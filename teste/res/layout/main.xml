@@ -12,18 +12,7 @@
         android:src="@drawable/ic_launcher" />
     -->
 
-    <TextView
-        android:id="@string/gasolina"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/gasolina" />
-
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/msgPromptGasolina"
-        android:inputType="numberDecimal" />
+<!--  -->
 
     <TextView
         android:id="@string/alcool"
@@ -39,20 +28,17 @@
         android:inputType="numberDecimal" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@string/gasolina"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Resultado" />
+        android:text="@string/gasolina" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/editText1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:clickable="false"
-        android:inputType="numberDecimal" >
-
-        <requestFocus />
-    </EditText>
+        android:hint="@string/msgPromptGasolina"
+        android:inputType="numberDecimal" />
 
     <Button
         android:id="@+id/button1"
@@ -73,6 +59,6 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#AABBCC" />
+        android:textColor="#FF0000" />
 
 </LinearLayout>
