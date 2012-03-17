@@ -22,8 +22,6 @@ import android.widget.Toast;
  *
  */
 public class ComoAbastecerActivity extends Activity {
-
-	
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -37,20 +35,11 @@ public class ComoAbastecerActivity extends Activity {
 
 		final EditText gasolina  = (EditText) findViewById(R.id.editText1);
 		final EditText alcool    = (EditText) findViewById(R.id.editText2);
-		final EditText resultado = (EditText) findViewById(R.id.editText3);
 		
 		final TextView msg = (TextView) findViewById(R.id.textView2);
 
 		Log.i("Preço da gasolina: ", gasolina.getText().toString());
 		Log.i("Preço do alcool: ", alcool.getText().toString());
-		
-		
-	
-		resultado.setText("123");
-	
-		/*
-	
-		*/
 	
 		Button botao = (Button) findViewById(R.id.button1);
 		
@@ -59,7 +48,7 @@ public class ComoAbastecerActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				
-				double res,gas,alc;
+				double res,gas,alc,perc;
 				
 				Log.i("O botão foi clicado", "clicado");
 				Toast.makeText(v.getContext(), "meu texto de aviso", Toast.LENGTH_LONG);
@@ -67,27 +56,34 @@ public class ComoAbastecerActivity extends Activity {
 				gas = Double.parseDouble(gasolina.getText().toString());
 				alc = Double.parseDouble(alcool.getText().toString());
 				
+				// res possui o valor de 70% do preço da gasolina
 				res = gas*0.7;
 				
+				// calcula o valor percentual do alcool em relação a gasolina
+				perc = alc/gas*100;
+				
+				String vlrPercentual = String.valueOf(perc).format("%.2f",perc);
+				
 				if(alc>res) {
+					// preço do alcool é maior que 70% do valor da gasolina
+					// portanto é melhor abastecer o tanque com gasolina
 					Log.i("","compensa gasolina");
 					//msg.setTextColor(180);
-					msg.setText("É melhor abastecer com gasolina");
+					msg.setText("É melhor abastecer com gasolina ("+ vlrPercentual+")%");
 				}
 				else {
+					// preço do alcool é menor ou igual a 70% do valor da gasolina
+					// portanto é melhor abastecer o tanque com alcool
 					Log.i("","compensa alcool");
-					msg.setText("É melhor abastecer com álcool");
+					msg.setText("É melhor abastecer com álcool ("+vlrPercentual+")%");
 				}
-			
-				// converte o resultado e atualiza o item
-				resultado.setText(String.valueOf(res));
 				
 			}
 		});
 
 	
 
-	
+	/* botão Limpar */
 	Button btnLimpar = (Button) findViewById(R.id.btnLimpar);
 	
 	btnLimpar.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +97,6 @@ public class ComoAbastecerActivity extends Activity {
 			// converte o resultado e atualiza o item
 			gasolina.setText("");
 			alcool.setText("");
-			resultado.setText("");
 			msg.setText("");
 			
 		}
