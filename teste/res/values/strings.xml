@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, ComoAbastecerActivity!</string>
+    <string name="app_name">ComoAbastecer</string>
+    <string name="gasolina">gasolina</string>
+    <string name="alcool">alcool</string>
+    <string name="Resultado">Resultado</string>
+    <string name="Calcular">Calcular</string>
+    <string name="msgPromptGasolina">Entre com o preço da gasolina</string>
+    <string name="msgPromptAlcool">Entre com o preço do álcool</string>
+
+</resources>
