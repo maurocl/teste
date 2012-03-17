@@ -9,6 +9,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * ComoAbastecerActivity
+ * 
+ * Esta activity  é responsável pelo cálculo para saber se compensa
+ * abastecer um carro com gasolina ou alcool baseado no preço do litro dos
+ * combustíveis, considerando que o uso do álcool é vantajoso no caso de seu
+ * preço ser inferior a 70% do valor do preço da gasolina.
+ * 
+ * 
+ * @author maurocl
+ *
+ */
 public class ComoAbastecerActivity extends Activity {
 
 	
