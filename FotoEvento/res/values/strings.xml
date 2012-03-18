@@ -3,5 +3,9 @@
 
     <string name="hello">Hello World, FotoEventoActivity!</string>
     <string name="app_name">FotoEvento</string>
+    <string name="nome">Nome</string>
+    <string name="email">Email</string>
+    <string name="telefone">Telefone</string>
+    <string name="tipofoto">Tipo da Foto</string>
 
 </resources>
