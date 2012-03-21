@@ -3,13 +3,16 @@ package br.com.mltech;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class Relatorio extends Activity {
+/**
+ * 
+ * @author maurocl
+ * 
+ */
+class Usuarios extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.relatorio);
-		
+		setContentView(R.layout.usuarios);
 	}
-	
 }

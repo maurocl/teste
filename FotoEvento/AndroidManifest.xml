@@ -19,7 +19,7 @@
         </activity>
         
         <activity
-            android:name=".UsuarioActivity"
+            android:name=".Usuarios"
             android:label="Cadastrar Usuario">
         </activity>
         
@@ -27,6 +27,12 @@
             android:name=".Relatorio"
             android:label="Relatórios">
         </activity>
+
+        <activity
+            android:name=".Evento"
+            android:label="Eventos">
+        </activity>
+        
         
     </application>
 

@@ -4,17 +4,14 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello" />
+    <!-- Nome -->
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/nome" />
-
+<!-- 
     <EditText
         android:id="@+id/editNome"
         android:layout_width="fill_parent"
@@ -23,63 +20,6 @@
         <requestFocus />
     </EditText>
 
-    <!-- Email -->
-
-    <TextView
-        android:id="@+id/txtEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/email" />
-
-    <EditText
-        android:id="@+id/editEmail"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress" />
-
-    <!-- Telefone -->
-
-    <TextView
-        android:id="@+id/txtTelefone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/telefone" />
-
-    <EditText
-        android:id="@+id/editTelefone"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="phone" />
-
-    <!-- Tipo de Foto -->
-
-    <TextView
-        android:id="@+id/txtTipoFoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/tipofoto" />
-
-    <!-- formato Polaroid -->
-
-    <RadioButton
-        android:id="@+id/radioButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Formato Polaroid" />
-
-    <!-- formato Cabine -->
-
-    <RadioButton
-        android:id="@+id/radioButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Formato Cabine" />
-
-    <!-- Incluir -->
-    <Button
-        android:id="@+id/btnIncluir"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Incluir" />
+ -->
 
 </LinearLayout>
