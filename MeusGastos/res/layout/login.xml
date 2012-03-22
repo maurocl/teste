@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <!-- Usuário -->
+    
+    <TextView
+        android:id="@+login/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Usuário"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+login/editUsuario"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <requestFocus />
+    </EditText>
+
+    <!-- Senha -->
+    
+    <TextView
+        android:id="@+login/editSenha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Senha"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+login/editText2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword" />
+
+    <!--  Botões -->
+    
+    <LinearLayout
+        android:id="@+login/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" 
+        android:gravity="fill_horizontal">
+
+        <Button
+            android:id="@+login/btnLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login" />
+
+        <Button
+            android:id="@+login/btnCancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar" />
+        
+    </LinearLayout>
+
+</LinearLayout>
