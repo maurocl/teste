@@ -1,64 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical">
 
-    <!--
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher" />
-    -->
+	<!-- <ImageView android:id="@+id/imageView1" android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" android:src="@drawable/ic_launcher" 
+		/> -->
 
-<!--  -->
+	<!-- -->
 
-    <TextView
-        android:id="@string/alcool"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/alcool" />
+	<TextView android:id="@string/alcool" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="@string/alcool" />
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/msgPromptAlcool"
-        android:inputType="numberDecimal" />
+	<EditText android:id="@+id/editText2" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:hint="@string/msgPromptAlcool"
+		android:inputType="numberDecimal" />
 
-    <TextView
-        android:id="@string/gasolina"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/gasolina" />
+	<TextView android:id="@string/gasolina" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="@string/gasolina" />
 
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/msgPromptGasolina"
-        android:inputType="numberDecimal" />
+	<EditText android:id="@+id/editText1" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:hint="@string/msgPromptGasolina"
+		android:inputType="numberDecimal" />
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Calcular" />
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="horizontal"
+		android:background="#2a2a2a" android:layout_marginTop="25dip">
 
-    <Button
-        android:id="@+id/btnLimpar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:contentDescription="Limpar"
-        android:hint="Pressione para faze novo calculo"
-        android:text="Limpar" />
+		<Button android:id="@+id/button1" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/Calcular"
+			android:gravity="center" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#FF0000" />
+		<Button android:id="@+id/btnLimpar" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:clickable="true"
+			android:contentDescription="Limpar" android:hint="Pressione para fazer novo cálculo"
+			android:gravity="center" android:text="Limpar" />
+
+	</LinearLayout>
+
+	<TextView android:id="@+id/textView2" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:textColor="#FF0000" android:gravity="center"/>
 
 </LinearLayout>

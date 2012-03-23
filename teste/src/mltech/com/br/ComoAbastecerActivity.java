@@ -37,11 +37,17 @@ public class ComoAbastecerActivity extends Activity {
 		final EditText alcool    = (EditText) findViewById(R.id.editText2);
 		
 		final TextView msg = (TextView) findViewById(R.id.textView2);
-
+	
 		Log.i("Preço da gasolina: ", gasolina.getText().toString());
 		Log.i("Preço do alcool: ", alcool.getText().toString());
 	
 		Button botao = (Button) findViewById(R.id.button1);
+		
+		botao.setEnabled(false);
+		
+		if ( (gasolina.getText().toString()!="") && (alcool.getText().toString()!="") ) {
+			botao.setEnabled(true);
+		}
 		
 		botao.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -49,6 +55,10 @@ public class ComoAbastecerActivity extends Activity {
 				// TODO Auto-generated method stub
 				
 				double res,gas,alc,perc;
+				
+				if ( (gasolina.getText().toString()!="") && (alcool.getText().toString()!="") ) {
+					return;
+				}
 				
 				Log.i("O botão foi clicado", "clicado");
 				Toast.makeText(v.getContext(), "meu texto de aviso", Toast.LENGTH_LONG);
