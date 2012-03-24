@@ -130,7 +130,7 @@ public class MeusGastosActivity extends Activity {
 		// -----------------
 		MenuItem gastos = menu.add(0, 1, 0, "Gastos");
 		gastos.setIcon(R.drawable.ic_launcher);
-		gastos.setIntent(new Intent(this, FormGasto.class));
+		gastos.setIntent(new Intent(this, ListaGastos.class));
 		gastos.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
 			@Override

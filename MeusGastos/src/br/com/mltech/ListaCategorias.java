@@ -22,6 +22,8 @@ import br.com.mltech.modelo.Categoria;
  * 
  * @author maurocl
  * 
+ * Exibe uma lista de categorias de gastos.
+ * 
  */
 public class ListaCategorias extends Activity {
 
@@ -39,26 +41,9 @@ public class ListaCategorias extends Activity {
 
 		setContentView(R.layout.listacat);
 
-		// String[] categorias = new String[] { "Combustível", "Alimentação",
-		// "Saúde", "Gerais" };
-
-		// ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-		// android.R.layout.simple_list_item_1, categorias);
-
-		// ListView lista = (ListView) findViewById(R.id.lista);
-
 		lista = (ListView) findViewById(R.id.lista);
 
-		/*
-		 * CategoriaDAO dao = new CategoriaDAO(this); categorias = dao.getLista();
-		 * dao.close();
-		 * 
-		 * ArrayAdapter<Categoria> adapter = new ArrayAdapter<Categoria>(this,
-		 * android.R.layout.simple_list_item_1, categorias);
-		 * 
-		 * lista.setAdapter(adapter);
-		 */
-
+		// Inicializa a lista de categorias de gasto
 		carregaLista();
 
 		// -------------------------------------------
@@ -69,13 +54,6 @@ public class ListaCategorias extends Activity {
 			public void onItemClick(AdapterView<?> adapter, View view, int posicao, long idDoObjeto) {
 
 				Toast.makeText(ListaCategorias.this, "Você clicou no item " + posicao, Toast.LENGTH_LONG).show();
-
-				// Intent altera = new Intent(ListaAlunos.this, Formulario.class);
-
-				// altera.putExtra("alunoSelecionado",(Aluno)
-				// adapterView.getItemAtPosition(posicao));
-
-				// startActivity(altera);
 
 			}
 
@@ -89,12 +67,17 @@ public class ListaCategorias extends Activity {
 			public boolean onItemLongClick(AdapterView<?> adapter, View view, int posicao, long id) {
 
 				Toast.makeText(ListaCategorias.this, "Você clicou longamente no item " + posicao, Toast.LENGTH_LONG).show();
+				
 				return false;
 			}
 
 		});
 	}
 
+	/**
+	 * Menu de Opções
+	 * 
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -103,6 +86,9 @@ public class ListaCategorias extends Activity {
 
 		categorias.setIntent(new Intent(this, FormCategoria.class));
 
+		// -----------------
+		// Menu Item: Novo
+		// -----------------
 		categorias.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
 			@Override
