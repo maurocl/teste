@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Código do Gasto"
+        android:text="Gasto" />
+
+    <EditText
+        android:id="@+id/codigo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Código do Gasto" />
+
+    <!-- Data -->
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Data" />
+
+    <EditText
+        android:id="@+id/data"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Data do Gasto" />
+
+    <!-- Descrição -->
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Descricao" />
+
+    <EditText
+        android:id="@+id/descricao"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descrição do Gasto" />
+
+    <!-- Valor -->
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Valor" />
+
+    <EditText
+        android:id="@+id/valor"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Valor do Gasto" />
+
+    <!-- Categoria -->
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Categoria" />
+
+    <EditText
+        android:id="@+id/categoria"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Categoria do Gasto" />
+
+    <!-- Botão de Inserção -->
+
+    <Button
+        android:id="@+id/inserir"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Pressione o botão para inserir"
+        android:text="Inserir" />
+
+</LinearLayout>

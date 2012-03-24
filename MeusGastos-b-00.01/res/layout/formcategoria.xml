@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <!-- Categoria -->
+
+
+    <!--
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Categoria" />
+
+    <EditText
+        android:id="@+id/codigo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+    -->
+
+
+    <!-- Descrição -->
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Preencha com a descrição da categoria"
+        android:text="Descrição" />
+
+    <EditText
+        android:id="@+id/descricao"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Botão -->
+
+    <Button
+        android:id="@+id/inserir"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Pressione o botão para inserir"
+        android:text="Inserir" />
+
+</LinearLayout>
