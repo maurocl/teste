@@ -8,6 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+/**
+ * FirstScreenActivity.java
+ * 
+ * @author maurocl
+ *
+ */
 public class FirstScreenActivity extends Activity {
 
 	EditText inputName;
@@ -16,21 +22,22 @@ public class FirstScreenActivity extends Activity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.screen1);
 
-		inputName = (EditText) findViewById(R.id.name);
+		inputName  = (EditText) findViewById(R.id.name);
 		inputEmail = (EditText) findViewById(R.id.email);
 		Button btnNextScreen = (Button) findViewById(R.id.btnNextScreen);
 
 		btnNextScreen.setOnClickListener(new View.OnClickListener() {
 
-			public void onClick(View srg0) {
+			public void onClick(View arg0) {
 
 				// Starting a new intent
 
-				Intent nextScreen = new Intent(getApplicationContext(),
-						SecondScreenActivity.class);
+				Intent nextScreen = new Intent(getApplicationContext(),	SecondScreenActivity.class);
+				//Intent nextScreen = new Intent(FirstScreenActivity.this,	SecondScreenActivity.class);
 
 				// Sending data to another Activity
 
@@ -40,8 +47,11 @@ public class FirstScreenActivity extends Activity {
 				Log.e("n",inputName.getText()+"."+inputEmail.getText());
 				
 				startActivity(nextScreen);
+				
 			}
+			
 		});
 
 	}
+	
 }
