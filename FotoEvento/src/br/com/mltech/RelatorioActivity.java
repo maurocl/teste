@@ -3,7 +3,13 @@ package br.com.mltech;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class Relatorio extends Activity {
+/**
+ * RelatorioActivity
+ * 
+ * @author maurocl
+ *
+ */
+public class RelatorioActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

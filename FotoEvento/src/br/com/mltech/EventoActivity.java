@@ -11,25 +11,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Evento.java
+ * EventoActivity.java
  * 
  * @author maurocl
  *
  * Activity para criação de um evento
  * 
  */
-public class Evento extends Activity {
+public class EventoActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.evento);
 
-		Display display = getWindowManager().getDefaultDisplay();
-
-		Log.i("", "DisplayId()=" + display.getDisplayId());
-		Log.i("", "getHeight()=" + display.getHeight());
-		Log.i("", "getWidth()=" + display.getWidth());
+		getDisplayInfo();
 
 		// Obtendo os campos da tela
 		TextView cliente = (TextView) findViewById(R.evento.editCliente);
@@ -43,6 +41,14 @@ public class Evento extends Activity {
 		// int width = size.x;
 		// int height = size.y;
 
+	}
+
+	private void getDisplayInfo() {
+		Display display = getWindowManager().getDefaultDisplay();
+
+		Log.i("Evento", "DisplayId()=" + display.getDisplayId());
+		Log.i("Evento", "getHeight()=" + display.getHeight());
+		Log.i("Evento", "getWidth()=" + display.getWidth());
 	}
 
 	//------------------------------------
@@ -61,7 +67,7 @@ public class Evento extends Activity {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				// TODO Auto-generated method stub
-				Toast.makeText(Evento.this, "Upload de Bordas", Toast.LENGTH_SHORT).show();
+				Toast.makeText(EventoActivity.this, "Upload de Bordas", Toast.LENGTH_SHORT).show();
 				return false;
 			}
 		});

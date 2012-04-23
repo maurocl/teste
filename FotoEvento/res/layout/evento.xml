@@ -33,6 +33,22 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
 
+        <!-- Checkbox para envio de fotos as redes sociais -->
+        
+        <!-- Facebook -->
+        <CheckBox
+            android:id="@+evento/chkFacebook"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Facebook" />
+
+        <!-- Twitter -->
+        <CheckBox
+            android:id="@+evento/chkTwitter"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Twitter" />
+
         <!-- Data -->
 
     </LinearLayout>
