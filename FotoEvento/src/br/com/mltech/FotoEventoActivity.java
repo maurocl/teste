@@ -1,10 +1,14 @@
 package br.com.mltech;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,11 +30,13 @@ import br.com.mltech.modelo.Participante;
 public class FotoEventoActivity extends Activity {
 
 	private static final String TAG = "FotoEventoActivity";
-	
+
 	private Contratante contratante;
 	private Evento evento;
 	private List<Participante> listaParticipantes;
-	private Participante usuario;
+	private Participante participante;
+
+	private int numParticipantes = 0;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -46,13 +52,16 @@ public class FotoEventoActivity extends Activity {
 
 		contratante = new Contratante("Casa da Benção-ITEJ", "bencao@itej.com.br");
 
+		// cria um novo evento
 		evento = new Evento();
 
 		evento.setContratante(contratante);
 
 		evento.setNome("Dia da Caridade");
 
-		usuario = new Participante("Mauro Cesar Lopes", "maurocl@terra.com.br", "(19) 8143-8978");
+		listaParticipantes = new ArrayList<Participante>();
+
+		participante = new Participante("Mauro Cesar Lopes", "maurocl@terra.com.br", "(19) 8143-8978");
 
 		Button botao = (Button) findViewById(R.id.btnParticipante);
 
@@ -64,21 +73,64 @@ public class FotoEventoActivity extends Activity {
 				// TODO Auto-generated method stub
 
 				// verifica se existe um contratante
-				
+
 				// verifica se existe um evento cadastrado
-				
+
 				// verifica se as bordas das fotos já foram disponibilizadas ao evento
-				
-				
-				
+
 				// abre a Activity para enviar uma foto ao evento
-				
+
 				// processa o caso de uso enviar foto
-				Log.d(TAG,"Enviar foto ...");
+				Log.d(TAG, "Enviar foto " + numParticipantes + " ..." + participante);
+
 				
+				Uri jpgUri = chooseFileDir();
+				
+				
+				// Envia email ao participante
+				sendEmail(participante.getEmail(), participante.getEmail(), "Evento Inicial", "Segue as informações sobre o evento",jpgUri);
+
+				if (listaParticipantes != null) {
+					listaParticipantes.add(participante);
+				} else {
+					Log.d(TAG, "Lista de participantes é null");
+				}
+
+				numParticipantes++;
+
 			}
 
+			/**
+			 * chooseFileDir()
+			 * 
+			 * @return
+			 */
+			private Uri chooseFileDir() {
+				
+				if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+					Log.d(TAG, "Error");
+				}
+
+				File pngDir = new File(Environment.getExternalStorageDirectory(), "Android/data/com.phstudios.jbrefurb/quote");
+
+				if (!pngDir.exists()) {
+					Log.d(TAG, "Criando o diretório ...");
+					pngDir.mkdirs();
+				}
+
+				//File pngFile = new File(pngDir, "pic1.png");
+				File pngFile = new File(pngDir, "figura.jpg");
+				Uri jpgUri = Uri.fromFile(pngFile);
+				
+				return jpgUri;
+				
+			}
+			
+			
+			
 		});
+
+		
 
 	}
 
@@ -100,7 +152,7 @@ public class FotoEventoActivity extends Activity {
 	 * @param menu
 	 */
 	private void criaMenus(Menu menu) {
-		
+
 		// ---------------------------------------------
 		// Menu: Cadastro de Usuários
 		// ----------------------------------------------
@@ -174,4 +226,61 @@ public class FotoEventoActivity extends Activity {
 			}
 		});
 	}
+
+	/**
+	 * 
+	 * Envia um email para
+	 * 
+	 * @param emailParticipante
+	 * @param subject
+	 * @param text
+	 */
+	private void sendEmail(String emailParticipante, String emailContratante, String subject, String text, Uri jpgUri) {
+
+		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+		//intentEmail.setType("message/rfc822");
+		
+		emailIntent.setType("image/jpg");
+
+		/*
+		 * intentEmail.putExtra(Intent.EXTRA_EMAIL, new String[] {
+		 * "maurocl@terra.com.br" }); intentEmail.putExtra(Intent.EXTRA_SUBJECT,
+		 * "Evento Inicial"); intentEmail.putExtra(Intent.EXTRA_TEXT,
+		 * "Segue as informações sobre o evento.");
+		 */
+
+		emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { emailParticipante });
+
+		if (emailContratante != null) {
+			// email do contratante foi fornecido
+			emailIntent.putExtra(Intent.EXTRA_BCC, new String[] { emailContratante });
+		}
+		
+		/**
+		 * A constant string holding the desired subject line of a message.
+		 * Constant Value: "android.intent.extra.SUBJECT"
+		 */
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		
+		/**
+		 * A constant CharSequence that is associated with the Intent, used with ACTION_SEND 
+		 * to supply the literal data to be sent. 
+		 * Note that this may be a styled CharSequence, so you must use Bundle.getCharSequence() to retrieve it.
+		 * Constant Value: "android.intent.extra.TEXT"
+		 */
+		emailIntent.putExtra(Intent.EXTRA_TEXT, text);
+		
+		emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, jpgUri);
+
+		//emailIntent.setType("image/png");
+		emailIntent.setType("image/jpg");
+
+		
+		startActivity(Intent.createChooser(emailIntent, "Selecione sua aplicação de email !"));
+
+		Log.d("EnviaEmailActivity", "ok");
+
+	}
+
 }
