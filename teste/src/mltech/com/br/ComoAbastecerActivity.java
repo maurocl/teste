@@ -49,6 +49,7 @@ public class ComoAbastecerActivity extends Activity {
 			botao.setEnabled(true);
 		}
 		
+		
 		botao.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -56,9 +57,11 @@ public class ComoAbastecerActivity extends Activity {
 				
 				double res,gas,alc,perc;
 				
-				if ( (gasolina.getText().toString()!="") && (alcool.getText().toString()!="") ) {
+				
+				if ( (gasolina.getText().toString()=="") || (alcool.getText().toString()=="") ) {
 					return;
 				}
+				
 				
 				Log.i("O botão foi clicado", "clicado");
 				Toast.makeText(v.getContext(), "meu texto de aviso", Toast.LENGTH_LONG);
