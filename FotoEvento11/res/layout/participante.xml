@@ -166,14 +166,14 @@
             android:layout_height="wrap_content"
             android:text="Parâmetro4:"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/editParam4"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="Parâmetro opcional 4"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <!-- Parâmetro Opcional 5 -->
 
@@ -183,14 +183,14 @@
             android:layout_height="wrap_content"
             android:text="Parâmetro5:"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/editParam5"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="Parâmetro opcional 5"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="fill_parent"

@@ -118,8 +118,7 @@ public class ParticipanteActivity extends Activity {
     final EditText editTelefone = (EditText) findViewById(R.id.editTelefone);
 
     /* Parâmetros opcionais */
-    // int[] params = new int[] { INVISIVEL, INVISIVEL, INVISIVEL, INVISIVEL,
-    // INVISIVEL };
+    // int[] params = new int[] { INVISIVEL, INVISIVEL, INVISIVEL, INVISIVEL, INVISIVEL };
     int[] params = new int[] { android.view.View.GONE, android.view.View.GONE, android.view.View.GONE, android.view.View.GONE,
         android.view.View.GONE };
 
@@ -127,30 +126,35 @@ public class ParticipanteActivity extends Activity {
 
       if (mEvento.getParametros() != null) {
 
+        // Parâmetro 1
         if (mEvento.getParametros().getParametro(0) != null) {
           params[0] = android.view.View.VISIBLE;
         } else {
           params[0] = android.view.View.GONE;
         }
 
+        // Parâmetro 2
         if (mEvento.getParametros().getParametro(1) != null) {
           params[1] = android.view.View.VISIBLE;
         } else {
           params[1] = android.view.View.GONE;
         }
 
+        // Parâmetro 3
         if (mEvento.getParametros().getParametro(2) != null) {
           params[2] = android.view.View.VISIBLE;
         } else {
           params[2] = android.view.View.GONE;
         }
 
+        // Parâmetro 4
         if (mEvento.getParametros().getParametro(3) != null) {
           params[3] = android.view.View.VISIBLE;
         } else {
           params[3] = android.view.View.GONE;
         }
 
+        // Parâmetro 5
         if (mEvento.getParametros().getParametro(4) != null) {
           params[4] = android.view.View.VISIBLE;
         } else {
@@ -372,11 +376,16 @@ public class ParticipanteActivity extends Activity {
   /**
    * updateOptionalParamFields(int[] params)
    * 
-   * @param params
+   * Recebe um vetor onde cada elemento indica se o parâmetro será visível ou não
+   * 
+   * @param params vetor de inteiros contendo a visibilidade de cada parâmetro adicional
    */
   private void updateOptionalParamFields(int[] params) {
 
+    // vetor de EditText (nome dos parâmetros)
     EditText[] editText = new EditText[5];
+    
+    // vetor TestView (valor dos parâmetros)
     TextView[] textView = new TextView[5];
 
     textView[0] = (TextView) findViewById(R.id.tvParam1);
