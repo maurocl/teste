@@ -111,7 +111,7 @@ public class CameraTools {
 
     } else {
       // no câmera on this device
-      Log.d(TAG, "O dispositivo não possui câmera.");
+      Log.w(TAG, "O dispositivo não possui câmera.");
       return false;
     }
 
