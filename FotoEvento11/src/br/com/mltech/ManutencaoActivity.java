@@ -59,12 +59,19 @@ public class ManutencaoActivity extends Activity {
     }
 
     // Obtém as preferências
-    lerPreferencias();
+    boolean b = lerPreferencias();
+    if (!b) {
+      Log.d(TAG, "Erro na leitura do arquivo de preferências.");
+    }
 
     Button btnContratante = (Button) findViewById(R.id.btnContratante);
     Button btnEvento = (Button) findViewById(R.id.btnEvento);
     Button btnPreferencias = (Button) findViewById(R.id.btnPrefencias);
     Button btnRelatorios = (Button) findViewById(R.id.btnRelatorios);
+    Button btnConfiguracaoInicial = (Button) findViewById(R.id.btnConfiguracaoInicial);
+    
+    // Desabilita botão
+    btnConfiguracaoInicial.setEnabled(false);
 
     /* Tratamento do click no botão Contratante */
     btnContratante.setOnClickListener(new OnClickListener() {
@@ -95,6 +102,13 @@ public class ManutencaoActivity extends Activity {
        */
       public void onClick(View v) {
 
+        if(mContratante==null) {
+          Toast.makeText(ManutencaoActivity.this, "Contratante ainda não foi preenchido", Toast.LENGTH_SHORT).show();
+          Log.w(TAG,"É necessário cadastrar um contratante antes de preencher os dados do evento");
+          
+          return;
+        }
+        
         Intent intent = new Intent(ManutencaoActivity.this, EventoActivity.class);
 
         intent.putExtra("br.com.mltech.evento", mEvento);
@@ -116,7 +130,7 @@ public class ManutencaoActivity extends Activity {
     btnPreferencias.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
-        
+
         Intent intent = new Intent(ManutencaoActivity.this, PreferenciasActivity.class);
 
         Bundle params = new Bundle();
@@ -124,8 +138,9 @@ public class ManutencaoActivity extends Activity {
         intent.putExtras(params);
 
         startActivity(intent);
-                
-        //Toast.makeText(ManutencaoActivity.this, "Preferências ...", Toast.LENGTH_LONG).show();
+
+        // Toast.makeText(ManutencaoActivity.this, "Preferências ...",
+        // Toast.LENGTH_LONG).show();
       }
     });
 
@@ -157,6 +172,55 @@ public class ManutencaoActivity extends Activity {
 
       }
     });
+
+    /* Tratamento do click no botão Configuração Inicial */
+    btnConfiguracaoInicial.setOnClickListener(new OnClickListener() {
+
+      /**
+       * 
+       */
+      public void onClick(View v) {
+        boolean b = limpaConfiguracoes();
+
+        if (b) {
+          Toast.makeText(ManutencaoActivity.this, "Configuração inicial restaurada com sucesso", Toast.LENGTH_SHORT).show();
+          
+          mContratante = null;
+          mEvento = null;
+          
+          
+        } else {
+          Toast.makeText(ManutencaoActivity.this, "Falha na reinicialização da onfiguração inicial", Toast.LENGTH_SHORT).show();
+        }
+
+      }
+    });
+
+  }
+
+  /**
+   * limpaConfiguracoes()
+   * 
+   * Reinicia o arquivo de onfiguração de contratante e evento
+   * 
+   * @return true se sucesso ou false caso haja algum erro.
+   */
+  private boolean limpaConfiguracoes() {
+
+    boolean commitDone;
+
+    mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
+
+    Editor edit = mPreferences.edit();
+
+    // grava as preferências
+    commitDone = edit.commit();
+
+    Log.d(TAG, "Gravando as preferências compartilhadas ...");
+
+    mPreferences = null;
+
+    return commitDone;
 
   }
 
@@ -382,10 +446,11 @@ public class ManutencaoActivity extends Activity {
   /**
    * gravarPreferencias()
    * 
-   * Garava a configuração do contratante e do evento na estrutura de
+   * Garava a configuração do Contratante e do Evento na estrutura de
    * preferências (Preferences)
    * 
-   * @return true caso a gravação ocorra com sucesso ou false caso haja algum problema.
+   * @return true caso a gravação ocorra com sucesso ou false caso haja algum
+   *         problema.
    */
   private boolean gravarPreferencias() {
 
@@ -411,10 +476,10 @@ public class ManutencaoActivity extends Activity {
     edit.putString("evento_telefone", mEvento.getTelefone());
     edit.putString("evento_envia_facebook", mEvento.isEnviaFacebook() == true ? "true" : "false");
     edit.putString("evento_envia_twitter", mEvento.isEnviaTwitter() == true ? "true" : "false");
-    
-    edit.putString("evento_borda_polaroid",mEvento.getBordaPolaroid());
-    edit.putString("evento_borda_cabine",mEvento.getBordaCabine());
-    
+
+    edit.putString("evento_borda_polaroid", mEvento.getBordaPolaroid());
+    edit.putString("evento_borda_cabine", mEvento.getBordaCabine());
+
     edit.putString("evento_param1", mEvento.getParametros().getParametro(0));
     edit.putString("evento_param2", mEvento.getParametros().getParametro(1));
     edit.putString("evento_param3", mEvento.getParametros().getParametro(2));
@@ -431,35 +496,58 @@ public class ManutencaoActivity extends Activity {
   /**
    * lerPreferencias()
    * 
-   * Lê a configuração do contratante e do evento armazenada na estrutura de
-   * preferências (Preferences)
+   * Lê a configuração do Contratante e do Evento armazenada na estrutura de
+   * preferências (Preferences).
+   * 
+   * Inicializa as variáveis mContratante e mEvento com os valores lidos ou
+   * apenas cria uma instância delas.
+   * 
+   * @return true em caso de sucesso ou false no caso de falhas
    * 
    */
-  private void lerPreferencias() {
+  private boolean lerPreferencias() {
 
     Log.d(TAG, "Lendo as preferências compartilhadas ...");
 
     mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
 
+    if (mPreferences == null) {
+      Log.w(TAG, "mPreferences is null. Falha na execução do comandos getSharedPreferences()");
+      return false;
+    }
+
+    // Retrieve all values from the preferences.
+    // Recupera todos os valores do mecanismo de preferências
+    // Returns a map containing a list of pairs key/value representing the
+    // preferences.
+    // Retorna um mapa contendo uma lista de pares chave/valor representando
+    // as preferências
     Map<?, ?> chaves = mPreferences.getAll();
 
-    Set<?> set = chaves.entrySet();
+    if (chaves != null) {
 
-    Log.d(TAG, "Nº de chaves lidas: " + set.size());
+      Set<?> set = chaves.entrySet();
 
-    Iterator<?> i = set.iterator();
+      Log.d(TAG, "Nº de chaves lidas: " + set.size());
 
-    // Display elements
-    while (i.hasNext()) {
+      Iterator<?> i = set.iterator();
 
-      Entry<?, ?> me = (Entry<?, ?>) i.next();
+      // Display elements
+      while (i.hasNext()) {
 
-      Log.v(TAG, me.getKey() + "=" + me.getValue());
+        Entry<?, ?> me = (Entry<?, ?>) i.next();
 
+        Log.v(TAG, me.getKey() + "=" + me.getValue());
+
+      }
+    } else {
+      Log.v(TAG, "Nenhum par de chave/valor foi encontrado.");
     }
 
     if (mContratante == null) {
 
+      // Contratante não foi inicializado
+      // Cria um novo contratante vazio
       mContratante = new Contratante();
 
     }
@@ -470,57 +558,70 @@ public class ManutencaoActivity extends Activity {
 
     if (mEvento == null) {
 
+      // Evento não foi inicializado
+      // Cria um novo Evento vazio
       mEvento = new Evento();
 
       mEvento.setContratante(mContratante);
 
     }
 
-    if (mEvento != null) {
+    mEvento.setBordaCabine(null);
+    mEvento.setBordaPolaroid(null);
 
-      mEvento.setBordaCabine(null);
-      mEvento.setBordaPolaroid(null);
+    mEvento.setNome((String) chaves.get("evento_nome"));
 
-      mEvento.setNome((String) chaves.get("evento_nome"));
+    mEvento.setEmail((String) chaves.get("evento_email"));
 
-      mEvento.setEmail((String) chaves.get("evento_email"));
+    mEvento.setEndereco((String) chaves.get("evento_endereco"));
+    mEvento.setCidade((String) chaves.get("evento_cidade"));
+    mEvento.setEstado((String) chaves.get("evento_estado"));
+    mEvento.setCep((String) chaves.get("evento_cep"));
 
-      mEvento.setEndereco((String) chaves.get("evento_endereco"));
-      mEvento.setCidade((String) chaves.get("evento_cidade"));
-      mEvento.setEstado((String) chaves.get("evento_estado"));
-      mEvento.setCep((String) chaves.get("evento_cep"));
+    mEvento.setData((String) chaves.get("evento_data"));
 
-      mEvento.setData((String) chaves.get("evento_data"));
+    mEvento.setTelefone((String) chaves.get("evento_telefone"));
 
-      mEvento.setTelefone((String) chaves.get("evento_telefone"));
+    mEvento.setBordaPolaroid((String) chaves.get("evento_borda_polaroid"));
 
-      mEvento.setBordaPolaroid((String) chaves.get("evento_borda_polaroid"));
-      
-      mEvento.setBordaCabine((String) chaves.get("evento_borda_cabine"));
-      
-       boolean b1, b2;
- 
-       b1 = ((String) chaves.get("evento_envia_facebook")).equals("true") ? true : false; 
-       b2 = ((String) chaves.get("evento_envia_twitter")).equals("true")  ? true : false;
-       
-       mEvento.setEnviaFacebook(b1); 
-       mEvento.setEnviaTwitter(b2);      
+    mEvento.setBordaCabine((String) chaves.get("evento_borda_cabine"));
 
-      String[] paramEventos = new String[5];
+    String facebookSelecionado = null;
+    String twitterSelecionado = null;
 
-      paramEventos[0] = (String) chaves.get("evento_param1");
-      paramEventos[1] = (String) chaves.get("evento_param2");
-      paramEventos[2] = (String) chaves.get("evento_param3");
-      paramEventos[3] = (String) chaves.get("evento_param4");
-      paramEventos[4] = (String) chaves.get("evento_param5");
+    facebookSelecionado = ((String) chaves.get("evento_envia_facebook"));
 
-      Parametros parametros = new Parametros(paramEventos);
+    boolean b1 = false, b2 = false;
 
-      mEvento.setParametros(parametros);
+    if (facebookSelecionado != null) {
 
-    } else {
-      Log.d(TAG, "mEvento is null");
+      b1 = (facebookSelecionado.equals("true") ? true : false);
+
     }
+
+    twitterSelecionado = ((String) chaves.get("evento_envia_twitter"));
+
+    if (twitterSelecionado != null) {
+
+      b2 = (twitterSelecionado.equals("true") ? true : false);
+    }
+
+    mEvento.setEnviaFacebook(b1);
+    mEvento.setEnviaTwitter(b2);
+
+    String[] paramEventos = new String[5];
+
+    paramEventos[0] = (String) chaves.get("evento_param1");
+    paramEventos[1] = (String) chaves.get("evento_param2");
+    paramEventos[2] = (String) chaves.get("evento_param3");
+    paramEventos[3] = (String) chaves.get("evento_param4");
+    paramEventos[4] = (String) chaves.get("evento_param5");
+
+    Parametros parametros = new Parametros(paramEventos);
+
+    mEvento.setParametros(parametros);
+
+    return true;
 
   }
 

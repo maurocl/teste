@@ -27,11 +27,7 @@ public class ParticipanteActivity extends Activity {
 
   private static final int DEBUG = 0;
 
-  private static final int VISIVEL = android.view.View.VISIBLE;
-  private static final int INVISIVEL = android.view.View.INVISIBLE;
-  private static final int GONE = android.view.View.GONE;
-
-  private static final String TAG = "Participante";
+  private static final String TAG = "ParticipanteActivity";
 
   // Definição de constantes para o tipo de foto
   private static final int POLAROID = 1;
@@ -63,8 +59,9 @@ public class ParticipanteActivity extends Activity {
 
     this.setContentView(R.layout.participante);
 
-    // --------------------------------
-
+    /**
+     * 
+     */
     Log.d(TAG, "*** onCreate() ***");
 
     Intent intent = getIntent();
@@ -404,13 +401,13 @@ public class ParticipanteActivity extends Activity {
 
       if (mEvento.getParametros() != null) {
 
-        if (mEvento.getParametros().getParametro(i) != null) {
+        if ((mEvento.getParametros().getParametro(i) != null) && (!mEvento.getParametros().getParametro(i).equals(""))) {
           textView[i].setText(mEvento.getParametros().getParametro(i));
-          textView[i].setVisibility(VISIVEL);
-          editText[i].setVisibility(VISIVEL);
+          textView[i].setVisibility(android.view.View.VISIBLE);
+          editText[i].setVisibility(android.view.View.VISIBLE);
         } else {
-          textView[i].setVisibility(GONE);
-          editText[i].setVisibility(GONE);
+          textView[i].setVisibility(android.view.View.GONE);
+          editText[i].setVisibility(android.view.View.GONE);
         }
 
       }

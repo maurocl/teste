@@ -66,6 +66,18 @@ public class EventoActivity extends Activity {
 
     }
 
+    /*
+    if(mContratante==null) {
+      Log.w(TAG,"Contratante não pode ser nulo");
+      Toast.makeText(this, "Contratante ainda não foi preenchido", Toast.LENGTH_SHORT);
+      
+      Intent i = new Intent();
+      setResult(RESULT_CANCELED, i);
+      finish();
+     
+    }
+    */
+    
     // Obtendo os identificadores dos elementos de tela
     final EditText cliente = (EditText) findViewById(R.evento.editCliente);
     final EditText nome = (EditText) findViewById(R.evento.editNome);
@@ -86,9 +98,11 @@ public class EventoActivity extends Activity {
     final EditText param4 = (EditText) findViewById(R.evento.editParam4);
     final EditText param5 = (EditText) findViewById(R.evento.editParam5);
 
+    // Checkboxes
     final CheckBox chkFacebook = (CheckBox) findViewById(R.evento.chkFacebook);
     final CheckBox chkTwitter = (CheckBox) findViewById(R.evento.chkTwitter);
 
+    // Botões
     final Button btnGravar = (Button) findViewById(R.evento.btnGravar);
     final Button btnCancelar = (Button) findViewById(R.evento.btnCancelar);
 
@@ -253,8 +267,10 @@ public class EventoActivity extends Activity {
 
       }
     });
-
-    // Botão Cancelar (Evento)
+ 
+    /**
+     * Botão Cancelar (Evento)
+     */
     btnCancelar.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {

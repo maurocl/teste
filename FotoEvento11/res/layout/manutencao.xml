@@ -36,6 +36,12 @@
         android:layout_height="wrap_content"
         android:text="Preferências" />
 
+    <Button
+        android:id="@+id/btnConfiguracaoInicial"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Configuração Inicial" />
+
     <!--
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -55,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".5"
             android:text="Voltar" />
-    </LinearLayout>
+    </LinearLayout>
     -->
 
 </LinearLayout>

@@ -283,6 +283,7 @@
         <!-- Botões de Ação -->
 
         <LinearLayout
+            
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
@@ -293,19 +294,16 @@
                 android:id="@+evento/btnGravar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:hint="Grava as informações sobre o evento"
+                android:layout_weight="1"                    
                 android:text="Gravar" />
 
             <Button
                 android:id="@+evento/btnCancelar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:hint="Cancela as informações sobre o evento"
+                android:layout_weight="1"                      
                 android:text="Cancelar" />
+            
         </LinearLayout>
         
     </LinearLayout>

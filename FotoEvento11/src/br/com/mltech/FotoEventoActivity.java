@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 import br.com.mltech.modelo.Contratante;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Parametros;
@@ -96,7 +97,7 @@ public class FotoEventoActivity extends Activity {
     }
 
     ct = new CameraTools();
-    
+
     // prepara o ambiente para execução da aplicação
     preparaAmbiente();
 
@@ -432,6 +433,8 @@ public class FotoEventoActivity extends Activity {
 
     super.onActivityResult(requestCode, resultCode, data);
 
+    Log.i(TAG, "onActivityResult(request " + requestCode + ", result=" + resultCode + ", data " + data + ") ...");
+
     if (requestCode == ACTIVITY_PARTICIPANTE) {
       resultActivityParticipante(resultCode, data);
     } else if (requestCode == ACTIVITY_LOGIN) {
@@ -443,6 +446,8 @@ public class FotoEventoActivity extends Activity {
     } else if (requestCode == ACTIVITY_DUMMY3) {
       resultActivityDummy3(resultCode, data);
     } else {
+      Toast.makeText(this, "Resultado inexperado", Toast.LENGTH_SHORT).show();
+
       Log.w(TAG, "Erro ... requestCode: " + requestCode + " não pode ser processado");
     }
 

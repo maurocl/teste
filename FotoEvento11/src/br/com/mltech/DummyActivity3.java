@@ -10,9 +10,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.drawable.GradientDrawable.Orientation;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -66,6 +66,8 @@ public class DummyActivity3 extends Activity {
 
   private ManipulaImagem imagem = null;
 
+  private SharedPreferences mPreferences;
+
   /**
    * onCreate(Bundle savedInstanceState)
    */
@@ -76,14 +78,17 @@ public class DummyActivity3 extends Activity {
 
     Log.d(TAG, "*** onCreate() ***");
 
+    setContentView(R.layout.dummy);
+
     // imagem = new ManipulaImagemOld();
     imagem = new ManipulaImagem();
+    if (imagem == null) {
+      Log.w(TAG, "Não foi possível obter uma instância da classe ManipulaImagm");
+    }
 
     showBundle(savedInstanceState);
 
     mContador++;
-
-    setContentView(R.layout.dummy);
 
     Button btn0 = (Button) findViewById(R.id.btn0);
 
@@ -114,14 +119,22 @@ public class DummyActivity3 extends Activity {
 
     super.onActivityResult(requestCode, resultCode, data);
 
-    if (requestCode == ACTIVITY_TIRA_FOTO_3) {
-      resultActivityTiraFoto3(resultCode, data);
-    } else if (requestCode == ACTIVITY_CHOOSER) {
-      resultActivityChooser(resultCode, data);
-    } else if (requestCode == ACTIVITY_PARTICIPANTE) {
+    if (requestCode == ACTIVITY_PARTICIPANTE) {
+
       resultActivityParticipante(resultCode, data);
+
+    } else if (requestCode == ACTIVITY_TIRA_FOTO_3) {
+
+      resultActivityTiraFoto3(resultCode, data);
+
+    } else if (requestCode == ACTIVITY_CHOOSER) {
+
+      resultActivityChooser(resultCode, data);
+
     } else {
+
       Log.w(TAG, "Erro ... requestCode: " + requestCode + " não pode ser processado");
+
     }
 
   }
@@ -151,6 +164,7 @@ public class DummyActivity3 extends Activity {
       mContratante = (Contratante) i.getSerializableExtra("br.com.mltech.contratante");
     } else {
       Log.w(TAG, "Contratante não pode ser nulo.");
+     Toast.makeText(this, "Contratante não pode ser nulo", Toast.LENGTH_SHORT).show();
       erro = 1;
     }
 
@@ -158,6 +172,7 @@ public class DummyActivity3 extends Activity {
       mEvento = (Evento) i.getSerializableExtra("br.com.mltech.evento");
     } else {
       Log.w(TAG, "Evento não pode ser nulo.");
+      Toast.makeText(this, "Evento não pode ser nulo", Toast.LENGTH_SHORT).show();
       erro += 2;
     }
 
@@ -182,11 +197,17 @@ public class DummyActivity3 extends Activity {
 
   /**
    * startActivityParticipante()
+   * 
+   * Inicia a Activity Participante Passa como parâmetro as informações sobre o
+   * Evento.
+   * 
+   * Aguarda as informações sobre o participante do evento
+   * 
    */
   private void startActivityParticipante() {
 
     Intent intent = new Intent(this, ParticipanteActivity.class);
-
+    
     intent.putExtra("br.com.mltech.evento", mEvento);
 
     // intent.putExtras(params);
@@ -200,7 +221,9 @@ public class DummyActivity3 extends Activity {
    * activityParticipanteResult(int resultCode, Intent data)
    * 
    * @param resultCode
+   *          resultado da execução da activity Participante
    * @param data
+   *          Intent com os resultados (se houverem)
    * 
    */
   private void resultActivityParticipante(int resultCode, Intent data) {
@@ -239,7 +262,9 @@ public class DummyActivity3 extends Activity {
     Log.d(TAG, "mParticipante=" + mParticipante);
     Log.d(TAG, "mParticipacao=" + mParticipacao);
 
+    // Atualiza o estado da máquina de estados
     setEstado(1);
+    // Processa o próximo estado
     obtemFoto();
 
   }
@@ -263,9 +288,11 @@ public class DummyActivity3 extends Activity {
 
     File file = null;
 
+    // Libera os recursos
     xUri = null;
     mUri = null;
     mFilename = null;
+    mCamera = null;
 
     Log.d(TAG, "obtemFoto() - mCurrentCamera: " + mCurrentCamera);
 
@@ -273,13 +300,13 @@ public class DummyActivity3 extends Activity {
 
     if (mCamera != null) {
       //
-      Log.w(TAG, "Camera is NOT null");
+      Log.w(TAG, "Instância da Camera obtida com sucesso");
       mCamera.release();
       mCamera = null;
-      numCameras = -1;
+      numCameras = -1; // TODO esse valor não deveria ser 0 ou 1 ???
     } else {
       //
-      Log.w(TAG, "Camera is null");
+      Log.w(TAG, "Erro da obtenção da instância da Camera");
       estadoFinal();
       return;
     }
@@ -298,6 +325,7 @@ public class DummyActivity3 extends Activity {
         Log.d(TAG, "Arquivo não pode ser gravado");
       }
 
+      // Obtem a URI do arquivo (esse valor será forncecido a Intent)
       xUri = Uri.fromFile(file);
       mUri = Uri.fromFile(file);
 
@@ -308,8 +336,10 @@ public class DummyActivity3 extends Activity {
         Log.w(TAG, "===> xUri=" + xUri.getPath() + ", xUri=" + xUri);
       }
 
+      // Passa como parâmetro a URI de onde a foto deve ser gravada
       intent.putExtra(MediaStore.EXTRA_OUTPUT, xUri);
 
+      // Inicia a Activity
       startActivityForResult(intent, ACTIVITY_TIRA_FOTO_3);
 
     } catch (IOException e) {
@@ -321,6 +351,7 @@ public class DummyActivity3 extends Activity {
       mFilename = null;
       mUri = null;
       xUri = null;
+      mCamera=null;
       estadoFinal();
 
     }
@@ -328,11 +359,12 @@ public class DummyActivity3 extends Activity {
   }
 
   /**
-   * activityTiraFoto3Result(int resultCode, Intent data)
+   * resultActivityTiraFoto3(int resultCode, Intent data)
    * 
    * A foto encontra-se no caminho dado por xUri.getPath();
    * 
    * @param resultCode
+   *          Resultado de execução da Activity
    * @param data
    */
   private void resultActivityTiraFoto3(int resultCode, Intent data) {
@@ -341,6 +373,8 @@ public class DummyActivity3 extends Activity {
     Log.d(TAG, "==> resultCode=" + resultCode);
 
     if (resultCode == RESULT_OK) {
+
+      // activity executada com sucesso
 
       Log.w(TAG, "xUri: " + xUri);
       Log.w(TAG, "mUri: " + mUri);
@@ -360,21 +394,21 @@ public class DummyActivity3 extends Activity {
 
           Log.d(TAG, "mParticipacao=" + mParticipacao);
 
-          setEstado(2);
-          
+          // atualiza a orientação da tela para Portrait
           int orientacao = this.getResources().getConfiguration().orientation;
-          
-          if(orientacao==Configuration.ORIENTATION_LANDSCAPE) {
-            Log.d(TAG,"Orientação da tela em LANDSCAPE");
-            
+
+          if (orientacao == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.d(TAG, "Orientação da tela em LANDSCAPE");
+
             this.setRequestedOrientation(Configuration.ORIENTATION_PORTRAIT);
-            
+
+          } else if (orientacao == Configuration.ORIENTATION_PORTRAIT) {
+            Log.d(TAG, "Orientação da tela em PORTRAIT");
           }
-          else if(orientacao==Configuration.ORIENTATION_PORTRAIT) {
-            Log.d(TAG,"Orientação da tela em PORTRAIT");      
-          }
-          
-          
+
+          // atualiza a máquina de estado
+          setEstado(2);
+          // Executa o próximo passo da máquina de estado
           processaFotos();
 
         } else {
@@ -403,6 +437,8 @@ public class DummyActivity3 extends Activity {
   /**
    * processaFotos()
    * 
+   * Responsável pelo processamento da foto, isto é, transformar a foto de
+   * acordo com o formato e tipo solicitado.
    * 
    */
   private void processaFotos() {
@@ -413,17 +449,30 @@ public class DummyActivity3 extends Activity {
     int efeitoFoto = -1;
 
     if (xUri == null) {
-      Log.d(TAG, "xUri é null");
+      // URI da foto não está disponível
+      Log.d(TAG, "URI contendo a foto não está disponível");
       estadoFinal();
     }
 
     if (mParticipacao != null) {
+      // há dados a respeito do participante do evento
 
+      // obtém o tipo da foto
       tipoFoto = mParticipacao.getTipoFoto();
 
+      // obtem o efeito para aplicação na foto
       efeitoFoto = mParticipacao.getEfeitoFoto();
 
     }
+
+    mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
+
+    if (mPreferences == null) {
+      Log.w(TAG, "mPreferences is null. Falha na execução do comandos getSharedPreferences()");
+    }
+
+    String pathPolaroid = mPreferences.getString("evento_borda_polaroid", "");
+    String pathCabine = mPreferences.getString("evento_borda_cabine", "");
 
     // -------------------------------------------------------------------------
 
@@ -436,13 +485,21 @@ public class DummyActivity3 extends Activity {
 
       Log.d(TAG, "processaFotos() - Foto tipo POLAROID foi selecionada");
 
-      Bitmap bitmap = imagem.criaBitmap(xUri);
+      if (imagem != null) {
 
-      imagem.showBitmapInfo(bitmap);
+        Bitmap bitmap = imagem.criaBitmap(xUri);
 
-      Bitmap bm = imagem.getScaledBitmap(bitmap, 20);
+        // Exibe informações a respeito da foto
+        imagem.showBitmapInfo(bitmap);
 
-      imagem.showBitmapInfo(bm);
+        // Executa o mudança de tamanho da foto
+        Bitmap bm = imagem.getScaledBitmap(bitmap, 20);
+
+        imagem.showBitmapInfo(bm);
+
+      } else {
+        Log.w(TAG, "A instância da biblioteca de imagens não está disponível");
+      }
 
     } else if (tipoFoto == CABINE) {
 
@@ -452,10 +509,21 @@ public class DummyActivity3 extends Activity {
 
     } else if (tipoFoto == CABINE) {
 
+      // foto formato Cabibe exige três fotos.
+      // as fotos serão montadas em sequencoa e será aplicada
+      // uma moldura (conforme configuração)
+      // observe que a moldura está relacionada ao evento em andamento
+      // portanto é necessário ter informações sobre o evento
+
+      // TODO verificar nesse ponto se há três fotos disponível
+
     }
 
     // -------------------------------------------------------------------------
 
+    // TODO aqui poderíamos ter um passo intermediário na máquina de estados
+
+    // O próximo passo é enviar o email com a foto já trabalhada.
     // Envia email com a foto pronta
     enviaEmail();
 
@@ -463,6 +531,10 @@ public class DummyActivity3 extends Activity {
 
   /**
    * enviaEmail()
+   * 
+   * Verifica se todas as condições necessárias estão satisfeita para o envio da
+   * foto
+   * 
    */
   private void enviaEmail() {
 
@@ -474,27 +546,43 @@ public class DummyActivity3 extends Activity {
     }
 
     if (mParticipante == null) {
-      Log.d(TAG, "mParticipante é null");
+      // Log.d(TAG, "mParticipante é null");
+      Log.w(TAG, "Não há informações sobre o participante");
       erro = true;
     }
 
     if (mContratante == null) {
-      Log.d(TAG, "mContrante é null");
+      // Log.d(TAG, "mContrante é null");
+      Log.w(TAG, "Não há informações sobre o contratante");
       erro = true;
     }
 
     if (xUri == null) {
-      Log.d(TAG, "xUri é null");
+      // Log.d(TAG, "xUri é null");
+      Log.d(TAG, "A foto não está disponível para envio");
       erro = true;
     }
 
     if (!erro) {
 
+      // não há erro conhecido
+
+      // obtém o email do participante do evento
       String to = mParticipante.getEmail();
+
+      // obtém o email do contratante do evento
+      // ele será copiado em BCC no email enviado
       String cc = mContratante.getEmail();
+
+      // Define o "subject" do email
+      // TODO busca informações no arquivo de preferência
       String subject = "Evento Inicial";
+
+      // Define o corpo do email (mensagem do corpo do email)
+      // TODO busca informações no arquivo de preferência
       String body = "Segue as informações sobre o evento";
 
+      // envia o email
       sendEmail(to, cc, subject, body, xUri);
 
     }
@@ -506,27 +594,36 @@ public class DummyActivity3 extends Activity {
    * subject, String text, Uri imageURI)
    * 
    * @param emailParticipante
+   *          Endereço de email do participante do evento
    * @param emailContratante
+   *          Endereço de email do contratante do evento
    * @param subject
+   *          String usada como "Subject" do email
    * @param text
+   *          String usada como "Body" do email (o conteúdo da mensagem)
    * @param imageURI
+   *          URL da foto processada
    * 
    */
   private void sendEmail(String emailParticipante, String emailContratante, String subject, String text, Uri imageURI) {
 
     Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
-    // emailIntent.setType("message/rfc822");
-    emailIntent.setType("image/jpg");
-
-    Log.d(TAG, "===> sendEmail");
+    Log.d(TAG, "===> sendEmail()");
 
     // To:
-    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { emailParticipante });
+    if (emailParticipante != null) {
+      emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { emailParticipante });
+    } else {
+      // email do participante não pode ser vazio
+    }
 
+    // Bcc:
     if (emailContratante != null) {
       // email do contratante foi fornecido (BCC:)
       emailIntent.putExtra(Intent.EXTRA_BCC, new String[] { emailContratante });
+    } else {
+      // email do contratante do evento não pode ser vazio
     }
 
     /**
@@ -547,9 +644,13 @@ public class DummyActivity3 extends Activity {
     // emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, imageURI);
     emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, xUri);
 
+    // Define o MIME type do email
+    // emailIntent.setType("message/rfc822");
     // emailIntent.setType("image/png");
     emailIntent.setType("image/jpg");
 
+    // TODO aqui pode acontecer de ser necessário forçar a aplicação de
+    // email
     Intent chooser = Intent.createChooser(emailIntent, "Selecione sua aplicação de email !");
 
     if (chooser != null) {
@@ -570,6 +671,8 @@ public class DummyActivity3 extends Activity {
 
   /**
    * activityChooserResult(int resultCode, Intent data)
+   * 
+   * Processa o resultado do envio do email
    * 
    * @param resultCode
    * @param data
@@ -597,7 +700,9 @@ public class DummyActivity3 extends Activity {
       // mensagem exibida após envio de email
       Toast.makeText(this, "Email enviado com sucesso", Toast.LENGTH_LONG).show();
 
+      // Atualiza o estado da máquina de estado
       setEstado(3);
+      // Processa o próximo estado
       estadoFinal();
 
     } else if (resultCode == RESULT_CANCELED) {
@@ -613,6 +718,8 @@ public class DummyActivity3 extends Activity {
 
   /**
    * estadoFinal()
+   * 
+   * Representa o estado final da máquina de estado.
    * 
    */
   private void estadoFinal() {
@@ -631,6 +738,8 @@ public class DummyActivity3 extends Activity {
       setResult(RESULT_OK, i);
 
     } else {
+
+      // estado final atingido porém houve falha
       Log.d(TAG, "DummyActivity3 - estadoFinal() - não chegou ao final do processamento");
 
       i.putExtra("br.com.mltech.result", "NOT_OK");
@@ -639,19 +748,22 @@ public class DummyActivity3 extends Activity {
 
     }
 
-    
+    // obtém informações sobre a configuração de orientação da tela
     int orientacao = this.getResources().getConfiguration().orientation;
-    
-    if(orientacao==Configuration.ORIENTATION_LANDSCAPE) {
-      Log.d(TAG,"Orientação da tela em LANDSCAPE");
-      
+
+    if (orientacao == Configuration.ORIENTATION_LANDSCAPE) {
+
+      // orientação está LANDSCAPE
+      Log.d(TAG, "Orientação da tela em LANDSCAPE");
+
+      // Altera a orientação para PORTRAIT
       this.setRequestedOrientation(Configuration.ORIENTATION_PORTRAIT);
-      
+
+    } else if (orientacao == Configuration.ORIENTATION_PORTRAIT) {
+      Log.d(TAG, "Orientação da tela em PORTRAIT");
     }
-    else if(orientacao==Configuration.ORIENTATION_PORTRAIT) {
-      Log.d(TAG,"Orientação da tela em PORTRAIT");      
-    }
-    
+
+    // Termina a execução da intent
     finish();
 
   }
@@ -659,10 +771,10 @@ public class DummyActivity3 extends Activity {
   /**
    * setEstado(int e)
    * 
-   * cONFIGURA O estado de uma máquina de estado
+   * Atualiza o estado da uma máquina de estados
    * 
    * @param e
-   *          novo estado
+   *          novo estado (próximo estado)
    */
   private void setEstado(int e) {
     Log.d(TAG, "transição do estado: " + mEstado + " para o estado: " + e);
@@ -671,6 +783,8 @@ public class DummyActivity3 extends Activity {
 
   /**
    * getEstado()
+   * 
+   * Obtém o estado atual da máquina de estados
    * 
    * @return Um inteiro contendo o estado da state machine
    * 
@@ -755,19 +869,21 @@ public class DummyActivity3 extends Activity {
    */
   public boolean isExternalMediaMounted() {
 
-    boolean b;
+    boolean isMounted;
 
-    b = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    // Obtém o estado corrente do principal dispositivo de armazenamento
+    // externo
+    isMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
 
-    if (b) {
-      // disco está montado
+    if (isMounted) {
+      // dispositivo está montado
       Log.d(TAG, "Media externa está montada.");
     } else {
-      // disco não está montado
+      // dispositivo não não está montado
       Log.w(TAG, "Media externa não está montada.");
     }
 
-    return b;
+    return isMounted;
 
   }
 
@@ -806,6 +922,8 @@ public class DummyActivity3 extends Activity {
   /**
    * createImageFile()
    * 
+   * Cria o nome para um arquivo de foto baseado da data e hora corrente
+   * 
    * @return File
    * 
    * @throws IOException
@@ -827,9 +945,12 @@ public class DummyActivity3 extends Activity {
   /**
    * setUpPhotoFile()
    * 
-   * @return
+   * Atualiza a variável mFilename.
+   * 
+   * @return Um objeto File com path completo do arquivo
    * 
    * @throws IOException
+   *           Se houver erro.
    */
   private File setUpPhotoFile() throws IOException {
 
@@ -889,20 +1010,21 @@ public class DummyActivity3 extends Activity {
   /**
    * showBundle(Bundle b)
    * 
-   * @param b
+   * @param bundle Instância da classe Bundle
+   * 
    */
-  private void showBundle(Bundle b) {
+  private void showBundle(Bundle bundle) {
 
-    if (b == null) {
+    if (bundle == null) {
       Log.w(TAG, "Bundle está vazio");
       return;
     }
 
     // Obtém um conjunto de chaves do Bundle
-    Set<String> setChaves = b.keySet();
+    Set<String> setChaves = bundle.keySet();
 
     // Obtém o tamanho do conjunto
-    int size = b.size();
+    int size = bundle.size();
 
     // Exibe o nº de elementos do conjunto
     Log.d(TAG, "Bundle size=" + size);
@@ -920,6 +1042,9 @@ public class DummyActivity3 extends Activity {
    * getCameraInstance()
    * 
    * Obtém a instância de uma câmera.
+   * 
+   * @param cameraID
+   *          Identificador da câmera do dispositivo
    * 
    * @return Uma instância de Camera ou null em caso de erro
    * 
@@ -953,8 +1078,10 @@ public class DummyActivity3 extends Activity {
    * isCameraWorking(int cameraID)
    * 
    * @param cameraID
+   *          Identificador da câmera do dispositivo
    * 
-   * @return
+   * @return true se for possível obter ima instância da câmera ou false, caso
+   *         contrário.
    */
   boolean isCameraWorking(int cameraID) {
 
@@ -964,7 +1091,6 @@ public class DummyActivity3 extends Activity {
 
     if (mCamera != null) {
       //
-
       mCamera.release();
       mCamera = null;
       numCameras = -1;
@@ -978,6 +1104,7 @@ public class DummyActivity3 extends Activity {
   }
 
   /**
+   * verificaComoFormatarFoto()
    * 
    * Processa a foto de acordo com as escolhas do participante. Usa as
    * informações de mParticipação.
