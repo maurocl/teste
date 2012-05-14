@@ -180,6 +180,7 @@ public class ManutencaoActivity extends Activity {
        * 
        */
       public void onClick(View v) {
+        
         boolean b = limpaConfiguracoes();
 
         if (b) {
@@ -198,31 +199,7 @@ public class ManutencaoActivity extends Activity {
 
   }
 
-  /**
-   * limpaConfiguracoes()
-   * 
-   * Reinicia o arquivo de onfiguração de contratante e evento
-   * 
-   * @return true se sucesso ou false caso haja algum erro.
-   */
-  private boolean limpaConfiguracoes() {
-
-    boolean commitDone;
-
-    mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
-
-    Editor edit = mPreferences.edit();
-
-    // grava as preferências
-    commitDone = edit.commit();
-
-    Log.d(TAG, "Gravando as preferências compartilhadas ...");
-
-    mPreferences = null;
-
-    return commitDone;
-
-  }
+ 
 
   /**
    * onPause()
@@ -423,25 +400,6 @@ public class ManutencaoActivity extends Activity {
 
   }
 
-  /*
-   * private void criaMenuRelatorios(Menu menu) { //
-   * --------------------------------------------- // Menu: Relatórios //
-   * ----------------------------------------------
-   * 
-   * Intent intent = new Intent(ManutencaoActivity.this,
-   * RelatorioActivity.class);
-   * 
-   * Bundle params = new Bundle();
-   * 
-   * // params.putString("numParticipantes", listaParticipantes.size() + "");
-   * params.putString("numParticipantes", "10");
-   * 
-   * intent.putExtras(params);
-   * 
-   * startActivity(intent);
-   * 
-   * }
-   */
 
   /**
    * gravarPreferencias()
@@ -625,4 +583,37 @@ public class ManutencaoActivity extends Activity {
 
   }
 
+  
+  /**
+   * limpaConfiguracoes()
+   * 
+   * Reinicia o arquivo de onfiguração de contratante e evento
+   * 
+   * SharedPreferences("preferencias")
+   * 
+   * @return true se sucesso ou false caso haja algum erro.
+   */
+  private boolean limpaConfiguracoes() {
+
+    boolean commitDone;
+
+    mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
+
+    Editor edit = mPreferences.edit();
+
+    // Mark in the editor to remove all values from the preferences.
+    // Once commit is called, the only remaining preferences will be any that you have defined in this editor. 
+    edit.clear();
+    
+    // grava as preferências
+    commitDone = edit.commit();
+
+    Log.d(TAG, "Gravando as preferências compartilhadas ...");
+
+    mPreferences = null;
+
+    return commitDone;
+
+  }
+  
 }
