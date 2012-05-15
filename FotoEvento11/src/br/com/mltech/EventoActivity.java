@@ -55,6 +55,17 @@ public class EventoActivity extends Activity {
       mEvento = (Evento) intent.getSerializableExtra("br.com.mltech.evento");
       mContratante = (Contratante) intent.getSerializableExtra("br.com.mltech.contratante");
 
+      if(mContratante==null) {
+        Log.w(TAG,"Contratante não pode ser nulo");
+        Toast.makeText(this, "O contratante deve ser cadastrado primeiro", Toast.LENGTH_SHORT).show();
+        Log.w(TAG,"Contratante não pode ser nulo");
+        Toast.makeText(this, "Contratante ainda não foi preenchido", Toast.LENGTH_SHORT);
+        
+        Intent i = new Intent();
+        setResult(RESULT_CANCELED, i);
+        finish();
+      }
+      
       if (mEvento == null) {
         // cria um evento vazio
         mEvento = new Evento();
@@ -116,9 +127,15 @@ public class EventoActivity extends Activity {
 
       // Atualiza os valores dos componentes
 
+      // Não permite que o campo seja alterado
       cliente.setText(mContratante.getNome());
+      cliente.setFocusable(false);
 
+      // Requisita o foco para preenchimento do nome do evento
       nome.setText(mEvento.getNome());
+      nome.requestFocus();
+      
+      
       endereco.setText(mEvento.getEndereco());
       cidade.setText(mEvento.getCidade());
       estado.setText(mEvento.getEstado());

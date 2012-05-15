@@ -9,6 +9,20 @@
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
+        <!-- Contratante -->
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome do contratante do evento"
+            android:text="Contratante:" />
+
+        <EditText
+            android:id="@+evento/editCliente"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome do contratante do evento" />
+
         <!-- Nome do Evento -->
 
         <TextView
@@ -23,20 +37,6 @@
             android:layout_height="wrap_content"
             android:hint="Nome do Evento" />
 
-        <!-- Cliente -->
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint=""
-            android:text="Cliente:" />
-
-        <EditText
-            android:id="@+evento/editCliente"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nome do Cliente" />
-
         <!-- Checkbox para envio de fotos as redes sociais -->
 
 
@@ -47,14 +47,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Endereço"
-            android:text="Endereço"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="Endereço" />
 
         <EditText
             android:id="@+evento/endereco"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:hint="Endereço do Evento" >
         </EditText>
 
@@ -71,7 +69,6 @@
             android:id="@+id/cidade"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:hint="Cidade onde ocorre o evento" />
 
         <!-- Estado -->
@@ -87,7 +84,6 @@
             android:id="@+id/estado"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:hint="Estado" />
 
         <!-- CEP -->
@@ -103,7 +99,6 @@
             android:id="@+id/cep"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:hint="CEP" />
 
         <!-- Telefone -->
@@ -119,7 +114,6 @@
             android:id="@+id/telefone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:hint="Telefone de contato" />
 
         <!-- Data do Evento -->
@@ -135,7 +129,6 @@
             android:id="@+id/data"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:hint="Data do evento" />
 
         <!-- Quais redes sociais participantes -->
@@ -283,7 +276,6 @@
         <!-- Botões de Ação -->
 
         <LinearLayout
-            
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
@@ -294,18 +286,16 @@
                 android:id="@+evento/btnGravar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"                    
+                android:layout_weight="1"
                 android:text="Gravar" />
 
             <Button
                 android:id="@+evento/btnCancelar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"                      
+                android:layout_weight="1"
                 android:text="Cancelar" />
-            
         </LinearLayout>
-        
     </LinearLayout>
 
 </ScrollView>

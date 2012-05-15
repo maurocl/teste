@@ -70,8 +70,8 @@ public class ManutencaoActivity extends Activity {
     Button btnRelatorios = (Button) findViewById(R.id.btnRelatorios);
     Button btnConfiguracaoInicial = (Button) findViewById(R.id.btnConfiguracaoInicial);
     
-    // Desabilita botão
-    btnConfiguracaoInicial.setEnabled(false);
+    // Habilita/Desabilita botão de Configuração Inicial
+    btnConfiguracaoInicial.setEnabled(true);
 
     /* Tratamento do click no botão Contratante */
     btnContratante.setOnClickListener(new OnClickListener() {
