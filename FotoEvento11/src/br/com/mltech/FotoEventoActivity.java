@@ -42,7 +42,7 @@ public class FotoEventoActivity extends Activity {
   private static final String TAG = "FotoEventoActivity";
 
   // indica o uso do DEBUG
-  private static final int DEBUG = 0;
+  private static final int DEBUG = 1;
 
   /* Identificadores das Activities */
 
@@ -656,7 +656,7 @@ public class FotoEventoActivity extends Activity {
 
     } else {
 
-      Log.w(TAG, "Bundle ss está vazio");
+      Log.w(TAG, "Bundle ss está vazio - nenhum resultado retornou");
 
     }
 
@@ -667,6 +667,7 @@ public class FotoEventoActivity extends Activity {
     } else {
 
       Log.i(TAG, "data possui informações");
+      Log.i(TAG,"data="+data);
       result = data.getStringExtra("br.com.mltech.result");
       Log.d(TAG, "result=" + result);
 
@@ -683,7 +684,7 @@ public class FotoEventoActivity extends Activity {
       } else {
 
         // operação cancelada
-        Log.w(TAG, "Operação ocorreu com erros");
+        Log.w(TAG, "resultActivityDummy3() - Operação ocorreu com erros");
 
       }
 
@@ -813,6 +814,8 @@ public class FotoEventoActivity extends Activity {
 
     String[] paramEventos = new String[5];
 
+    Log.d(TAG,"*** passo 10 ***");
+    
     paramEventos[0] = (String) chaves.get("evento_param1");
     paramEventos[1] = (String) chaves.get("evento_param2");
     paramEventos[2] = (String) chaves.get("evento_param3");
@@ -821,7 +824,11 @@ public class FotoEventoActivity extends Activity {
 
     Parametros parametros = new Parametros(paramEventos);
 
+    Log.d(TAG,"*** passo 20 ***");
+    
     mEvento.setParametros(parametros);
+    
+    Log.d(TAG,"*** passo 30 ***");
 
   }
 

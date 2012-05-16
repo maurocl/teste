@@ -55,21 +55,23 @@ public class EventoActivity extends Activity {
       mEvento = (Evento) intent.getSerializableExtra("br.com.mltech.evento");
       mContratante = (Contratante) intent.getSerializableExtra("br.com.mltech.contratante");
 
-      if(mContratante==null) {
-        Log.w(TAG,"Contratante não pode ser nulo");
-        Toast.makeText(this, "O contratante deve ser cadastrado primeiro", Toast.LENGTH_SHORT).show();
-        Log.w(TAG,"Contratante não pode ser nulo");
+      if (mContratante == null) {
+
+        Log.w(TAG, "Contratante não pode ser nulo");
         Toast.makeText(this, "Contratante ainda não foi preenchido", Toast.LENGTH_SHORT);
-        
+
         Intent i = new Intent();
         setResult(RESULT_CANCELED, i);
         finish();
+
       }
-      
+
       if (mEvento == null) {
         // cria um evento vazio
         mEvento = new Evento();
         Log.d(TAG, "Criando evento vazio");
+        // e atribui o contratante
+        mEvento.setContratante(mContratante);
       } else {
         // exibe as informações a respeito do evento
         Log.d(TAG, "Evento carregado com sucesso: " + mEvento);
@@ -78,17 +80,15 @@ public class EventoActivity extends Activity {
     }
 
     /*
-    if(mContratante==null) {
-      Log.w(TAG,"Contratante não pode ser nulo");
-      Toast.makeText(this, "Contratante ainda não foi preenchido", Toast.LENGTH_SHORT);
-      
-      Intent i = new Intent();
-      setResult(RESULT_CANCELED, i);
-      finish();
-     
-    }
-    */
-    
+     * if(mContratante==null) { Log.w(TAG,"Contratante não pode ser nulo");
+     * Toast.makeText(this, "Contratante ainda não foi preenchido",
+     * Toast.LENGTH_SHORT);
+     * 
+     * Intent i = new Intent(); setResult(RESULT_CANCELED, i); finish();
+     * 
+     * }
+     */
+
     // Obtendo os identificadores dos elementos de tela
     final EditText cliente = (EditText) findViewById(R.evento.editCliente);
     final EditText nome = (EditText) findViewById(R.evento.editNome);
@@ -127,15 +127,14 @@ public class EventoActivity extends Activity {
 
       // Atualiza os valores dos componentes
 
-      // Não permite que o campo seja alterado
       cliente.setText(mContratante.getNome());
+
       cliente.setFocusable(false);
 
-      // Requisita o foco para preenchimento do nome do evento
       nome.setText(mEvento.getNome());
+
       nome.requestFocus();
-      
-      
+
       endereco.setText(mEvento.getEndereco());
       cidade.setText(mEvento.getCidade());
       estado.setText(mEvento.getEstado());
@@ -151,7 +150,13 @@ public class EventoActivity extends Activity {
 
       Parametros paramOpcionais = mEvento.getParametros();
 
-      String[] param = paramOpcionais.getParametros();
+      String[] param = null;
+
+      if (paramOpcionais != null) {
+        param = paramOpcionais.getParametros();
+      } else {
+        param = new String[5];
+      }
 
       param1.setText(param[0]);
       param2.setText(param[1]);
@@ -284,7 +289,7 @@ public class EventoActivity extends Activity {
 
       }
     });
- 
+
     /**
      * Botão Cancelar (Evento)
      */
@@ -298,6 +303,8 @@ public class EventoActivity extends Activity {
       }
 
     });
+
+    Log.d(TAG, "*** passei 140 ***");
 
   }
 

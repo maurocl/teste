@@ -148,10 +148,13 @@ public class DummyActivity3 extends Activity {
 
     Log.d(TAG, "Number of Cameras: " + numCameras);
 
+    
+    // verifica se a câmera fotogrática está em operação
     if (isCameraWorking(0)) {
-      Log.w(TAG, "Camera is working ...");
+      Log.w(TAG, "Camera is working ...");      
     } else {
       Log.w(TAG, "Camera is not working");
+      Toast.makeText(this, "Camera não está disponível", Toast.LENGTH_SHORT);
       // showAlert("Camera não está disponível para essa aplicação");
       return false;
     }
@@ -164,7 +167,7 @@ public class DummyActivity3 extends Activity {
       mContratante = (Contratante) i.getSerializableExtra("br.com.mltech.contratante");
     } else {
       Log.w(TAG, "Contratante não pode ser nulo.");
-     Toast.makeText(this, "Contratante não pode ser nulo", Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, "Contratante não pode ser nulo", Toast.LENGTH_SHORT).show();
       erro = 1;
     }
 
@@ -207,7 +210,7 @@ public class DummyActivity3 extends Activity {
   private void startActivityParticipante() {
 
     Intent intent = new Intent(this, ParticipanteActivity.class);
-    
+
     intent.putExtra("br.com.mltech.evento", mEvento);
 
     // intent.putExtras(params);
@@ -351,7 +354,7 @@ public class DummyActivity3 extends Activity {
       mFilename = null;
       mUri = null;
       xUri = null;
-      mCamera=null;
+      mCamera = null;
       estadoFinal();
 
     }
@@ -474,6 +477,9 @@ public class DummyActivity3 extends Activity {
     String pathPolaroid = mPreferences.getString("evento_borda_polaroid", "");
     String pathCabine = mPreferences.getString("evento_borda_cabine", "");
 
+    Log.d(TAG, "processaFotos() - pathPolaroid: " + pathPolaroid);
+    Log.d(TAG, "processaFotos() - pathPolaroid: " + pathCabine);
+
     // -------------------------------------------------------------------------
 
     if (tipoFoto == POLAROID) {
@@ -493,13 +499,31 @@ public class DummyActivity3 extends Activity {
         imagem.showBitmapInfo(bitmap);
 
         // Executa o mudança de tamanho da foto
-        Bitmap bm = imagem.getScaledBitmap(bitmap, 20);
+        //Bitmap bm = imagem.getScaledBitmap(bitmap, 20);
+        //imagem.showBitmapInfo(bm);
 
-        imagem.showBitmapInfo(bm);
+        
+        Bitmap bm = bitmap;
+        
+        File moldura = new File("/mnt/sdcard/Pictures/fotoevento/molduras/moldura-320x240-green.png");
+
+        if ((moldura != null) && (moldura.exists())) {
+          Log.i(TAG, "arquivo de moldura existe");
+        } else {
+          Log.w(TAG, "moldura está com erro !!!");
+        }
+
+        if ((bm != null) && (moldura != null) && (moldura.exists())) {
+          bm = imagem.processaFotoFormatoPolaroid(bm, moldura);
+        } else {
+          Log.w(TAG, "ERRRO");
+        }
 
       } else {
         Log.w(TAG, "A instância da biblioteca de imagens não está disponível");
       }
+      
+      // TODO é necessário gravar o arquivo obtido para que ele possa ser enviado por email
 
     } else if (tipoFoto == CABINE) {
 
@@ -922,9 +946,9 @@ public class DummyActivity3 extends Activity {
   /**
    * createImageFile()
    * 
-   * Cria o nome para um arquivo de foto baseado da data e hora corrente
+   * Cria um File e nomeando-o com a data e hora corrente
    * 
-   * @return File
+   * @return File Um File
    * 
    * @throws IOException
    */
@@ -1010,7 +1034,8 @@ public class DummyActivity3 extends Activity {
   /**
    * showBundle(Bundle b)
    * 
-   * @param bundle Instância da classe Bundle
+   * @param bundle
+   *          Instância da classe Bundle
    * 
    */
   private void showBundle(Bundle bundle) {

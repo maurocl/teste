@@ -69,8 +69,8 @@ public class ManutencaoActivity extends Activity {
     Button btnPreferencias = (Button) findViewById(R.id.btnPrefencias);
     Button btnRelatorios = (Button) findViewById(R.id.btnRelatorios);
     Button btnConfiguracaoInicial = (Button) findViewById(R.id.btnConfiguracaoInicial);
-    
-    // Habilita/Desabilita botão de Configuração Inicial
+
+    // Desabilita botão
     btnConfiguracaoInicial.setEnabled(true);
 
     /* Tratamento do click no botão Contratante */
@@ -102,13 +102,13 @@ public class ManutencaoActivity extends Activity {
        */
       public void onClick(View v) {
 
-        if(mContratante==null) {
+        if (mContratante == null) {
           Toast.makeText(ManutencaoActivity.this, "Contratante ainda não foi preenchido", Toast.LENGTH_SHORT).show();
-          Log.w(TAG,"É necessário cadastrar um contratante antes de preencher os dados do evento");
-          
+          Log.w(TAG, "É necessário cadastrar um contratante antes de preencher os dados do evento");
+
           return;
         }
-        
+
         Intent intent = new Intent(ManutencaoActivity.this, EventoActivity.class);
 
         intent.putExtra("br.com.mltech.evento", mEvento);
@@ -165,6 +165,8 @@ public class ManutencaoActivity extends Activity {
         params.putString("numParticipantes", String.valueOf(num));
 
         intent.putExtra("br.com.mltech.lista", (ArrayList<Participacao>) lista);
+        
+        intent.putExtra("br.com.mltech.evento", mEvento);
 
         intent.putExtras(params);
 
@@ -180,16 +182,15 @@ public class ManutencaoActivity extends Activity {
        * 
        */
       public void onClick(View v) {
-        
+
         boolean b = limpaConfiguracoes();
 
         if (b) {
           Toast.makeText(ManutencaoActivity.this, "Configuração inicial restaurada com sucesso", Toast.LENGTH_SHORT).show();
-          
+
           mContratante = null;
           mEvento = null;
-          
-          
+
         } else {
           Toast.makeText(ManutencaoActivity.this, "Falha na reinicialização da onfiguração inicial", Toast.LENGTH_SHORT).show();
         }
@@ -198,8 +199,6 @@ public class ManutencaoActivity extends Activity {
     });
 
   }
-
- 
 
   /**
    * onPause()
@@ -400,7 +399,6 @@ public class ManutencaoActivity extends Activity {
 
   }
 
-
   /**
    * gravarPreferencias()
    * 
@@ -414,40 +412,56 @@ public class ManutencaoActivity extends Activity {
 
     boolean commitDone;
 
+    if (mPreferences == null) {
+      Log.w(TAG, "mPreferences is null");
+      return false;
+    }
     Editor edit = mPreferences.edit();
 
-    Log.d(TAG, "Gravando as preferências compartilhadas ...");
+    if (edit != null) {
 
-    /* Contratante */
-    edit.putString("contratante_nome", mContratante.getNome());
-    edit.putString("contratante_email", mContratante.getEmail());
-    edit.putString("contratante_telefone", mContratante.getTelefone());
+      Log.d(TAG, "Gravando as preferências compartilhadas ...");
 
-    /* Evento */
-    edit.putString("evento_nome", mEvento.getNome());
-    edit.putString("evento_email", mEvento.getEmail());
-    edit.putString("evento_endereco", mEvento.getEndereco());
-    edit.putString("evento_cidade", mEvento.getCidade());
-    edit.putString("evento_estado", mEvento.getEstado());
-    edit.putString("evento_cep", mEvento.getCep());
-    edit.putString("evento_data", mEvento.getData());
-    edit.putString("evento_telefone", mEvento.getTelefone());
-    edit.putString("evento_envia_facebook", mEvento.isEnviaFacebook() == true ? "true" : "false");
-    edit.putString("evento_envia_twitter", mEvento.isEnviaTwitter() == true ? "true" : "false");
+      /* Contratante */
+      if (mContratante != null) {
+        edit.putString("contratante_nome", mContratante.getNome());
+        edit.putString("contratante_email", mContratante.getEmail());
+        edit.putString("contratante_telefone", mContratante.getTelefone());
+      }
 
-    edit.putString("evento_borda_polaroid", mEvento.getBordaPolaroid());
-    edit.putString("evento_borda_cabine", mEvento.getBordaCabine());
+      /* Evento */
+      if (mEvento != null) {
+        edit.putString("evento_nome", mEvento.getNome());
+        edit.putString("evento_email", mEvento.getEmail());
+        edit.putString("evento_endereco", mEvento.getEndereco());
+        edit.putString("evento_cidade", mEvento.getCidade());
+        edit.putString("evento_estado", mEvento.getEstado());
+        edit.putString("evento_cep", mEvento.getCep());
+        edit.putString("evento_data", mEvento.getData());
+        edit.putString("evento_telefone", mEvento.getTelefone());
+        edit.putString("evento_envia_facebook", mEvento.isEnviaFacebook() == true ? "true" : "false");
+        edit.putString("evento_envia_twitter", mEvento.isEnviaTwitter() == true ? "true" : "false");
 
-    edit.putString("evento_param1", mEvento.getParametros().getParametro(0));
-    edit.putString("evento_param2", mEvento.getParametros().getParametro(1));
-    edit.putString("evento_param3", mEvento.getParametros().getParametro(2));
-    edit.putString("evento_param4", mEvento.getParametros().getParametro(3));
-    edit.putString("evento_param5", mEvento.getParametros().getParametro(4));
+        edit.putString("evento_borda_polaroid", mEvento.getBordaPolaroid());
+        edit.putString("evento_borda_cabine", mEvento.getBordaCabine());
 
-    // grava as preferências
-    commitDone = edit.commit();
+        edit.putString("evento_param1", mEvento.getParametros().getParametro(0));
+        edit.putString("evento_param2", mEvento.getParametros().getParametro(1));
+        edit.putString("evento_param3", mEvento.getParametros().getParametro(2));
+        edit.putString("evento_param4", mEvento.getParametros().getParametro(3));
+        edit.putString("evento_param5", mEvento.getParametros().getParametro(4));
 
-    return commitDone;
+      }
+
+      // grava as preferências
+      commitDone = edit.commit();
+
+      return commitDone;
+
+    } else {
+      Log.w(TAG, "Erro na gravação das preferências compartilhadas");
+      return false;
+    }
 
   }
 
@@ -583,13 +597,11 @@ public class ManutencaoActivity extends Activity {
 
   }
 
-  
   /**
    * limpaConfiguracoes()
    * 
-   * Reinicia o arquivo de onfiguração de contratante e evento
-   * 
-   * SharedPreferences("preferencias")
+   * Reinicia o SharedPreferences("preferencias") Limpa a configuração de
+   * Contratante e Evento
    * 
    * @return true se sucesso ou false caso haja algum erro.
    */
@@ -602,18 +614,22 @@ public class ManutencaoActivity extends Activity {
     Editor edit = mPreferences.edit();
 
     // Mark in the editor to remove all values from the preferences.
-    // Once commit is called, the only remaining preferences will be any that you have defined in this editor. 
+    // Once commit is called, the only remaining preferences will be any that
+    // you have defined in this editor.
     edit.clear();
-    
+
     // grava as preferências
     commitDone = edit.commit();
 
-    Log.d(TAG, "Gravando as preferências compartilhadas ...");
-
-    mPreferences = null;
+    if (commitDone) {
+      Log.d(TAG, "Gravando as preferências compartilhadas ...");
+      mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
+    } else {
+      Log.w(TAG, "Falha na atualização das preferências compartilhadas.");
+    }
 
     return commitDone;
 
   }
-  
+
 }

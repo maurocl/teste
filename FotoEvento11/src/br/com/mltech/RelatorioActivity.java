@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 
@@ -26,12 +27,14 @@ import br.com.mltech.modelo.Participante;
  */
 public class RelatorioActivity extends Activity {
 
+  private static final String TAG = "RelatorioActivity";
+  
   private static final String SEP = ";";
   private static final String DEM = "\"";
 
-  private static final String TAG = "RelatorioActivity";
-
   private List<Participacao> lista = null;
+  
+  private Evento mEvento;
   
   private static final String CSVFILE = "lista.csv";
 
@@ -61,6 +64,10 @@ public class RelatorioActivity extends Activity {
 
       if (params.getSerializable("br.com.mltech.lista") != null) {
         lista = (List<Participacao>) params.getSerializable("br.com.mltech.lista");
+      }
+      
+      if (params.getSerializable("br.com.mltech.evento") != null) {
+        mEvento = (Evento) params.getSerializable("br.com.mltech.evento");
       }
 
     }
@@ -198,6 +205,10 @@ public class RelatorioActivity extends Activity {
 
           contador++;
 
+          
+          // TODO falta inserir os parâmetros adicionais
+          // obter os parâmetros adicionais a partir de mEvento
+          
           // formata um participante e grava no arquivo
           participante = p.getParticipante();
 

@@ -1,6 +1,7 @@
 package br.com.mltech.modelo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Evento
@@ -15,6 +16,10 @@ public class Evento implements Serializable {
 	 */
   private static final long serialVersionUID = 3437555496744232446L;
 
+  // lista de participantes do evento
+  private ArrayList<Participacao> participantes;
+
+  // contratante do evento
   private Contratante contratante;
 
   private String nome; // nome do evento
@@ -41,6 +46,26 @@ public class Evento implements Serializable {
   // adicionais para que o participante do
   // evento
   // preencha
+
+  /**
+   * Construtor vazio
+   */
+  public Evento() {
+    this.parametros = new Parametros();
+    this.participantes = new ArrayList<Participacao>();
+  }
+
+  /**
+   * Evento(Contratante c)
+   * 
+   * @param c
+   *          Instância de um contratante
+   * 
+   */
+  public Evento(Contratante c) {
+    this.contratante = c;
+    this.parametros = new Parametros();
+  }
 
   public Contratante getContratante() {
     return contratante;
@@ -170,6 +195,33 @@ public class Evento implements Serializable {
     this.bordaCabine = bordaCabine;
   }
 
+  /**
+   * getParticipantes()
+   * 
+   * Obtém a lista de participantes do evento
+   * 
+   * @return Obtém uma referência a lista de participantes do evento
+   * 
+   */
+  public ArrayList<Participacao> getParticipantes() {
+    return participantes;
+  }
+
+  /**
+   * setParticipantes(ArrayList<Participacao> participantes)
+   * 
+   * Atribui uma lista d e participantes ao evento
+   * 
+   * @param participantes
+   * 
+   */
+  public void setParticipantes(ArrayList<Participacao> participantes) {
+    this.participantes = participantes;
+  }
+
+  /**
+   * 
+   */
   @Override
   public String toString() {
     return "Evento [contratante=" + contratante + ", nome=" + nome + ", data=" + data + ", email=" + email + ", endereco="
