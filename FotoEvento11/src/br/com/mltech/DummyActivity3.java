@@ -40,34 +40,45 @@ public class DummyActivity3 extends Activity {
   // Definição de constantes para o efeito de cores
   private static final int CORES = 11;
 
+  // Definição de constantes para o efeito P&B
+  private static final int PB = 12;
+
+  // Definição da Activies chamadas
   private static final int ACTIVITY_TIRA_FOTO_3 = 113;
   private static final int ACTIVITY_CHOOSER = 150;
   private static final int ACTIVITY_PARTICIPANTE = 102;
 
+  // Definição dos atributos da aplicação
   private static Contratante mContratante;
   private static Evento mEvento;
   private static Participante mParticipante;
   private static Participacao mParticipacao;
 
+  // Nome do arquivo onde está armazenado a última foto
   private static String mFilename;
 
+  // Uri da última foto
   private static Uri xUri;
   private Uri mUri;
 
+  // Estado atual da máquina de estado da aplicaçaõ
   private static int mEstado = -1;
 
+  // Nº de vezes que a activity é criada
   private static int mContador = 0;
 
+  // Instância de uma câmera
   private static Camera mCamera = null;
 
+  // Nº de câmeras do dispositivo
   private static int numCameras = -1;
 
+  // Nº da câmera corrente em uso (se houver)
   private static int mCurrentCamera = 0;
 
+  // Biblioteca de funções para manipulação de imagens
   private ManipulaImagem imagem = null;
-
-  private SharedPreferences mPreferences;
-
+ 
   /**
    * onCreate(Bundle savedInstanceState)
    */
@@ -79,8 +90,7 @@ public class DummyActivity3 extends Activity {
     Log.d(TAG, "*** onCreate() ***");
 
     setContentView(R.layout.dummy);
-
-    // imagem = new ManipulaImagemOld();
+   
     imagem = new ManipulaImagem();
     if (imagem == null) {
       Log.w(TAG, "Não foi possível obter uma instância da classe ManipulaImagm");
@@ -119,6 +129,8 @@ public class DummyActivity3 extends Activity {
 
     super.onActivityResult(requestCode, resultCode, data);
 
+    Log.i(TAG, "onActivityResult(request " + requestCode + ", result=" + resultCode + ", data " + data + ") ...");
+
     if (requestCode == ACTIVITY_PARTICIPANTE) {
 
       resultActivityParticipante(resultCode, data);
@@ -141,26 +153,41 @@ public class DummyActivity3 extends Activity {
 
   /**
    * iniciaVariaveis()
+   * 
+   * Inicia a execução da máquina de estados da activity
+   * 
+   * @return true se as operações iniciais foram executas com sucesso ou false
+   *         em caso de erro
+   * 
    */
   private boolean iniciaVariaveis() {
 
+    // obtem o nº de câmeras disponíveis pelo dispositivo onde a aplicação está
+    // em execução
     numCameras = android.hardware.Camera.getNumberOfCameras();
 
     Log.d(TAG, "Number of Cameras: " + numCameras);
 
-    
     // verifica se a câmera fotogrática está em operação
     if (isCameraWorking(0)) {
-      Log.w(TAG, "Camera is working ...");      
+      Log.i(TAG, "Camera está em funcionamento...");
     } else {
-      Log.w(TAG, "Camera is not working");
+
+      Log.w(TAG, "Camera não está em funcionamento");
+
       Toast.makeText(this, "Camera não está disponível", Toast.LENGTH_SHORT);
       // showAlert("Camera não está disponível para essa aplicação");
       return false;
     }
 
+    // Obtem a Intent que iniciou esta Activity
     Intent i = this.getIntent();
 
+    if (i == null) {
+      Log.w(TAG, "Erro gravíssimo !!!");
+    }
+
+    // indicador de erro de configuração
     int erro = 0;
 
     if (i.getSerializableExtra("br.com.mltech.contratante") != null) {
@@ -180,6 +207,7 @@ public class DummyActivity3 extends Activity {
     }
 
     if (erro > 0) {
+
       Log.w(TAG, "Informações insuficientes para execução (erro=" + erro + ")");
 
       showAlert("Verifique a configuração da aplicação");
@@ -191,7 +219,9 @@ public class DummyActivity3 extends Activity {
     Log.d(TAG, "mContratante=" + mContratante);
     Log.d(TAG, "mEvento=" + mEvento);
 
+    // Altera o estado atual
     setEstado(0);
+    // Inicia a obtenção dos Participantes
     startActivityParticipante();
 
     return true;
@@ -201,7 +231,7 @@ public class DummyActivity3 extends Activity {
   /**
    * startActivityParticipante()
    * 
-   * Inicia a Activity Participante Passa como parâmetro as informações sobre o
+   * Inicia a Activity Participante. Passa como parâmetro as informações sobre o
    * Evento.
    * 
    * Aguarda as informações sobre o participante do evento
@@ -209,11 +239,11 @@ public class DummyActivity3 extends Activity {
    */
   private void startActivityParticipante() {
 
+    // Cria uma nova Intent
     Intent intent = new Intent(this, ParticipanteActivity.class);
 
+    // Inclui o parâmetro mEvento (com as informações sobre o evento em curso)
     intent.putExtra("br.com.mltech.evento", mEvento);
-
-    // intent.putExtras(params);
 
     // Inicia a Activity
     startActivityForResult(intent, ACTIVITY_PARTICIPANTE);
@@ -231,21 +261,28 @@ public class DummyActivity3 extends Activity {
    */
   private void resultActivityParticipante(int resultCode, Intent data) {
 
+    Log.d(TAG, "==> processando resultado da ACTIVITY PARTICIPANTE");
+
     if (getEstado() < 0) {
       Log.d(TAG, "Não há informações sobre o participante");
       return;
     }
 
-    Log.d(TAG, "==> processando resultado da ACTIVITY PARTICIPANTE");
-
     if (resultCode == RESULT_CANCELED) {
+
+      // operação cancelada
       Log.d(TAG, "resultCode=RESULT_CANCELED - Participante cancelou sua participação");
+      // Limpa as variáveis
       mParticipante = null;
       mParticipacao = null;
       return;
+
     } else if (resultCode != RESULT_OK) {
+
+      // o resultado execução da activity não é conhecido
       Log.w(TAG, "resultCode não conhecido: " + resultCode);
       return;
+
     }
 
     if (data == null) {
@@ -262,6 +299,7 @@ public class DummyActivity3 extends Activity {
       mParticipacao = (Participacao) data.getSerializableExtra("br.com.mltech.participacao");
     }
 
+    // Exibe as informações sobre o participante e sua participaçaõ
     Log.d(TAG, "mParticipante=" + mParticipante);
     Log.d(TAG, "mParticipacao=" + mParticipacao);
 
@@ -274,6 +312,8 @@ public class DummyActivity3 extends Activity {
 
   /**
    * obtemFoto()
+   * 
+   * Executa a Intent ACTION_IMAGE_CAPTURE para obter uma foto da câmera
    * 
    */
   private void obtemFoto() {
@@ -291,21 +331,22 @@ public class DummyActivity3 extends Activity {
 
     File file = null;
 
-    // Libera os recursos
-    xUri = null;
+    // Libera os recursos relacionados a câmera
+    xUri = null; // endereço onde a foto será armazenada em caso de sucesso
     mUri = null;
-    mFilename = null;
+    mFilename = null; // nome do arquivo onde a foto está armazenada
     mCamera = null;
 
     Log.d(TAG, "obtemFoto() - mCurrentCamera: " + mCurrentCamera);
 
+    // Obtém informações sobre a câmera (atualmente configurada)
     mCamera = getCameraInstance(mCurrentCamera);
 
     if (mCamera != null) {
-      //
-      Log.w(TAG, "Instância da Camera obtida com sucesso");
-      mCamera.release();
-      mCamera = null;
+      // Camera obtida com sucesso
+      Log.i(TAG, "Instância da Camera obtida com sucesso");
+      mCamera.release(); // libera a câmera
+      mCamera = null; // limpa as variáveis
       numCameras = -1; // TODO esse valor não deveria ser 0 ou 1 ???
     } else {
       //
@@ -316,11 +357,13 @@ public class DummyActivity3 extends Activity {
 
     try {
 
+      // obtém um novo de arquivo
       file = setUpPhotoFile();
 
+      // atualiza o nome do arquivo onde a foto será armazenada
       mFilename = file.getAbsolutePath();
 
-      Log.d(TAG, "===> Arquivo=" + file.getAbsolutePath());
+      Log.d(TAG, "===> Arquivo=" + mFilename);
 
       if (file.canWrite()) {
         Log.d(TAG, "Arquivo pode ser gravado");
@@ -329,7 +372,7 @@ public class DummyActivity3 extends Activity {
       }
 
       // Obtem a URI do arquivo (esse valor será forncecido a Intent)
-      xUri = Uri.fromFile(file);
+      xUri = Uri.fromFile(file); // informa a Uri onde a foto será armazenada
       mUri = Uri.fromFile(file);
 
       if (xUri == null) {
@@ -386,6 +429,7 @@ public class DummyActivity3 extends Activity {
       // uma foto foi tirada e encontra-se no endereço xUri
       if (xUri != null) {
 
+        // uma foto foi tirada e encontra-se no endereço xUri
         // exibe informações sobre a localização da foto armazenada no
         // sistema
         Log.d(TAG, "Foto tirada e armazenada em xUri.getPath()=" + xUri.getPath());
@@ -393,6 +437,9 @@ public class DummyActivity3 extends Activity {
         if (mParticipacao != null) {
 
           // atualiza o caminho onde a foto foi armazenada.
+          // getPath(): Gets the decoded path.
+          // the decoded path, or null if this is not a hierarchical URI
+          // (like "mailto:nobody@google.com") or the URI is invalid
           mParticipacao.setNomeArqFoto(xUri.getPath());
 
           Log.d(TAG, "mParticipacao=" + mParticipacao);
@@ -415,14 +462,18 @@ public class DummyActivity3 extends Activity {
           processaFotos();
 
         } else {
+          // mParticipacao é nulo
           Log.d(TAG, "mParticipação é nulo");
         }
 
       } else {
+        // Uri is null
         Log.d(TAG, "xUri is null");
       }
 
     } else {
+
+      // resultCode != RESULT_OK
 
       xUri = null;
       mUri = null;
@@ -446,7 +497,7 @@ public class DummyActivity3 extends Activity {
    */
   private void processaFotos() {
 
-    Log.d(TAG, "+++ processaFotos() +++");
+    Log.d(TAG, "====> processaFotos() <====");
 
     int tipoFoto = -1;
     int efeitoFoto = -1;
@@ -468,17 +519,18 @@ public class DummyActivity3 extends Activity {
 
     }
 
-    mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
+    String pathPolaroid = null;
+    String pathCabine = null;
 
-    if (mPreferences == null) {
-      Log.w(TAG, "mPreferences is null. Falha na execução do comandos getSharedPreferences()");
+    if (mEvento != null) {
+
+      pathPolaroid = mEvento.getBordaPolaroid();
+      pathCabine = mEvento.getBordaCabine();
+
+      Log.d(TAG, "processaFotos() - pathPolaroid: " + pathPolaroid);
+      Log.d(TAG, "processaFotos() - pathPolaroid: " + pathCabine);
+
     }
-
-    String pathPolaroid = mPreferences.getString("evento_borda_polaroid", "");
-    String pathCabine = mPreferences.getString("evento_borda_cabine", "");
-
-    Log.d(TAG, "processaFotos() - pathPolaroid: " + pathPolaroid);
-    Log.d(TAG, "processaFotos() - pathPolaroid: " + pathCabine);
 
     // -------------------------------------------------------------------------
 
@@ -491,6 +543,10 @@ public class DummyActivity3 extends Activity {
 
       Log.d(TAG, "processaFotos() - Foto tipo POLAROID foi selecionada");
 
+      if (pathPolaroid == null) {
+        Log.d(TAG, "Não há moldura definida para foto POLAROID");
+      }
+
       if (imagem != null) {
 
         Bitmap bitmap = imagem.criaBitmap(xUri);
@@ -499,12 +555,11 @@ public class DummyActivity3 extends Activity {
         imagem.showBitmapInfo(bitmap);
 
         // Executa o mudança de tamanho da foto
-        //Bitmap bm = imagem.getScaledBitmap(bitmap, 20);
-        //imagem.showBitmapInfo(bm);
+        // Bitmap bm = imagem.getScaledBitmap(bitmap, 20);
+        // imagem.showBitmapInfo(bm);
 
-        
         Bitmap bm = bitmap;
-        
+
         File moldura = new File("/mnt/sdcard/Pictures/fotoevento/molduras/moldura-320x240-green.png");
 
         if ((moldura != null) && (moldura.exists())) {
@@ -522,16 +577,15 @@ public class DummyActivity3 extends Activity {
       } else {
         Log.w(TAG, "A instância da biblioteca de imagens não está disponível");
       }
-      
-      // TODO é necessário gravar o arquivo obtido para que ele possa ser enviado por email
+
+      // TODO é necessário gravar o arquivo obtido para que ele possa ser
+      // enviado por email
 
     } else if (tipoFoto == CABINE) {
 
-      // TODO veja que aqui são necessárias 3 fotos
-      // as fotos podem ser armazenadas em um array de fotos
-      Log.d(TAG, "processaFotos() - Foto tipo CABINE foi selecionada");
-
-    } else if (tipoFoto == CABINE) {
+      if (pathCabine == null) {
+        Log.d(TAG, "Não há moldura definida para foto CABINE");
+      }
 
       // foto formato Cabibe exige três fotos.
       // as fotos serão montadas em sequencoa e será aplicada
@@ -541,15 +595,43 @@ public class DummyActivity3 extends Activity {
 
       // TODO verificar nesse ponto se há três fotos disponível
 
+      // TODO veja que aqui são necessárias 3 fotos
+      // as fotos podem ser armazenadas em um array de fotos
+      Log.d(TAG, "processaFotos() - Foto tipo CABINE foi selecionada");
+
+      File f1, f2, f3, moldura;
+
+      f1 = null;
+      f2 = null;
+      f3 = null;
+      moldura = null;
+
+      Bitmap bm = imagem.processaFotoFormatoCabine(f1, f2, f3, moldura);
+
+    } else {
+      Log.w(TAG, "Tipo de foto: " + tipoFoto + " não suportado.");
+
+    }
+
+    if (efeitoFoto == CORES) { // aplica efeito cores COR
+      // TODO processa o efeito cores
+    } else if (efeitoFoto == PB) { // aplica efeito P&B
+      // TODO processa o efeito P&B, isto é, aplicaca um filtro P&B à foto
+    } else {
+      Log.w(TAG, "Efeito: " + efeitoFoto + " não é suportado pela aplicação");
     }
 
     // -------------------------------------------------------------------------
 
     // TODO aqui poderíamos ter um passo intermediário na máquina de estados
 
+    // TODO aqui também é necessário atualizar a Uri da foto processada
+
+    Uri lastUri = xUri;
+
     // O próximo passo é enviar o email com a foto já trabalhada.
     // Envia email com a foto pronta
-    enviaEmail();
+    enviaEmail(lastUri);
 
   }
 
@@ -560,7 +642,7 @@ public class DummyActivity3 extends Activity {
    * foto
    * 
    */
-  private void enviaEmail() {
+  private void enviaEmail(Uri lastUri) {
 
     boolean erro = false;
 
@@ -591,6 +673,18 @@ public class DummyActivity3 extends Activity {
 
       // não há erro conhecido
 
+      // carrega as preferências sobre o envio de email
+      SharedPreferences sp = getSharedPreferences("pref_email", MODE_PRIVATE);
+
+      if (sp == null) {
+        Log.w(TAG, "SharedPreferences não foi encontrada.");
+      }
+
+      String assuntoDoEmail = sp.getString("preferencias_assunto", "");
+      String corpoDoEmail = sp.getString("preferencias_descricao", "");
+
+      sp = null;
+
       // obtém o email do participante do evento
       String to = mParticipante.getEmail();
 
@@ -598,15 +692,30 @@ public class DummyActivity3 extends Activity {
       // ele será copiado em BCC no email enviado
       String cc = mContratante.getEmail();
 
+      /**
+       * Assunto do email
+       */
+      String subject = null;
       // Define o "subject" do email
-      // TODO busca informações no arquivo de preferência
-      String subject = "Evento Inicial";
+      if ((assuntoDoEmail != null) && (!assuntoDoEmail.equals(""))) {
+        subject = assuntoDoEmail;
+      } else {
+        subject = "Evento Inicial";
+      }
 
+      /**
+       * Corpo do email
+       */
+      String body = null;
       // Define o corpo do email (mensagem do corpo do email)
-      // TODO busca informações no arquivo de preferência
-      String body = "Segue as informações sobre o evento";
+      if ((corpoDoEmail != null) && (!corpoDoEmail.equals(""))) {
+        body = corpoDoEmail;
+      } else {
+        body = "Segue as informações sobre o evento";
+      }
 
       // envia o email
+      // TODO substituir xUri por lastUri, isto é, a URI da foto processada
       sendEmail(to, cc, subject, body, xUri);
 
     }
@@ -666,6 +775,7 @@ public class DummyActivity3 extends Activity {
 
     // Imagem
     // emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, imageURI);
+    // TODO
     emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, xUri);
 
     // Define o MIME type do email
@@ -689,6 +799,28 @@ public class DummyActivity3 extends Activity {
 
     }
 
+    // Inicia a Activity para envio do email
+    // TODO aqui é necessário fixa o uso do email como mecanismo de envio
+    // TODO talvez seja necessário permitir o envio via Facebook e Twitter
+    // também
+
+    // TODO talvez pudesse ser feito após o envio do email ???
+    if (mEvento != null) {
+
+      if (mEvento.isEnviaFacebook()) {
+        // enviar foto ao Facebook
+        // TODO qual texto ???
+        Log.d(TAG, "Envia foto ao Facebook ...");
+      } else if (mEvento.isEnviaTwitter()) {
+        // enviar foto ao Twitter
+        // TODO qual texto ?
+        Log.d(TAG, "Envia foto ao Twitter ...");
+      }
+
+    } else {
+      Log.w(TAG, "mEvento é nulo");
+    }
+
     startActivityForResult(chooser, ACTIVITY_CHOOSER);
 
   }
@@ -705,7 +837,9 @@ public class DummyActivity3 extends Activity {
 
     Log.d(TAG, "===> processando resultado da ACTIVITY CHOOSER: resultCode=" + resultCode);
 
+    // Obtém o intent
     Intent i = this.getIntent();
+
     if (i != null) {
       ComponentName compName = i.getComponent();
       if (compName != null) {
@@ -748,8 +882,10 @@ public class DummyActivity3 extends Activity {
    */
   private void estadoFinal() {
 
+    // Obtem as informações sobre a Intent "chamadora"
     Intent i = getIntent();
 
+    // Obtém o estado corrente da máquina de estado
     int estadoCorrente = getEstado();
 
     if (estadoCorrente == 3) {
@@ -787,7 +923,7 @@ public class DummyActivity3 extends Activity {
       Log.d(TAG, "Orientação da tela em PORTRAIT");
     }
 
-    // Termina a execução da intent
+    // Termina a execução da intent responsável por tirar e enviar uma foto
     finish();
 
   }
@@ -891,6 +1027,7 @@ public class DummyActivity3 extends Activity {
    *         false, caso contrário.
    * 
    */
+
   public boolean isExternalMediaMounted() {
 
     boolean isMounted;
@@ -1010,6 +1147,9 @@ public class DummyActivity3 extends Activity {
 
   /**
    * showVariables()
+   * 
+   * Exibe o valor dos atributos do objeto (se forem diferente de null)
+   * 
    */
   public void showVariables() {
     Log.d(TAG, "=================================");
