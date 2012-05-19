@@ -29,19 +29,15 @@ import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.ManipulaImagem;
 
-public class DummyActivity3 extends Activity {
+/**
+ * DummyActivity3
+ * 
+ * @author maurocl
+ * 
+ */
+public class DummyActivity3 extends Activity implements Constantes {
 
   private static final String TAG = "DummyActivity3";
-
-  // Definição de constantes para o tipo de foto
-  private static final int POLAROID = 1;
-  private static final int CABINE = 2;
-
-  // Definição de constantes para o efeito de cores
-  private static final int CORES = 11;
-
-  // Definição de constantes para o efeito P&B
-  private static final int PB = 12;
 
   // Definição da Activies chamadas
   private static final int ACTIVITY_TIRA_FOTO_3 = 113;
@@ -78,7 +74,7 @@ public class DummyActivity3 extends Activity {
 
   // Biblioteca de funções para manipulação de imagens
   private ManipulaImagem imagem = null;
- 
+
   /**
    * onCreate(Bundle savedInstanceState)
    */
@@ -90,7 +86,7 @@ public class DummyActivity3 extends Activity {
     Log.d(TAG, "*** onCreate() ***");
 
     setContentView(R.layout.dummy);
-   
+
     imagem = new ManipulaImagem();
     if (imagem == null) {
       Log.w(TAG, "Não foi possível obter uma instância da classe ManipulaImagm");
@@ -123,6 +119,8 @@ public class DummyActivity3 extends Activity {
 
   /**
    * onActivityResult(int requestCode, int resultCode, Intent data)
+   * 
+   * Trata o resultado da execução das Activities
    * 
    */
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -534,7 +532,7 @@ public class DummyActivity3 extends Activity {
 
     // -------------------------------------------------------------------------
 
-    if (tipoFoto == POLAROID) {
+    if (tipoFoto == TIPO_FOTO_POLAROID) {
 
       // foto formato Polaroid exige o redimensionamento da foto bem como
       // a inclusão da moldura
@@ -581,7 +579,7 @@ public class DummyActivity3 extends Activity {
       // TODO é necessário gravar o arquivo obtido para que ele possa ser
       // enviado por email
 
-    } else if (tipoFoto == CABINE) {
+    } else if (tipoFoto == TIPO_FOTO_CABINE) {
 
       if (pathCabine == null) {
         Log.d(TAG, "Não há moldura definida para foto CABINE");
@@ -638,8 +636,8 @@ public class DummyActivity3 extends Activity {
   /**
    * enviaEmail()
    * 
-   * Verifica se todas as condições necessárias estão satisfeita para o envio da
-   * foto
+   * Verifica se todas as condições necessárias estão satisfeita para o envio do
+   * email com a foto anexada.
    * 
    */
   private void enviaEmail(Uri lastUri) {
@@ -674,16 +672,16 @@ public class DummyActivity3 extends Activity {
       // não há erro conhecido
 
       // carrega as preferências sobre o envio de email
-      SharedPreferences sp = getSharedPreferences("pref_email", MODE_PRIVATE);
+      SharedPreferences emailPreferences = getSharedPreferences("pref_email", MODE_PRIVATE);
 
-      if (sp == null) {
+      if (emailPreferences == null) {
         Log.w(TAG, "SharedPreferences não foi encontrada.");
       }
 
-      String assuntoDoEmail = sp.getString("preferencias_assunto", "");
-      String corpoDoEmail = sp.getString("preferencias_descricao", "");
+      String subject = emailPreferences.getString("preferencias_assunto", "Evento Inicial");
+      String body = emailPreferences.getString("preferencias_descricao", "Segue as informações sobre o evento");
 
-      sp = null;
+      emailPreferences = null;
 
       // obtém o email do participante do evento
       String to = mParticipante.getEmail();
@@ -695,24 +693,28 @@ public class DummyActivity3 extends Activity {
       /**
        * Assunto do email
        */
+      /*
       String subject = null;
       // Define o "subject" do email
       if ((assuntoDoEmail != null) && (!assuntoDoEmail.equals(""))) {
         subject = assuntoDoEmail;
       } else {
-        subject = "Evento Inicial";
+        subject = "";
       }
+      */
 
       /**
        * Corpo do email
        */
+      /*
       String body = null;
       // Define o corpo do email (mensagem do corpo do email)
       if ((corpoDoEmail != null) && (!corpoDoEmail.equals(""))) {
         body = corpoDoEmail;
       } else {
-        body = "Segue as informações sobre o evento";
+        body = "";
       }
+      */
 
       // envia o email
       // TODO substituir xUri por lastUri, isto é, a URI da foto processada
@@ -783,14 +785,34 @@ public class DummyActivity3 extends Activity {
     // emailIntent.setType("image/png");
     emailIntent.setType("image/jpg");
 
+    // TODO verificar se funciona !!!
+    startActivityForResult(emailIntent, ACTIVITY_CHOOSER);
+
+    // Envia "email" a redes sociais previamente cadastradas
+    sendEmailRedesSociais();
+
+    // sendEmailByChooser(emailIntent);
+
+  }
+
+  /**
+   * sendEmailByChooser(Intent emailIntent)
+   * 
+   * @param emailIntent
+   * 
+   */
+  private void sendEmailByChooser(Intent emailIntent) {
+
     // TODO aqui pode acontecer de ser necessário forçar a aplicação de
     // email
     Intent chooser = Intent.createChooser(emailIntent, "Selecione sua aplicação de email !");
 
     if (chooser != null) {
+
       Log.w(TAG, "chooser.getAction()=" + chooser.getAction());
 
       ComponentName compName = chooser.getComponent();
+
       if (compName != null) {
         Log.w(TAG, "==> CHOOSER ==> compName=" + compName.getClassName() + ", compName=" + compName.getPackageName());
       } else {
@@ -804,24 +826,34 @@ public class DummyActivity3 extends Activity {
     // TODO talvez seja necessário permitir o envio via Facebook e Twitter
     // também
 
-    // TODO talvez pudesse ser feito após o envio do email ???
-    if (mEvento != null) {
-
-      if (mEvento.isEnviaFacebook()) {
-        // enviar foto ao Facebook
-        // TODO qual texto ???
-        Log.d(TAG, "Envia foto ao Facebook ...");
-      } else if (mEvento.isEnviaTwitter()) {
-        // enviar foto ao Twitter
-        // TODO qual texto ?
-        Log.d(TAG, "Envia foto ao Twitter ...");
-      }
-
-    } else {
-      Log.w(TAG, "mEvento é nulo");
-    }
+    sendEmailRedesSociais();
 
     startActivityForResult(chooser, ACTIVITY_CHOOSER);
+
+  }
+
+  /**
+   * sendEmailRedesSociais()
+   * 
+   */
+  private void sendEmailRedesSociais() {
+
+    if (mEvento == null) {
+      Log.d(TAG, "sendEmailRedesSociais() - Não foi possível obter os dados do evento.");
+      return;
+    }
+
+    // TODO talvez pudesse ser feito após o envio do email ???
+
+    if (mEvento.isEnviaFacebook()) {
+      // enviar foto ao Facebook
+      // TODO qual texto ???
+      Log.d(TAG, "sendEmailRedesSociais() - Envia foto ao Facebook ...");
+    } else if (mEvento.isEnviaTwitter()) {
+      // enviar foto ao Twitter
+      // TODO qual texto ?
+      Log.d(TAG, "sendEmailRedesSociais() - Envia foto ao Twitter ...");
+    }
 
   }
 
@@ -1285,11 +1317,11 @@ public class DummyActivity3 extends Activity {
       return null;
     }
 
-    if (mParticipacao.getTipoFoto() == POLAROID) {
+    if (mParticipacao.getTipoFoto() == TIPO_FOTO_POLAROID) {
 
       //
 
-    } else if (mParticipacao.getTipoFoto() == CABINE) {
+    } else if (mParticipacao.getTipoFoto() == TIPO_FOTO_CABINE) {
 
       //
 

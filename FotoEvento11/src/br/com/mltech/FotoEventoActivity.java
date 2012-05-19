@@ -41,6 +41,8 @@ public class FotoEventoActivity extends Activity {
 
   private static final String TAG = "FotoEventoActivity";
 
+  public static final String PREF_EMAIL = "pref_email";
+
   // indica o uso do DEBUG
   private static final int DEBUG = 1;
 
@@ -116,6 +118,18 @@ public class FotoEventoActivity extends Activity {
 
       // 1=POLAROID, 11=COR
       mParticipacao = new Participacao(mParticipante, 1, 11, null);
+
+    }
+
+    // Verifica se existem algum bitmap configurado para exibição na tela
+    // inicial
+    Bitmap bitmapTelaInicial = obtemImagemTelaInicial();
+
+    if (bitmapTelaInicial != null) {
+
+      ImageView imageViewTelaInicial = (ImageView) findViewById(R.id.imageView1);
+
+      imageViewTelaInicial.setImageBitmap(bitmapTelaInicial);
 
     }
 
@@ -667,7 +681,7 @@ public class FotoEventoActivity extends Activity {
     } else {
 
       Log.i(TAG, "data possui informações");
-      Log.i(TAG,"data="+data);
+      Log.i(TAG, "data=" + data);
       result = data.getStringExtra("br.com.mltech.result");
       Log.d(TAG, "result=" + result);
 
@@ -814,8 +828,6 @@ public class FotoEventoActivity extends Activity {
 
     String[] paramEventos = new String[5];
 
-    Log.d(TAG,"*** passo 10 ***");
-    
     paramEventos[0] = (String) chaves.get("evento_param1");
     paramEventos[1] = (String) chaves.get("evento_param2");
     paramEventos[2] = (String) chaves.get("evento_param3");
@@ -824,11 +836,7 @@ public class FotoEventoActivity extends Activity {
 
     Parametros parametros = new Parametros(paramEventos);
 
-    Log.d(TAG,"*** passo 20 ***");
-    
     mEvento.setParametros(parametros);
-    
-    Log.d(TAG,"*** passo 30 ***");
 
   }
 
@@ -918,37 +926,85 @@ public class FotoEventoActivity extends Activity {
   }
 
   /**
+   * preparaAmbiente()
+   * 
+   * Prepara o ambiente para gravação das fotos
    * 
    */
   public void preparaAmbiente() {
 
-    if (ct != null) {
+    if (ct == null) {
+      Log.w(TAG,"preparaAmbiente() - CameraTools não foi instanciado");
+      return;
+    }
 
-      if (ct.isExternalStorageMounted()) {
+    if (ct.isExternalStorageMounted()) {
 
-        Log.i(TAG, "SDCARD está montado");
+      Log.i(TAG, "SDCARD está montado");
 
-        // xxx(publicDirectory);
+      // xxx(publicDirectory);
 
-        // File f = ct.getStorageDir("fotoevento2");
-        File f = null;
+      // File f = ct.getStorageDir("fotoevento2");
+      File f = null;
 
-        f = ct.getDir2("fotoevento/fotos");
-        ct.ShowFileDetails(f, "fotoevento/fotos");
+      f = ct.getDir2("fotoevento/fotos");
+      ct.ShowFileDetails(f, "fotoevento/fotos");
 
-        f = ct.getDir2("fotoevento/molduras");
-        ct.ShowFileDetails(f, "fotoevento/molduras");
+      f = ct.getDir2("fotoevento/molduras");
+      ct.ShowFileDetails(f, "fotoevento/molduras");
 
-        f = ct.getDir2("fotoevento/telainicial");
-        ct.ShowFileDetails(f, "fotoevento/telainicial");
+      f = ct.getDir2("fotoevento/telainicial");
+      ct.ShowFileDetails(f, "fotoevento/telainicial");
 
+    } else {
+
+      Log.i(TAG, "SDCARD não está montado");
+
+    }
+
+  }
+
+  /**
+   * obtemImagemTelaInicial()
+   * 
+   * Obtem um bitmap que será configurado na página inicial da aplicação. Caso
+   * nenhuma bitmap seja configurado será usado um bitmap padrão.
+   * 
+   */
+  private Bitmap obtemImagemTelaInicial() {
+
+    Bitmap bitmap = null;
+
+    SharedPreferences preferences = getSharedPreferences(PREF_EMAIL, MODE_PRIVATE);
+
+    String urlImagem = preferences.getString("preferencias_url_imagem", "");
+
+    if ((urlImagem == null) || (urlImagem.equals(""))) {
+      return null;
+    }
+
+    File f = new File(urlImagem);
+
+    if (f != null) {
+
+      if (f.exists()) {
+        // arquivo existe
+        // carrega o arquivo e exibe a foto
+        bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
       } else {
+        // carrega a foto default (padrão)
 
-        Log.i(TAG, "SDCARD não está montado");
+        // TODO definir o tamanho da imagem inicial
+
+        Log.w(TAG, "obtemImagemTelaInicial() - Arquivo: " + f.getAbsolutePath() + " não foi encontrado.");
 
       }
 
     }
+
+    preferences = null;
+
+    return bitmap;
 
   }
 
