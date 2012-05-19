@@ -473,7 +473,35 @@ public class CameraTools {
     return isMounted;
 
   }
+  
+  /**
+   * isExternalMediaMounted()
+   * 
+   * @return true se uma media de armazenamento externo estiver montada ou
+   *         false, caso contrário.
+   * 
+   */
 
+  public boolean isExternalMediaMounted() {
+
+    boolean isMounted;
+
+    // Obtém o estado corrente do principal dispositivo de armazenamento
+    // externo
+    isMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+
+    if (isMounted) {
+      // dispositivo está montado
+      Log.d(TAG, "Media externa está montada.");
+    } else {
+      // dispositivo não não está montado
+      Log.w(TAG, "Media externa não está montada.");
+    }
+
+    return isMounted;
+
+  }
+  
   /**
    * 
    * Retorna o diretório solicitado dentro de
@@ -687,13 +715,13 @@ public class CameraTools {
    */
   public void showUri(Uri uri) {
 
-    Log.d(TAG, "Exibe informações sobre uma Uri:");
-    Log.d(TAG, "  uri=" + uri);
-    Log.d(TAG, "  uri.getAuthority=" + uri.getAuthority());
-    Log.d(TAG, "  uri.getHost=" + uri.getHost());
-    Log.d(TAG, "  uri.getQuery=" + uri.getQuery());
-    Log.d(TAG, "  uri.getPath=" + uri.getPath());
-    Log.d(TAG, "  uri.getPort=" + uri.getPort());
+    Log.v(TAG, "Exibe informações sobre uma Uri:");
+    Log.v(TAG, "  uri=" + uri);
+    Log.v(TAG, "  uri.getAuthority=" + uri.getAuthority());
+    Log.v(TAG, "  uri.getHost=" + uri.getHost());
+    Log.v(TAG, "  uri.getQuery=" + uri.getQuery());
+    Log.v(TAG, "  uri.getPath=" + uri.getPath());
+    Log.v(TAG, "  uri.getPort=" + uri.getPort());
 
   }
 
@@ -822,24 +850,24 @@ public class CameraTools {
    */
   public void ShowFileDetails(File f, String msg) {
 
-    Log.d(TAG, " ==> " + msg);
+    Log.v(TAG, " ==> " + msg);
 
     if (f.exists()) {
-      Log.d(TAG, "f=" + f.getAbsolutePath() + " existe");
+      Log.v(TAG, "f=" + f.getAbsolutePath() + " existe");
     } else {
-      Log.d(TAG, "f=" + f.getAbsolutePath() + " não existe");
+      Log.v(TAG, "f=" + f.getAbsolutePath() + " não existe");
     }
 
     if (f.isDirectory()) {
-      Log.d(TAG, "f=" + f.getAbsolutePath() + " é um diretório");
+      Log.v(TAG, "f=" + f.getAbsolutePath() + " é um diretório");
     } else {
-      Log.d(TAG, "f=" + f.getAbsolutePath() + " não é um diretório");
+      Log.v(TAG, "f=" + f.getAbsolutePath() + " não é um diretório");
     }
 
     if (f.isFile()) {
-      Log.d(TAG, "f=" + f.getAbsolutePath() + " é um arquivo");
+      Log.v(TAG, "f=" + f.getAbsolutePath() + " é um arquivo");
     } else {
-      Log.d(TAG, "f=" + f.getAbsolutePath() + " não é um arquivo");
+      Log.v(TAG, "f=" + f.getAbsolutePath() + " não é um arquivo");
     }
 
   }
