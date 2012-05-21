@@ -6,7 +6,6 @@ import android.content.Context;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 
 /**
