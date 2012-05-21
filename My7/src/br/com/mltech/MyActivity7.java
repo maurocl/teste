@@ -9,6 +9,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Bitmap.Config;
+import android.graphics.Path.Direction;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -25,7 +33,12 @@ import br.com.mltech.utils.ManipulaImagem;
  * @author maurocl
  * 
  */
-public class MyActivity7 extends Activity {
+public class MyActivity7 extends Activity implements OnClickListener {
+
+  public static final String TAG = "MyActivity7";
+
+  public static final String PATH_MOLDURAS = "/mnt/sdcard/Pictures/fotoevento/molduras/";
+  public static final String PATH_FOTOS = "/mnt/sdcard/Pictures/fotoevento/fotos/";
 
   int numConfirmar;
   int numCancelar;
@@ -39,9 +52,9 @@ public class MyActivity7 extends Activity {
 
   static int sNum;
 
-  public static final String TAG = "MyActivity7";
-
-  public static int opcao = 0;
+  Button btn1;
+  Button btn2;
+  Button btn3;
 
   private static Context mContext = null;
 
@@ -62,83 +75,118 @@ public class MyActivity7 extends Activity {
 
     Log.i(TAG, "*** " + getClassName() + " onCreate() ***");
 
-    Button btn1 = (Button) findViewById(R.id.btnConfirmar);
-    Button btn2 = (Button) findViewById(R.id.btnCancelar);
-    Button btn3 = (Button) findViewById(R.id.btnFim);
+    btn1 = (Button) findViewById(R.id.btnConfirmar);
+    btn1.setOnClickListener(this);
+
+    btn2 = (Button) findViewById(R.id.btnCancelar);
+    btn2.setOnClickListener(this);
+
+    btn3 = (Button) findViewById(R.id.btnFim);
+    btn3.setOnClickListener(this);
 
     imagem = new ManipulaImagem();
 
     mImageView = (ImageView) findViewById(R.id.imageView1);
 
-    /**
-     * btn1
-     */
-    btn1.setOnClickListener(new OnClickListener() {
+    Bitmap bi = imagem.getBitmapFromFile(PATH_FOTOS + "bia-480x640.png");
 
-      @Override
-      public void onClick(View v) {
+    Log.d(TAG, "bi: " + imagem.getStringBitmapSize(bi));
 
-        Log.d(TAG, "Botão Confirmar pressionado: " + numConfirmar++);
-        mImageView.setVisibility(ImageView.INVISIBLE);
+    Bitmap bi2 = imagem.getScaledBitmap2(bi, 240, 320);
 
-      }
-    });
+    Log.d(TAG, "bi2: " + imagem.getStringBitmapSize(bi2));
 
-    /**
-     * btn2
-     */
-    btn2.setOnClickListener(new OnClickListener() {
+    Bitmap bi3 = xxx(bi2);
 
-      @Override
-      public void onClick(View v) {
-
-        Log.d(TAG, "Botão Cancelar pressionado: " + numCancelar++);
-        mImageView.setVisibility(ImageView.VISIBLE);
-      }
-    });
-
-    btn3.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View v) {
-
-        Log.d(TAG, "Botão 3 pressionado: ");
-
-        // 
-        testaVerticalJoin();
-
-        Application app = MyActivity7.this.getApplication();
-
-        Context ctx = MyActivity7.this.getApplicationContext();
-
-        ApplicationInfo appInfo = MyActivity7.this.getApplicationInfo();
-
-        Log.v(TAG, "getApplication()=" + MyActivity7.this.getApplication());
-        Log.v(TAG, "getApplicationContext()=" + MyActivity7.this.getApplicationContext());
-
-        Log.v(TAG, "getApplicationInfo()=" + MyActivity7.this.getApplicationInfo());
-
-        desejaSairDaAplicacao();
-
-      }
-
-    });
+    imagem.exibeBitmap(mImageView, bi3);
 
     showDisplayMetrics(this.getResources().getDisplayMetrics());
+    
+    imagem.showBitmapInfo(bi3);
+
+  }
+
+  Bitmap xxx(Bitmap bitmap) {
+
+    // Cria um novo bitmap
+    Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+
+    Canvas canvas = new Canvas(output);
+
+    final Paint paint = new Paint();
+
+    final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+    
+    paint.setAntiAlias(true);
+
+    // canvas.drawARGB(0, 0, 0, 0);
+    //canvas.drawARGB(0, 255, 255, 255);
+    canvas.drawARGB(150, 150, 150, 150);
+
+    final Rect rect2 = new Rect(0, 0, 199, 199);
+
+    
+    boolean b = canvas.clipRect(20, 20, 220, 220);
+    if (!b) {
+      Log.d(TAG, "false");
+    }
+   
+    canvas.drawBitmap(bitmap, rect, rect, paint);
+    
+    return output;
 
   }
 
   /**
-   * showDisplayMetrics(DisplayMetrics d)
+   * onClick(View v)
    * 
-   * @param d
-   *          instância da classe DisplayMetrics
+   * Trata os eventos dos botões
+   * 
    */
-  public void showDisplayMetrics(DisplayMetrics d) {
-    Log.v(TAG, "showDisplayMetrics(): " + d.toString());
-    Log.v(TAG, "  widthPixels=" + d.widthPixels);
-    Log.v(TAG, "  heightPixels=" + d.heightPixels);
-    Log.v(TAG, "  density=" + d.density);
+  @Override
+  public void onClick(View v) {
+    // TODO Auto-generated method stub
+    if (v == btn1) {
+      numConfirmar++;
+      Log.d(TAG, "Botão Confirmar pressionado: " + numConfirmar);
+      mImageView.setVisibility(ImageView.INVISIBLE);
+
+    } else if (v == btn2) {
+      numCancelar++;
+      Log.d(TAG, "Botão Cancelar pressionado: " + numCancelar);
+      mImageView.setVisibility(ImageView.VISIBLE);
+    } else if (v == btn3) {
+      Log.d(TAG, "Botão Executar pressionado: ");
+      executaAcao();
+
+    }
+
+  }
+
+  /**
+   * executaAcao()
+   */
+  private void executaAcao() {
+
+    Log.i(TAG, "---> testaVerticalJoin()");
+    testaVerticalJoin();
+
+    // showInfoApps();
+
+    // desejaSairDaAplicacao();
+
+  }
+
+  /**
+   * onResume()
+   */
+  @Override
+  protected void onResume() {
+
+    super.onResume();
+
+    Log.d(TAG, "*** onResume() ***");
+
   }
 
   /**
@@ -175,7 +223,7 @@ public class MyActivity7 extends Activity {
     // "/mnt/sdcard/Pictures/fotoevento/molduras/moldura-320x240-red.png";
     // String filename = "/mnt/sdcard/Pictures/fotoevento/fotos/blue.png";
 
-    String filename = "/mnt/sdcard/Pictures/fotoevento/molduras/moldura-320x240-green.png";
+    String filename = PATH_MOLDURAS + "moldura-320x240-green.png";
 
     File f = new File(filename);
 
@@ -222,10 +270,10 @@ public class MyActivity7 extends Activity {
     // "/mnt/sdcard/Pictures/fotoevento/molduras/moldura-320x240-green.png";
 
     // Define uma moldura
-    String moldura = "/mnt/sdcard/Pictures/fotoevento/molduras/moldura-320x240-red.png";
+    String moldura = PATH_MOLDURAS + "moldura-320x240-red.png";
 
     // Define uma foto
-    String foto = "/mnt/sdcard/Pictures/fotoevento/fotos/casa-320x240.png";
+    String foto = PATH_FOTOS + "casa-320x240.png";
 
     // Lê a foto e transforma em um bitmap
     Bitmap bmFoto = imagem.getBitmapFromFile(foto);
@@ -263,136 +311,188 @@ public class MyActivity7 extends Activity {
    * Testa o funcionamento da função verticalJoin().
    * 
    * Testa o funcionamento da criação de uma única foto a partir de três outras
-   * fotos Lê a fotos a partir de um arquivo. Cria um bitmap contendo três
-   * cópias da foto Exibe a foto gerada Grava o resultado
+   * fotos. Carrega as imagens a partir de um arquivo localizado em memória
+   * externa (sdcard).
+   * 
+   * Cria um bitmap contendo três cópias da foto Exibe a foto gerada Grava o
+   * resultado
    * 
    */
   private void testaVerticalJoin() {
 
-    String foto = "/mnt/sdcard/Pictures/fotoevento/fotos/casa-320x240.png";
-    String moldura = "/mnt/sdcard/Pictures/fotoevento/molduras/moldura-cabine-132x567-green.png";
+    // Foto 1
+    String foto1 = PATH_FOTOS + "img-3x4-blue.png";
+    Bitmap bmFoto1 = carregaFoto(foto1);
 
-    // Lê o arquivo contendo a foto
-    Bitmap bmFoto = imagem.getBitmapFromFile(foto);
-    
-    // Lê o arquivo contendo a moldura
-    Bitmap bmMoldura = imagem.getBitmapFromFile(moldura);
-
-    if (bmFoto != null) {
-      Log.v(TAG, "Tamanho da foto original: " + getStringBitmapSize(bmFoto));
-    } else {
-      Log.w(TAG, "Não foi possível ler o arquivo: " + foto);
+    if (bmFoto1 == null) {
+      // Log.w(TAG, "Não foi possível ler o arquivo: " + foto1);
       return;
     }
 
-    // Cria um novo bitmap a partir da repetição de 3 fotos
-    // No caso estamos repetindo a mesma foto três vezes
-    Bitmap bmImagem = imagem.verticalJoin(bmFoto, bmFoto, bmFoto);
+    // Foto 2
+    String foto2 = PATH_FOTOS + "img-3x4-green.png";
+
+    Bitmap bmFoto2 = carregaFoto(foto2);
+    if (bmFoto2 == null) {
+      // Log.w(TAG, "Não foi possível ler o arquivo: " + foto2);
+      return;
+    }
+
+    // Foto 3
+    String foto3 = PATH_FOTOS + "img-3x4-yellow.png";
+
+    Bitmap bmFoto3 = carregaFoto(foto3);
+    if (bmFoto3 == null) {
+      // Log.w(TAG, "Não foi possível ler o arquivo: " + foto3);
+      return;
+    }
+
+    // Lê o arquivo contendo a moldura
+
+    String arqModura = "moldura-cabine-132x568-red.png";
+
+    String moldura = PATH_MOLDURAS + arqModura;
+
+    Bitmap bmMoldura = imagem.getBitmapFromFile(moldura);
+
+    if (bmMoldura != null) {
+      Log.v(TAG, " ==> Tamanho da moldura original: " + getStringBitmapSize(bmMoldura));
+    } else {
+      Log.w(TAG, "Não foi possível ler o arquivo: " + moldura);
+      return;
+    }
+
+    // =========================================================================
+    // Cria um novo bitmap a partir da composição das 3 fotos
+    // A foto será repetida na vertical, isto é, uma nova foto
+    // será colocada embaixo da outra.
+    // =========================================================================
+    Bitmap bmImgJoin = imagem.verticalJoin(bmFoto1, bmFoto2, bmFoto3);
+
+    if (bmImgJoin != null) {
+      Log.i(TAG, "Imagens foram juntadas com sucesso");
+      Log.v(TAG, " ==> Tamanho da foto após join: " + getStringBitmapSize(bmImgJoin));
+      // imagem.exibeBitmap(mImageView, bmImagem);
+    } else {
+      Log.w(TAG, "Erro no merge das três fotos");
+      return;
+    }
 
     Bitmap scaledBitmap = null;
 
-    if (bmImagem != null) {
+    String arqSaida = PATH_FOTOS + "xxx-join.png";
 
-      Log.v(TAG, "Tamanho da foto após join: " + getStringBitmapSize(bmImagem));
+    // grava a foto das imagens "juntada"
+    boolean gravou = imagem.gravaBitmapArquivo(bmImgJoin, arqSaida);
 
-      // imagem.exibeBitmap(mImageView, bmImagem);
+    if (!gravou) {
+      Log.w(TAG, "Erro na gravação do arquivo contendo as três fotos: " + arqSaida);
+      return;
+    } else {
 
-      String arqSaida = "/mnt/sdcard/Pictures/fotoevento/fotos/xxx-join.png";
+      Log.i(TAG, "testaVerticalJoin() - Arquivo: " + arqSaida + " gravado com sucesso");
+    }
 
-      // grava a foto resultante
-      boolean gravou = imagem.gravaBitmapArquivo(bmImagem, arqSaida);
+    // Obtém uma imagem em escala
+    // scaledBitmap = imagem.getScaledBitmap(bmImgJoin);
+    scaledBitmap = imagem.getScaledBitmap2(bmImgJoin, 113, 453);
 
-      if (gravou) {
+    if (scaledBitmap == null) {
+      //
+      return;
+    }
 
-        Log.i(TAG, "testaVerticalJoin() - Arquivo: " + arqSaida + " gravado com sucesso");
+    Log.v(TAG, "Tamanho depois do escalonamento: " + getStringBitmapSize(scaledBitmap));
 
-        // Obtém uma imagem em escala
-        scaledBitmap = imagem.getScaledBitmap(bmImagem);
+    // exibe a imagem escalonada
+    imagem.exibeBitmap(mImageView, scaledBitmap);
 
-        if (scaledBitmap != null) {
+    arqSaida = PATH_FOTOS + "xxx2-join.png";
 
-          Log.v(TAG, "Tamanho depois da transformação: " + getStringBitmapSize(scaledBitmap));
+    boolean gravouImagemEscalonda = imagem.gravaBitmapArquivo(scaledBitmap, arqSaida);
 
-          // exibe a imagem escalonada
-          imagem.exibeBitmap(mImageView, scaledBitmap);
+    if (gravouImagemEscalonda) {
 
-          arqSaida = "/mnt/sdcard/Pictures/fotoevento/fotos/xxx2-join.png";
-          
-          boolean gravouImagemEscalonda = imagem.gravaBitmapArquivo(scaledBitmap, arqSaida);
-          
-          if (gravouImagemEscalonda) {
-            Log.v(TAG, "Imagem escalonada gravada com sucesso no arquivo "+arqSaida);
-          } else {
-            Log.v(TAG, "Falha na gravação da imagem escalonada no arquivo: "+ arqSaida);
-          }
+      // imagem escalonada gravada com sucesso
+      Log.v(TAG, "Imagem escalonada gravada com sucesso no arquivo " + arqSaida);
+    } else {
+      Log.v(TAG, "Falha na gravação da imagem escalonada no arquivo: " + arqSaida);
+      return;
+    }
 
-          // combina a foto com a moldura
-          Bitmap fotoCompleta = imagem.aplicaMolduraFoto(bmFoto, bmMoldura);
-          
-          
+    // combina a foto com a moldura
+    Bitmap fotoComMoldura = imagem.aplicaMolduraFoto(scaledBitmap, bmMoldura);
 
-          // exibe a foto com a moldura
-          imagem.exibeBitmap(mImageView, fotoCompleta);
+    // exibe a foto com a moldura
+    imagem.exibeBitmap(mImageView, fotoComMoldura);
 
-          
-        } else {
-          Log.w(TAG, "Scaled bitmap é null");
-        }
+    arqSaida = PATH_FOTOS + "xxx3-join-moldura.png";
 
-      } else {
-        Log.i(TAG, "testaVerticalJoin() - Falha na gravação do arquivo: " + arqSaida);
-      }
+    boolean gravouImagemComMoldura = imagem.gravaBitmapArquivo(fotoComMoldura, arqSaida);
 
+    if (gravouImagemComMoldura) {
+
+      // imagem escalonada gravada com sucesso
+      Log.v(TAG, "Imagem com moldura gravada com sucesso no arquivo " + arqSaida);
+    } else {
+      Log.v(TAG, "Falha na gravação da imagem com moldura no arquivo: " + arqSaida);
+      return;
     }
 
   }
 
   /**
-   * onResume()
+   * carregaFoto(String foto)
+   * 
+   * @param foto
+   *          Caminho onde encontrar a foto
+   * 
+   * @return Um bitmap contendo a foto ou null caso a foto não seja encontrada
+   * 
    */
-  @Override
-  protected void onResume() {
+  private Bitmap carregaFoto(String foto) {
 
-    super.onResume();
+    Bitmap bmFoto = imagem.getBitmapFromFile(foto);
 
-    Log.d(TAG, "*** onResume() ***");
+    if (bmFoto != null) {
+      Log.v(TAG, " ==> Tamanho da foto original: " + getStringBitmapSize(bmFoto));
+    } else {
+      Log.w(TAG, "Não foi possível ler o arquivo: " + foto);
+    }
+
+    return bmFoto;
 
   }
 
   /**
-   * Obtém um bitmap em escala reduzida
+   * getScaled70Bitmap(Bitmap bm)
+   * 
+   * Reduz as dimensções de um bitmap em 30%
    * 
    * @param bm
    *          Bitmap original
    * 
-   * @return Um bitmap em escala reduzida.
+   * @return Um bitmap em escala reduzida ou null no caso de erro.
    */
-  public Bitmap pqp(Bitmap bm) {
+  public Bitmap getScaled70Bitmap(Bitmap bm) {
 
     if (bm == null) {
-      Log.w(TAG, "Bitmap is null");
+      Log.w(TAG, "getScaledBitmap() - Bitmap is null");
       return null;
     }
 
     Bitmap bm2 = imagem.getScaledBitmap(bm, 70);
 
-    if (bm2 != null) {
-
-      if (mImageView != null) {
-        mImageView.setImageBitmap(bm2);
-      }
-
-      if (imagem != null) {
-        imagem.showBitmapInfo(bm2);
-        imagem.showImageViewInfo(mImageView);
-      }
-
-    }
-
     return bm2;
 
   }
 
+  /**
+   * getClassName()
+   * 
+   * @return uma string contendo o nome da classe
+   * 
+   */
   private String getClassName() {
 
     // retorna o nome da classe sem o pacote
@@ -432,71 +532,60 @@ public class MyActivity7 extends Activity {
   }
 
   /**
-   * msgDialog(String msg, String sim, String nao)
+   * getStringBitmapSize(Bitmap bm)
    * 
-   * @param msg
-   * @param sim
-   * @param nao
+   * Retorna uma string contendo o tamanho (largura x altura) do bitmap.
    * 
-   * @return
+   * @param bm
+   *          Bitmap
+   * 
+   * @return o tamanho (largura x altura) do bitmap ou null caso o bitmap seja
+   *         nulo
+   * 
    */
-  private int msgDialog(String msg, String sim, String nao) {
+  public String getStringBitmapSize(Bitmap bm) {
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    String s = null;
 
-    builder.setMessage(msg);
+    if (bm != null) {
 
-    builder.setCancelable(false);
+      s = bm.getWidth() + "x" + bm.getHeight();
+    } else {
+      Log.w(TAG, "getStringBitmapSize() - Bitmap é nulo");
+    }
 
-    builder.setPositiveButton(sim, new DialogInterface.OnClickListener() {
-
-      public void onClick(DialogInterface dialog, int id) {
-        // MyActivity7.this.finish();
-        dialog.dismiss();
-        opcao = 1;
-      }
-
-    });
-
-    builder.setNegativeButton(nao, new DialogInterface.OnClickListener() {
-
-      public void onClick(DialogInterface dialog, int id) {
-        dialog.cancel();
-        opcao = 0;
-      }
-
-    });
-
-    AlertDialog alert = builder.create();
-    alert.show();
-
-    return opcao;
+    return s;
 
   }
 
   /**
-   * getStringBitmapSize(Bitmap bm)
-   * 
-   * Retorna ums string contendo o tamanho (largura x altura) do bitmap.
-   *  
-   * @param bm Bitmap
-   * 
-   * @return o tamanho (largura x altura) do bitmap ou null caso o bitmap seja nulo
-   * 
+   * showInfoApps()
    */
-  public String getStringBitmapSize(Bitmap bm) {
-    
-    String s = null;
-    
-    if (bm != null) {
-      
-      s = bm.getWidth() + "x" + bm.getHeight();
-    } else {
-      Log.w(TAG, "Bitmap é nulo");
-    }
-    
-    return s;
-    
+  private void showInfoApps() {
+
+    Application app = MyActivity7.this.getApplication();
+
+    Context ctx = MyActivity7.this.getApplicationContext();
+
+    ApplicationInfo appInfo = MyActivity7.this.getApplicationInfo();
+
+    Log.v(TAG, "getApplication()=" + MyActivity7.this.getApplication());
+    Log.v(TAG, "getApplicationContext()=" + MyActivity7.this.getApplicationContext());
+
+    Log.v(TAG, "getApplicationInfo()=" + MyActivity7.this.getApplicationInfo());
+  }
+
+  /**
+   * showDisplayMetrics(DisplayMetrics d)
+   * 
+   * @param d
+   *          instância da classe DisplayMetrics
+   */
+  public void showDisplayMetrics(DisplayMetrics d) {
+    Log.v(TAG, "showDisplayMetrics(): " + d.toString());
+    Log.v(TAG, "  widthPixels=" + d.widthPixels);
+    Log.v(TAG, "  heightPixels=" + d.heightPixels);
+    Log.v(TAG, "  density=" + d.density);
   }
 
 }
