@@ -29,6 +29,8 @@ import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.ManipulaImagem;
 
+
+
 /**
  * DummyActivity3
  * 
@@ -38,6 +40,9 @@ import br.com.mltech.utils.ManipulaImagem;
 public class DummyActivity3 extends Activity implements Constantes {
 
   private static final String TAG = "DummyActivity3";
+
+  public static final String PATH_MOLDURAS = "/mnt/sdcard/Pictures/fotoevento/molduras/";
+  public static final String PATH_FOTOS = "/mnt/sdcard/Pictures/fotoevento/fotos/";
 
   // Definição da Activies chamadas
   private static final int ACTIVITY_TIRA_FOTO_3 = 113;
@@ -530,94 +535,24 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     }
 
-    // -------------------------------------------------------------------------
+    // --------
+
+    String s = null;
 
     if (tipoFoto == TIPO_FOTO_POLAROID) {
 
-      // foto formato Polaroid exige o redimensionamento da foto bem como
-      // a inclusão da moldura
-      // observe que a moldura está relacionada ao evento em andamento
-      // portanto é necessário ter informações sobre o evento
-
-      Log.d(TAG, "processaFotos() - Foto tipo POLAROID foi selecionada");
-
-      if (pathPolaroid == null) {
-        Log.d(TAG, "Não há moldura definida para foto POLAROID");
-      }
-
-      if (imagem != null) {
-
-        Bitmap bitmap = imagem.criaBitmap(xUri);
-
-        // Exibe informações a respeito da foto
-        imagem.showBitmapInfo(bitmap);
-
-        // Executa o mudança de tamanho da foto
-        // Bitmap bm = imagem.getScaledBitmap(bitmap, 20);
-        // imagem.showBitmapInfo(bm);
-
-        Bitmap bm = bitmap;
-
-        File moldura = new File("/mnt/sdcard/Pictures/fotoevento/molduras/moldura-320x240-green.png");
-
-        if ((moldura != null) && (moldura.exists())) {
-          Log.i(TAG, "arquivo de moldura existe");
-        } else {
-          Log.w(TAG, "moldura está com erro !!!");
-        }
-
-        if ((bm != null) && (moldura != null) && (moldura.exists())) {
-          bm = imagem.processaFotoFormatoPolaroid(bm, moldura);
-        } else {
-          Log.w(TAG, "ERRRO");
-        }
-
-      } else {
-        Log.w(TAG, "A instância da biblioteca de imagens não está disponível");
-      }
-
-      // TODO é necessário gravar o arquivo obtido para que ele possa ser
-      // enviado por email
+      formataFotoPolaroid(pathPolaroid);
 
     } else if (tipoFoto == TIPO_FOTO_CABINE) {
 
-      if (pathCabine == null) {
-        Log.d(TAG, "Não há moldura definida para foto CABINE");
-      }
-
-      // foto formato Cabibe exige três fotos.
-      // as fotos serão montadas em sequencoa e será aplicada
-      // uma moldura (conforme configuração)
-      // observe que a moldura está relacionada ao evento em andamento
-      // portanto é necessário ter informações sobre o evento
-
-      // TODO verificar nesse ponto se há três fotos disponível
-
-      // TODO veja que aqui são necessárias 3 fotos
-      // as fotos podem ser armazenadas em um array de fotos
-      Log.d(TAG, "processaFotos() - Foto tipo CABINE foi selecionada");
-
-      File f1, f2, f3, moldura;
-
-      f1 = null;
-      f2 = null;
-      f3 = null;
-      moldura = null;
-
-      Bitmap bm = imagem.processaFotoFormatoCabine(f1, f2, f3, moldura);
+      s = formataFotoCabine(pathCabine);
 
     } else {
       Log.w(TAG, "Tipo de foto: " + tipoFoto + " não suportado.");
 
     }
 
-    if (efeitoFoto == CORES) { // aplica efeito cores COR
-      // TODO processa o efeito cores
-    } else if (efeitoFoto == PB) { // aplica efeito P&B
-      // TODO processa o efeito P&B, isto é, aplicaca um filtro P&B à foto
-    } else {
-      Log.w(TAG, "Efeito: " + efeitoFoto + " não é suportado pela aplicação");
-    }
+    processoEfeitoFiltroFoto(efeitoFoto);
 
     // -------------------------------------------------------------------------
 
@@ -631,6 +566,117 @@ public class DummyActivity3 extends Activity implements Constantes {
     // Envia email com a foto pronta
     enviaEmail(lastUri);
 
+  }
+
+  /**
+   * processoEfeitoFiltroFoto(int efeitoFoto)
+   * 
+   * @param efeitoFoto
+   */
+  private void processoEfeitoFiltroFoto(int efeitoFoto) {
+    
+    if (efeitoFoto == CORES) { // aplica efeito cores COR
+      // TODO processa o efeito cores
+    } else if (efeitoFoto == PB) { // aplica efeito P&B
+      // TODO processa o efeito P&B, isto é, aplicaca um filtro P&B à foto
+    } else {
+      Log.w(TAG, "Efeito: " + efeitoFoto + " não é suportado pela aplicação");
+    }
+    
+  }
+
+  /**
+   * 
+   * @param pathCabine
+   */
+  private String formataFotoCabine(String pathCabine) {
+    
+    if (pathCabine == null) {
+      Log.d(TAG, "Não há moldura definida para foto CABINE");
+    }
+
+    // foto formato Cabibe exige três fotos.
+    // as fotos serão montadas em sequencoa e será aplicada
+    // uma moldura (conforme configuração)
+    // observe que a moldura está relacionada ao evento em andamento
+    // portanto é necessário ter informações sobre o evento
+
+    // TODO verificar nesse ponto se há três fotos disponível
+
+    // TODO veja que aqui são necessárias 3 fotos
+    // as fotos podem ser armazenadas em um array de fotos
+    Log.d(TAG, "processaFotos() - Foto tipo CABINE foi selecionada");
+
+
+    String foto1 = PATH_FOTOS + "img-3x4-blue.png";
+    String foto2 = PATH_FOTOS + "img-3x4-green.png";
+    String foto3 = PATH_FOTOS + "img-3x4-yellow.png";
+    
+    String moldura = "moldura-cabine-132x568-red.png";
+    
+    String s = imagem.processaFotoFormatoCabine(foto1, foto2, foto3, moldura);
+
+
+    
+    return null;
+  }
+
+  /**
+   * formataFotoPolaroid(String pathPolaroid)
+   * 
+   * Pega a foto e a moldura e cria um novo bitmap
+   * 
+   * @param pathPolaroid
+   * 
+   */
+  private String formataFotoPolaroid(String pathPolaroid) {
+    
+    // foto formato Polaroid exige o redimensionamento da foto bem como
+    // a inclusão da moldura
+    // observe que a moldura está relacionada ao evento em andamento
+    // portanto é necessário ter informações sobre o evento
+
+    Log.d(TAG, "processaFotos() - Foto tipo POLAROID foi selecionada");
+
+    if (pathPolaroid == null) {
+      Log.d(TAG, "Não há moldura definida para foto POLAROID");
+    }
+
+    if (imagem != null) {
+
+      Bitmap bitmap = imagem.criaBitmap(xUri);
+
+      // Exibe informações a respeito da foto
+      imagem.showBitmapInfo(bitmap);
+
+      // Executa o mudança de tamanho da foto
+      Bitmap bm = imagem.getScaledBitmap2(bitmap, 228, 302);
+      // imagem.showBitmapInfo(bm);
+
+      // Bitmap bm = bitmap;
+
+      File moldura = new File(PATH_MOLDURAS + "moldura-polaroid-340x416-red.png");
+
+      if ((moldura != null) && (moldura.exists())) {
+        Log.i(TAG, "arquivo de moldura existe");
+      } else {
+        Log.w(TAG, "moldura está com erro !!!");
+      }
+
+      if ((bm != null) && (moldura != null) && (moldura.exists())) {
+        bm = imagem.processaFotoFormatoPolaroid(bm, moldura);
+      } else {
+        Log.w(TAG, "ERRO");
+      }
+
+    } else {
+      Log.w(TAG, "A instância da biblioteca de imagens não está disponível");
+    }
+
+    // TODO é necessário gravar o arquivo obtido para que ele possa ser
+    // enviado por email
+
+    return null;
   }
 
   /**
@@ -694,27 +740,19 @@ public class DummyActivity3 extends Activity implements Constantes {
        * Assunto do email
        */
       /*
-      String subject = null;
-      // Define o "subject" do email
-      if ((assuntoDoEmail != null) && (!assuntoDoEmail.equals(""))) {
-        subject = assuntoDoEmail;
-      } else {
-        subject = "";
-      }
-      */
+       * String subject = null; // Define o "subject" do email if
+       * ((assuntoDoEmail != null) && (!assuntoDoEmail.equals(""))) { subject =
+       * assuntoDoEmail; } else { subject = ""; }
+       */
 
       /**
        * Corpo do email
        */
       /*
-      String body = null;
-      // Define o corpo do email (mensagem do corpo do email)
-      if ((corpoDoEmail != null) && (!corpoDoEmail.equals(""))) {
-        body = corpoDoEmail;
-      } else {
-        body = "";
-      }
-      */
+       * String body = null; // Define o corpo do email (mensagem do corpo do
+       * email) if ((corpoDoEmail != null) && (!corpoDoEmail.equals(""))) { body
+       * = corpoDoEmail; } else { body = ""; }
+       */
 
       // envia o email
       // TODO substituir xUri por lastUri, isto é, a URI da foto processada
