@@ -9,14 +9,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Bitmap.Config;
-import android.graphics.Path.Direction;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -26,6 +22,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import br.com.mltech.utils.ManipulaImagem;
+
+
 
 /**
  * MyActivity7
