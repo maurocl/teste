@@ -12,7 +12,19 @@ import android.widget.EditText;
 /**
  * PreferenciasActivity
  * 
- * Activity responsável pelo cadastramento de preferências de uso do sistema
+ * Activity responsável pela manutenção das preferências de uso do sistema
+ * 
+ * Aqui são configuradas as preferências de:
+ * 
+ * - subjet do email
+ * - corpo da mensagem do email
+ * 
+ * - texto padrão da mensagem do Facebook
+ * - texto padrão da mensagem do Twitter
+ * 
+ * - localização da foto da página inicial da aplicação
+ * 
+ * - nº da câmera frontal do equipamento
  * 
  * @author maurocl
  * 
@@ -36,6 +48,10 @@ public class PreferenciasActivity extends Activity {
 
     final EditText assunto = (EditText) findViewById(R.id.editAssunto);
     final EditText descricao = (EditText) findViewById(R.id.editDescricao);
+        
+    final EditText txtFacebook = (EditText) findViewById(R.id.editTextoFacebook);
+    final EditText txtTwitter  = (EditText) findViewById(R.id.editTextoTwitter);
+    
     final EditText urlImagem = (EditText) findViewById(R.id.editUrlImagem);
     final EditText numCameraFrontal = (EditText) findViewById(R.id.editNumCameraFrontal);
 
@@ -47,6 +63,10 @@ public class PreferenciasActivity extends Activity {
 
     assunto.setText(preferences.getString("preferencias_assunto", ""));
     descricao.setText(preferences.getString("preferencias_descricao", ""));
+    
+    txtFacebook.setText(preferences.getString("preferencias_texto_facebook", ""));
+    txtTwitter.setText(preferences.getString("preferencias_texto_twitter", ""));
+    
     urlImagem.setText(preferences.getString("preferencias_url_imagem", ""));
     numCameraFrontal.setText(preferences.getString("preferencias_num_camera_frontal", ""));
 
@@ -59,6 +79,10 @@ public class PreferenciasActivity extends Activity {
 
         edit.putString("preferencias_assunto", assunto.getText().toString());
         edit.putString("preferencias_descricao", descricao.getText().toString());
+        
+        edit.putString("preferencias_texto_facebook", txtFacebook.getText().toString());
+        edit.putString("preferencias_texto_twitter", txtTwitter.getText().toString());
+        
         edit.putString("preferencias_url_imagem", urlImagem.getText().toString());
         edit.putString("preferencias_num_camera_frontal", numCameraFrontal.getText().toString());
 

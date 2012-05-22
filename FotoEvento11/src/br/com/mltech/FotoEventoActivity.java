@@ -9,7 +9,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -193,16 +195,11 @@ public class FotoEventoActivity extends Activity {
     btnSair.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
-        // TODO aqui deve ter um ALERT solicitando sim/não
 
-        /*
-         * AlertDialog.Builder builder = new
-         * AlertDialog.Builder(FotoEventoActivity.this);
-         * builder.setMessage("Sai da aplicação ?").setNeutralButton("Fechar",
-         * null); AlertDialog alert = builder.create(); alert.show();
-         */
-
-        finish();
+        desejaSairDaAplicacao() ;
+        
+        //finish();
+        
       }
 
     });
@@ -882,12 +879,14 @@ public class FotoEventoActivity extends Activity {
     // verifica se existe um contratante
     if (mContratante == null) {
       Log.w(TAG, "Contratante não foi configurado");
+      Toast.makeText(this, "Contratante não foi configurado", Toast.LENGTH_LONG).show();
       b = false;
     }
 
     // verifica se existe um evento cadastrado
     if (mEvento == null) {
       Log.w(TAG, "Evento não foi configurado");
+      Toast.makeText(this, "Evento não foi configurado", Toast.LENGTH_LONG).show();
       b = false;
     }
 
@@ -1013,4 +1012,36 @@ public class FotoEventoActivity extends Activity {
 
   }
 
+  
+  /**
+   * desejaSairDaAplicacao()
+   * 
+   * Exibe uma caixa de diálogo e a mensagem operguntando se deseja sair da
+   * aplicação
+   */
+  private void desejaSairDaAplicacao() {
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+    builder.setMessage("Você tem certeza que deseja sair ?").setCancelable(false)
+        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+
+          public void onClick(DialogInterface dialog, int id) {
+            FotoEventoActivity.this.finish();
+          }
+
+        }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
+
+          public void onClick(DialogInterface dialog, int id) {
+            dialog.cancel();
+          }
+
+        });
+
+    AlertDialog alert = builder.create();
+    alert.show();
+
+  }
+
+  
 }

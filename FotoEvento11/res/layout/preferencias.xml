@@ -59,6 +59,51 @@
             android:hint="Descrição do evento (corpo do email)"
             android:text="editDescricao" />
 
+        <!--  -->
+
+
+        <!-- Preferências de email -->
+
+        <TextView
+            android:id="@+id/textRedesSociais"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:text="Redes Sociais"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <!-- Facebook -->
+
+        <TextView
+            android:id="@+id/tvFacebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Texto Facebook:" />
+
+        <EditText
+            android:id="@+id/editTextoFacebook"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Texto mensagem Facebook"
+            android:paddingBottom="20dp" />
+
+        <!-- Twitter -->
+
+        <TextView
+            android:id="@+id/tvTwitter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Texto Twitter:" />
+
+        <EditText
+            android:id="@+id/editTextoTwitter"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Texto mensagem Twitter" />
+
+        <!--  -->
+
+
         <!-- URL da imagem da tela inicial da aplicação -->
 
         <TextView

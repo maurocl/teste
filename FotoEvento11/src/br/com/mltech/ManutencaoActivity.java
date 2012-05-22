@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -165,7 +167,7 @@ public class ManutencaoActivity extends Activity {
         params.putString("numParticipantes", String.valueOf(num));
 
         intent.putExtra("br.com.mltech.lista", (ArrayList<Participacao>) lista);
-        
+
         intent.putExtra("br.com.mltech.evento", mEvento);
 
         intent.putExtras(params);
@@ -183,17 +185,36 @@ public class ManutencaoActivity extends Activity {
        */
       public void onClick(View v) {
 
-        boolean b = limpaConfiguracoes();
+        AlertDialog.Builder builder = new AlertDialog.Builder(ManutencaoActivity.this);
 
-        if (b) {
-          Toast.makeText(ManutencaoActivity.this, "Configuração inicial restaurada com sucesso", Toast.LENGTH_SHORT).show();
+        builder.setMessage("Você tem certeza que apagar todos os dados ?").setCancelable(false)
+            .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
 
-          mContratante = null;
-          mEvento = null;
+              public void onClick(DialogInterface dialog, int id) {
+                boolean b = limpaConfiguracoes();
+                
+                if (b) {
+                  Toast.makeText(ManutencaoActivity.this, "Configuração inicial restaurada com sucesso", Toast.LENGTH_SHORT).show();
 
-        } else {
-          Toast.makeText(ManutencaoActivity.this, "Falha na reinicialização da onfiguração inicial", Toast.LENGTH_SHORT).show();
-        }
+                  mContratante = null;
+                  mEvento = null;
+
+                } else {
+                  Toast.makeText(ManutencaoActivity.this, "Falha na reinicialização da onfiguração inicial", Toast.LENGTH_SHORT).show();
+                }
+                
+              }
+
+            }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
+
+              public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+              }
+
+            });
+
+        AlertDialog alert = builder.create();
+        alert.show();
 
       }
     });

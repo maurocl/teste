@@ -169,12 +169,17 @@
             android:layout_height="wrap_content"
             android:hint="Borda usada no formato de borda Polaroid"
             android:text="Borda Polaroid" />
-
+
         <EditText
             android:id="@+evento/editBordaPolaroid"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="URL do arquivo com a borda Polaroid" />
+            android:ems="10"
+            android:hint="URL do arquivo com a borda Polaroid"
+            android:inputType="text" >
+
+            <requestFocus />
+        </EditText>
 
         <!-- Borda Cabine -->
 
@@ -183,12 +188,13 @@
             android:layout_height="wrap_content"
             android:hint="Borda usada no formato de borda Cabine"
             android:text="Borda Cabine" />
-
+
         <EditText
             android:id="@+evento/editBordaCabine"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="URL do arquivo com a borda Cabine" />
+            android:hint="URL do arquivo com a borda Cabine"
+            android:inputType="text" />
 
         <!-- Parâmetros Adicionais -->
 
