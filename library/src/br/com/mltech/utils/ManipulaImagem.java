@@ -62,9 +62,10 @@ public class ManipulaImagem {
     bmp1 = getBitmapFromFile(foto); // foto
     bmp2 = getBitmapFromFile(moldura); // moldura
 
-    Bitmap bitmap = overlay4(bmp1, bmp2); // cria um novo bitmap com a
+    // cria um novo bitmap com a
     // moldura
     // sobreposta a foto
+    Bitmap bitmap = overlay4(bmp1, bmp2);
 
     if (bitmap == null) {
       Log.w(TAG, "processaFotoFormatoPolaroid() - erro na conversão da foto");
@@ -105,15 +106,12 @@ public class ManipulaImagem {
    * 
    * @return
    */
-  public Bitmap processaFotoFormatoPolaroid(Bitmap foto, File moldura) {
+  public Bitmap processaFotoFormatoPolaroid(Bitmap foto, Bitmap moldura) {
 
-    Bitmap bmp2 = null;
-
-    bmp2 = getBitmapFromFile(moldura); // moldura
-
-    Bitmap bitmap = overlay4(foto, bmp2); // cria um novo bitmap com a
+    // cria um novo bitmap com a
     // moldura
     // sobreposta a foto
+    Bitmap bitmap = overlay4(foto, moldura);
 
     if (bitmap == null) {
       Log.w(TAG, "processaFotoFormatoPolaroid() - erro na conversão da foto");
@@ -124,7 +122,8 @@ public class ManipulaImagem {
   }
 
   /**
-   * processaFotoFormatoCabine(String foto1, String foto2, String foto3, String arqMoldura)
+   * processaFotoFormatoCabine(String foto1, String foto2, String foto3, String
+   * arqMoldura)
    * 
    * Testa o funcionamento da função verticalJoin().
    * 
@@ -149,21 +148,27 @@ public class ManipulaImagem {
     Bitmap bmFoto1 = carregaFoto(foto1);
 
     if (bmFoto1 == null) {
-      // Log.w(TAG, "processaFotoFormatoCabine() - Não foi possível ler o arquivo: " + foto1);
+      // Log.w(TAG,
+      // "processaFotoFormatoCabine() - Não foi possível ler o arquivo: " +
+      // foto1);
       return null;
     }
 
     // Foto 2
     Bitmap bmFoto2 = carregaFoto(foto2);
     if (bmFoto2 == null) {
-      // Log.w(TAG, "processaFotoFormatoCabine() - Não foi possível ler o arquivo: " + foto2);
+      // Log.w(TAG,
+      // "processaFotoFormatoCabine() - Não foi possível ler o arquivo: " +
+      // foto2);
       return null;
     }
 
     // Foto 3
     Bitmap bmFoto3 = carregaFoto(foto3);
     if (bmFoto3 == null) {
-      // Log.w(TAG, "processaFotoFormatoCabine() - Não foi possível ler o arquivo: " + foto3);
+      // Log.w(TAG,
+      // "processaFotoFormatoCabine() - Não foi possível ler o arquivo: " +
+      // foto3);
       return null;
     }
 
@@ -263,23 +268,24 @@ public class ManipulaImagem {
 
   }
 
-  
   /**
    * aplicaFiltroCores(Bitmap bi)
    * 
-   * @param bi Bitmap original
+   * @param bi
+   *          Bitmap original
    * 
-   * @return um bitmap com o filtro aplicado ou null 
+   * @return um bitmap com o filtro aplicado ou null
    * 
    */
   public Bitmap aplicaFiltroCores(Bitmap bi) {
     return null;
   }
-  
+
   /**
    * aplicaFiltroPB(Bitmap bi)
    * 
-   * @param bi Bitmap original
+   * @param bi
+   *          Bitmap original
    * 
    * @return um bitmap com o filtro aplicado ou null
    * 
@@ -288,7 +294,6 @@ public class ManipulaImagem {
     return null;
   }
 
-  
   /**
    * aplicaMolduraFoto(String foto, String moldura)
    * 
@@ -366,8 +371,145 @@ public class ManipulaImagem {
     return bmOverlay;
 
   }
-  
-  
+
+  /**
+   * carregaFoto(String foto)
+   * 
+   * Obtém um bitmap a partir de um arquivo
+   * 
+   * @param foto
+   *          Caminho onde encontrar a foto
+   * 
+   * @return Um bitmap contendo a foto ou null caso a foto não seja encontrada
+   * 
+   */
+  private Bitmap carregaFoto(String foto) {
+
+    Bitmap bmFoto = getBitmapFromFile(foto);
+
+    if (bmFoto != null) {
+      Log.v(TAG, " ==> Tamanho da foto original: " + getStringBitmapSize(bmFoto));
+    } else {
+      Log.w(TAG, "Não foi possível ler o arquivo: " + foto);
+    }
+
+    return bmFoto;
+
+  }
+
+  /**
+   * criaBitmap(Uri uri)
+   * 
+   * Tenta criar um bitmap a partir de um arquivo identificado por uma Uri
+   * 
+   * @param uri
+   *          Uri do arquivo contendo uma imagem
+   * 
+   * @return um Bitmap ou null caso não seja possível criar o bitmap
+   * 
+   */
+  public Bitmap criaBitmap(Uri uri) {
+
+    if (uri == null) {
+      Log.d(TAG, "criaBitmap() - uri é null");
+      return null;
+    }
+
+    // cria-se um arquivo
+    File file = new File(uri.getPath());
+
+    // cria um bitmap a partir do arquivo
+    Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+    Log.v(TAG, "criaBitmap() - tamanho da imagem criada: " + getStringBitmapSize(bitmap));
+
+    return bitmap;
+
+  }
+
+  /**
+   * combineImages(Bitmap c, Bitmap s)
+   * 
+   * @param c
+   *          Bitmap c
+   * @param s
+   *          Bitmap s (source ???)
+   * 
+   * @return A Bitmap ou null caso haja algum erro
+   */
+  public Bitmap combineImages(Bitmap c, Bitmap s) {
+
+    Bitmap cs = null;
+
+    // largura e altura do novo bitmap
+    int width, height = 0;
+
+    if (c.getWidth() > s.getWidth()) {
+      // obtém a maior largura
+      width = c.getWidth();
+      height = c.getHeight();
+
+    } else {
+      // obtem a nova largura com sendo a soma
+      width = s.getWidth() + s.getWidth();
+      height = c.getHeight();
+
+    }
+
+    // cria o novo bitmap com as medidas calculadas anteriormnete
+    cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+    // Obtem um cancas para poder desenhar no bitmap
+    Canvas comboImage = new Canvas(cs);
+
+    // desenha o bitmap c
+    comboImage.drawBitmap(c, 0, 0, null);
+
+    // desenha o bitmap s
+    comboImage.drawBitmap(s, 100, 300, null);
+
+    /******
+     * 
+     * Write file to SDCard
+     * 
+     * ****/
+
+    // cria um nome de arquivo
+    String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
+
+    OutputStream os = null;
+
+    try {
+      // grava p arquivo contendo o bitmap
+      os = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + tmpImg);
+      // grava o bitmap no file stream de saída
+      cs.compress(CompressFormat.PNG, 100, os);
+    } catch (IOException e) {
+      Log.e(TAG, "Houve algum problema ao combinar as imagens", e);
+    }
+
+    // retorna o novo bitmap criado
+    return cs;
+
+  }
+
+  /**
+   * exibeBitmap(ImageView imageView, Bitmap bitmap)
+   * 
+   * Exibe um bitmap em um imageView.
+   * 
+   * @param imageView
+   * @param bitmap
+   */
+  public void exibeBitmap(ImageView imageView, Bitmap bitmap) {
+
+    if ((imageView != null) && (bitmap != null)) {
+      // imageView.setImageBitmap(bitmap);
+      updateBitmap(bitmap, imageView);
+    }
+
+  }
+
   /**
    * extractAlpha(Bitmap bm)
    * 
@@ -593,6 +735,85 @@ public class ManipulaImagem {
   }
 
   /**
+   * getRoundedCornerBitmap(Bitmap bitmap)
+   * 
+   * @param bitmap
+   * 
+   * @return um bitmap
+   */
+  public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+
+    // Returns a mutable bitmap with the specified width and height.
+    // Its initial density is as per getDensity().
+    Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+
+    // Construct a canvas with the specified bitmap to draw into.
+    // The bitmap must be mutable.
+    // The initial target density of the canvas is the same as the given
+    // bitmap's density.
+    Canvas canvas = new Canvas(output);
+
+    final int color = 0xff424242;
+
+    // Create a new paint with default settings.
+    final Paint paint = new Paint();
+
+    // Create a new rectangle with the specified coordinates.
+    // Note: no range checking is performed, so the caller must ensure that
+    // left <= right and top <= bottom.
+    final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+    // RectF holds four float coordinates for a rectangle.
+    // The rectangle is represented by the coordinates of its 4 edges (left,
+    // top, right bottom).
+    // These fields can be accessed directly.
+    // Use width() and height() to retrieve the rectangle's width and height.
+    // Note: most methods do not check to see that the coordinates are sorted
+    // correctly
+    // (i.e. left <= right and top <= bottom).
+    final RectF rectF = new RectF(rect);
+
+    // final float roundPx = 15;
+    final float roundPx = 25;
+
+    // Helper for setFlags(), setting or clearing the ANTI_ALIAS_FLAG bit
+    // AntiAliasing smooths out the edges of what is being drawn, but is has no
+    // impact on the interior of the shape. See setDither() and
+    // setFilterBitmap() to affect how colors are treated.
+    paint.setAntiAlias(true);
+
+    // Fill the entire canvas' bitmap (restricted to the current clip) with the
+    // specified ARGB color, using srcover porterduff mode.
+    canvas.drawARGB(0, 0, 0, 0);
+    // canvas.drawARGB(0, 255, 255, 255);
+
+    // Set the paint's color.
+    // Note that the color is an int containing alpha as well as r,g,b.
+    // This 32bit value is not pre multiplied, meaning that its
+    // alpha can be any value, regardless of the values of r,g,b.
+    // See the Color class for more details.
+    paint.setColor(color);
+
+    // Draw the specified round-rect using the specified paint.
+    // The roundrect will be filled or framed based on the Style in the paint.
+    canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+    // Set or clear the xfermode object.
+    // Pass null to clear any previous xfermode. As a convenience, the parameter
+    // passed is also returned.
+    paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+    // paint.setXfermode(new PorterDuffXfermode(Mode.LIGHTEN));
+
+    // Draw the specified bitmap, scaling/translating automatically to fill the
+    // destination rectangle. If the source rectangle is not null, it specifies
+    // the subset of the bitmap to draw.
+    canvas.drawBitmap(bitmap, rect, rect, paint);
+
+    return output;
+
+  }
+
+  /**
    * gravaBitmapArquivo(Bitmap bm, String filename)
    * 
    * Grava um bitmap em um arquivo.
@@ -649,6 +870,51 @@ public class ManipulaImagem {
     return salvou;
 
   }
+  
+  
+  public boolean gravaBitmapArquivo2(Bitmap bm, String filename) {
+
+    boolean salvou = false;
+
+    if (bm == null) {
+      // bitmap não pode ser vazio
+      return false;
+    }
+
+    if (filename == null) {
+      // arquivo não pode ser vazio
+      return false;
+    }
+
+    File f = new File(filename);
+
+    // transforma o nome do arquivo em uma URI
+    URI uri = f.toURI();
+
+    Log.v(TAG, "gravaBitmapArquivo() - uri=" + uri);
+
+    OutputStream out = null;
+
+    try {
+
+      out = new FileOutputStream(filename);
+
+      boolean success = bm.compress(Bitmap.CompressFormat.JPEG, 75, out);
+      Log.i(TAG, "gravaBitmapArquivo() - sucess code from bitmap.compress: " + success);
+      out.close();
+
+      salvou = true;
+
+    } catch (FileNotFoundException e) {
+      Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo", e);
+    } catch (IOException e) {
+      Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo", e);
+    }
+
+    return salvou;
+
+  }
+  
 
   /**
    * getStringBitmapSize(Bitmap bm)
@@ -833,8 +1099,8 @@ public class ManipulaImagem {
    * 
    * Executa o overlay para fotos no formato polaroid
    * 
-   * @param bmp1
-   * @param bmp2
+   * @param bmp1 foto
+   * @param bmp2 moldura
    * 
    * @return Bitmap
    */
@@ -871,8 +1137,8 @@ public class ManipulaImagem {
     Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
     Matrix m = new Matrix();
-
-    //m.setTranslate(0, 0);
+    
+    m.setTranslate(58, 24);
 
     // desenha a imagem de fundo (backgroud) - foto
     canvas.drawBitmap(bmp1, m, paint);
@@ -884,109 +1150,12 @@ public class ManipulaImagem {
 
     paint.setAlpha(255);
 
-    m.setTranslate(58, 24);
+    m.setTranslate(0, 0);
 
     // desenha a imagem de frente (foreground) - moldura
     canvas.drawBitmap(bmp2, m, paint);
 
     return bmOverlay;
-
-  }
-
-  
-  /**
-   * combineImages(Bitmap c, Bitmap s)
-   * 
-   * @param c
-   *          Bitmap c
-   * @param s
-   *          Bitmap s (source ???)
-   * 
-   * @return A Bitmap ou null caso haja algum erro
-   */
-  public Bitmap combineImages(Bitmap c, Bitmap s) {
-
-    Bitmap cs = null;
-
-    // largura e altura do novo bitmap
-    int width, height = 0;
-
-    if (c.getWidth() > s.getWidth()) {
-      // obtém a maior largura
-      width = c.getWidth();
-      height = c.getHeight();
-
-    } else {
-      // obtem a nova largura com sendo a soma
-      width = s.getWidth() + s.getWidth();
-      height = c.getHeight();
-
-    }
-
-    // cria o novo bitmap com as medidas calculadas anteriormnete
-    cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-    // Obtem um cancas para poder desenhar no bitmap
-    Canvas comboImage = new Canvas(cs);
-
-    // desenha o bitmap c
-    comboImage.drawBitmap(c, 0, 0, null);
-
-    // desenha o bitmap s
-    comboImage.drawBitmap(s, 100, 300, null);
-
-    /******
-     * 
-     * Write file to SDCard
-     * 
-     * ****/
-
-    // cria um nome de arquivo
-    String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
-
-    OutputStream os = null;
-
-    try {
-      // grava p arquivo contendo o bitmap
-      os = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + tmpImg);
-      // grava o bitmap no file stream de saída
-      cs.compress(CompressFormat.PNG, 100, os);
-    } catch (IOException e) {
-      Log.e(TAG, "Houve algum problema ao combinar as imagens", e);
-    }
-
-    // retorna o novo bitmap criado
-    return cs;
-
-  }
-
-  /**
-   * criaBitmap(Uri uri)
-   * 
-   * Tenta criar um bitmap a partir de um arquivo identificado por uma Uri
-   * 
-   * @param uri
-   *          Uri do bitmap
-   * 
-   * @return um Bitmap ou null caso não seja possível criar o bitmap
-   * 
-   */
-  public Bitmap criaBitmap(Uri uri) {
-
-    if (uri == null) {
-      Log.d(TAG, "criaBitmap() - uri é null");
-      return null;
-    }
-
-    // cria-se um arquivo
-    File file = new File(uri.getPath());
-
-    // cria um bitmap a partir do arquivo
-    Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-
-    Log.v(TAG, getStringBitmapSize(bitmap));
-
-    return bitmap;
 
   }
 
@@ -1063,6 +1232,167 @@ public class ManipulaImagem {
       Log.w(TAG, "showBitmapInfo(): Bitmap is null");
 
     }
+
+  }
+
+  /**
+   * verticlJoin(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3)
+   * 
+   * Faz a concatenação entre três arquivos bitmap na vertical, isto é, as fotos
+   * são colocadas uma abaixo da outra. As imagem ficam maiores na vertical
+   * 
+   * @param bmp1
+   *          Foto 1
+   * @param bmp2
+   *          Foto 2
+   * @param bmp3
+   *          Foto 3
+   * 
+   * @return Um bitmap contendo as "junção" entre os três bitmaps (na vertica,
+   *         isto é), um bitmap será posicionado abaixo do outro na vertical (a
+   *         figura irá manter a largura e terá como altura a soma das alturas
+   *         de cada uma das figuras) É importante notar que todas as imagem
+   *         deverão ter a mesma largura.
+   */
+  public Bitmap verticalJoin(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3) {
+
+    if (bmp1 == null || bmp2 == null || bmp3 == null) {
+      Log.w(TAG, "verticalJoin() - Pelo menos uma imagem é null");
+      return null;
+    }
+
+    if (!((bmp1.getWidth() == bmp2.getWidth()) && (bmp2.getWidth() == bmp3.getWidth()))) {
+      Log.w(TAG, "bmp1=" + bmp1.getWidth());
+      Log.w(TAG, "bmp2=" + bmp2.getWidth());
+      Log.w(TAG, "bmp3=" + bmp3.getWidth());
+      Log.w(TAG, "As imagens não possuem a mesma largura");
+      return null;
+    }
+
+    // a imagem resultante terá a mesma largura
+    int w = bmp1.getWidth();
+
+    // a altura da imagem resultante será dada pela soma das alturas das
+    // imagens
+    int newHeight = bmp1.getHeight() + bmp2.getHeight() + bmp3.getHeight();
+
+    /*
+     * Possible bitmap configurations. A bitmap configuration describes how
+     * pixels are stored. This affects the quality (color depth) as well as the
+     * ability to display transparent/translucent colors.
+     */
+
+    /*
+     * Each pixel is stored on 4 bytes. Each channel (RGB and alpha for
+     * translucency) is stored with 8 bits of precision (256 possible values.)
+     * This configuration is very flexible and offers the best quality. It
+     * should be used whenever possible.
+     */
+
+    // cria um novo bitmap onde será inseridas as três imagens
+    // o tamanho do novo bitmap é dado por w + a soma das alturas dos
+    // bitmaps 1, 2 e 3
+    Bitmap bitmap = Bitmap.createBitmap(w, newHeight, Bitmap.Config.ARGB_8888);
+
+    // Obtém o canvas e carrega o bitmap ao canvas.
+    // O canvas pode ser "pintado"
+    Canvas canvas = new Canvas(bitmap);
+
+    // Define a cor AZUL como cor de preenchimento
+    canvas.drawColor(Color.BLUE);
+
+    Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+
+    // Define uma matriz identidade
+    Matrix m = new Matrix();
+
+    // Desenha o 1º bitmap
+    canvas.drawBitmap(bmp1, m, paint);
+
+    m.setTranslate(0, bmp1.getHeight());
+
+    // Desenha o 2º bitmap
+    canvas.drawBitmap(bmp2, m, paint);
+
+    m.setTranslate(0, bmp1.getHeight() + bmp2.getHeight());
+
+    // Desenha o 3º bitmap
+    canvas.drawBitmap(bmp3, m, paint);
+
+    // o novo bitmap formado
+    return bitmap;
+
+  }
+
+  /**
+   * updateBitmap(Bitmap bm, ImageView image)
+   * 
+   * Atualiza um ImageView com um bitmap
+   * 
+   * @param bm
+   *          Bitmap
+   * @param image
+   *          imageView
+   * 
+   */
+  public void updateBitmap(Bitmap bm, ImageView image) {
+
+    if ((bm != null) && (image != null)) {
+
+      image.setImageBitmap(bm);
+
+      showBitmapInfo(bm);
+
+    } else {
+
+      Log.d(TAG, "updateBitmap() - Bitmap is null");
+
+    }
+
+  }
+
+  /**
+   * msgDialog(String msg, String sim, String nao)
+   * 
+   * @param msg
+   * @param sim
+   * @param nao
+   * 
+   * @return
+   */
+  private int msgDialog(Context ctx, String msg, String sim, String nao) {
+
+    // TODO esse método está com problemas ...
+    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+
+    builder.setMessage(msg);
+
+    builder.setCancelable(false);
+
+    builder.setPositiveButton(sim, new DialogInterface.OnClickListener() {
+
+      public void onClick(DialogInterface dialog, int id) {
+        // MyActivity7.this.finish();
+        dialog.dismiss();
+        // opcao = 1;
+      }
+
+    });
+
+    builder.setNegativeButton(nao, new DialogInterface.OnClickListener() {
+
+      public void onClick(DialogInterface dialog, int id) {
+        dialog.cancel();
+        // opcao = 0;
+      }
+
+    });
+
+    AlertDialog alert = builder.create();
+    alert.show();
+
+    // return opcao;
+    return 0;
 
   }
 
@@ -1168,286 +1498,4 @@ public class ManipulaImagem {
 
   }
 
-  /**
-   * verticlJoin(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3)
-   * 
-   * Faz a concatenação entre três arquivos bitmap
-   * 
-   * @param bmp1
-   *          Foto 1
-   * @param bmp2
-   *          Foto 2
-   * @param bmp3
-   *          Foto 3
-   * 
-   * @return Um bitmap contendo as "junção" entre os três bitmaps (na vertica,
-   *         isto é), um bitmap será posicionado abaixo do outro na vertical (a
-   *         figura irá manter a largura e terá como altura a soma das alturas
-   *         de cada uma das figuras) É importante notar que todas as imagem
-   *         deverão ter a mesma largura.
-   */
-  public Bitmap verticalJoin(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3) {
-
-    if (bmp1 == null || bmp2 == null || bmp3 == null) {
-      Log.w(TAG, "verticalJoin() - Pelo menos uma imagem é null");
-      return null;
-    }
-
-    if (!((bmp1.getWidth() == bmp2.getWidth()) && (bmp2.getWidth() == bmp3.getWidth()))) {
-      Log.w(TAG, "bmp1=" + bmp1.getWidth());
-      Log.w(TAG, "bmp2=" + bmp2.getWidth());
-      Log.w(TAG, "bmp3=" + bmp3.getWidth());
-      Log.w(TAG, "As imagens não possuem a mesma largura");
-      return null;
-    }
-
-    // a imagem resultante terá a mesma largura
-    int w = bmp1.getWidth();
-
-    // a altura da imagem resultante será dada pela soma das alturas das
-    // imagens
-    int nh = bmp1.getHeight() + bmp2.getHeight() + bmp3.getHeight();
-
-    /*
-     * Possible bitmap configurations. A bitmap configuration describes how
-     * pixels are stored. This affects the quality (color depth) as well as the
-     * ability to display transparent/translucent colors.
-     */
-
-    /*
-     * Each pixel is stored on 4 bytes. Each channel (RGB and alpha for
-     * translucency) is stored with 8 bits of precision (256 possible values.)
-     * This configuration is very flexible and offers the best quality. It
-     * should be used whenever possible.
-     */
-
-    // cria um novo bitmap onde será inseridas as três imagens
-    // o tamanho do novo bitmap é dado por w + a soma das alturas dos
-    // bitmaps 1,
-    // 2 e 3
-    Bitmap bitmap = Bitmap.createBitmap(w, nh, Bitmap.Config.ARGB_8888);
-
-    // Obtém o canvas
-    Canvas canvas = new Canvas(bitmap);
-
-    // Define a cor AZUL como cor de preenchimento
-    canvas.drawColor(Color.BLUE);
-
-    Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-
-    // Define uma matriz identidade
-    Matrix m = new Matrix();
-
-    // Desenha o 1º bitmap
-    canvas.drawBitmap(bmp1, m, paint);
-
-    m.setTranslate(0, bmp1.getHeight());
-
-    // Desenha o 2º bitmap
-    canvas.drawBitmap(bmp2, m, paint);
-
-    m.setTranslate(0, bmp1.getHeight() + bmp2.getHeight());
-
-    // Desenha o 3º bitmap
-    canvas.drawBitmap(bmp3, m, paint);
-
-    // o novo bitmap formado
-    return bitmap;
-
-  }
-
-  /**
-   * exibeBitmap(ImageView imageView, Bitmap bitmap)
-   * 
-   * Exibe um bitmap em um imageView.
-   * 
-   * @param imageView
-   * @param bitmap
-   */
-  public void exibeBitmap(ImageView imageView, Bitmap bitmap) {
-
-    if ((imageView != null) && (bitmap != null)) {
-      // imageView.setImageBitmap(bitmap);
-      updateBitmap(bitmap, imageView);
-    }
-
-  }
-
-  /**
-   * updateBitmap(Bitmap bm, ImageView image)
-   * 
-   * Atualiza um ImageView com um bitmap
-   * 
-   * @param bm
-   *          Bitmap
-   * @param image
-   *          imageView
-   * 
-   */
-  public void updateBitmap(Bitmap bm, ImageView image) {
-
-    if ((bm != null) && (image != null)) {
-
-      image.setImageBitmap(bm);
-
-      showBitmapInfo(bm);
-
-    } else {
-
-      Log.d(TAG, "updateBitmap() - Bitmap is null");
-
-    }
-
-  }
-
-  /**
-   * msgDialog(String msg, String sim, String nao)
-   * 
-   * @param msg
-   * @param sim
-   * @param nao
-   * 
-   * @return
-   */
-  private int msgDialog(Context ctx, String msg, String sim, String nao) {
-
-    // TODO esse método está com problemas ...
-    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-
-    builder.setMessage(msg);
-
-    builder.setCancelable(false);
-
-    builder.setPositiveButton(sim, new DialogInterface.OnClickListener() {
-
-      public void onClick(DialogInterface dialog, int id) {
-        // MyActivity7.this.finish();
-        dialog.dismiss();
-        // opcao = 1;
-      }
-
-    });
-
-    builder.setNegativeButton(nao, new DialogInterface.OnClickListener() {
-
-      public void onClick(DialogInterface dialog, int id) {
-        dialog.cancel();
-        // opcao = 0;
-      }
-
-    });
-
-    AlertDialog alert = builder.create();
-    alert.show();
-
-    // return opcao;
-    return 0;
-
-  }
-
-  /**
-   * getRoundedCornerBitmap(Bitmap bitmap)
-   * 
-   * @param bitmap
-   * 
-   * @return um bitmap
-   */
-  public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
-
-    // Returns a mutable bitmap with the specified width and height.
-    // Its initial density is as per getDensity().
-    Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
-
-    // Construct a canvas with the specified bitmap to draw into.
-    // The bitmap must be mutable.
-    // The initial target density of the canvas is the same as the given
-    // bitmap's density.
-    Canvas canvas = new Canvas(output);
-
-    final int color = 0xff424242;
-
-    // Create a new paint with default settings.
-    final Paint paint = new Paint();
-
-    // Create a new rectangle with the specified coordinates.
-    // Note: no range checking is performed, so the caller must ensure that
-    // left <= right and top <= bottom.
-    final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-
-    // RectF holds four float coordinates for a rectangle.
-    // The rectangle is represented by the coordinates of its 4 edges (left,
-    // top, right bottom).
-    // These fields can be accessed directly.
-    // Use width() and height() to retrieve the rectangle's width and height.
-    // Note: most methods do not check to see that the coordinates are sorted
-    // correctly
-    // (i.e. left <= right and top <= bottom).
-    final RectF rectF = new RectF(rect);
-
-    // final float roundPx = 15;
-    final float roundPx = 25;
-
-    // Helper for setFlags(), setting or clearing the ANTI_ALIAS_FLAG bit
-    // AntiAliasing smooths out the edges of what is being drawn, but is has no
-    // impact on the interior of the shape. See setDither() and
-    // setFilterBitmap() to affect how colors are treated.
-    paint.setAntiAlias(true);
-
-    // Fill the entire canvas' bitmap (restricted to the current clip) with the
-    // specified ARGB color, using srcover porterduff mode.
-    // canvas.drawARGB(0, 0, 0, 0);
-    canvas.drawARGB(0, 255, 255, 255);
-
-    // Set the paint's color.
-    // Note that the color is an int containing alpha as well as r,g,b.
-    // This 32bit value is not pre multiplied, meaning that its
-    // alpha can be any value, regardless of the values of r,g,b.
-    // See the Color class for more details.
-    paint.setColor(color);
-
-    // Draw the specified round-rect using the specified paint.
-    // The roundrect will be filled or framed based on the Style in the paint.
-    canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-    // Set or clear the xfermode object.
-    // Pass null to clear any previous xfermode. As a convenience, the parameter
-    // passed is also returned.
-    // paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
-    paint.setXfermode(new PorterDuffXfermode(Mode.LIGHTEN));
-
-    // Draw the specified bitmap, scaling/translating automatically to fill the
-    // destination rectangle. If the source rectangle is not null, it specifies
-    // the subset of the bitmap to draw.
-    canvas.drawBitmap(bitmap, rect, rect, paint);
-
-    return output;
-
-  }
-
-  /**
-   * carregaFoto(String foto)
-   * 
-   * Obtém um bitmap a partir de um arquivo
-   * 
-   * @param foto
-   *          Caminho onde encontrar a foto
-   * 
-   * @return Um bitmap contendo a foto ou null caso a foto não seja encontrada
-   * 
-   */
-  private Bitmap carregaFoto(String foto) {
-
-    Bitmap bmFoto = getBitmapFromFile(foto);
-
-    if (bmFoto != null) {
-      Log.v(TAG, " ==> Tamanho da foto original: " + getStringBitmapSize(bmFoto));
-    } else {
-      Log.w(TAG, "Não foi possível ler o arquivo: " + foto);
-    }
-
-    return bmFoto;
-
-  }
-
-  
 }
