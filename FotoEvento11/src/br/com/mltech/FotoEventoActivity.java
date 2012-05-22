@@ -643,8 +643,10 @@ public class FotoEventoActivity extends Activity {
   /**
    * resultActivityDummy3(int resultCode, Intent data)
    * 
-   * @param resultCode
-   * @param data
+   * Processo o resultado da execução da activity
+   * 
+   * @param resultCode Resultado da execução da activity
+   * @param data Intent recebida
    * 
    */
   private void resultActivityDummy3(int resultCode, Intent data) {
@@ -658,6 +660,7 @@ public class FotoEventoActivity extends Activity {
     Intent i = getIntent();
 
     Bundle ss = i.getBundleExtra("br.com.mltech.result");
+    
     if (ss != null) {
 
       Log.w(TAG, "Bundle ss possui informações");
@@ -670,20 +673,20 @@ public class FotoEventoActivity extends Activity {
 
     } else {
 
-      Log.w(TAG, "Bundle ss está vazio - nenhum resultado retornou");
+      Log.w(TAG, "resultActivityDummy3() - Bundle ss está vazio - nenhum resultado retornou");
 
     }
 
     if (data == null) {
 
-      Log.w(TAG, "data is null");
+      Log.w(TAG, "resultActivityDummy3() - data is null");
 
     } else {
 
-      Log.i(TAG, "data possui informações");
-      Log.i(TAG, "data=" + data);
+      Log.i(TAG, "resultActivityDummy3() - data possui informações");
+      Log.i(TAG, "resultActivityDummy3 - data=" + data);
       result = data.getStringExtra("br.com.mltech.result");
-      Log.d(TAG, "result=" + result);
+      Log.d(TAG, "resultActivityDummy3() - result=" + result);
 
     }
 
@@ -703,7 +706,7 @@ public class FotoEventoActivity extends Activity {
       }
 
     } else {
-      Log.w(TAG, "Result == null - problemas !!!");
+      Log.w(TAG, "resultActivityDummy3() - Result == null - problemas !!!");
     }
 
   }
@@ -711,7 +714,9 @@ public class FotoEventoActivity extends Activity {
   /**
    * carregaImagem(File f)
    * 
-   * @param f
+   * Tenta decodificar uma bitmap de um arquivp
+   * 
+   * @param f Arquivo
    */
   public Bitmap carregaImagem(File f) {
 
