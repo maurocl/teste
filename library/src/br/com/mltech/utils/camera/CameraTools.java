@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -111,7 +114,7 @@ public class CameraTools {
 
     } else {
       // no câmera on this device
-      Log.w(TAG, "O dispositivo não possui câmera.");
+      Log.w(TAG, "checkCameraFeatures() - O dispositivo não possui câmera.");
       return false;
     }
 
@@ -119,6 +122,8 @@ public class CameraTools {
 
   /**
    * createImageFile()
+   * 
+   * Cria um nome para identificar um arquivo
    * 
    * @return um arquivo File criado ou null caso haja algum problema
    * 
@@ -153,7 +158,9 @@ public class CameraTools {
   /**
    * getNumCameras()
    * 
-   * @return Returns the number of physical cameras available on this device.
+   * Retorna o nº de câmeras de um dispositivo
+   * 
+   * @return Retorna o nº de câmeras físicas disponíveis em um dispositivo
    */
   public static int getNumCameras() {
     return Camera.getNumberOfCameras();
@@ -162,7 +169,9 @@ public class CameraTools {
   /**
    * getCameraInstance()
    * 
-   * @return
+   * Obtém a instância de uma câmera
+   * 
+   * @return a primeira instância de câmera disponível no dispositivo
    */
   public static Camera getCameraInstance() {
 
@@ -172,6 +181,8 @@ public class CameraTools {
 
   /**
    * getCameraInstance(int num)
+   * 
+   * Obtém a instância de uma câmera num. A primeira câmera possui o nº 0
    * 
    * @param num
    *          Número identificador da câmera
@@ -194,13 +205,13 @@ public class CameraTools {
         //
       } catch (Exception e) {
         // camera is not available (in use or does not exist)
-        Log.d(TAG, "Error in getCameraInstance()", e);
+        Log.d(TAG, "getCameraInstance() - Error in getCameraInstance()", e);
       }
 
     } else {
       // nº da câmera inválido (está fora do intervalo)
-      Log.d(TAG, "O número da câmera: " + num + " está fora do intervalo de câmeras válidas (deve estar entre 0 e "
-          + getNumCameras() + ")");
+      Log.d(TAG, "getCameraInstance() - O número da câmera: " + num
+          + " está fora do intervalo de câmeras válidas (deve estar entre 0 e " + getNumCameras() + ")");
     }
 
     return c; // return null if camera is unavailable
@@ -209,6 +220,8 @@ public class CameraTools {
 
   /**
    * getParametersFlatten(Camera c)
+   * 
+   * Obtém os detalhes da configuração de uma câmera em uma única string.
    * 
    * @param c
    *          Instância de uma câmera
@@ -225,7 +238,7 @@ public class CameraTools {
     }
 
     String flatten = c.getParameters().flatten();
-    Log.d(TAG, "params.flatten=" + flatten);
+    Log.d(TAG, "getParametersFlatten() - params.flatten=" + flatten);
 
     return flatten;
 
@@ -233,6 +246,8 @@ public class CameraTools {
 
   /**
    * getTimeStamp()
+   * 
+   * Retorna a data e hora do sistema de acordo com o formato solicitado
    * 
    * @return String contendo a data atual no formato: yyyyMMdd_HHmmss
    * 
@@ -390,11 +405,15 @@ public class CameraTools {
 
     Bundle extras = intent.getExtras();
 
-    mImageBitmap = (Bitmap) extras.get("data");
+    if (extras != null) {
 
-    mImageView.setImageBitmap(mImageBitmap);
+      mImageBitmap = (Bitmap) extras.get("data");
 
-    mImageView.setVisibility(View.VISIBLE);
+      mImageView.setImageBitmap(mImageBitmap);
+
+      mImageView.setVisibility(View.VISIBLE);
+
+    }
 
   }
 
@@ -406,7 +425,7 @@ public class CameraTools {
   private Uri chooseFileDir(String nomeArquivo) {
 
     if (isExternalStorageMounted() == false) {
-      Log.w(TAG, "Error - SD não foi montado.");
+      Log.w(TAG, "chooseFileDir() - Erro - sdcard não foi montado.");
       return null;
     }
 
@@ -473,11 +492,11 @@ public class CameraTools {
     return isMounted;
 
   }
-  
+
   /**
    * isExternalMediaMounted()
    * 
-   * @return true se uma media de armazenamento externo estiver montada ou
+   * @return true se uma media de armazenamento externo estiver montada; retorna
    *         false, caso contrário.
    * 
    */
@@ -501,8 +520,9 @@ public class CameraTools {
     return isMounted;
 
   }
-  
+
   /**
+   * getDir2(String dirName)
    * 
    * Retorna o diretório solicitado dentro de
    * getExternalStoragePublicDirectoryPictures Cria-o caso ele não exista
@@ -737,7 +757,7 @@ public class CameraTools {
 
     int num = Camera.getNumberOfCameras();
 
-    Log.d(TAG, "Número de câmera(s) disponível(eis):  " + num);
+    Log.d(TAG, "showCameraInfo() - número de câmera(s) disponível(eis):  " + num);
 
     for (int i = 0; i < num; i++) {
 
@@ -745,12 +765,12 @@ public class CameraTools {
 
       if (camera != null) {
 
-        Log.d(TAG, "*** Detalhes de configuração da câmera: " + i);
+        Log.d(TAG, "showCameraInfo() - *** Detalhes de configuração da câmera: " + i);
         showParametersDetail(camera);
 
       } else {
 
-        Log.d(TAG, "Câmera " + i + " não está disponível");
+        Log.d(TAG, "showCameraInfo() - câmera " + i + " não está disponível");
 
       }
 
@@ -768,9 +788,9 @@ public class CameraTools {
 
     Camera.getCameraInfo(cameraId, cameraInfo);
 
-    Log.d(TAG, "cameraInfo.facing=" + cameraInfo.facing);
+    Log.d(TAG, "exibeCameraInfo() - cameraInfo.facing=" + cameraInfo.facing);
 
-    Log.d(TAG, "cameraInfo.orientation=" + cameraInfo.orientation);
+    Log.d(TAG, "exibeCameraInfo() - cameraInfo.orientation=" + cameraInfo.orientation);
 
   }
 
@@ -868,6 +888,103 @@ public class CameraTools {
       Log.v(TAG, "f=" + f.getAbsolutePath() + " é um arquivo");
     } else {
       Log.v(TAG, "f=" + f.getAbsolutePath() + " não é um arquivo");
+    }
+
+  }
+
+  /**
+   * getParametersDetail(Camera c)
+   * 
+   * @param c
+   */
+  public HashMap<String, List<String>> getParametersDetail(Camera c) {
+
+    HashMap<String, List<String>> hash = new HashMap<String, List<String>>();
+
+    ArrayList<String> lista = null;
+
+    Parameters params = c.getParameters();
+
+    // O método flatten retorna uma String
+    // Creates a single string with all the parameters set in this
+    // Camera.Parameters object.
+    // flattened a String of parameters (key-value paired) that are
+    // semi-colon
+    // delimited
+
+    String flatten = params.flatten();
+
+    // Divide a string contendo os parâmetros separados por ";"
+    String[] lines = flatten.split(";");
+
+    if (lines == null) {
+      return null;
+    }
+
+    for (String line : lines) {
+
+      // divide um parâmetro em pares do tipo key-value paired
+      String[] chavesValores = line.split("=");
+
+      // a chave é representada pelo lado esquerdo da atribuição
+      // o valor é representado pelo lado direito da atribuição
+      String chave = null, valor = null;
+
+      // os múltiplos valores das chaves (se existirem) são separados
+      // por ","
+      String[] valoresPossiveis = null;
+
+      if (chavesValores != null && chavesValores.length == 2) {
+
+        chave = chavesValores[0];
+        valor = chavesValores[1];
+
+        lista = new ArrayList<String>();
+
+        if (valor != null) {
+          valoresPossiveis = valor.split(",");
+          for (String value : valoresPossiveis) {
+            lista.add(value);
+          }
+        }
+
+      }
+
+      hash.put(chave, lista);
+
+    }
+    showHash(hash);
+
+    return hash;
+
+  }
+
+  /**
+   * showHash(HashMap<String, List<String>> hash)
+   * 
+   * @param hash
+   * 
+   */
+  void showHash(HashMap<String, List<String>> hash) {
+
+    int num = 0;
+
+    for (String chave : hash.keySet()) {
+
+      num++;
+
+      List<String> listaValues = hash.get(chave);
+
+      Log.d(TAG, "chave(" + num + ")=" + chave);
+
+      if (listaValues != null) {
+
+        for (String s2 : listaValues) {
+          Log.d(TAG, "  value=" + s2);
+        }
+
+      }
+
     }
 
   }

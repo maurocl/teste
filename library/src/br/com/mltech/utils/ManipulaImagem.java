@@ -15,17 +15,17 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -711,6 +711,37 @@ public class ManipulaImagem {
   }
 
   /**
+   * getBitmapRegion(String filename, Rect rect, Options options)
+   * 
+   * @param filename
+   * @param rect
+   * @param options
+   * 
+   * @return The decoded bitmap, or null if the image data could not be decoded.
+   */
+  public Bitmap getBitmapRegion(String filename, Rect rect, Options options) {
+
+    BitmapRegionDecoder brd = null;
+
+    Bitmap bitmap = null;
+
+    try {
+
+      brd = BitmapRegionDecoder.newInstance(filename, true);
+
+      bitmap = brd.decodeRegion(rect, options);
+
+    } catch (IOException e) {
+
+      Log.w(TAG, "getBitmapRegion() - ", e);
+
+    }
+
+    return bitmap;
+
+  }
+
+  /**
    * getRotatedBitmap(Resources res, int id, int angle)
    * 
    * @param res
@@ -855,11 +886,9 @@ public class ManipulaImagem {
       // boolean success =
       // bm.compress(Bitmap.CompressFormat.valueOf("PNG"),
       // 100, out);
-      boolean success = bm.compress(Bitmap.CompressFormat.PNG, 100, out);
-      Log.i(TAG, "gravaBitmapArquivo() - sucess code from bitmap.compress: " + success);
+      salvou = bm.compress(Bitmap.CompressFormat.PNG, 100, out);
+      Log.i(TAG, "gravaBitmapArquivo() - sucess code from bitmap.compress: " + salvou);
       out.close();
-
-      salvou = true;
 
     } catch (FileNotFoundException e) {
       Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo", e);
@@ -870,8 +899,15 @@ public class ManipulaImagem {
     return salvou;
 
   }
-  
-  
+
+  /**
+   * gravaBitmapArquivo2(Bitmap bm, String filename)
+   * 
+   * @param bm
+   * @param filename
+   * 
+   * @return
+   */
   public boolean gravaBitmapArquivo2(Bitmap bm, String filename) {
 
     boolean salvou = false;
@@ -899,11 +935,9 @@ public class ManipulaImagem {
 
       out = new FileOutputStream(filename);
 
-      boolean success = bm.compress(Bitmap.CompressFormat.JPEG, 75, out);
-      Log.i(TAG, "gravaBitmapArquivo() - sucess code from bitmap.compress: " + success);
+      salvou = bm.compress(Bitmap.CompressFormat.JPEG, 75, out);
+      Log.i(TAG, "gravaBitmapArquivo() - sucess code from bitmap.compress: " + salvou);
       out.close();
-
-      salvou = true;
 
     } catch (FileNotFoundException e) {
       Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo", e);
@@ -914,7 +948,58 @@ public class ManipulaImagem {
     return salvou;
 
   }
-  
+
+  /**
+   * gravaBitmapArquivo3(Uri uri)
+   * 
+   * @param uri
+   *          URI contendo a localização do dados que serão decodificados em um
+   *          bitmap e salvos em um arquivo
+   * 
+   * @return true se o arquivo foi gerado com sucesso ou false em caso de algum
+   *         erro
+   */
+  public boolean gravaBitmapArquivo3(Uri uri) {
+
+    boolean salvou = false;
+
+    if (uri == null) {
+      // arquivo não pode ser vazio
+      return false;
+    }
+
+    Log.v(TAG, "gravaBitmapArquivo3() - uri=" + uri);
+
+    // cria-se um arquivo
+    File file = new File(uri.getPath());
+
+    // cria um bitmap a partir do arquivo
+    Bitmap foto = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+    if (foto == null) {
+      Log.w(TAG, "gravaBitmapArquivo3() - falha da conversão para bitmap");
+      return false;
+    }
+
+    OutputStream out = null;
+
+    try {
+
+      out = new FileOutputStream(file);
+
+      salvou = foto.compress(Bitmap.CompressFormat.PNG, 100, out);
+      Log.i(TAG, "gravaBitmapArquivo3() - sucess code from bitmap.compress: " + salvou);
+      out.close();
+
+    } catch (FileNotFoundException e) {
+      Log.w(TAG, "gravaBitmapArquivo3() - Erro na criação do arquivo", e);
+    } catch (IOException e) {
+      Log.w(TAG, "gravaBitmapArquivo3() - Erro na criação do arquivo", e);
+    }
+
+    return salvou;
+
+  }
 
   /**
    * getStringBitmapSize(Bitmap bm)
@@ -941,6 +1026,44 @@ public class ManipulaImagem {
 
     return s;
 
+  }
+
+  /**
+   * isLandscape(Bitmap bm)
+   * 
+   * Verifica se o bitmap possui uma imagem cuja largura é MAIOR que a altura.
+   * 
+   * @param bm
+   *          Bitmap
+   * 
+   * @return true se o bitmap contiver uma imagem formato landscape
+   * 
+   */
+  public boolean isLandscape(Bitmap bm) {
+    boolean ret = false;
+    if (bm != null) {
+      ret = bm.getWidth() > bm.getHeight();
+    }
+    return ret;
+  }
+
+  /**
+   * isPortrait(Bitmap bm)
+   * 
+   * Verifica se o bitmap possui uma imagem cuja largura é MENOR que a altura.
+   * 
+   * @param bm
+   *          Bitmap
+   * 
+   * @return true se o bitmap contiver uma imagem formato portrait
+   * 
+   */
+  public boolean isPortrait(Bitmap bm) {
+    boolean ret = false;
+    if (bm != null) {
+      ret = bm.getHeight() > bm.getWidth();
+    }
+    return ret;
   }
 
   /**
@@ -976,6 +1099,14 @@ public class ManipulaImagem {
 
   }
 
+  /**
+   * overlay2(Bitmap bmp1, Bitmap bmp2)
+   * 
+   * @param bmp1
+   * @param bmp2
+   * 
+   * @return
+   */
   public Bitmap overlay2(Bitmap bmp1, Bitmap bmp2) {
 
     // Bitmap bmOverlay = Bitmap.createBitmap(500, 500, bmp1.getConfig());
@@ -1099,8 +1230,10 @@ public class ManipulaImagem {
    * 
    * Executa o overlay para fotos no formato polaroid
    * 
-   * @param bmp1 foto
-   * @param bmp2 moldura
+   * @param bmp1
+   *          foto
+   * @param bmp2
+   *          moldura
    * 
    * @return Bitmap
    */
@@ -1132,13 +1265,15 @@ public class ManipulaImagem {
 
     Canvas canvas = new Canvas(bmOverlay);
 
+    // Preenche o canvas com a color cinza
     canvas.drawColor(Color.GRAY);
 
     Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
     Matrix m = new Matrix();
-    
-    m.setTranslate(58, 24);
+
+    // m.setTranslate(58, 24);
+    m.setTranslate(10, 10);
 
     // desenha a imagem de fundo (backgroud) - foto
     canvas.drawBitmap(bmp1, m, paint);
@@ -1208,6 +1343,43 @@ public class ManipulaImagem {
   }
 
   /**
+   * showBitmapInfo2(Bitmap bm)
+   * 
+   * @param bm
+   * 
+   */
+  public void showBitmapInfo2(Bitmap bm) {
+
+    // TODO transformar ...
+    if (bm == null) {
+      Log.w(TAG, "Bitmap não pode ser nulo");
+      return;
+    }
+
+    Config config = bm.getConfig();
+    int density = bm.getDensity();
+    int h = bm.getHeight();
+    int w = bm.getWidth();
+    boolean hasAlpha = bm.hasAlpha();
+    boolean isMutable = bm.isMutable();
+    boolean isRecycled = bm.isRecycled();
+    String s = bm.toString();
+
+    Log.v(TAG, "getConfig= " + bm.getConfig());
+    Log.v(TAG, "getDensity= " + bm.getDensity());
+    Log.v(TAG, "getHeight= " + bm.getHeight());
+    Log.v(TAG, "getWidth= " + bm.getWidth());
+    Log.v(TAG, "hasAlpha= " + bm.hasAlpha());
+    Log.v(TAG, "isMutable= " + bm.isMutable());
+    Log.v(TAG, "isRecycled= " + bm.isRecycled());
+    Log.v(TAG, "toString= " + bm.toString());
+
+    Log.v(TAG, "Size=" + w + "x" + h);
+    Log.v(TAG, "config=" + config);
+    Log.v(TAG, "getRowBytes()=" + bm.getRowBytes());
+  }
+
+  /**
    * showBitmapInfo(Bitmap bm)
    * 
    * Exibe o tamanho (largura x altura), densidade de pixels, etc
@@ -1232,6 +1404,53 @@ public class ManipulaImagem {
       Log.w(TAG, "showBitmapInfo(): Bitmap is null");
 
     }
+
+  }
+
+  /**
+   * showBitmapOptions(Options options)
+   * 
+   * @param options
+   * 
+   */
+  void showBitmapOptions(Options options) {
+    Log.v(TAG, "showBitmapOptions()=options=" + options);
+    Log.v(TAG, "showBitmapOptions() - inDensity: " + options.inDensity);
+    Log.v(TAG, "showBitmapOptions() - inSampleSize: " + options.inSampleSize);
+    Log.v(TAG, "showBitmapOptions() - inScreenDensity: " + options.inScreenDensity);
+    Log.v(TAG, "showBitmapOptions() - inTargetDensity: " + options.inTargetDensity);
+    Log.v(TAG, "showBitmapOptions() - outHeight: " + options.outHeight);
+    Log.v(TAG, "showBitmapOptions() - outWidth: " + options.outWidth);
+  }
+
+  /**
+   * showUri(Uri uri)
+   * 
+   * Exibe informações sobre uma Uri
+   * 
+   * @param uri
+   *          Uri
+   * 
+   */
+  public static void showUri(Uri uri) {
+
+    if (uri == null) {
+      Log.w(TAG, "Uri é nula");
+      return;
+    }
+
+    Log.v(TAG, "showUri(): ");
+    Log.v(TAG, "  getScheme: " + uri.getScheme());
+    Log.v(TAG, "  getAuthority: " + uri.getAuthority());
+    Log.v(TAG, "  getPort: " + uri.getPort());
+    Log.v(TAG, "  getPath: " + uri.getPath());
+    Log.v(TAG, "  getQuery: " + uri.getQuery());
+    Log.v(TAG, "  getUserInfo: " + uri.getUserInfo());
+    Log.v(TAG, "  isAbsolute: " + uri.isAbsolute());
+    Log.v(TAG, "  isRelative: " + uri.isRelative());
+    Log.v(TAG, "  isHierarchical: " + uri.isHierarchical());
+    Log.v(TAG, "  isOpaque: " + uri.isOpaque());
+    Log.v(TAG, "  getFragment: " + uri.getFragment());
 
   }
 
