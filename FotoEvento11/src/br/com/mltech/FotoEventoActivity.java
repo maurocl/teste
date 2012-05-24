@@ -46,7 +46,7 @@ public class FotoEventoActivity extends Activity {
   public static final String PREF_EMAIL = "pref_email";
 
   // indica o uso do DEBUG
-  private static final int DEBUG = 1;
+  private static int DEBUG = 1;
 
   /* Identificadores das Activities */
 
@@ -196,10 +196,10 @@ public class FotoEventoActivity extends Activity {
 
       public void onClick(View v) {
 
-        desejaSairDaAplicacao() ;
-        
-        //finish();
-        
+        dialogoDesejaSairDaAplicacao();
+
+        // finish();
+
       }
 
     });
@@ -266,49 +266,36 @@ public class FotoEventoActivity extends Activity {
   }
 
   /**
-   * criaMenuParticipante(Menu menu)
+   * launchActivity(Context ctx, Class<?> cls, Bundle params, int requestCode)
    * 
-   * @param menu
+   * Lança uma Activity passando o contexto de execução, o nome da classe que
+   * será executada, parâmetros e o requestCode, isto é, o código de requisição
+   * de execução da Activity.
+   * 
+   * @param ctx
+   *          Contexto
+   * @param cls
+   *          Classe que será executada
+   * @param params
+   *          Parâmetros enviados
+   * @param requestCode
+   *          Código da solicitação
+   * 
+   * 
    */
-  private void criaMenuParticipante(Menu menu) {
-    // ---------------------------------------------
-    // Menu: Cadastro de Participantes
-    // ----------------------------------------------
-    MenuItem participante = menu.add(0, 0, 0, "Participante");
-    participante.setIcon(R.drawable.ic_launcher);
+  private void launchActivity(Context ctx, Class<?> cls, Bundle params, int requestCode) {
 
-    participante.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+    // Intent intent = new Intent(FotoEventoActivity.this,CameraActivity.class);
+    Intent intent = new Intent(ctx, cls);
 
-      public boolean onMenuItemClick(MenuItem item) {
-        launchActivity(FotoEventoActivity.this, ParticipanteActivity.class, null, ACTIVITY_PARTICIPANTE);
-        return false;
-      }
+    if (params != null) {
+      intent.putExtras(params);
     }
 
-    );
+    Log.i(TAG, "launchActivity() - Lançando a Activity code: " + requestCode);
 
-  }
-
-  /**
-   * criaMenuCamera(Menu menu)
-   * 
-   * @param menu
-   */
-  private void criaMenuCamera(Menu menu) {
-
-    MenuItem participante = menu.add(0, 8, 0, "Camera");
-    participante.setIcon(R.drawable.ic_launcher);
-
-    participante.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-
-      public boolean onMenuItemClick(MenuItem item) {
-
-        launchActivityCamera();
-
-        return false;
-
-      }
-    });
+    // Inicia a Activity
+    startActivityForResult(intent, requestCode);
 
   }
 
@@ -384,6 +371,7 @@ public class FotoEventoActivity extends Activity {
    */
   private void launchActivityCamera() {
 
+    // TODO esse método precisa verificação
     int escolha = 2;
 
     Bundle params = null;
@@ -402,41 +390,13 @@ public class FotoEventoActivity extends Activity {
   }
 
   /**
-   * launchActivity(Context ctx, Class<?> cls, Bundle params, int requestCode)
-   * 
-   * Cria e lança uma Intent
-   * 
-   * @param ctx
-   *          Contexto
-   * @param cls
-   *          Classe que será executada
-   * @param params
-   *          Parâmetros enviados
-   * @param requestCode
-   *          Código da solicitação
-   * 
-   * 
-   */
-  private void launchActivity(Context ctx, Class<?> cls, Bundle params, int requestCode) {
-
-    // Intent intent = new Intent(FotoEventoActivity.this,CameraActivity.class);
-    Intent intent = new Intent(ctx, cls);
-
-    if (params != null) {
-      intent.putExtras(params);
-    }
-
-    Log.i(TAG, "Lançando a Activity code: " + requestCode);
-
-    // Inicia a Activity
-    startActivityForResult(intent, requestCode);
-
-  }
-
-  /**
    * onActivityResult(int requestCode, int resultCode, Intent data)
    * 
    * Called when an activity you launched exits
+   * 
+   * @param requestCode
+   * @param resultCode
+   * @param data
    * 
    */
   @Override
@@ -459,7 +419,7 @@ public class FotoEventoActivity extends Activity {
     } else {
       Toast.makeText(this, "Resultado inexperado", Toast.LENGTH_SHORT).show();
 
-      Log.w(TAG, "Erro ... requestCode: " + requestCode + " não pode ser processado");
+      Log.w(TAG, "onActivityResult() - Erro ... requestCode: " + requestCode + " não pode ser processado");
     }
 
   }
@@ -467,22 +427,27 @@ public class FotoEventoActivity extends Activity {
   /**
    * activityManutencaoResult(int resultCode, Intent data)
    * 
+   * Resultado da execução da Activity de Manutenção
+   * 
    * @param resultCode
+   *          Resultado da execução da activity
    * @param data
+   *          Intent contendo o resultado (se houver algum)
+   * 
    */
   private void resultActivityManutencao(int resultCode, Intent data) {
 
-    Log.d(TAG, "processando ACTIVITY MANUTENCAO");
+    Log.d(TAG, "resultActivityManutencao()");
 
     if (resultCode == RESULT_OK) {
 
-      Log.d(TAG, "processando ACTIVITY MANUTENCAO - RESULT_OK");
+      Log.d(TAG, "resultActivityManutencao() - processando ACTIVITY MANUTENCAO - RESULT_OK");
 
     } else if (resultCode == RESULT_CANCELED) {
-      Log.d(TAG, "processando ACTIVITY MANUTENCAO - RESULT_CANCELED");
+      Log.d(TAG, "resultActivityManutencao() - processando ACTIVITY MANUTENCAO - RESULT_CANCELED");
 
     } else {
-      Log.d(TAG, "Erro ... resultCode não conhecido: " + resultCode);
+      Log.d(TAG, "resultActivityManutencao() - Erro ... resultCode não conhecido: " + resultCode);
     }
 
   }
@@ -491,35 +456,35 @@ public class FotoEventoActivity extends Activity {
    * activityParticipanteResult(int resultCode, Intent data)
    * 
    * @param resultCode
-   *          Resultado da execução da Intent
+   *          Resultado da execução da Activity
    * @param data
-   * 
-   *          É esperado que a Activity participante retorne ...
+   *          É esperado que a Activity participante retorne as informações
+   *          sobre o participante e sua participação.
    * 
    */
   private void resultActivityParticipante(int resultCode, Intent data) {
 
-    Log.d(TAG, "==> processando ACTIVITY_PARTICIPANTE");
+    Log.d(TAG, "resultActivityParticipante() ==> processando ACTIVITY_PARTICIPANTE");
 
     if (resultCode == RESULT_CANCELED) {
-      Log.d(TAG, "resultCode=RESULT_CANCELED - Participante cancelou sua participação");
+      Log.d(TAG, "resultActivityParticipante() - resultCode=RESULT_CANCELED - Participante cancelou sua participação");
       return;
     } else if (resultCode != RESULT_OK) {
-      Log.w(TAG, "resultCode não conhecido: " + resultCode);
+      Log.w(TAG, "resultActivityParticipante() - resultCode não conhecido: " + resultCode);
       return;
     }
 
     if (data == null) {
       // caso a Intent não retorne nada houve algum problema
-      Log.w(TAG, "A intent não retornou os dados esperados");
+      Log.w(TAG, "resultActivityParticipante() - A intent não retornou os dados esperados");
       return;
     }
 
     mParticipante = (Participante) data.getSerializableExtra("br.com.mltech.participante");
     mParticipacao = (Participacao) data.getSerializableExtra("br.com.mltech.participacao");
 
-    Log.d(TAG, "mParticipante=" + mParticipante);
-    Log.d(TAG, "mParticipacao=" + mParticipacao);
+    Log.d(TAG, "resultActivityParticipante() - mParticipante=" + mParticipante);
+    Log.d(TAG, "resultActivityParticipante() - mParticipacao=" + mParticipacao);
 
   }
 
@@ -527,7 +492,9 @@ public class FotoEventoActivity extends Activity {
    * activityLoginResult(int resultCode, Intent data)
    * 
    * @param resultCode
+   *          Resultado da execução da Activity
    * @param data
+   *          Intent de retorno
    * 
    */
   private void resultActivityLogin(int resultCode, Intent data) {
@@ -536,7 +503,7 @@ public class FotoEventoActivity extends Activity {
 
     mLogged = false;
 
-    Log.d(TAG, "processActivityLogin()");
+    Log.d(TAG, "activityLoginResult()");
 
     if (resultCode == RESULT_OK) {
 
@@ -554,7 +521,7 @@ public class FotoEventoActivity extends Activity {
             if ("OK".equals(resultado)) {
 
               mLogged = true;
-              Log.d(TAG, "Login efetuado com sucesso");
+              Log.d(TAG, "activityLoginResult() - Login efetuado com sucesso");
 
               // Lança automaticamente a atividade de manutenção
               launchActivityManutencao();
@@ -562,7 +529,7 @@ public class FotoEventoActivity extends Activity {
             } else {
 
               mLogged = false;
-              Log.d(TAG, "Falha no Login");
+              Log.d(TAG, "activityLoginResult() - Falha no Login");
 
             }
           } else {
@@ -578,10 +545,10 @@ public class FotoEventoActivity extends Activity {
 
     } else if (resultCode == RESULT_CANCELED) {
 
-      Log.d(TAG, "Login cancelado pelo usuário - RESULT_CANCELED");
+      Log.d(TAG, "activityLoginResult() - Login cancelado pelo usuário - RESULT_CANCELED");
 
     } else {
-      Log.d(TAG, "Erro ...");
+      Log.d(TAG, "activityLoginResult() - Erro ...");
     }
 
   }
@@ -590,7 +557,9 @@ public class FotoEventoActivity extends Activity {
    * activityCameraResult(int resultCode, Intent data)
    * 
    * @param resultCode
+   *          Resultado da execução da Activity
    * @param data
+   *          Intent contendo os dados de retorno (se houverem)
    * 
    */
   private void resultActivityCamera(int resultCode, Intent data) {
@@ -600,11 +569,11 @@ public class FotoEventoActivity extends Activity {
 
     byte[] dados;
 
-    Log.d(TAG, "processando ACTIVITY_CAMERA");
+    Log.d(TAG, "resultActivityCamera() - processando ACTIVITY_CAMERA");
 
     if (resultCode == RESULT_OK) {
 
-      Log.d(TAG, "ActivityCamera processada com sucesso: RESULT_OK");
+      Log.d(TAG, "resultActivityCamera() - activityprocessada com sucesso: RESULT_OK");
 
       if (data != null) {
 
@@ -621,18 +590,18 @@ public class FotoEventoActivity extends Activity {
           dados = params.getByteArray("br.com.mltech.dados");
           filename = params.getString("br.com.mltech.image.filename");
 
-          Log.d(TAG, "Filename=" + filename);
+          Log.d(TAG, "resultActivityCamera() - Filename=" + filename);
           if (dados != null) {
-            Log.d(TAG, "Dados=" + dados.length);
+            Log.d(TAG, "resultActivityCamera() - Dados=" + dados.length);
           }
 
         }
       }
 
     } else if (resultCode == RESULT_CANCELED) {
-      Log.d(TAG, "ActivityCamera retornou: RESULT_CANCELED");
+      Log.d(TAG, "resultActivityCamera() - RESULT_CANCELED");
     } else {
-      Log.d(TAG, "Erro ...");
+      Log.d(TAG, "resultActivityCamera() - valor retornado " + resultCode + " é desconhecido.");
     }
 
   }
@@ -642,22 +611,24 @@ public class FotoEventoActivity extends Activity {
    * 
    * Processo o resultado da execução da activity
    * 
-   * @param resultCode Resultado da execução da activity
-   * @param data Intent recebida
+   * @param resultCode
+   *          Resultado da execução da activity
+   * @param data
+   *          Intent recebida (se houver)
    * 
    */
   private void resultActivityDummy3(int resultCode, Intent data) {
 
     String result = null;
 
-    Log.d(TAG, "==> resultActivityDummy3 - Executando o resultado do processamento da ACTIVITY DUMMY3");
+    Log.d(TAG, "==> resultActivityDummy3() - Executando o resultado do processamento da ACTIVITY DUMMY3");
 
-    Log.d(TAG, "==> resultCode=" + resultCode);
+    Log.d(TAG, "==> resultActivityDummy3() - resultCode=" + resultCode);
 
     Intent i = getIntent();
 
     Bundle ss = i.getBundleExtra("br.com.mltech.result");
-    
+
     if (ss != null) {
 
       Log.w(TAG, "Bundle ss possui informações");
@@ -690,7 +661,8 @@ public class FotoEventoActivity extends Activity {
     if (result != null) {
 
       if (resultCode == RESULT_OK) {
-        Log.i(TAG, "resultActivityDummy3 executada com sucesso");
+
+        Log.i(TAG, "resultActivityDummy3() - executada com sucesso");
 
         // atualiza a lista de participantes
         updateListaParticipacao();
@@ -707,37 +679,7 @@ public class FotoEventoActivity extends Activity {
     }
 
   }
-
-  /**
-   * carregaImagem(File f)
-   * 
-   * Tenta decodificar uma bitmap de um arquivp
-   * 
-   * @param f Arquivo
-   */
-  public Bitmap carregaImagem(File f) {
-
-    Bitmap bm = null;
-
-    if (f != null) {
-
-      bm = BitmapFactory.decodeFile(f.getName());
-
-      if (bm != null) {
-
-        bm = Bitmap.createScaledBitmap(bm, 100, 100, true);
-        ImageView button = (ImageView) findViewById(R.id.imageView1);
-
-        button.setImageBitmap(bm);
-
-      }
-
-    }
-
-    return bm;
-
-  }
-
+ 
   /**
    * lerConfiguracoes(String name)
    * 
@@ -761,7 +703,7 @@ public class FotoEventoActivity extends Activity {
     Set<?> set = chaves.entrySet();
 
     // Exibe o nº de entradas no arquivo de preferências
-    Log.d(TAG, "Nº de entradas do arquivo de preferências=" + set.size());
+    Log.d(TAG, "lerConfiguracoes() - nº de entradas do arquivo de preferências=" + set.size());
 
     Iterator<?> i = set.iterator();
 
@@ -775,7 +717,7 @@ public class FotoEventoActivity extends Activity {
       Entry<?, ?> me = (Entry<?, ?>) i.next();
 
       if (DEBUG == 1) {
-        Log.d(TAG, j + ") " + me.getKey() + "=" + me.getValue());
+        Log.d(TAG, "  " + j + ") " + me.getKey() + "=" + me.getValue());
       }
 
     }
@@ -845,10 +787,14 @@ public class FotoEventoActivity extends Activity {
   /**
    * startActivityParticipante(View v)
    * 
+   * Inicia a Activity Participante que obtém as informações do participante do
+   * evento e suas preferências quanto ao tipo e filtro que será aplicado a
+   * foto.
+   * 
    * @param v
    *          View
    */
-  public void startActivityParticipante(View v) {
+  private void startActivityParticipante(View v) {
 
     Log.d(TAG, "startActivityParticipante() - inicio");
     launchActivity(FotoEventoActivity.this, ParticipanteActivity.class, null, ACTIVITY_PARTICIPANTE);
@@ -878,14 +824,14 @@ public class FotoEventoActivity extends Activity {
 
     // verifica se existe um contratante
     if (mContratante == null) {
-      Log.w(TAG, "Contratante não foi configurado");
+      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Contratante não foi configurado");
       Toast.makeText(this, "Contratante não foi configurado", Toast.LENGTH_LONG).show();
       b = false;
     }
 
     // verifica se existe um evento cadastrado
     if (mEvento == null) {
-      Log.w(TAG, "Evento não foi configurado");
+      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Evento não foi configurado");
       Toast.makeText(this, "Evento não foi configurado", Toast.LENGTH_LONG).show();
       b = false;
     }
@@ -894,7 +840,7 @@ public class FotoEventoActivity extends Activity {
     // evento
     if (mEvento != null && ((mEvento.getBordaCabine() == null) || (mEvento.getBordaPolaroid() == null))) {
       // TODO alterar essa condição
-      Log.w(TAG, "Bordas não foram configuradas");
+      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Bordas não foram configuradas");
     }
 
     return b;
@@ -909,7 +855,9 @@ public class FotoEventoActivity extends Activity {
    */
   private void updateListaParticipacao() {
 
-    Log.v(TAG, "--> updateListaParticipação <---");
+    Log.v(TAG, "--------------------------------");
+    Log.v(TAG, " updateListaParticipação        ");
+    Log.v(TAG, "--------------------------------");
 
     if (mListaParticipacao != null) {
 
@@ -919,11 +867,11 @@ public class FotoEventoActivity extends Activity {
       // incrementa o contador de participantes do evento
       // TODO o nº de participante poderia aparecer na tela principal
       mNumParticipantes++;
-      Log.v(TAG, "updateListaParticipação: Nº de participantes até o momento: " + mNumParticipantes);
+      Log.v(TAG, "updateListaParticipação() - nº de participantes até o momento: " + mNumParticipantes);
 
     } else {
 
-      Log.w(TAG, "Lista de participantes é null. Participante não foi adicionado");
+      Log.w(TAG, "updateListaParticipação() - Lista de participantes é null. Participante não foi adicionado");
 
     }
 
@@ -935,16 +883,16 @@ public class FotoEventoActivity extends Activity {
    * Prepara o ambiente para gravação das fotos
    * 
    */
-  public void preparaAmbiente() {
+  private void preparaAmbiente() {
 
     if (ct == null) {
-      Log.w(TAG,"preparaAmbiente() - CameraTools não foi instanciado");
+      Log.w(TAG, "preparaAmbiente() - CameraTools não foi instanciado");
       return;
     }
 
     if (ct.isExternalStorageMounted()) {
 
-      Log.i(TAG, "SDCARD está montado");
+      Log.i(TAG, "preparaAmbiente() - SDCARD está montado");
 
       // xxx(publicDirectory);
 
@@ -962,7 +910,7 @@ public class FotoEventoActivity extends Activity {
 
     } else {
 
-      Log.i(TAG, "SDCARD não está montado");
+      Log.i(TAG, "preparaAmbiente() - SDCARD não está montado");
 
     }
 
@@ -1012,14 +960,17 @@ public class FotoEventoActivity extends Activity {
 
   }
 
-  
   /**
-   * desejaSairDaAplicacao()
+   * dialogoDesejaSairDaAplicacao()
    * 
-   * Exibe uma caixa de diálogo e a mensagem operguntando se deseja sair da
-   * aplicação
+   * Exibe uma caixa de diálogo e a mensagem perguntando se o usuário deseja
+   * sair da aplicação.
+   * 
+   * Caso o usuário pressione "Sim" a aplicação será encerrada. Caso contrário a
+   * caixa de diálogo irá desaparecer e a aplicação continua´ra em execução.
+   * 
    */
-  private void desejaSairDaAplicacao() {
+  private void dialogoDesejaSairDaAplicacao() {
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -1043,5 +994,28 @@ public class FotoEventoActivity extends Activity {
 
   }
 
-  
+  /**
+   * getSharedPreference(String sharedPreferencesName, String attribute)
+   * 
+   * Obtém um parâmetro da lista de preferências.
+   * 
+   * @param sharedPreferencesName
+   * @param attribute
+   * 
+   * @return o valor do atributo solicitado ou null caso haja algum erro (o
+   *         parâmetro não foi encontrado)
+   * 
+   */
+  private String getSharedPreference(String sharedPreferencesName, String attribute) {
+
+    SharedPreferences preferences = getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
+
+    String sValue = preferences.getString(attribute, "");
+
+    preferences = null;
+
+    return sValue;
+
+  }
+
 }
