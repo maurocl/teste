@@ -134,9 +134,9 @@ public class ContratanteActivity extends Activity {
    * checkCamposObrigatorios(final EditText nome, final EditText email, final
    * EditText telefone)
    * 
-   * @param nome
-   * @param email
-   * @param telefone
+   * @param nome Nome do contratante
+   * @param email Email do contratante
+   * @param telefone Telefone do contratante
    * 
    */
   private boolean checkCamposObrigatorios(final EditText nome, final EditText email, final EditText telefone) {
