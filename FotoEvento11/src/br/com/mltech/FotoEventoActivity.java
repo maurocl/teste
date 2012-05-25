@@ -46,7 +46,7 @@ public class FotoEventoActivity extends Activity {
   public static final String PREF_EMAIL = "pref_email";
 
   // indica o uso do DEBUG
-  private static int DEBUG = 1;
+  private static int DEBUG = 0;
 
   /* Identificadores das Activities */
 
@@ -100,10 +100,12 @@ public class FotoEventoActivity extends Activity {
       // obtém as informações salvas (se existirem)
     }
 
+    Log.i(TAG, "*** onCreate() ***");
+
     ct = new CameraTools();
 
     // prepara o ambiente para execução da aplicação
-    preparaAmbiente();
+    boolean b = preparaAmbiente();
 
     // Lê a configuração das preferências do sistema
     if (mPreferences == null) {
@@ -161,7 +163,7 @@ public class FotoEventoActivity extends Activity {
     }
 
     // ----------------------------
-    // trata o botão
+    // trata o botão Participar
     // ----------------------------
 
     btn.setText("*** Participar ***");
@@ -170,18 +172,21 @@ public class FotoEventoActivity extends Activity {
 
       public void onClick(View v) {
 
-        Bundle bundle = new Bundle();
-
-        bundle.putSerializable("br.com.mltech.contratante", mContratante);
-        bundle.putSerializable("br.com.mltech.evento", mEvento);
-        bundle.putSerializable("br.com.mltech.participante", mParticipante);
-        bundle.putSerializable("br.com.mltech.participacao", mParticipacao);
-
         boolean b = isCondicoesIniciaisSatisfeitas();
 
         if (b) {
+
+          Bundle bundle = new Bundle();
+
+          bundle.putSerializable("br.com.mltech.contratante", mContratante);
+          bundle.putSerializable("br.com.mltech.evento", mEvento);
+          bundle.putSerializable("br.com.mltech.participante", mParticipante);
+          bundle.putSerializable("br.com.mltech.participacao", mParticipacao);
+
           launchActivity(FotoEventoActivity.this, DummyActivity3.class, bundle, ACTIVITY_DUMMY3);
+
         } else {
+          Toast.makeText(FotoEventoActivity.this, "Falta configuração !!!", Toast.LENGTH_LONG).show();
           Log.w(TAG, "mParticipante ou mParticipacao ou mContratante ou mEvento é null");
         }
 
@@ -625,13 +630,29 @@ public class FotoEventoActivity extends Activity {
 
     Log.d(TAG, "==> resultActivityDummy3() - resultCode=" + resultCode);
 
+    if (data == null) {
+      // Activity não retornou dados
+      Log.w(TAG, "resultActivityDummy3() - Activity Dummy3 não retornou dados");
+
+    } else {
+
+      Log.i(TAG, "resultActivityDummy3 - data=" + data);
+
+      // Obtem o resultado da execução da activity
+      result = data.getStringExtra("br.com.mltech.result");
+
+      Log.i(TAG, "resultActivityDummy3() - result=" + result);
+
+    }
+
+    // Obtém informações sobre a intent que chamou a activity
     Intent i = getIntent();
 
-    Bundle ss = i.getBundleExtra("br.com.mltech.result");
+    Bundle ss = i.getExtras();
 
     if (ss != null) {
 
-      Log.w(TAG, "Bundle ss possui informações");
+      Log.w(TAG, "resultActivityDummy3() - bundle ss possui as seguintes informações:");
 
       Set<String> chaves = ss.keySet();
 
@@ -641,45 +662,26 @@ public class FotoEventoActivity extends Activity {
 
     } else {
 
-      Log.w(TAG, "resultActivityDummy3() - Bundle ss está vazio - nenhum resultado retornou");
+      Log.w(TAG, "resultActivityDummy3() - bundle ss está vazio");
 
     }
 
-    if (data == null) {
+    if (resultCode == RESULT_OK) {
 
-      Log.w(TAG, "resultActivityDummy3() - data is null");
+      Log.i(TAG, "resultActivityDummy3() - executada com sucesso");
 
-    } else {
-
-      Log.i(TAG, "resultActivityDummy3() - data possui informações");
-      Log.i(TAG, "resultActivityDummy3 - data=" + data);
-      result = data.getStringExtra("br.com.mltech.result");
-      Log.d(TAG, "resultActivityDummy3() - result=" + result);
-
-    }
-
-    if (result != null) {
-
-      if (resultCode == RESULT_OK) {
-
-        Log.i(TAG, "resultActivityDummy3() - executada com sucesso");
-
-        // atualiza a lista de participantes
-        updateListaParticipacao();
-
-      } else {
-
-        // operação cancelada
-        Log.w(TAG, "resultActivityDummy3() - Operação ocorreu com erros");
-
-      }
+      // atualiza a lista de participantes
+      updateListaParticipacao();
 
     } else {
-      Log.w(TAG, "resultActivityDummy3() - Result == null - problemas !!!");
+
+      // operação cancelada
+      Log.w(TAG, "resultActivityDummy3() - Operação ocorreu com erros");
+
     }
 
   }
- 
+
   /**
    * lerConfiguracoes(String name)
    * 
@@ -692,7 +694,7 @@ public class FotoEventoActivity extends Activity {
    */
   private void lerConfiguracoes(String name) {
 
-    Log.d(TAG, "Lendo as preferências compartilhadas: " + name);
+    Log.d(TAG, "lerConfiguracoes() - Lendo as preferências compartilhadas: " + name);
 
     mPreferences = getSharedPreferences(name, MODE_PRIVATE);
 
@@ -723,64 +725,73 @@ public class FotoEventoActivity extends Activity {
     }
 
     // Contratante
-    if (mContratante == null) {
+    if ((mContratante == null) && (set.size() > 0)) {
+      // inicializa o contrante
 
       //
       mContratante = new Contratante();
 
+      mContratante.setNome((String) chaves.get("contratante_nome"));
+      mContratante.setEmail((String) chaves.get("contratante_email"));
+      mContratante.setTelefone((String) chaves.get("contratante_telefone"));
+
     }
 
-    mContratante.setNome((String) chaves.get("contratante_nome"));
-    mContratante.setEmail((String) chaves.get("contratante_email"));
-    mContratante.setTelefone((String) chaves.get("contratante_telefone"));
-
     // Evento
-    if (mEvento == null) {
+    if ((mEvento == null) && (set.size() > 0)) {
 
       mEvento = new Evento();
 
       mEvento.setContratante(mContratante);
 
+      mEvento.setBordaPolaroid((String) chaves.get("evento_borda_polaroid"));
+      mEvento.setBordaCabine((String) chaves.get("evento_borda_cabine"));
+
+      // TODO
+      // edit.putString("evento_envia_facebook", mEvento.isEnviaFacebook() ==
+      // true ? "true" : "false");
+      // edit.putString("evento_envia_twitter", mEvento.isEnviaTwitter() == true
+      // ? "true" : "false");
+
+      //
+
+      mEvento.setNome((String) chaves.get("evento_nome"));
+
+      mEvento.setEmail((String) chaves.get("evento_email"));
+
+      mEvento.setEndereco((String) chaves.get("evento_endereco"));
+      mEvento.setCidade((String) chaves.get("evento_cidade"));
+      mEvento.setEstado((String) chaves.get("evento_estado"));
+      mEvento.setCep((String) chaves.get("evento_cep"));
+
+      mEvento.setData((String) chaves.get("evento_data"));
+
+      mEvento.setTelefone((String) chaves.get("evento_telefone"));
+
+      /*
+       * 
+       * boolean b1, b2;
+       * 
+       * b1 = ((String) chaves.get("evento_envia_facebook")).equals("true") ?
+       * true : false; b2 = ((String)
+       * chaves.get("evento_envia_twitter")).equals("true") ? true : false;
+       * 
+       * mEvento.setEnviaFacebook(b1); mEvento.setEnviaTwitter(b2);
+       */
+
+      String[] paramEventos = new String[5];
+
+      paramEventos[0] = (String) chaves.get("evento_param1");
+      paramEventos[1] = (String) chaves.get("evento_param2");
+      paramEventos[2] = (String) chaves.get("evento_param3");
+      paramEventos[3] = (String) chaves.get("evento_param4");
+      paramEventos[4] = (String) chaves.get("evento_param5");
+
+      Parametros parametros = new Parametros(paramEventos);
+
+      mEvento.setParametros(parametros);
+
     }
-
-    mEvento.setBordaCabine(null);
-    mEvento.setBordaPolaroid(null);
-
-    mEvento.setNome((String) chaves.get("evento_nome"));
-
-    mEvento.setEmail((String) chaves.get("evento_email"));
-
-    mEvento.setEndereco((String) chaves.get("evento_endereco"));
-    mEvento.setCidade((String) chaves.get("evento_cidade"));
-    mEvento.setEstado((String) chaves.get("evento_estado"));
-    mEvento.setCep((String) chaves.get("evento_cep"));
-
-    mEvento.setData((String) chaves.get("evento_data"));
-
-    mEvento.setTelefone((String) chaves.get("evento_telefone"));
-
-    /*
-     * 
-     * boolean b1, b2;
-     * 
-     * b1 = ((String) chaves.get("evento_envia_facebook")).equals("true") ? true
-     * : false; b2 = ((String)
-     * chaves.get("evento_envia_twitter")).equals("true") ? true : false;
-     * 
-     * mEvento.setEnviaFacebook(b1); mEvento.setEnviaTwitter(b2);
-     */
-
-    String[] paramEventos = new String[5];
-
-    paramEventos[0] = (String) chaves.get("evento_param1");
-    paramEventos[1] = (String) chaves.get("evento_param2");
-    paramEventos[2] = (String) chaves.get("evento_param3");
-    paramEventos[3] = (String) chaves.get("evento_param4");
-    paramEventos[4] = (String) chaves.get("evento_param5");
-
-    Parametros parametros = new Parametros(paramEventos);
-
-    mEvento.setParametros(parametros);
 
   }
 
@@ -838,9 +849,19 @@ public class FotoEventoActivity extends Activity {
 
     // verifica se as bordas das fotos já foram disponibilizadas ao
     // evento
-    if (mEvento != null && ((mEvento.getBordaCabine() == null) || (mEvento.getBordaPolaroid() == null))) {
+
+    if (mEvento != null) {
+      Log.i(TAG, "getBordaCabine: " + mEvento.getBordaCabine());
+      Log.i(TAG, "getBordaPolaroid: " + mEvento.getBordaPolaroid());
+    } else {
+      Log.w(TAG, "Evento é null");
+    }
+
+    if ((mEvento != null) && ((mEvento.getBordaCabine() == null) || (mEvento.getBordaPolaroid() == null))) {
       // TODO alterar essa condição
       Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Bordas não foram configuradas");
+      Toast.makeText(this, "Bordas não foram configuradas", Toast.LENGTH_LONG).show();
+      b = false;
     }
 
     return b;
@@ -883,20 +904,18 @@ public class FotoEventoActivity extends Activity {
    * Prepara o ambiente para gravação das fotos
    * 
    */
-  private void preparaAmbiente() {
+  private boolean preparaAmbiente() {
 
     if (ct == null) {
       Log.w(TAG, "preparaAmbiente() - CameraTools não foi instanciado");
-      return;
+      return false;
     }
 
+    boolean b = false;
     if (ct.isExternalStorageMounted()) {
 
       Log.i(TAG, "preparaAmbiente() - SDCARD está montado");
 
-      // xxx(publicDirectory);
-
-      // File f = ct.getStorageDir("fotoevento2");
       File f = null;
 
       f = ct.getDir2("fotoevento/fotos");
@@ -908,18 +927,25 @@ public class FotoEventoActivity extends Activity {
       f = ct.getDir2("fotoevento/telainicial");
       ct.ShowFileDetails(f, "fotoevento/telainicial");
 
+      b = true;
+
     } else {
 
       Log.i(TAG, "preparaAmbiente() - SDCARD não está montado");
 
+      // TODO aqui seria melhor exibir uma caixa de diálogo
+      Toast.makeText(this, "SDCARD não está montado !!!", Toast.LENGTH_LONG).show();
+
     }
+
+    return b;
 
   }
 
   /**
    * obtemImagemTelaInicial()
    * 
-   * Obtem um bitmap que será configurado na página inicial da aplicação. Caso
+   * Obtem um bitmap que será exibido na tela inicial da aplicação. Caso
    * nenhuma bitmap seja configurado será usado um bitmap padrão.
    * 
    */
@@ -928,6 +954,11 @@ public class FotoEventoActivity extends Activity {
     Bitmap bitmap = null;
 
     SharedPreferences preferences = getSharedPreferences(PREF_EMAIL, MODE_PRIVATE);
+
+    if (preferences == null) {
+      Log.w(TAG, "obtemImagemTelaInicial() - Não foi possível abrir o arquivo de preferências: " + PREF_EMAIL);
+      return null;
+    }
 
     String urlImagem = preferences.getString("preferencias_url_imagem", "");
 
@@ -940,12 +971,14 @@ public class FotoEventoActivity extends Activity {
     if (f != null) {
 
       if (f.exists()) {
+        
         // arquivo existe
         // carrega o arquivo e exibe a foto
         bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+        
       } else {
+        
         // carrega a foto default (padrão)
-
         // TODO definir o tamanho da imagem inicial
 
         Log.w(TAG, "obtemImagemTelaInicial() - Arquivo: " + f.getAbsolutePath() + " não foi encontrado.");
@@ -978,12 +1011,14 @@ public class FotoEventoActivity extends Activity {
         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
 
           public void onClick(DialogInterface dialog, int id) {
+            Log.i(TAG, "dialogoDesejaSairDaAplicacao() - Finalizando a aplicação.");
             FotoEventoActivity.this.finish();
           }
 
         }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
 
           public void onClick(DialogInterface dialog, int id) {
+            Log.i(TAG, "dialogoDesejaSairDaAplicacao() - o usuário cancelou o pedido de saída.");
             dialog.cancel();
           }
 
@@ -993,7 +1028,5 @@ public class FotoEventoActivity extends Activity {
     alert.show();
 
   }
-
- 
 
 }
