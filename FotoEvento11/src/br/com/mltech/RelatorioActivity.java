@@ -22,22 +22,27 @@ import br.com.mltech.modelo.Participante;
 /**
  * RelatorioActivity
  * 
+ * Essa activity é responsável pela geração de relatórios de uso do sistema.
+ * 
  * @author maurocl
  * 
  */
 public class RelatorioActivity extends Activity {
 
   private static final String TAG = "RelatorioActivity";
-  
+
   private static final String SEP = ";";
   private static final String DEM = "\"";
 
+  private static Evento mEvento;
+
   private List<Participacao> lista = null;
-  
-  private Evento mEvento;
-  
+
   private static final String CSVFILE = "lista.csv";
 
+  /**
+   * onCreate()
+   */
   @Override
   public void onCreate(Bundle savedInstanceState) {
 
@@ -57,15 +62,20 @@ public class RelatorioActivity extends Activity {
       // verifica se existem parâmetros existentes
       Bundle params = intent.getExtras();
 
+      // recupera o nº de participantes
       if (params != null) {
         // obtém o nº de participantes do evento
-        num = params.getString("numParticipantes");
+        if (params.getString("numParticipantes") != null) {
+          num = params.getString("numParticipantes");
+        }
       }
 
+      // recupera a lista de emails enviados
       if (params.getSerializable("br.com.mltech.lista") != null) {
         lista = (List<Participacao>) params.getSerializable("br.com.mltech.lista");
       }
-      
+
+      // recupera as informações sobre o evento
       if (params.getSerializable("br.com.mltech.evento") != null) {
         mEvento = (Evento) params.getSerializable("br.com.mltech.evento");
       }
@@ -79,9 +89,9 @@ public class RelatorioActivity extends Activity {
     Button btn1 = (Button) findViewById(R.id.btn1);
     Button btn2 = (Button) findViewById(R.id.btn2);
     /*
-    Button btn3 = (Button) findViewById(R.id.btn3);
-    Button btn4 = (Button) findViewById(R.id.btn4);
-    */
+     * Button btn3 = (Button) findViewById(R.id.btn3); Button btn4 = (Button)
+     * findViewById(R.id.btn4);
+     */
 
     btn1.setText("Exportar arquivo para Excel");
 
@@ -92,16 +102,15 @@ public class RelatorioActivity extends Activity {
     btn1.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
-        // TODO Auto-generated method stub
-        Log.d(TAG, "Botão 1 foi pressionado");
+
+        Log.d(TAG, "onCreate() - Botão 1 foi pressionado");
 
         boolean b = gravarArquivoCSV(CSVFILE, lista);
-        
-        if(b) {
-          Log.d(TAG,"Lista exportada com sucesso");
-        }
-        else {
-          Log.d(TAG,"Falha na exportação da lista");
+
+        if (b) {
+          Log.d(TAG, "onCreate() - Lista exportada com sucesso");
+        } else {
+          Log.d(TAG, "onCreate() - Falha na exportação da lista");
         }
 
       }
@@ -118,25 +127,19 @@ public class RelatorioActivity extends Activity {
 
     // Tratamento do evento do botão 3
     /*
-    btn3.setOnClickListener(new OnClickListener() {
-
-      public void onClick(View v) {
-        // TODO Auto-generated method stub
-        Log.d(TAG, "Botão 3 foi pressionado");
-      }
-    });
-    */
+     * btn3.setOnClickListener(new OnClickListener() {
+     * 
+     * public void onClick(View v) { // TODO Auto-generated method stub
+     * Log.d(TAG, "Botão 3 foi pressionado"); } });
+     */
 
     // Tratamento do evento do botão 4
     /*
-    btn4.setOnClickListener(new OnClickListener() {
-
-      public void onClick(View v) {
-        // TODO Auto-generated method stub
-        Log.d(TAG, "Botão 4 foi pressionado");
-      }
-    });
-    */
+     * btn4.setOnClickListener(new OnClickListener() {
+     * 
+     * public void onClick(View v) { // TODO Auto-generated method stub
+     * Log.d(TAG, "Botão 4 foi pressionado"); } });
+     */
 
   }
 
@@ -159,13 +162,21 @@ public class RelatorioActivity extends Activity {
 
     StringBuilder sb = new StringBuilder();
 
+    // um participante
     Participante participante = null;
 
+    // nº de participantes
     int numParticipantes = 0;
 
     if (filename == null) {
-      Log.w(TAG, "Nenhum arquivo fornecido !");
+      Log.w(TAG, "gravarArquivoCSV() - Nenhum arquivo fornecido !");
       return b;
+    }
+
+    if (lista == null) {
+      // lista de participantes está vazia
+      Log.d(TAG, "gravarArquivoCSV() - Lista de participantes está vazia !");
+      return false;
     }
 
     Context myContext = this.getApplicationContext();
@@ -173,86 +184,79 @@ public class RelatorioActivity extends Activity {
     FileOutputStream fos = null;
     DataOutputStream dos = null;
 
-    if (lista != null) {
+    try {
 
-      try {
+      fos = myContext.openFileOutput(filename, MODE_PRIVATE);
+      dos = new DataOutputStream(fos);
 
-        fos = myContext.openFileOutput(filename, MODE_PRIVATE);
-        dos = new DataOutputStream(fos);
+      // abre o arquivo para gravação no modo gravação (escrita)
 
-        // abre o arquivo para gravação no modo gravação (escrita)
+      Log.d(TAG, "gravarArquivoCSV() - Processando a lista de participantes ...");
 
-        Log.d(TAG, "Processando a lista de participantes ...");
+      Log.d(TAG, "gravarArquivoCSV() - Gravando arquivo: " + filename);
 
-        Log.d(TAG, "Gravando arquivo: " + filename);
+      int contador = 0;
 
-        int contador = 0;
+      // Cria o cabeçalho do arquivo .csv
+      sb = new StringBuilder();
+      sb.append(formatItem("nome"));
+      sb.append(formatItem("email"));
+      sb.append(formatItem("telefone"));
+      sb.append(formatItem("TipoFoto"));
+      sb.append(formatItem("EfeitoFoto"));
+      sb.append(formatItem("Arquivo"));
+      sb.append("\n");
+      dos.write(sb.toString().getBytes());
 
-        // Cria o cabeçalho do arquivo .csv
+      // TODO aqui falta tratar os campos adicionais (se houverem)
+      
+      for (Participacao p : lista) {
+
         sb = new StringBuilder();
-        sb.append(formatItem("nome"));
-        sb.append(formatItem("email"));
-        sb.append(formatItem("telefone"));
-        sb.append(formatItem("TipoFoto"));
-        sb.append(formatItem("EfeitoFoto"));
-        sb.append(formatItem("Arquivo"));
+
+        contador++;
+
+        // TODO falta inserir os parâmetros adicionais
+        // obter os parâmetros adicionais a partir de mEvento
+
+        // formata um participante e grava no arquivo
+        participante = p.getParticipante();
+
+        sb.append(participante.getNome()).append(SEP);
+        sb.append(participante.getEmail()).append(SEP);
+        sb.append(participante.getTelefone()).append(SEP);
+        sb.append("" + p.getTipoFoto()).append(SEP);
+        sb.append("" + p.getEfeitoFoto()).append(SEP);
+        sb.append(p.getNomeArqFoto());
         sb.append("\n");
+
+        numParticipantes++;
+
+        Log.d(TAG, contador + ") " + sb.toString());
+
         dos.write(sb.toString().getBytes());
 
-        for (Participacao p : lista) {
-
-          sb = new StringBuilder();
-
-          contador++;
-
-          
-          // TODO falta inserir os parâmetros adicionais
-          // obter os parâmetros adicionais a partir de mEvento
-          
-          // formata um participante e grava no arquivo
-          participante = p.getParticipante();
-
-          sb.append(participante.getNome()).append(SEP);
-          sb.append(participante.getEmail()).append(SEP);
-          sb.append(participante.getTelefone()).append(SEP);
-          sb.append("" + p.getTipoFoto()).append(SEP);
-          sb.append("" + p.getEfeitoFoto()).append(SEP);
-          sb.append(p.getNomeArqFoto());
-          sb.append("\n");
-
-          numParticipantes++;
-
-          Log.d(TAG, contador + ") " + sb.toString());
-
-          dos.write(sb.toString().getBytes());
-
-        }
-      } catch (FileNotFoundException e) {
-        // TODO: handle exception
-        Log.d(TAG, "Arquivo " + filename + " não foi encontrado");
-
-      } catch (Exception e) {
-        // TODO: handle exception
-        Log.d(TAG, "Exceção encontrada", e);
-
-      } finally {
-        try {
-          dos.close();
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
       }
+    } catch (FileNotFoundException e) {
+      // TODO: handle exception
+      Log.d(TAG, "gravarArquivoCSV() - Arquivo " + filename + " não foi encontrado");
 
-      // fecha o arquivo de gravação
+    } catch (Exception e) {
+      // TODO: handle exception
+      Log.d(TAG, "gravarArquivoCSV() - Exceção encontrada", e);
 
-      Log.d(TAG, "Nº total de participantes: " + numParticipantes);
-
-      b = true;
-
-    } else {
-      Log.d(TAG, "Lista de participantes está vazia !");
+    } finally {
+      try {
+        // fecha o arquivo de gravação
+        dos.close();
+      } catch (IOException e) {
+        Log.w(TAG, "gravarArquivoCSV() - IOException encontrada", e);
+      }
     }
+
+    Log.d(TAG, "gravarArquivoCSV() - Nº total de participantes: " + numParticipantes);
+
+    b = true;
 
     return b;
 
