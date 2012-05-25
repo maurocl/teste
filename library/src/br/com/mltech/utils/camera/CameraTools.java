@@ -903,6 +903,10 @@ public class CameraTools {
 
     ArrayList<String> lista = null;
 
+    if(c==null) {
+      return null;
+    }
+    
     Parameters params = c.getParameters();
 
     // O método flatten retorna uma String

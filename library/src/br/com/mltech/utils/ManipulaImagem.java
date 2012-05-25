@@ -269,6 +269,131 @@ public class ManipulaImagem {
   }
 
   /**
+   * processaFotoFormatoCabine2(Bitmap foto1, Bitmap foto2, Bitmap foto3, Bitmap bmMoldura)
+   * 
+   * 
+   * 
+   * Testa o funcionamento da criação de uma única foto a partir de três outras
+   * fotos. Carrega as imagens a partir de um arquivo localizado em memória
+   * externa (sdcard).
+   * 
+   * Cria um bitmap contendo três fotos e acrescenta uma moldura.
+   * Grava o bitmap resultante em um arquivo
+   * 
+   * @param bmFoto1
+   * @param bmFoto2
+   * @param bmFoto3
+   * @param bmMoldura
+   * 
+   * @return
+   * 
+   */
+  public String processaFotoFormatoCabine2(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3, Bitmap bmMoldura) {
+
+    if (bmFoto1 == null) {
+      Log.w(TAG, "processaFotoFormatoCabine2() - Foto1 está vazia !");
+      return null;
+    }
+
+    if (bmFoto2 == null) {
+      Log.w(TAG, "processaFotoFormatoCabine2() - Foto2 está vazia !");
+      return null;
+    }
+
+    if (bmFoto3 == null) {
+      Log.w(TAG, "processaFotoFormatoCabine2() - Foto3 está vazia !");
+      return null;
+    }
+
+    if (bmMoldura == null) {
+      Log.w(TAG, "processaFotoFormatoCabine2() - Moldura formato Cabine está vazia !");
+      return null;
+    }
+
+    Log.v(TAG, "processaFotoFormatoCabine2() ==> Tamanho da moldura original: " + getStringBitmapSize(bmMoldura));
+
+    // =========================================================================
+    // Cria um novo bitmap a partir da composição das 3 fotos
+    // A foto será repetida na vertical, isto é, uma nova foto
+    // será colocada embaixo da outra.
+    // =========================================================================
+    Bitmap bmImgJoin = verticalJoin(bmFoto1, bmFoto2, bmFoto3);
+
+    if (bmImgJoin != null) {
+      Log.i(TAG, "processaFotoFormatoCabine2() - Imagens foram juntadas com sucesso");
+      Log.v(TAG, "processaFotoFormatoCabine2() -  ==> Tamanho da foto após join: " + getStringBitmapSize(bmImgJoin));
+      // imagem.exibeBitmap(mImageView, bmImagem);
+    } else {
+      Log.w(TAG, "processaFotoFormatoCabine2() - Erro no merge das três fotos");
+      return null;
+    }
+
+    Bitmap scaledBitmap = null;
+
+    String arqSaida = PATH_FOTOS + "xxx-join.png";
+
+    // grava a foto das imagens "juntada"
+    boolean gravou = gravaBitmapArquivo(bmImgJoin, arqSaida);
+
+    if (!gravou) {
+      Log.w(TAG, "processaFotoFormatoCabine2() - Erro na gravação do arquivo contendo as três fotos: " + arqSaida);
+      return null;
+    } else {
+
+      Log.i(TAG, "processaFotoFormatoCabine2() - arquivo: " + arqSaida + " gravado com sucesso");
+    }
+
+    // Obtém uma imagem em escala
+    // scaledBitmap = imagem.getScaledBitmap(bmImgJoin);
+    scaledBitmap = getScaledBitmap2(bmImgJoin, 113, 453);
+
+    if (scaledBitmap == null) {
+      //
+      return null;
+    }
+
+    Log.v(TAG, "processaFotoFormatoCabine2() - Tamanho depois do escalonamento: " + getStringBitmapSize(scaledBitmap));
+
+    // exibe a imagem escalonada
+    // exibeBitmap(mImageView, scaledBitmap);
+
+    arqSaida = PATH_FOTOS + "xxx2-join.png";
+
+    boolean gravouImagemEscalonda = gravaBitmapArquivo(scaledBitmap, arqSaida);
+
+    if (gravouImagemEscalonda) {
+
+      // imagem escalonada gravada com sucesso
+      Log.v(TAG, "processaFotoFormatoCabine2() - Imagem escalonada gravada com sucesso no arquivo " + arqSaida);
+    } else {
+      Log.v(TAG, "processaFotoFormatoCabine2() - Falha na gravação da imagem escalonada no arquivo: " + arqSaida);
+      return null;
+    }
+
+    // combina a foto com a moldura
+    Bitmap fotoComMoldura = aplicaMolduraFoto(scaledBitmap, bmMoldura);
+
+    // exibe a foto com a moldura
+    // exibeBitmap(mImageView, fotoComMoldura);
+
+    arqSaida = PATH_FOTOS + "xxx3-join-moldura.png";
+
+    boolean gravouImagemComMoldura = gravaBitmapArquivo(fotoComMoldura, arqSaida);
+
+    if (gravouImagemComMoldura) {
+
+      // imagem escalonada gravada com sucesso
+      Log.v(TAG, "processaFotoFormatoCabine2() - Imagem com moldura gravada com sucesso no arquivo " + arqSaida);
+    } else {
+      Log.v(TAG, "processaFotoFormatoCabine2() - Falha na gravação da imagem com moldura no arquivo: " + arqSaida);
+      return null;
+    }
+
+    return arqSaida;
+
+  }
+
+  /**
    * aplicaFiltroCores(Bitmap bi)
    * 
    * @param bi
