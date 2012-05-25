@@ -62,9 +62,7 @@ public class ManipulaImagem {
     bmp1 = getBitmapFromFile(foto); // foto
     bmp2 = getBitmapFromFile(moldura); // moldura
 
-    // cria um novo bitmap com a
-    // moldura
-    // sobreposta a foto
+    // cria um novo bitmap com a moldura sobreposta a foto
     Bitmap bitmap = overlay4(bmp1, bmp2);
 
     if (bitmap == null) {
@@ -79,9 +77,11 @@ public class ManipulaImagem {
    * processaFotoFormatoPolaroid(String sFilename, String sMoldura)´
    * 
    * @param sFilename
+   *          Caminho completo do arquivo
    * @param sMoldura
+   *          Caminho completo da moldura
    * 
-   * @return
+   * @return Bitmap
    */
   public Bitmap processaFotoFormatoPolaroid(String sFilename, String sMoldura) {
 
@@ -108,9 +108,7 @@ public class ManipulaImagem {
    */
   public Bitmap processaFotoFormatoPolaroid(Bitmap foto, Bitmap moldura) {
 
-    // cria um novo bitmap com a
-    // moldura
-    // sobreposta a foto
+    // cria um novo bitmap com a moldura sobreposta a foto
     Bitmap bitmap = overlay4(foto, moldura);
 
     if (bitmap == null) {
@@ -181,9 +179,9 @@ public class ManipulaImagem {
     Bitmap bmMoldura = getBitmapFromFile(moldura);
 
     if (bmMoldura != null) {
-      Log.v(TAG, " ==> Tamanho da moldura original: " + getStringBitmapSize(bmMoldura));
+      Log.v(TAG, "processaFotoFormatoCabine() ==> Tamanho da moldura original: " + getStringBitmapSize(bmMoldura));
     } else {
-      Log.w(TAG, "Não foi possível ler o arquivo: " + moldura);
+      Log.w(TAG, "processaFotoFormatoCabine() - Não foi possível ler o arquivo: " + moldura);
       return null;
     }
 
@@ -195,11 +193,11 @@ public class ManipulaImagem {
     Bitmap bmImgJoin = verticalJoin(bmFoto1, bmFoto2, bmFoto3);
 
     if (bmImgJoin != null) {
-      Log.i(TAG, "Imagens foram juntadas com sucesso");
-      Log.v(TAG, " ==> Tamanho da foto após join: " + getStringBitmapSize(bmImgJoin));
+      Log.i(TAG, "processaFotoFormatoCabine() - Imagens foram juntadas com sucesso");
+      Log.v(TAG, "processaFotoFormatoCabine() ==> Tamanho da foto após join: " + getStringBitmapSize(bmImgJoin));
       // imagem.exibeBitmap(mImageView, bmImagem);
     } else {
-      Log.w(TAG, "Erro no merge das três fotos");
+      Log.w(TAG, "processaFotoFormatoCabine() - Erro no merge das três fotos");
       return null;
     }
 
@@ -211,11 +209,11 @@ public class ManipulaImagem {
     boolean gravou = gravaBitmapArquivo(bmImgJoin, arqSaida);
 
     if (!gravou) {
-      Log.w(TAG, "Erro na gravação do arquivo contendo as três fotos: " + arqSaida);
+      Log.w(TAG, "processaFotoFormatoCabine() - Erro na gravação do arquivo contendo as três fotos: " + arqSaida);
       return null;
     } else {
 
-      Log.i(TAG, "testaVerticalJoin() - Arquivo: " + arqSaida + " gravado com sucesso");
+      Log.i(TAG, "processaFotoFormatoCabine() - Arquivo: " + arqSaida + " gravado com sucesso");
     }
 
     // Obtém uma imagem em escala
@@ -227,21 +225,21 @@ public class ManipulaImagem {
       return null;
     }
 
-    Log.v(TAG, "Tamanho depois do escalonamento: " + getStringBitmapSize(scaledBitmap));
+    Log.v(TAG, "processaFotoFormatoCabine() - Tamanho depois do rescalonamento: " + getStringBitmapSize(scaledBitmap));
 
     // exibe a imagem escalonada
     // exibeBitmap(mImageView, scaledBitmap);
 
     arqSaida = PATH_FOTOS + "xxx2-join.png";
 
-    boolean gravouImagemEscalonda = gravaBitmapArquivo(scaledBitmap, arqSaida);
+    boolean gravouImagemRedimensionada = gravaBitmapArquivo(scaledBitmap, arqSaida);
 
-    if (gravouImagemEscalonda) {
+    if (gravouImagemRedimensionada) {
 
       // imagem escalonada gravada com sucesso
-      Log.v(TAG, "Imagem escalonada gravada com sucesso no arquivo " + arqSaida);
+      Log.v(TAG, "processaFotoFormatoCabine() - Imagem escalonada gravada com sucesso no arquivo " + arqSaida);
     } else {
-      Log.v(TAG, "Falha na gravação da imagem escalonada no arquivo: " + arqSaida);
+      Log.v(TAG, "processaFotoFormatoCabine() - Falha na gravação da imagem escalonada no arquivo: " + arqSaida);
       return null;
     }
 
@@ -258,9 +256,9 @@ public class ManipulaImagem {
     if (gravouImagemComMoldura) {
 
       // imagem escalonada gravada com sucesso
-      Log.v(TAG, "Imagem com moldura gravada com sucesso no arquivo " + arqSaida);
+      Log.v(TAG, "processaFotoFormatoCabine() - Imagem com moldura gravada com sucesso no arquivo " + arqSaida);
     } else {
-      Log.v(TAG, "Falha na gravação da imagem com moldura no arquivo: " + arqSaida);
+      Log.v(TAG, "processaFotoFormatoCabine() - Falha na gravação da imagem com moldura no arquivo: " + arqSaida);
       return null;
     }
 
@@ -269,7 +267,8 @@ public class ManipulaImagem {
   }
 
   /**
-   * processaFotoFormatoCabine2(Bitmap foto1, Bitmap foto2, Bitmap foto3, Bitmap bmMoldura)
+   * processaFotoFormatoCabine2(Bitmap foto1, Bitmap foto2, Bitmap foto3, Bitmap
+   * bmMoldura)
    * 
    * 
    * 
@@ -277,8 +276,8 @@ public class ManipulaImagem {
    * fotos. Carrega as imagens a partir de um arquivo localizado em memória
    * externa (sdcard).
    * 
-   * Cria um bitmap contendo três fotos e acrescenta uma moldura.
-   * Grava o bitmap resultante em um arquivo
+   * Cria um bitmap contendo três fotos e acrescenta uma moldura. Grava o bitmap
+   * resultante em um arquivo
    * 
    * @param bmFoto1
    * @param bmFoto2
@@ -672,7 +671,7 @@ public class ManipulaImagem {
 
     File f = new File(filename);
 
-    if (f != null && f.exists()) {
+    if (f != null && f.exists() && f.isFile()) {
 
       // showFile(f);
 
@@ -681,7 +680,7 @@ public class ManipulaImagem {
       bm = BitmapFactory.decodeFile(f.getAbsolutePath());
 
     } else {
-      Log.w(TAG, "getBitmapFile(String) - não foi possível ler o arquivo: " + f.getAbsolutePath());
+      Log.w(TAG, "getBitmapFile() - não foi possível ler o arquivo: " + f.getAbsolutePath());
     }
 
     return bm;
@@ -709,9 +708,16 @@ public class ManipulaImagem {
 
     } else {
 
-      showFile(f);
+      if (f.isFile()) {
 
-      bm = BitmapFactory.decodeFile(f.getAbsolutePath());
+        showFile(f);
+
+        bm = BitmapFactory.decodeFile(f.getAbsolutePath());
+
+      } else if (f.isDirectory()) {
+        Log.w(TAG, "getBitmapFile() - arquivo: " + f.getAbsolutePath() + " é um diretório.");
+        return null;
+      }
 
     }
 
@@ -725,7 +731,8 @@ public class ManipulaImagem {
    * imageData for where the decoder should begin parsing. length the number of
    * bytes, beginning at offset, to parse
    * 
-   * @param
+   * @param um array de bytes contendo a imagem
+   * 
    * @return data The decoded bitmap, or null if the image could not be decode.
    */
   public Bitmap getBitmapFromByteArray(byte[] data) {
@@ -854,7 +861,17 @@ public class ManipulaImagem {
 
       brd = BitmapRegionDecoder.newInstance(filename, true);
 
-      bitmap = brd.decodeRegion(rect, options);
+      if (brd != null) {
+
+        bitmap = brd.decodeRegion(rect, options);
+
+        if (bitmap == null) {
+          Log.w(TAG, "getBitmapRegion() - bitmap is null");
+        }
+
+      } else {
+        Log.w(TAG, "getBitmapRegion() - brd is null");
+      }
 
     } catch (IOException e) {
 
@@ -975,9 +992,9 @@ public class ManipulaImagem {
    * Grava um bitmap em um arquivo.
    * 
    * @param bm
-   *          Bitmap Bitmap contendo a imagem
+   *          Bitmap contendo a imagem
    * @param filename
-   *          Arquivo Nome do arquivo que conterá a imagem
+   *          Nome completo do arquivo onde a imagem será gravada
    * 
    * @return true se o arquivo for gravado com sucesso ou false caso contrário.
    */
@@ -987,11 +1004,13 @@ public class ManipulaImagem {
 
     if (bm == null) {
       // bitmap não pode ser vazio
+      Log.w(TAG, "gravaBitmapArquivo() - arquivo não pode ser gravado pois bitmap é nulo");
       return false;
     }
 
     if (filename == null) {
       // arquivo não pode ser vazio
+      Log.w(TAG, "gravaBitmapArquivo() - arquivo não pode ser gravado pois o nome do arquivo é nulo");
       return false;
     }
 
@@ -1008,17 +1027,27 @@ public class ManipulaImagem {
 
       out = new FileOutputStream(filename);
 
-      // boolean success =
-      // bm.compress(Bitmap.CompressFormat.valueOf("PNG"),
-      // 100, out);
       salvou = bm.compress(Bitmap.CompressFormat.PNG, 100, out);
-      Log.i(TAG, "gravaBitmapArquivo() - sucess code from bitmap.compress: " + salvou);
-      out.close();
+
+      if (salvou) {
+        Log.i(TAG, "gravaBitmapArquivo() - arquivo: " + filename + " gravado com sucesso");
+      } else {
+        Log.i(TAG, "gravaBitmapArquivo() - falha na gravação do arquivo: " + filename);
+      }
 
     } catch (FileNotFoundException e) {
-      Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo", e);
-    } catch (IOException e) {
-      Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo", e);
+      Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo: " + filename, e);
+
+    } finally {
+      if (out != null) {
+        try {
+          out.close();
+        } catch (IOException e) {
+
+          Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo", e);
+
+        }
+      }
     }
 
     return salvou;
@@ -1839,6 +1868,30 @@ public class ManipulaImagem {
     bitmap.compress(CompressFormat.PNG, 100, fos);
 
     return bitmap;
+
+  }
+
+  /**
+   * isValidFile(File f)
+   * 
+   * Verifica se um arquivo existe e é um arquivo
+   * 
+   * @param f
+   * 
+   * @return true se o arquivo existir e for um arquivo
+   * 
+   */
+  private boolean isValidFile(File f) {
+
+    if (f == null) {
+      return false;
+    }
+
+    if (f.exists() || f.isFile()) {
+      return true;
+    }
+
+    return false;
 
   }
 
