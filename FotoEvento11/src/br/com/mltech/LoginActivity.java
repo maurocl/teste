@@ -51,14 +51,14 @@ public class LoginActivity extends Activity {
        */
       public void onClick(View v) {
        
-        Log.d(TAG, "Botão Login clicado");
+        Log.d(TAG, "onClick() - Botão Login clicado");
 
         final String sUsuario = usuario.getText().toString().toLowerCase();
 
         final String sSenha = senha.getText().toString().toLowerCase();
 
-        Log.d(TAG, "==> usuario: " + sUsuario);
-        Log.d(TAG, "==> senha: " + sSenha);
+        Log.d(TAG, "onClick() ==> usuario: " + sUsuario);
+        Log.d(TAG, "onClick() ==> senha: " + sSenha);
 
         mUsuarioValidado = verificaUsuarioSenha(sUsuario, sSenha);
 
@@ -66,10 +66,10 @@ public class LoginActivity extends Activity {
 
         if (mUsuarioValidado) {
           it.putExtra("br.com.mltech.usuarioValidado", "OK");
-          Log.d(TAG, "Usuário validado");
+          Log.d(TAG, "onClick() - Usuário validado");
         } else {
           it.putExtra("br.com.mltech.usuarioValidado", "FALHOU");
-          Log.d(TAG, "Usuário NÃO validado");
+          Log.d(TAG, "onClick() - Usuário NÃO validado");
         }
 
         it.putExtra("br.com.mltech.usuario", usuario.getText().toString());
@@ -114,7 +114,7 @@ public class LoginActivity extends Activity {
        */
       public void onClick(View v) {
 
-        Log.d(TAG, "Botão Cancelar clicado");
+        Log.d(TAG, "onClick() - Botão Cancelar clicado");
         Intent it = new Intent();
         setResult(RESULT_CANCELED, it);
         finish();
