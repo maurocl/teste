@@ -25,7 +25,7 @@ import br.com.mltech.modelo.Participante;
  */
 public class ParticipanteActivity extends Activity {
 
-  private static final int DEBUG = 0;
+  private static int DEBUG = 0;
 
   private static final String TAG = "ParticipanteActivity";
 
@@ -66,7 +66,7 @@ public class ParticipanteActivity extends Activity {
 
     Intent intent = getIntent();
 
-    Log.i(TAG, "intent.getActtion()=" + intent.getAction());
+    Log.i(TAG, "onCreate() - intent.getActtion()=" + intent.getAction());
 
     if (intent != null) {
 
@@ -74,7 +74,7 @@ public class ParticipanteActivity extends Activity {
 
         mEvento = (Evento) intent.getSerializableExtra("br.com.mltech.evento");
 
-        Log.w(TAG, "mEvento=" + mEvento);
+        Log.w(TAG, "onCreate() - mEvento=" + mEvento);
 
       }
 
@@ -92,17 +92,17 @@ public class ParticipanteActivity extends Activity {
 
       if (mParticipante == null) {
         mParticipante = new Participante();
-        Log.w(TAG, "Criando Participante vazio");
+        Log.w(TAG, "onCreate() - Criando Participante vazio");
       }
 
       if (mParticipacao == null) {
 
         mParticipacao = new Participacao();
-        Log.w(TAG, "Criando Participacao vazia");
+        Log.w(TAG, "onCreate() - Criando Participacao vazia");
 
       } else {
 
-        Log.d(TAG, "Participante carregado com sucesso: " + mParticipante);
+        Log.d(TAG, "onCreate() - Participante carregado com sucesso: " + mParticipante);
 
       }
 
@@ -162,6 +162,7 @@ public class ParticipanteActivity extends Activity {
 
     }
 
+    // Atualiza os parâmetros opcionais
     updateOptionalParamFields(params);
 
     final RadioGroup groupFormatoFoto = (RadioGroup) findViewById(R.id.group1);
@@ -192,11 +193,11 @@ public class ParticipanteActivity extends Activity {
 
       public void onClick(View v) {
 
-        Log.d(TAG, "Botão Enviar do Participante foi selecionado");
+        Log.d(TAG, "onCreate() - Botão Enviar do Participante foi selecionado");
 
-        Log.d(TAG, "groupFormatoFoto.isSelected()=" + groupFormatoFoto.isSelected());
+        Log.d(TAG, "onCreate() - groupFormatoFoto.isSelected()=" + groupFormatoFoto.isSelected());
 
-        Log.d(TAG, "groupEfeitoFoto.isSelected()=" + groupEfeitoFoto.isSelected());
+        Log.d(TAG, "onCreate() - groupEfeitoFoto.isSelected()=" + groupEfeitoFoto.isSelected());
 
         boolean radio1isChecked = ((RadioButton) findViewById(R.id.radioOp1)).isChecked();
         boolean radio2isChecked = ((RadioButton) findViewById(R.id.radioOp2)).isChecked();
@@ -205,11 +206,11 @@ public class ParticipanteActivity extends Activity {
         boolean radioPbIsChecked = ((RadioButton) findViewById(R.id.radioPB)).isChecked();
 
         
-        Log.d(TAG, "radio1isChecked=" + radio1isChecked);
-        Log.d(TAG, "radio2isChecked=" + radio2isChecked);
+        Log.d(TAG, "onCreate() - radio1isChecked=" + radio1isChecked);
+        Log.d(TAG, "onCreate() - radio2isChecked=" + radio2isChecked);
         
-        Log.d(TAG, "radioCorIsChecked=" + radioCorIsChecked);
-        Log.d(TAG, "radioPbIsChecked=" + radioPbIsChecked);
+        Log.d(TAG, "onCreate() - radioCorIsChecked=" + radioCorIsChecked);
+        Log.d(TAG, "onCreate() - radioPbIsChecked=" + radioPbIsChecked);
         
         
         Participante novoParticipante = new Participante(editNome.getText().toString(), editEmail.getText().toString(),
@@ -217,8 +218,8 @@ public class ParticipanteActivity extends Activity {
 
         mParticipacao = new Participacao(novoParticipante, tipoFoto, efeitoFoto, null);
 
-        Log.d(TAG, "Participante: " + novoParticipante);
-        Log.d(TAG, "Participacao: " + mParticipacao);
+        Log.d(TAG, "onCreate() - Participante: " + novoParticipante);
+        Log.d(TAG, "onCreate() - Participacao: " + mParticipacao);
 
         // Criação da Intent com resultado da execução da Activity
         Intent it = new Intent();
@@ -240,7 +241,7 @@ public class ParticipanteActivity extends Activity {
 
       public void onClick(View v) {
 
-        Log.d(TAG, "Botão Cancelar selecionado");
+        Log.d(TAG, "onCreate() - Botão Cancelar selecionado");
 
         // retorna todos os campos para seus valores iniciais.
 
@@ -256,7 +257,7 @@ public class ParticipanteActivity extends Activity {
 
         // TODO falta limpar os checkboxes
 
-        Log.d(TAG, "Botão cancelar selecionado");
+        Log.d(TAG, "onCreate() - Botão cancelar selecionado");
         Intent it = new Intent();
 
         setResult(RESULT_CANCELED, it);
@@ -281,18 +282,18 @@ public class ParticipanteActivity extends Activity {
 
         if (opcaoPolaroid) {
 
-          Log.d(TAG, "Opção Polaroid escolhida");
+          Log.d(TAG, "onCreate() - Opção Polaroid escolhida");
           tipoFoto = POLAROID;
 
         } else if (opcaoCabine) {
 
-          Log.d(TAG, "Opção Cabine escolhida");
+          Log.d(TAG, "onCreate() - Opção Cabine escolhida");
           tipoFoto = CABINE;
 
         }
                 
         int buttonId = group.getCheckedRadioButtonId();
-        Log.w(TAG,"Polaroid ou Cabine = buttonId="+buttonId);
+        Log.w(TAG,"onCreate() - Polaroid ou Cabine = buttonId="+buttonId);
         
       }
     });
@@ -313,18 +314,18 @@ public class ParticipanteActivity extends Activity {
 
         if (cor) {
 
-          Log.d(TAG, "Foto a cores");
+          Log.d(TAG, "onCreate() - Foto a cores");
           efeitoFoto = CORES;
 
         } else if (pb) {
 
-          Log.d(TAG, "Foto em Preto e Branco");
+          Log.d(TAG, "onCreate() - Foto em Preto e Branco");
           efeitoFoto = PB;
 
         }
         
         int buttonId = group.getCheckedRadioButtonId();
-        Log.w(TAG,"cor ou PB = buttonId="+buttonId);
+        Log.w(TAG,"onCreate() - cor ou PB = buttonId="+buttonId);
         
         
         
