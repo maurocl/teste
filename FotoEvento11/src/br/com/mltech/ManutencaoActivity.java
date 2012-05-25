@@ -63,7 +63,7 @@ public class ManutencaoActivity extends Activity {
     // Obtém as preferências
     boolean b = lerPreferencias();
     if (!b) {
-      Log.d(TAG, "Erro na leitura do arquivo de preferências.");
+      Log.d(TAG, "onCreate() - Erro na leitura do arquivo de preferências.");
     }
 
     Button btnContratante = (Button) findViewById(R.id.btnContratante);
@@ -192,7 +192,7 @@ public class ManutencaoActivity extends Activity {
 
               public void onClick(DialogInterface dialog, int id) {
                 boolean b = limpaConfiguracoes();
-                
+
                 if (b) {
                   Toast.makeText(ManutencaoActivity.this, "Configuração inicial restaurada com sucesso", Toast.LENGTH_SHORT).show();
 
@@ -200,9 +200,10 @@ public class ManutencaoActivity extends Activity {
                   mEvento = null;
 
                 } else {
-                  Toast.makeText(ManutencaoActivity.this, "Falha na reinicialização da onfiguração inicial", Toast.LENGTH_SHORT).show();
+                  Toast.makeText(ManutencaoActivity.this, "Falha na reinicialização da onfiguração inicial", Toast.LENGTH_SHORT)
+                      .show();
                 }
-                
+
               }
 
             }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
@@ -241,6 +242,8 @@ public class ManutencaoActivity extends Activity {
 
     super.onActivityResult(requestCode, resultCode, data);
 
+    Log.i(TAG, "onActivityResult(request " + requestCode + ", result=" + resultCode + ", data " + data + ") ...");
+
     if (requestCode == ACTIVITY_CONTRATANTE) {
       processActivityContratante(resultCode, data);
     } else if (requestCode == ACTIVITY_EVENTO) {
@@ -265,11 +268,11 @@ public class ManutencaoActivity extends Activity {
    */
   private void processActivityContratante(int resultCode, Intent data) {
 
-    Log.d(TAG, "Retorno da ACTIVITY_CONTRATANTE:");
+    Log.d(TAG, "processActivityContratante() - retorno da ACTIVITY_CONTRATANTE:");
 
     if (resultCode == RESULT_OK) {
 
-      Log.d(TAG, "processando RESULT_OK");
+      Log.d(TAG, "processActivityContratante() - processando RESULT_OK");
 
       if (data != null) {
         // Atualiza os dados do contratante
@@ -279,17 +282,17 @@ public class ManutencaoActivity extends Activity {
 
       boolean b = gravarPreferencias();
       if (b) {
-        Log.d(TAG, "Arquivo de preferências foi gravado com sucesso após alteração de contratante");
+        Log.d(TAG, "processActivityContratante() - Arquivo de preferências foi gravado com sucesso após alteração de contratante");
       } else {
 
       }
 
     } else if (resultCode == RESULT_CANCELED) {
 
-      Log.d(TAG, "O usuário cancelou a atividade Contratante");
+      Log.d(TAG, "processActivityContratante() - O usuário cancelou a atividade Contratante");
 
     } else {
-      Log.d(TAG, "Erro ...");
+      Log.d(TAG, "processActivityContratante() - Erro ...");
     }
 
   }
@@ -302,28 +305,28 @@ public class ManutencaoActivity extends Activity {
    */
   private void processActivityEvento(int resultCode, Intent data) {
 
-    Log.d(TAG, "processando ACTIVITY_EVENTO");
+    Log.d(TAG, "processActivityEvento() - processando ACTIVITY_EVENTO");
 
     if (resultCode == RESULT_OK) {
 
-      Log.d(TAG, "processando RESULT_OK");
+      Log.d(TAG, "processActivityEvento() - processando RESULT_OK");
 
       if (data != null) {
         mEvento = (Evento) data.getSerializableExtra("br.com.mltech.evento");
-        Log.d(TAG, "processando evento=" + mEvento);
+        Log.d(TAG, "processActivityEvento() - processando evento=" + mEvento);
       }
 
       boolean b = gravarPreferencias();
       if (b) {
-        Log.d(TAG, "Arquivo de preferências foi gravado com sucesso após alteração do evento");
+        Log.d(TAG, "processActivityEvento() - Arquivo de preferências foi gravado com sucesso após alteração do evento");
       } else {
 
       }
 
     } else if (resultCode == RESULT_CANCELED) {
-      Log.d(TAG, "Usuário cancelou a tela de eventos");
+      Log.d(TAG, "processActivityEvento() - Usuário cancelou a tela de eventos");
     } else {
-      Log.d(TAG, "Erro ...");
+      Log.d(TAG, "processActivityEvento() - Erro ...");
     }
   }
 
@@ -334,11 +337,12 @@ public class ManutencaoActivity extends Activity {
    * @param data
    */
   private void processActivityPreferencias(int resultCode, Intent data) {
-    Log.d(TAG, "processando ACTIVITY_PREFERENCIAS");
+
+    Log.d(TAG, "processActivityPreferencias() - processando ACTIVITY_PREFERENCIAS");
 
     if (resultCode == RESULT_OK) {
 
-      Log.d(TAG, "processando RESULT_OK");
+      Log.d(TAG, "processActivityPreferencias() - processando RESULT_OK");
 
       /*
        * if (data != null) { evento = (Evento)
@@ -348,9 +352,9 @@ public class ManutencaoActivity extends Activity {
       // Log.d(TAG, "processando evento=" + mEvento);
 
     } else if (resultCode == RESULT_CANCELED) {
-      Log.d(TAG, "Usuário cancelou a tela de preferências");
+      Log.d(TAG, "processActivityPreferencias() - Usuário cancelou a tela de preferências");
     } else {
-      Log.d(TAG, "Erro ...");
+      Log.d(TAG, "processActivityPreferencias() - Erro ...");
     }
   }
 
@@ -362,11 +366,11 @@ public class ManutencaoActivity extends Activity {
    */
   private void processActivityRelatorios(int resultCode, Intent data) {
 
-    Log.d(TAG, "Retorno ACTIVITY_RELATORIOS");
+    Log.d(TAG, "processActivityRelatorios() - retorno ACTIVITY_RELATORIOS");
 
     if (resultCode == RESULT_OK) {
 
-      Log.d(TAG, "processando RESULT_OK na tela de preferencias");
+      Log.d(TAG, "processActivityRelatorios() - processando RESULT_OK na tela de relatórios");
 
       /*
        * if (data != null) { evento = (Evento)
@@ -377,10 +381,10 @@ public class ManutencaoActivity extends Activity {
 
     } else if (resultCode == RESULT_CANCELED) {
 
-      Log.d(TAG, "O usuário cancelou a tela de Preferências");
+      Log.d(TAG, "processActivityRelatorios() - O usuário cancelou a tela de relatórios");
 
     } else {
-      Log.d(TAG, "Erro ...");
+      Log.d(TAG, "processActivityRelatorios() - Erro ...");
     }
 
   }
@@ -398,19 +402,19 @@ public class ManutencaoActivity extends Activity {
     // verifica se existe um contratante configurado
     if (mContratante == null) {
       b = false;
-      Log.d(TAG, "Contratante não foi configurado");
+      Log.d(TAG, "isConfiguracaoCompleta() - Contratante não foi configurado");
     }
 
     // verifica se existe um evento cadastrado
     if (mEvento == null) {
       b = false;
-      Log.d(TAG, "Evento não foi configurado");
+      Log.d(TAG, "isConfiguracaoCompleta() - Evento não foi configurado");
     }
 
     // verifica se as bordas das fotos já foram disponibilizadas ao
     // evento
     if (mEvento != null && ((mEvento.getBordaCabine() == null) || (mEvento.getBordaPolaroid() == null))) {
-      Log.d(TAG, "Bordas não foram configuradas");
+      Log.d(TAG, "isConfiguracaoCompleta() - Bordas não foram configuradas");
 
       b = false;
 
@@ -434,14 +438,15 @@ public class ManutencaoActivity extends Activity {
     boolean commitDone;
 
     if (mPreferences == null) {
-      Log.w(TAG, "mPreferences is null");
+      Log.w(TAG, "gravarPreferencias() - mPreferences is null");
       return false;
     }
+    
     Editor edit = mPreferences.edit();
 
     if (edit != null) {
 
-      Log.d(TAG, "Gravando as preferências compartilhadas ...");
+      Log.d(TAG, "gravarPreferencias() - Gravando as preferências de contratante e evento");
 
       /* Contratante */
       if (mContratante != null) {
@@ -480,7 +485,7 @@ public class ManutencaoActivity extends Activity {
       return commitDone;
 
     } else {
-      Log.w(TAG, "Erro na gravação das preferências compartilhadas");
+      Log.w(TAG, "gravarPreferencias() - Erro na gravação das preferências compartilhadas");
       return false;
     }
 
@@ -500,12 +505,12 @@ public class ManutencaoActivity extends Activity {
    */
   private boolean lerPreferencias() {
 
-    Log.d(TAG, "Lendo as preferências compartilhadas ...");
+    Log.d(TAG, "lerPreferencias() - Lendo as preferências compartilhadas ...");
 
     mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
 
     if (mPreferences == null) {
-      Log.w(TAG, "mPreferences is null. Falha na execução do comandos getSharedPreferences()");
+      Log.w(TAG, "lerPreferencias() - mPreferences is null. Falha na execução do comandos getSharedPreferences()");
       return false;
     }
 
@@ -643,10 +648,10 @@ public class ManutencaoActivity extends Activity {
     commitDone = edit.commit();
 
     if (commitDone) {
-      Log.d(TAG, "Gravando as preferências compartilhadas ...");
+      Log.d(TAG, "limpaConfiguracoes() - Gravando as preferências compartilhadas ...");
       mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
     } else {
-      Log.w(TAG, "Falha na atualização das preferências compartilhadas.");
+      Log.w(TAG, "limpaConfiguracoes() - Falha na atualização das preferências compartilhadas.");
     }
 
     return commitDone;
