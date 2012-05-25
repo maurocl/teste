@@ -994,28 +994,6 @@ public class FotoEventoActivity extends Activity {
 
   }
 
-  /**
-   * getSharedPreference(String sharedPreferencesName, String attribute)
-   * 
-   * Obtém um parâmetro da lista de preferências.
-   * 
-   * @param sharedPreferencesName
-   * @param attribute
-   * 
-   * @return o valor do atributo solicitado ou null caso haja algum erro (o
-   *         parâmetro não foi encontrado)
-   * 
-   */
-  private String getSharedPreference(String sharedPreferencesName, String attribute) {
-
-    SharedPreferences preferences = getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
-
-    String sValue = preferences.getString(attribute, "");
-
-    preferences = null;
-
-    return sValue;
-
-  }
+ 
 
 }
