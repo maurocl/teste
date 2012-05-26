@@ -157,9 +157,9 @@ public class DummyActivity3 extends Activity implements Constantes {
     // incrementa o nº de vezes que a activity foi reiniciada
     mContador++;
     
-    iniciaProcesso();
+    //iniciaProcesso();
     
-/*
+
     Button btn0 = (Button) findViewById(R.id.btn0);
 
  
@@ -177,7 +177,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     });
 
-*/  }
+  }
   
   /**
    * iniciaProcesso()

@@ -175,11 +175,16 @@ public class RelatorioActivity extends Activity {
 
     if (lista == null) {
       // lista de participantes está vazia
-      Log.d(TAG, "gravarArquivoCSV() - Lista de participantes está vazia !");
+      Log.w(TAG, "gravarArquivoCSV() - Lista de participantes está vazia !");
       return false;
     }
 
     Context myContext = this.getApplicationContext();
+    
+    if(myContext==null) {
+      Log.w(TAG, "gravarArquivoCSV() - não foi possível obter o contexto da aplicação !");
+      return false;
+    }
 
     FileOutputStream fos = null;
     DataOutputStream dos = null;
@@ -187,6 +192,12 @@ public class RelatorioActivity extends Activity {
     try {
 
       fos = myContext.openFileOutput(filename, MODE_PRIVATE);
+      
+      if(fos==null) {
+        Log.w(TAG, "gravarArquivoCSV() - não foi possível abrir o arquivo " + filename+" para escrita!");
+        return false;
+      }
+      
       dos = new DataOutputStream(fos);
 
       // abre o arquivo para gravação no modo gravação (escrita)
@@ -199,6 +210,7 @@ public class RelatorioActivity extends Activity {
 
       // Cria o cabeçalho do arquivo .csv
       sb = new StringBuilder();
+      
       sb.append(formatItem("nome"));
       sb.append(formatItem("email"));
       sb.append(formatItem("telefone"));
@@ -206,6 +218,8 @@ public class RelatorioActivity extends Activity {
       sb.append(formatItem("EfeitoFoto"));
       sb.append(formatItem("Arquivo"));
       sb.append("\n");
+      
+      // Escreve o cabeçalho do arquivo
       dos.write(sb.toString().getBytes());
 
       // TODO aqui falta tratar os campos adicionais (se houverem)
@@ -221,10 +235,16 @@ public class RelatorioActivity extends Activity {
 
         // formata um participante e grava no arquivo
         participante = p.getParticipante();
+        
+        if(participante==null) {
+          Log.d(TAG, "participante é nulo");
+          return false;
+        }
 
         sb.append(participante.getNome()).append(SEP);
         sb.append(participante.getEmail()).append(SEP);
         sb.append(participante.getTelefone()).append(SEP);
+        
         sb.append("" + p.getTipoFoto()).append(SEP);
         sb.append("" + p.getEfeitoFoto()).append(SEP);
         sb.append(p.getNomeArqFoto());
@@ -238,11 +258,11 @@ public class RelatorioActivity extends Activity {
 
       }
     } catch (FileNotFoundException e) {
-      // TODO: handle exception
+     
       Log.d(TAG, "gravarArquivoCSV() - Arquivo " + filename + " não foi encontrado");
 
     } catch (Exception e) {
-      // TODO: handle exception
+     
       Log.d(TAG, "gravarArquivoCSV() - Exceção encontrada", e);
 
     } finally {
