@@ -36,11 +36,11 @@ public class Contratante implements Serializable {
 	 * Contratante
 	 */
 	public Contratante() {
-    this.nome = null;
-    this.email = null;
-    this.telefone = null;
-  }
-	
+		this.nome = null;
+		this.email = null;
+		this.telefone = null;
+	}
+
 	/**
 	 * @return the nome
 	 */
@@ -71,10 +71,18 @@ public class Contratante implements Serializable {
 		this.email = email;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getTelefone() {
 		return telefone;
 	}
 
+	/**
+	 * 
+	 * @param telefone
+	 */
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
 	}
@@ -83,6 +91,21 @@ public class Contratante implements Serializable {
 	public String toString() {
 		return "Contratante [nome=" + nome + ", email=" + email + ", telefone="
 				+ telefone + "]";
+	}
+
+	/**
+	 * isValido()
+	 * 
+	 * O contratante deve ter todos os campos não nulos
+	 * 
+	 * @return
+	 */
+	public boolean isValido() {
+		if ((!getNome().equals("")) && (!getEmail().equals(""))
+				&& (!getTelefone().equals(""))) {
+			return true;
+		}
+		return false;
 	}
 
 }

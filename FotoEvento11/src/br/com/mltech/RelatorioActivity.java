@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
@@ -50,6 +51,8 @@ public class RelatorioActivity extends Activity {
 
     setContentView(R.layout.relatorio);
 
+    Log.d(TAG,"*** onCreate() ***");
+    
     String num = null;
 
     // --------------------------------------------
@@ -170,12 +173,14 @@ public class RelatorioActivity extends Activity {
 
     if (filename == null) {
       Log.w(TAG, "gravarArquivoCSV() - Nenhum arquivo fornecido !");
+      Toast.makeText(this, "Operação abortada - nome do arquivo é nulo", Toast.LENGTH_SHORT).show();
       return b;
     }
 
     if (lista == null) {
       // lista de participantes está vazia
       Log.w(TAG, "gravarArquivoCSV() - Lista de participantes está vazia !");
+      Toast.makeText(this, "Lista de Participantes está vazia - arquivo não foi gerado", Toast.LENGTH_SHORT).show();
       return false;
     }
 
@@ -195,6 +200,7 @@ public class RelatorioActivity extends Activity {
       
       if(fos==null) {
         Log.w(TAG, "gravarArquivoCSV() - não foi possível abrir o arquivo " + filename+" para escrita!");
+        Toast.makeText(this, "não foi possível abrir o arquivo " + filename+" para escrita!", Toast.LENGTH_SHORT).show();
         return false;
       }
       
@@ -203,9 +209,11 @@ public class RelatorioActivity extends Activity {
       // abre o arquivo para gravação no modo gravação (escrita)
 
       Log.d(TAG, "gravarArquivoCSV() - Processando a lista de participantes ...");
+      Toast.makeText(this, "Processando lista de participantes", Toast.LENGTH_SHORT).show();      
 
       Log.d(TAG, "gravarArquivoCSV() - Gravando arquivo: " + filename);
-
+      Toast.makeText(this, "Gravando arquivo: "+ filename, Toast.LENGTH_SHORT).show();
+      
       int contador = 0;
 
       // Cria o cabeçalho do arquivo .csv
@@ -275,6 +283,7 @@ public class RelatorioActivity extends Activity {
     }
 
     Log.d(TAG, "gravarArquivoCSV() - Nº total de participantes: " + numParticipantes);
+    Toast.makeText(this, numParticipantes + " foram exportados", Toast.LENGTH_SHORT).show();
 
     b = true;
 

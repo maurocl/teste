@@ -33,6 +33,7 @@ import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.camera.CameraTools;
 
+
 /**
  * Activity principal da aplicação
  * 
@@ -305,7 +306,7 @@ public class FotoEventoActivity extends Activity {
   }
 
   /**
-   * 
+   * launchActivityocessaClickItemMenuManutencao()
    */
   private void launchActivityocessaClickItemMenuManutencao() {
 
@@ -698,6 +699,13 @@ public class FotoEventoActivity extends Activity {
 
     mPreferences = getSharedPreferences(name, MODE_PRIVATE);
 
+    if(mPreferences==null) {
+    	
+    }
+    else if(mPreferences==null) {
+    	
+    }
+    
     // Lê todas as entradas
     Map<?, ?> chaves = mPreferences.getAll();
 
@@ -851,10 +859,10 @@ public class FotoEventoActivity extends Activity {
     // evento
 
     if (mEvento != null) {
-      Log.i(TAG, "getBordaCabine: " + mEvento.getBordaCabine());
-      Log.i(TAG, "getBordaPolaroid: " + mEvento.getBordaPolaroid());
+      Log.i(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaCabine: " + mEvento.getBordaCabine());
+      Log.i(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaPolaroid: " + mEvento.getBordaPolaroid());
     } else {
-      Log.w(TAG, "Evento é null");
+      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Evento é nulo");
     }
 
     if ((mEvento != null) && ((mEvento.getBordaCabine() == null) || (mEvento.getBordaPolaroid() == null))) {
@@ -892,7 +900,7 @@ public class FotoEventoActivity extends Activity {
 
     } else {
 
-      Log.w(TAG, "updateListaParticipação() - Lista de participantes é null. Participante não foi adicionado");
+      Log.w(TAG, "updateListaParticipação() - Lista de participantes é nula. Participante não foi adicionado");
 
     }
 

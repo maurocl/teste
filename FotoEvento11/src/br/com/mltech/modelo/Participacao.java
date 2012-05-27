@@ -6,15 +6,15 @@ import java.io.Serializable;
  * Participacao
  * 
  * @author maurocl
- *
+ * 
  */
 public class Participacao implements Serializable {
 
 	/**
-   * 
-   */
-  private static final long serialVersionUID = 3182925558872819278L;
-  
+	 * 
+	 */
+	private static final long serialVersionUID = 3182925558872819278L;
+
 	// informações sobre um participante do evento
 	private Participante participante;
 
@@ -32,12 +32,15 @@ public class Participacao implements Serializable {
 	}
 
 	/**
+	 * Participacao(Participante participante, int tipoFoto,
+			int efeitoFoto, String nomeArqFoto)
+	 * 
 	 * Construtor
 	 * 
-	 * @param participante
-	 * @param tipoFoto
-	 * @param efeitoFoto
-	 * @param nomeArqFoto
+	 * @param participante Objeto participante
+	 * @param tipoFoto Tipo da foto
+	 * @param efeitoFoto 
+	 * @param nomeArqFoto Arquivo com a foto
 	 * 
 	 */
 	public Participacao(Participante participante, int tipoFoto,
@@ -47,17 +50,20 @@ public class Participacao implements Serializable {
 		this.tipoFoto = tipoFoto;
 		this.efeitoFoto = efeitoFoto;
 		this.nomeArqFoto = nomeArqFoto;
+		
 	}
 
 	/**
+	 * getParticipante()
 	 * 
-	 * @return
+	 * @return Objeto da classe participante
 	 */
 	public Participante getParticipante() {
 		return participante;
 	}
 
 	/**
+	 * setParticipante(Participante participante)
 	 * 
 	 * @param participante
 	 */
@@ -66,15 +72,17 @@ public class Participacao implements Serializable {
 	}
 
 	/**
+	 * getTipoFoto()
 	 * 
-	 * @return
+	 * @return tipo da foto
+	 * 
 	 */
 	public int getTipoFoto() {
 		return tipoFoto;
 	}
 
 	/**
-	 * 
+	 * setTipoFoto(int tipoFoto)
 	 * @param tipoFoto
 	 */
 	public void setTipoFoto(int tipoFoto) {
@@ -82,7 +90,7 @@ public class Participacao implements Serializable {
 	}
 
 	/**
-	 * 
+	 * getEfeitoFoto()
 	 * @return
 	 */
 	public int getEfeitoFoto() {
@@ -90,7 +98,7 @@ public class Participacao implements Serializable {
 	}
 
 	/**
-	 * 
+	 * setEfeitoFoto(int efeitoFoto)
 	 * @param efeitoFoto
 	 */
 	public void setEfeitoFoto(int efeitoFoto) {
@@ -98,7 +106,7 @@ public class Participacao implements Serializable {
 	}
 
 	/**
-	 * 
+	 * getNomeArqFoto()
 	 * @return
 	 */
 	public String getNomeArqFoto() {
@@ -106,7 +114,7 @@ public class Participacao implements Serializable {
 	}
 
 	/**
-	 * 
+	 * setNomeArqFoto(String nomeArqFoto)
 	 * @param nomeArqFoto
 	 */
 	public void setNomeArqFoto(String nomeArqFoto) {
