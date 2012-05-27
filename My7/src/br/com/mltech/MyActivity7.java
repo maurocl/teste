@@ -141,7 +141,7 @@ public class MyActivity7 extends Activity implements OnClickListener {
    * Trata os eventos dos botões
    * 
    */
-  @Override
+  //@Override
   public void onClick(View v) {
     // TODO Auto-generated method stub
     if (v == btn1) {
