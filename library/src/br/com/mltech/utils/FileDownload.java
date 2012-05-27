@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 
+
+
 public class FileDownload {
 
   private static final String TAG = "FileDownload";
@@ -136,7 +138,7 @@ public class FileDownload {
 
     handler.post(new Runnable() {
 
-      @Override
+      //@Override
       public void run() {
 
         Log.d(TAG, "run()");

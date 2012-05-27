@@ -53,7 +53,7 @@ public class AndroidUtils {
     AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Título").setMessage(message).create();
     dialog.setButton("OK", new OnClickListener() {
 
-      @Override
+      //@Override
       public void onClick(DialogInterface dialog, int which) {
         // TODO Auto-generated method stub
         return;
