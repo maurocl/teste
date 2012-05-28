@@ -51,8 +51,8 @@ public class RelatorioActivity extends Activity {
 
     setContentView(R.layout.relatorio);
 
-    Log.d(TAG,"*** onCreate() ***");
-    
+    Log.d(TAG, "*** onCreate() ***");
+
     String num = null;
 
     // --------------------------------------------
@@ -62,7 +62,7 @@ public class RelatorioActivity extends Activity {
 
     if (intent != null) {
 
-      // verifica se existem parâmetros existentes
+      // obtem os parâmetros da activity
       Bundle params = intent.getExtras();
 
       // recupera o nº de participantes
@@ -76,11 +76,15 @@ public class RelatorioActivity extends Activity {
       // recupera a lista de emails enviados
       if (params.getSerializable("br.com.mltech.lista") != null) {
         lista = (List<Participacao>) params.getSerializable("br.com.mltech.lista");
+      } else {
+        Log.w(TAG, "onCreate() - lista de participantes está vazia");
       }
 
       // recupera as informações sobre o evento
       if (params.getSerializable("br.com.mltech.evento") != null) {
         mEvento = (Evento) params.getSerializable("br.com.mltech.evento");
+      } else {
+        Log.w(TAG, "onCreate() - não há informações sobre o evento");
       }
 
     }
@@ -90,11 +94,10 @@ public class RelatorioActivity extends Activity {
     EditText numParticipantes = (EditText) findViewById(R.id.numParticipantes);
 
     Button btn1 = (Button) findViewById(R.id.btn1);
-    Button btn2 = (Button) findViewById(R.id.btn2);
-    /*
-     * Button btn3 = (Button) findViewById(R.id.btn3); Button btn4 = (Button)
-     * findViewById(R.id.btn4);
-     */
+    // Button btn2 = (Button) findViewById(R.id.btn2);
+
+    // Button btn3 = (Button) findViewById(R.id.btn3);
+    // Button btn4 = (Button) findViewById(R.id.btn4);
 
     btn1.setText("Exportar arquivo para Excel");
 
@@ -108,9 +111,9 @@ public class RelatorioActivity extends Activity {
 
         Log.d(TAG, "onCreate() - Botão 1 foi pressionado");
 
-        boolean b = gravarArquivoCSV(CSVFILE, lista);
+        boolean gravou = gravarArquivoCSV(CSVFILE, lista);
 
-        if (b) {
+        if (gravou) {
           Log.d(TAG, "onCreate() - Lista exportada com sucesso");
         } else {
           Log.d(TAG, "onCreate() - Falha na exportação da lista");
@@ -120,13 +123,14 @@ public class RelatorioActivity extends Activity {
     });
 
     // Tratamento do evento do botão 2
-    btn2.setOnClickListener(new OnClickListener() {
-
-      public void onClick(View v) {
-        // TODO Auto-generated method stub
-        Log.d(TAG, "Botão 2 foi pressionado");
-      }
-    });
+    /*
+     * btn2.setOnClickListener(new OnClickListener() {
+     * 
+     * public void onClick(View v) { // TODO Auto-generated method stub
+     * Log.d(TAG, "Botão 2 foi pressionado"); }
+     * 
+     * });
+     */
 
     // Tratamento do evento do botão 3
     /*
@@ -185,8 +189,8 @@ public class RelatorioActivity extends Activity {
     }
 
     Context myContext = this.getApplicationContext();
-    
-    if(myContext==null) {
+
+    if (myContext == null) {
       Log.w(TAG, "gravarArquivoCSV() - não foi possível obter o contexto da aplicação !");
       return false;
     }
@@ -197,28 +201,26 @@ public class RelatorioActivity extends Activity {
     try {
 
       fos = myContext.openFileOutput(filename, MODE_PRIVATE);
-      
-      if(fos==null) {
-        Log.w(TAG, "gravarArquivoCSV() - não foi possível abrir o arquivo " + filename+" para escrita!");
-        Toast.makeText(this, "não foi possível abrir o arquivo " + filename+" para escrita!", Toast.LENGTH_SHORT).show();
+
+      if (fos == null) {
+        Log.w(TAG, "gravarArquivoCSV() - não foi possível abrir o arquivo " + filename + " para escrita!");
+        Toast.makeText(this, "Não foi possível abrir o arquivo " + filename + " para escrita!", Toast.LENGTH_SHORT).show();
         return false;
       }
-      
+
       dos = new DataOutputStream(fos);
 
       // abre o arquivo para gravação no modo gravação (escrita)
 
       Log.d(TAG, "gravarArquivoCSV() - Processando a lista de participantes ...");
-      Toast.makeText(this, "Processando lista de participantes", Toast.LENGTH_SHORT).show();      
+      Toast.makeText(this, "Processando lista de participantes", Toast.LENGTH_SHORT).show();
 
       Log.d(TAG, "gravarArquivoCSV() - Gravando arquivo: " + filename);
-      Toast.makeText(this, "Gravando arquivo: "+ filename, Toast.LENGTH_SHORT).show();
-      
-      int contador = 0;
+      Toast.makeText(this, "Gravando arquivo: " + filename, Toast.LENGTH_SHORT).show();
 
       // Cria o cabeçalho do arquivo .csv
       sb = new StringBuilder();
-      
+
       sb.append(formatItem("nome"));
       sb.append(formatItem("email"));
       sb.append(formatItem("telefone"));
@@ -226,33 +228,36 @@ public class RelatorioActivity extends Activity {
       sb.append(formatItem("EfeitoFoto"));
       sb.append(formatItem("Arquivo"));
       sb.append("\n");
-      
+
       // Escreve o cabeçalho do arquivo
       dos.write(sb.toString().getBytes());
 
       // TODO aqui falta tratar os campos adicionais (se houverem)
-      
+
       for (Participacao p : lista) {
 
         sb = new StringBuilder();
 
-        contador++;
-
         // TODO falta inserir os parâmetros adicionais
         // obter os parâmetros adicionais a partir de mEvento
 
-        // formata um participante e grava no arquivo
+        if (p == null) {
+          // formata um participante e grava no arquivo
+          Log.w(TAG, "gravarArquivoCSV() - participacao é nula");          
+          return false;
+        }
+
         participante = p.getParticipante();
         
-        if(participante==null) {
-          Log.d(TAG, "participante é nulo");
+        if (participante == null) {
+          Log.w(TAG, "gravarArquivoCSV() - participante é nulo");
           return false;
         }
 
         sb.append(participante.getNome()).append(SEP);
         sb.append(participante.getEmail()).append(SEP);
         sb.append(participante.getTelefone()).append(SEP);
-        
+
         sb.append("" + p.getTipoFoto()).append(SEP);
         sb.append("" + p.getEfeitoFoto()).append(SEP);
         sb.append(p.getNomeArqFoto());
@@ -260,18 +265,20 @@ public class RelatorioActivity extends Activity {
 
         numParticipantes++;
 
-        Log.d(TAG, contador + ") " + sb.toString());
+        Log.d(TAG, numParticipantes + ") " + sb.toString());
 
         dos.write(sb.toString().getBytes());
 
       }
     } catch (FileNotFoundException e) {
-     
+
       Log.d(TAG, "gravarArquivoCSV() - Arquivo " + filename + " não foi encontrado");
+      Toast.makeText(this, "Arquivo " + filename + " não foi encontrado.", Toast.LENGTH_SHORT).show();
 
     } catch (Exception e) {
-     
+
       Log.d(TAG, "gravarArquivoCSV() - Exceção encontrada", e);
+      Toast.makeText(this, "Erro na gravação do arquivo " + filename + ".", Toast.LENGTH_SHORT).show();
 
     } finally {
       try {
