@@ -1,50 +1,84 @@
 package br.com.mltech.modelo;
 
+/**
+ * Moldura
+ * 
+ * @author maurocl
+ * 
+ */
 public class Moldura extends Foto {
 
-	// largura da moldura
-	int largura;
-	
-	// altura da moldura
-	int altura;
-	
-	String descricao;
-	
-	public Moldura(String arquivo) {
-		super(arquivo);
-		// TODO Auto-generated constructor stub
-	}
+  // largura da moldura
+  private int largura;
 
-	public int getLargura() {
-		return largura;
-	}
+  // altura da moldura
+  private int altura;
 
-	public void setLargura(int largura) {
-		this.largura = largura;
-	}
+  private String descricao;
 
-	public int getAltura() {
-		return altura;
-	}
+  /**
+   * 
+   * @param arquivo
+   */
+  public Moldura(String arquivo) {
+    super(arquivo);
+    // TODO Auto-generated constructor stub
+  }
 
-	public void setAltura(int altura) {
-		this.altura = altura;
-	}
+  /**
+   * getLargura()
+   * @return
+   */
+  public int getLargura() {
+    return largura;
+  }
 
-	public String getDescricao() {
-		return descricao;
-	}
+  /**
+   * setLargura(int largura)
+   * @param largura
+   */
+  public void setLargura(int largura) {
+    this.largura = largura;
+  }
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
+  /**
+   * getAltura()
+   * @return
+   */
+  public int getAltura() {
+    return altura;
+  }
 
-	@Override
-	public String toString() {
-		return "Moldura [largura=" + largura + ", altura=" + altura
-				+ ", descricao=" + descricao + "]";
-	}
-	
-	
+  /**
+   * setAltura(int altura)
+   * @param altura
+   */
+  public void setAltura(int altura) {
+    this.altura = altura;
+  }
+
+  /**
+   * getDescricao()
+   * @return
+   */
+  public String getDescricao() {
+    return descricao;
+  }
+
+  /**
+   * setDescricao(String descricao)
+   * @param descricao
+   */
+  public void setDescricao(String descricao) {
+    this.descricao = descricao;
+  }
+
+  /**
+	 * toString()
+	 */
+  @Override
+  public String toString() {
+    return "Moldura [largura=" + largura + ", altura=" + altura + ", descricao=" + descricao + "]";
+  }
 
 }

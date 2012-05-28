@@ -6,169 +6,229 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 
 /**
+ * Foto
  * 
  * @author maurocl
  * 
  */
 public class Foto {
 
-	private Dimensao dimensao;
+  private Dimensao dimensao;
 
-	// nome do arquivo
-	private String arquivo;
+  // nome do arquivo
+  private String arquivo;
 
-	// bitmap contendo a imagem (foto)
-	private Bitmap imagem;
+  // bitmap contendo a imagem (foto)
+  private Bitmap imagem;
 
-	private byte[] dados;
+  private byte[] dados;
 
-	private Uri uri;
+  private Uri uri;
 
-	/**
-	 * 
-	 * @param arquivo
-	 */
-	public Foto(String arquivo) {
-		this.arquivo = arquivo;
-	}
+  /**
+   * 
+   * @param arquivo
+   */
+  public Foto(String arquivo) {
+    this.arquivo = arquivo;
+  }
 
-	public Foto(String arquivo, byte[] dados) {
-		this.arquivo = arquivo;
-		this.dados = dados;
-	}
+  /**
+   * 
+   * @param arquivo
+   * @param dados
+   */
+  public Foto(String arquivo, byte[] dados) {
+    this.arquivo = arquivo;
+    this.dados = dados;
+  }
 
-	public Foto(String arquivo, Bitmap bm) {
-		this.arquivo = arquivo;
-		this.imagem = bm;
-	}
-	
-	public Foto(Uri uri) {
-		this.uri = uri;
-	}
-	
-	public Foto(Uri uri, byte[] dados) {
-		this.uri = uri;
-		this.dados = dados;
-	}
+  /**
+   * 
+   * @param arquivo
+   * @param bm
+   */
+  public Foto(String arquivo, Bitmap bm) {
+    this.arquivo = arquivo;
+    this.imagem = bm;
+  }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isLandscape() {
-		if (getDimensao() != null) {
-			return (getDimensao().getLargura() > getDimensao().getAltura());
-		} else {
-			return false;
-		}
+  /**
+   * 
+   * @param uri
+   */
+  public Foto(Uri uri) {
+    this.uri = uri;
+  }
 
-	}
+  /**
+   * 
+   * @param uri
+   * @param dados
+   */
+  public Foto(Uri uri, byte[] dados) {
+    this.uri = uri;
+    this.dados = dados;
+  }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isPortrait() {
-		if (getDimensao() != null) {
-			return (getDimensao().getLargura() <= getDimensao().getAltura());
-		} else {
-			return false;
-		}
+  /**
+   * 
+   * @return
+   */
+  public boolean isLandscape() {
+    if (getDimensao() != null) {
+      return (getDimensao().getLargura() > getDimensao().getAltura());
+    } else {
+      return false;
+    }
 
-	}
+  }
 
-	public Foto redimensiona(int largura, int altura) {
-		return null;
-	}
-	
-	/**
-	 * Grava uma foto em um arquivo
-	 * 
-	 * @return
-	 */
-	public boolean gravar() {
+  /**
+   * 
+   * @return
+   */
+  public boolean isPortrait() {
+    if (getDimensao() != null) {
+      return (getDimensao().getLargura() <= getDimensao().getAltura());
+    } else {
+      return false;
+    }
 
-		// a foto armazenada em imagem será salva
-		if (getImagem() == null) {
-			return false;
-		}
+  }
 
-		if (getFilename() == null) {
-			return false;
-		}
+  /**
+   * 
+   * @param largura
+   * @param altura
+   * @return
+   */
+  public Foto redimensiona(int largura, int altura) {
+    return null;
+  }
 
-		return false;
-	}
+  /**
+   * Grava uma foto em um arquivo
+   * 
+   * @return
+   */
+  public boolean gravar() {
 
-	/**
-	 * Lê uma foto armazenada em um arquivo
-	 * 
-	 * @return
-	 * 
-	 */
-	public boolean ler() {
-		// a foto será lida do filename e armazenada no bitmap imagem
+    // a foto armazenada em imagem será salva
+    if (getImagem() == null) {
+      return false;
+    }
 
-		if (getFilename() == null) {
-			return false;
-		}
+    if (getFilename() == null) {
+      return false;
+    }
 
-		if (!getFilename().exists()) {
-			// arquivo não existe
-		}
+    return false;
+  }
 
-		return false;
+  /**
+   * Lê uma foto armazenada em um arquivo
+   * 
+   * @return
+   * 
+   */
+  public boolean ler() {
+    // a foto será lida do filename e armazenada no bitmap imagem
 
-	}
+    if (getFilename() == null) {
+      return false;
+    }
 
-	private File getFilename() {
-		File f = new File(getArquivo());
-		if ((f != null) && (f.exists())) {
-			return f;
-		}
-		return null;
-	}
+    if (!getFilename().exists()) {
+      // arquivo não existe
+    }
 
-	//
-	public Bitmap getImagem() {
-		return imagem;
-	}
+    return false;
 
-	public void setImagem(Bitmap imagem) {
-		this.imagem = imagem;
-	}
+  }
 
-	public Bitmap getBitmap() {
-		return null;
-	}
+  /**
+   * 
+   * @return
+   */
+  private File getFilename() {
+    File f = new File(getArquivo());
+    if ((f != null) && (f.exists())) {
+      return f;
+    }
+    return null;
+  }
 
-	public String tamanho() {
-		return null;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Bitmap getImagem() {
+    return imagem;
+  }
 
-	public Dimensao getDimensao() {
-		return dimensao;
-	}
+  /**
+   * 
+   * @param imagem
+   */
+  public void setImagem(Bitmap imagem) {
+    this.imagem = imagem;
+  }
 
-	public void setDimensao(Dimensao dimensao) {
-		this.dimensao = dimensao;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Bitmap getBitmap() {
+    return null;
+  }
 
-	public String getArquivo() {
-		return arquivo;
-	}
+  /**
+   * 
+   * @return
+   */
+  public String tamanho() {
+    return null;
+  }
 
-	public void setArquivo(String arquivo) {
-		this.arquivo = arquivo;
-	}
+  /**
+   * 
+   * @return
+   */
+  public Dimensao getDimensao() {
+    return dimensao;
+  }
 
-	/**
-	 * 
-	 */
-	@Override
-	public String toString() {
-		return "Foto [dimensao=" + dimensao + ", arquivo=" + arquivo
-				+ ", imagem=" + imagem + "]";
-	}
+  /**
+   * 
+   * @param dimensao
+   */
+  public void setDimensao(Dimensao dimensao) {
+    this.dimensao = dimensao;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String getArquivo() {
+    return arquivo;
+  }
+
+  /**
+   * 
+   * @param arquivo
+   */
+  public void setArquivo(String arquivo) {
+    this.arquivo = arquivo;
+  }
+
+  /**
+   * toString()
+   */
+  @Override
+  public String toString() {
+    return "Foto [dimensao=" + dimensao + ", arquivo=" + arquivo + ", imagem=" + imagem + "]";
+  }
 
 }
