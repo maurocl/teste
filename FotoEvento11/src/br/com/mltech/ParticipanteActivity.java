@@ -66,7 +66,7 @@ public class ParticipanteActivity extends Activity {
 
     Intent intent = getIntent();
 
-    Log.i(TAG, "onCreate() - intent.getActtion()=" + intent.getAction());
+    //Log.i(TAG, "onCreate() - intent.getActtion()=" + intent.getAction());
 
     if (intent != null) {
 
@@ -92,17 +92,22 @@ public class ParticipanteActivity extends Activity {
 
       if (mParticipante == null) {
         mParticipante = new Participante();
-        Log.w(TAG, "onCreate() - Criando Participante vazio");
+        Log.w(TAG, "onCreate() - Criando um novo Participante");
+      }
+      else {
+
+        Log.d(TAG, "onCreate() - Participante carregado com sucesso: " + mParticipante);
+
       }
 
       if (mParticipacao == null) {
 
         mParticipacao = new Participacao();
-        Log.w(TAG, "onCreate() - Criando Participacao vazia");
+        Log.w(TAG, "onCreate() - Criando uma nova Participacao");
 
       } else {
 
-        Log.d(TAG, "onCreate() - Participante carregado com sucesso: " + mParticipante);
+        Log.d(TAG, "onCreate() - Participação carregada com sucesso: " + mParticipacao);
 
       }
 
@@ -193,7 +198,7 @@ public class ParticipanteActivity extends Activity {
 
       public void onClick(View v) {
 
-        Log.d(TAG, "onCreate() - Botão Enviar do Participante foi selecionado");
+        Log.d(TAG, "onCreate() - *** Botão Enviar do Participante foi selecionado ***");
 
         Log.d(TAG, "onCreate() - groupFormatoFoto.isSelected()=" + groupFormatoFoto.isSelected());
 
@@ -292,8 +297,8 @@ public class ParticipanteActivity extends Activity {
 
         }
                 
-        int buttonId = group.getCheckedRadioButtonId();
-        Log.w(TAG,"onCreate() - Polaroid ou Cabine = buttonId="+buttonId);
+        //int buttonId = group.getCheckedRadioButtonId();
+        //Log.w(TAG,"onCreate() - Polaroid ou Cabine = buttonId="+buttonId);
         
       }
     });
@@ -314,18 +319,18 @@ public class ParticipanteActivity extends Activity {
 
         if (cor) {
 
-          Log.d(TAG, "onCreate() - Foto a cores");
+          Log.d(TAG, "onCreate() - Foto a cores selecionada");
           efeitoFoto = CORES;
 
         } else if (pb) {
 
-          Log.d(TAG, "onCreate() - Foto em Preto e Branco");
+          Log.d(TAG, "onCreate() - Foto em Preto e Branco selecionada");
           efeitoFoto = PB;
 
         }
         
-        int buttonId = group.getCheckedRadioButtonId();
-        Log.w(TAG,"onCreate() - cor ou PB = buttonId="+buttonId);
+        //int buttonId = group.getCheckedRadioButtonId();
+        //Log.w(TAG,"onCreate() - cor ou PB = buttonId="+buttonId);
         
         
         

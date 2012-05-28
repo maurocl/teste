@@ -33,7 +33,6 @@ import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.camera.CameraTools;
 
-
 /**
  * Activity principal da aplicação
  * 
@@ -53,7 +52,7 @@ public class FotoEventoActivity extends Activity {
 
   private static final int ACTIVITY_LOGIN = 103;
   private static final int ACTIVITY_MANUTENCAO = 104;
-  private static final int ACTIVITY_PARTICIPANTE = 102;
+  // private static final int ACTIVITY_PARTICIPANTE = 102;
   private static final int ACTIVITY_DUMMY3 = 120;
 
   private static final int ACTIVITY_CAMERA = 105;
@@ -62,13 +61,13 @@ public class FotoEventoActivity extends Activity {
   private SharedPreferences mPreferences;
 
   // Definição do contrante, evento e participações
-  private Contratante mContratante;
-  private Evento mEvento;
-  private Participante mParticipante;
-  private Participacao mParticipacao;
+  private static Contratante mContratante;
+  private static Evento mEvento;
+  private static Participante mParticipante;
+  private static Participacao mParticipacao;
 
   // Definição da lista de participação no evento
-  private List<Participacao> mListaParticipacao;
+  private static List<Participacao> mListaParticipacao;
 
   // Nº de participantes até o momento
   private int mNumParticipantes = 0;
@@ -155,7 +154,8 @@ public class FotoEventoActivity extends Activity {
 
         public void onClick(View v) {
 
-          launchActivity(FotoEventoActivity.this, ParticipanteActivity.class, null, ACTIVITY_PARTICIPANTE);
+          // launchActivity(FotoEventoActivity.this, ParticipanteActivity.class,
+          // null, ACTIVITY_PARTICIPANTE);
 
         }
 
@@ -412,9 +412,12 @@ public class FotoEventoActivity extends Activity {
 
     Log.i(TAG, "onActivityResult(request " + requestCode + ", result=" + resultCode + ", data " + data + ") ...");
 
-    if (requestCode == ACTIVITY_PARTICIPANTE) {
-      resultActivityParticipante(resultCode, data);
-    } else if (requestCode == ACTIVITY_LOGIN) {
+    /*
+     * if (requestCode == ACTIVITY_PARTICIPANTE) {
+     * resultActivityParticipante(resultCode, data); } else
+     */
+
+    if (requestCode == ACTIVITY_LOGIN) {
       resultActivityLogin(resultCode, data);
     } else if (requestCode == ACTIVITY_MANUTENCAO) {
       resultActivityManutencao(resultCode, data);
@@ -642,6 +645,9 @@ public class FotoEventoActivity extends Activity {
       // Obtem o resultado da execução da activity
       result = data.getStringExtra("br.com.mltech.result");
 
+      mParticipante = (Participante) data.getSerializableExtra("br.com.mltech.participante");
+      mParticipacao = (Participacao) data.getSerializableExtra("br.com.mltech.participacao");
+      
       Log.i(TAG, "resultActivityDummy3() - result=" + result);
 
     }
@@ -699,13 +705,12 @@ public class FotoEventoActivity extends Activity {
 
     mPreferences = getSharedPreferences(name, MODE_PRIVATE);
 
-    if(mPreferences==null) {
-    	
+    if (mPreferences == null) {
+
+    } else if (mPreferences == null) {
+
     }
-    else if(mPreferences==null) {
-    	
-    }
-    
+
     // Lê todas as entradas
     Map<?, ?> chaves = mPreferences.getAll();
 
@@ -804,24 +809,6 @@ public class FotoEventoActivity extends Activity {
   }
 
   /**
-   * startActivityParticipante(View v)
-   * 
-   * Inicia a Activity Participante que obtém as informações do participante do
-   * evento e suas preferências quanto ao tipo e filtro que será aplicado a
-   * foto.
-   * 
-   * @param v
-   *          View
-   */
-  private void startActivityParticipante(View v) {
-
-    Log.d(TAG, "startActivityParticipante() - inicio");
-    launchActivity(FotoEventoActivity.this, ParticipanteActivity.class, null, ACTIVITY_PARTICIPANTE);
-    Log.d(TAG, "startActivityParticipante() - fim");
-
-  }
-
-  /**
    * isCondicoesIniciaisSatisfeitas()
    * 
    * Verifica se as configurações iniciais estão satisfeitas para execução de
@@ -888,28 +875,32 @@ public class FotoEventoActivity extends Activity {
     Log.v(TAG, " updateListaParticipação        ");
     Log.v(TAG, "--------------------------------");
 
-    if (mListaParticipacao != null) {
-
-      // adiciona uma nova participação
-      mListaParticipacao.add(mParticipacao);
-
-      // incrementa o contador de participantes do evento
-      // TODO o nº de participante poderia aparecer na tela principal
-      mNumParticipantes++;
-      Log.v(TAG, "updateListaParticipação() - nº de participantes até o momento: " + mNumParticipantes);
-
-    } else {
-
-      Log.w(TAG, "updateListaParticipação() - Lista de participantes é nula. Participante não foi adicionado");
-
+    if (mParticipacao == null) {
+      Log.w(TAG, "updateListaParticipação() - participacao é nula, portanto não foi adicionada");
+      return;
     }
+
+    if (mListaParticipacao == null) {
+      Log.w(TAG, "updateListaParticipação() - Lista de participantes é nula. Participante não foi adicionado");
+      return;
+    }
+
+    // adiciona uma nova participação
+    mListaParticipacao.add(mParticipacao);
+
+    // incrementa o contador de participantes do evento
+    // TODO o nº de participante poderia aparecer na tela principal
+    mNumParticipantes++;
+
+    Log.v(TAG, "updateListaParticipação() - nº de participantes até o momento: " + mNumParticipantes);
 
   }
 
   /**
    * preparaAmbiente()
    * 
-   * Prepara o ambiente para gravação das fotos
+   * Prepara o sistema de arquivos ambiente para conter as molduras, a tela
+   * inicial e para gravação das fotos.
    * 
    */
   private boolean preparaAmbiente() {
@@ -919,42 +910,43 @@ public class FotoEventoActivity extends Activity {
       return false;
     }
 
-    boolean b = false;
-    if (ct.isExternalStorageMounted()) {
-
-      Log.i(TAG, "preparaAmbiente() - SDCARD está montado");
-
-      File f = null;
-
-      f = ct.getDir2("fotoevento/fotos");
-      ct.ShowFileDetails(f, "fotoevento/fotos");
-
-      f = ct.getDir2("fotoevento/molduras");
-      ct.ShowFileDetails(f, "fotoevento/molduras");
-
-      f = ct.getDir2("fotoevento/telainicial");
-      ct.ShowFileDetails(f, "fotoevento/telainicial");
-
-      b = true;
-
-    } else {
-
+    if (!ct.isExternalStorageMounted()) {
       Log.i(TAG, "preparaAmbiente() - SDCARD não está montado");
 
       // TODO aqui seria melhor exibir uma caixa de diálogo
       Toast.makeText(this, "SDCARD não está montado !!!", Toast.LENGTH_LONG).show();
-
+      return false;
     }
 
-    return b;
+    Log.i(TAG, "preparaAmbiente() - SDCARD está montado");
+
+    File f = null;
+
+    f = ct.getDir2("fotoevento/fotos");
+
+    if (DEBUG == 1) {
+      ct.ShowFileDetails(f, "fotoevento/fotos");
+    }
+
+    f = ct.getDir2("fotoevento/molduras");
+    if (DEBUG == 1) {
+      ct.ShowFileDetails(f, "fotoevento/molduras");
+    }
+
+    f = ct.getDir2("fotoevento/telainicial");
+    if (DEBUG == 1) {
+      ct.ShowFileDetails(f, "fotoevento/telainicial");
+    }
+
+    return true;
 
   }
 
   /**
    * obtemImagemTelaInicial()
    * 
-   * Obtem um bitmap que será exibido na tela inicial da aplicação. Caso
-   * nenhuma bitmap seja configurado será usado um bitmap padrão.
+   * Obtem um bitmap que será exibido na tela inicial da aplicação. Caso nenhuma
+   * bitmap seja configurado será usado um bitmap padrão.
    * 
    */
   private Bitmap obtemImagemTelaInicial() {
@@ -979,13 +971,13 @@ public class FotoEventoActivity extends Activity {
     if (f != null) {
 
       if (f.exists()) {
-        
+
         // arquivo existe
         // carrega o arquivo e exibe a foto
         bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
-        
+
       } else {
-        
+
         // carrega a foto default (padrão)
         // TODO definir o tamanho da imagem inicial
 

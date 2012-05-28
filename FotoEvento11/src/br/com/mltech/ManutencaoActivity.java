@@ -27,6 +27,11 @@ import br.com.mltech.modelo.Participacao;
 /**
  * ManutencaoActivity
  * 
+ * Esta activity é responsável pela Manutenção do Sistema.
+ * 
+ * É a partir dela que podemos fazer a manutenção do Contratante, Evento,
+ * Configurações e Relatórios
+ * 
  * @author maurocl
  * 
  */
@@ -156,7 +161,7 @@ public class ManutencaoActivity extends Activity {
 
         Intent i = getIntent();
 
-        List<Participacao> lista = (List<Participacao>) i.getSerializableExtra("br.com.mltech.lista");
+        List<Participacao> lista = (ArrayList<Participacao>) i.getSerializableExtra("br.com.mltech.lista");
 
         Intent intent = new Intent(ManutencaoActivity.this, RelatorioActivity.class);
 
@@ -253,7 +258,7 @@ public class ManutencaoActivity extends Activity {
     } else if (requestCode == ACTIVITY_RELATORIOS) {
       processActivityRelatorios(resultCode, data);
     } else {
-      Log.d(TAG, "Error ... requestCode: " + requestCode + " não pode ser processado");
+      Log.w(TAG, "onActivityResult() - requestCode: " + requestCode + " desconhecido");
     }
 
   }
@@ -441,7 +446,7 @@ public class ManutencaoActivity extends Activity {
       Log.w(TAG, "gravarPreferencias() - mPreferences is null");
       return false;
     }
-    
+
     Editor edit = mPreferences.edit();
 
     if (edit != null) {

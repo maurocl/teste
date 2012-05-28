@@ -16,11 +16,9 @@ import android.widget.EditText;
  * 
  * Aqui são configuradas as preferências de:
  * 
- * - subjet do email
- * - corpo da mensagem do email
+ * - subjet do email - corpo da mensagem do email
  * 
- * - texto padrão da mensagem do Facebook
- * - texto padrão da mensagem do Twitter
+ * - texto padrão da mensagem do Facebook - texto padrão da mensagem do Twitter
  * 
  * - localização da foto da página inicial da aplicação
  * 
@@ -32,7 +30,7 @@ import android.widget.EditText;
 public class PreferenciasActivity extends Activity {
 
   public static final String TAG = "Preferencias";
-  
+
   public static final String PREF_EMAIL = "pref_email";
 
   private SharedPreferences preferences;
@@ -48,10 +46,10 @@ public class PreferenciasActivity extends Activity {
 
     final EditText assunto = (EditText) findViewById(R.id.editAssunto);
     final EditText descricao = (EditText) findViewById(R.id.editDescricao);
-        
+
     final EditText txtFacebook = (EditText) findViewById(R.id.editTextoFacebook);
-    final EditText txtTwitter  = (EditText) findViewById(R.id.editTextoTwitter);
-    
+    final EditText txtTwitter = (EditText) findViewById(R.id.editTextoTwitter);
+
     final EditText urlImagem = (EditText) findViewById(R.id.editUrlImagem);
     final EditText numCameraFrontal = (EditText) findViewById(R.id.editNumCameraFrontal);
 
@@ -61,28 +59,36 @@ public class PreferenciasActivity extends Activity {
     // carrega as preferências sobre o envio de email
     preferences = getSharedPreferences(PREF_EMAIL, MODE_PRIVATE);
 
+    //---------------------------------------------------------------------------------
+    // Atualiza a interface gráfico com os valores recuperados do arquivo de prefências
+    //---------------------------------------------------------------------------------
     assunto.setText(preferences.getString("preferencias_assunto", ""));
     descricao.setText(preferences.getString("preferencias_descricao", ""));
-    
+
     txtFacebook.setText(preferences.getString("preferencias_texto_facebook", ""));
     txtTwitter.setText(preferences.getString("preferencias_texto_twitter", ""));
-    
+
     urlImagem.setText(preferences.getString("preferencias_url_imagem", ""));
     numCameraFrontal.setText(preferences.getString("preferencias_num_camera_frontal", ""));
 
+    //---------------------------
     // processa o botão de Gravar
+    //---------------------------
     btnGravarPreferencias.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
 
         Editor edit = preferences.edit();
 
+        //------------------------------------------------------------------------------
+        // Atualiza o arquivo de prefência com as alterações feitas na interface gráfica
+        //------------------------------------------------------------------------------
         edit.putString("preferencias_assunto", assunto.getText().toString());
         edit.putString("preferencias_descricao", descricao.getText().toString());
-        
+
         edit.putString("preferencias_texto_facebook", txtFacebook.getText().toString());
         edit.putString("preferencias_texto_twitter", txtTwitter.getText().toString());
-        
+
         edit.putString("preferencias_url_imagem", urlImagem.getText().toString());
         edit.putString("preferencias_num_camera_frontal", numCameraFrontal.getText().toString());
 
@@ -90,9 +96,9 @@ public class PreferenciasActivity extends Activity {
         boolean b = edit.commit();
 
         if (b == false) {
-          Log.d(TAG, "Falha da atualização da preferência");
+          Log.d(TAG, "onClick() - Falha na atualização da preferência");
         }
-
+        // Finaliza a execução da activity
         finish();
 
       }
@@ -102,11 +108,11 @@ public class PreferenciasActivity extends Activity {
     btnCancelar.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
-
+        // Finaliza a execução da activity
         finish();
 
       }
-      
+
     });
 
   };

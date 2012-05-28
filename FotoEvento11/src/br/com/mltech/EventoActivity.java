@@ -234,7 +234,7 @@ public class EventoActivity extends Activity implements Constantes {
 			finish();
 
 		} else {
-			Log.w(TAG, "testaContratanteNulo() - Contratante recuperado");
+			Log.d(TAG, "testaContratanteNulo() - Contratante recuperado");
 		}
 
 	}
