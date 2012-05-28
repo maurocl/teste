@@ -285,8 +285,8 @@ public class DummyActivity3 extends Activity implements Constantes {
     int erro = 0;
 
     // Obtém informações sobre o Contratante
-    if (i.getSerializableExtra("br.com.mltech.contratante") != null) {
-      mContratante = (Contratante) i.getSerializableExtra("br.com.mltech.contratante");
+    if (i.getSerializableExtra(CONTRATANTE) != null) {
+      mContratante = (Contratante) i.getSerializableExtra(CONTRATANTE);
     } else {
       Log.w(TAG, "iniciaVariaveis() - Contratante não pode ser nulo.");
       Toast.makeText(this, "Contratante não pode ser nulo", Toast.LENGTH_SHORT).show();
@@ -294,8 +294,8 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     // Obtem informações sobre o Evento
-    if (i.getSerializableExtra("br.com.mltech.evento") != null) {
-      mEvento = (Evento) i.getSerializableExtra("br.com.mltech.evento");
+    if (i.getSerializableExtra(EVENTO) != null) {
+      mEvento = (Evento) i.getSerializableExtra(EVENTO);
     } else {
       Log.w(TAG, "iniciaVariaveis() - Evento não pode ser nulo.");
       Toast.makeText(this, "Evento não pode ser nulo", Toast.LENGTH_SHORT).show();
@@ -340,7 +340,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     // Inclui o parâmetro mEvento (com as informações sobre o evento em
     // curso)
-    intentParticipante.putExtra("br.com.mltech.evento", mEvento);
+    intentParticipante.putExtra(EVENTO, mEvento);
 
     // Inicia a Activity
     startActivityForResult(intentParticipante, ACTIVITY_PARTICIPANTE);
@@ -390,15 +390,15 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     showBundle(data.getExtras());
 
-    if (data.getSerializableExtra("br.com.mltech.participante") != null) {
-      mParticipante = (Participante) data.getSerializableExtra("br.com.mltech.participante");
+    if (data.getSerializableExtra(PARTICIPANTE) != null) {
+      mParticipante = (Participante) data.getSerializableExtra(PARTICIPANTE);
     }
 
-    if (data.getSerializableExtra("br.com.mltech.participacao") != null) {
-      mParticipacao = (Participacao) data.getSerializableExtra("br.com.mltech.participacao");
+    if (data.getSerializableExtra(PARTICIPACAO) != null) {
+      mParticipacao = (Participacao) data.getSerializableExtra(PARTICIPACAO);
     }
 
-    // Exibe as informações sobre o participante e sua participaçaõ
+    // Exibe as informações sobre o participante e sua participaçÃO
     Log.d(TAG, "resultActivityParticipante() - mParticipante=" + mParticipante);
     Log.d(TAG, "resultActivityParticipante() - mParticipacao=" + mParticipacao);
 
@@ -1431,8 +1431,8 @@ public class DummyActivity3 extends Activity implements Constantes {
       // estado final atingido com sucesso
       Log.i(TAG, "estadoFinal() - final do processamento");
 
-      intent.putExtra("br.com.mltech.participante", mParticipante);
-      intent.putExtra("br.com.mltech.participacao", mParticipacao);
+      intent.putExtra(PARTICIPANTE, mParticipante);
+      intent.putExtra(PARTICIPACAO, mParticipacao);
       
       intent.putExtra("br.com.mltech.result", "OK");
 
@@ -1556,8 +1556,8 @@ public class DummyActivity3 extends Activity implements Constantes {
     super.onSaveInstanceState(outState);
     Log.d(TAG, "*** onSaveInstanceState() ***");
 
-    outState.putSerializable("br.com.mltech.participante", mParticipante);
-    outState.putSerializable("br.com.mltech.participacao", mParticipacao);
+    outState.putSerializable(PARTICIPANTE, mParticipante);
+    outState.putSerializable(PARTICIPACAO, mParticipacao);
 
     showBundle(outState);
 
@@ -1576,12 +1576,12 @@ public class DummyActivity3 extends Activity implements Constantes {
       Log.w(TAG, "onRestoreInstanceState() - savedInstaceState é nulo");
     }
 
-    if (savedInstanceState.containsKey("br.com.mltech.participante")) {
-      mParticipante = (Participante) savedInstanceState.getSerializable("br.com.mltech.participante");
+    if (savedInstanceState.containsKey(PARTICIPANTE)) {
+      mParticipante = (Participante) savedInstanceState.getSerializable(PARTICIPANTE);
     }
     
-    if (savedInstanceState.containsKey("br.com.mltech.participacao")) {
-      mParticipacao = (Participacao) savedInstanceState.getSerializable("br.com.mltech.participacao");
+    if (savedInstanceState.containsKey(PARTICIPACAO)) {
+      mParticipacao = (Participacao) savedInstanceState.getSerializable(PARTICIPACAO);
     }
 
     showBundle(savedInstanceState);
