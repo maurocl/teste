@@ -54,7 +54,7 @@ public class ManipulaImagem {
    * 
    * @return Um bitmap contendo a foto com a moldura sobreposta
    */
-  public Bitmap processaFotoFormatoPolaroid(File foto, File moldura) {
+  public static Bitmap processaFotoFormatoPolaroid(File foto, File moldura) {
 
     Bitmap bmp1 = null;
     Bitmap bmp2 = null;
@@ -83,7 +83,7 @@ public class ManipulaImagem {
    * 
    * @return Bitmap
    */
-  public Bitmap processaFotoFormatoPolaroid(String sFilename, String sMoldura) {
+  public static Bitmap processaFotoFormatoPolaroid(String sFilename, String sMoldura) {
 
     File f = new File(sFilename);
     File moldura = new File(sMoldura);
@@ -106,7 +106,7 @@ public class ManipulaImagem {
    * 
    * @return
    */
-  public Bitmap processaFotoFormatoPolaroid(Bitmap foto, Bitmap moldura) {
+  public static Bitmap processaFotoFormatoPolaroid(Bitmap foto, Bitmap moldura) {
 
     // cria um novo bitmap com a moldura sobreposta a foto
     Bitmap bitmap = overlay4(foto, moldura);
@@ -140,7 +140,7 @@ public class ManipulaImagem {
    * @return
    * 
    */
-  public String processaFotoFormatoCabine(String foto1, String foto2, String foto3, String arqMoldura) {
+  public static String processaFotoFormatoCabine(String foto1, String foto2, String foto3, String arqMoldura) {
 
     // Foto 1
     Bitmap bmFoto1 = carregaFoto(foto1);
@@ -287,7 +287,7 @@ public class ManipulaImagem {
    * @return
    * 
    */
-  public String processaFotoFormatoCabine2(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3, Bitmap bmMoldura) {
+  public static String processaFotoFormatoCabine2(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3, Bitmap bmMoldura) {
 
     if (bmFoto1 == null) {
       Log.w(TAG, "processaFotoFormatoCabine2() - Foto1 está vazia !");
@@ -401,7 +401,7 @@ public class ManipulaImagem {
    * @return um bitmap com o filtro aplicado ou null
    * 
    */
-  public Bitmap aplicaFiltroCores(Bitmap bi) {
+  public static Bitmap aplicaFiltroCores(Bitmap bi) {
     return null;
   }
 
@@ -414,7 +414,7 @@ public class ManipulaImagem {
    * @return um bitmap com o filtro aplicado ou null
    * 
    */
-  public Bitmap aplicaFiltroPB(Bitmap bi) {
+  public static Bitmap aplicaFiltroPB(Bitmap bi) {
     return null;
   }
 
@@ -431,7 +431,7 @@ public class ManipulaImagem {
    * 
    * @return o bitmap resultante ou null em caso de erro
    */
-  public Bitmap aplicaMolduraFoto(String foto, String moldura) {
+  public static Bitmap aplicaMolduraFoto(String foto, String moldura) {
 
     Bitmap bmOverlay = null;
 
@@ -460,7 +460,7 @@ public class ManipulaImagem {
    * 
    * @return o bitmap resultante ou null em caso de erro
    */
-  public Bitmap aplicaMolduraFoto(Bitmap bmFoto, Bitmap bmMoldura) {
+  public static Bitmap aplicaMolduraFoto(Bitmap bmFoto, Bitmap bmMoldura) {
 
     Bitmap bmOverlay = null;
 
@@ -482,7 +482,7 @@ public class ManipulaImagem {
    * 
    * @return
    */
-  public Bitmap aplicaMolduraFotoPolaroid(Bitmap bmFoto, Bitmap bmMoldura) {
+  public static Bitmap aplicaMolduraFotoPolaroid(Bitmap bmFoto, Bitmap bmMoldura) {
 
     Bitmap bmOverlay = null;
 
@@ -507,7 +507,7 @@ public class ManipulaImagem {
    * @return Um bitmap contendo a foto ou null caso a foto não seja encontrada
    * 
    */
-  private Bitmap carregaFoto(String foto) {
+  private static Bitmap carregaFoto(String foto) {
 
     Bitmap bmFoto = getBitmapFromFile(foto);
 
@@ -532,7 +532,7 @@ public class ManipulaImagem {
    * @return um Bitmap ou null caso não seja possível criar o bitmap
    * 
    */
-  public Bitmap criaBitmap(Uri uri) {
+  public static Bitmap criaBitmap(Uri uri) {
 
     if (uri == null) {
       Log.d(TAG, "criaBitmap() - uri é null");
@@ -561,7 +561,7 @@ public class ManipulaImagem {
    * 
    * @return A Bitmap ou null caso haja algum erro
    */
-  public Bitmap combineImages(Bitmap c, Bitmap s) {
+  public static Bitmap combineImages(Bitmap c, Bitmap s) {
 
     Bitmap cs = null;
 
@@ -625,7 +625,7 @@ public class ManipulaImagem {
    * @param imageView
    * @param bitmap
    */
-  public void exibeBitmap(ImageView imageView, Bitmap bitmap) {
+  public static void exibeBitmap(ImageView imageView, Bitmap bitmap) {
 
     if ((imageView != null) && (bitmap != null)) {
       // imageView.setImageBitmap(bitmap);
@@ -641,7 +641,7 @@ public class ManipulaImagem {
    * 
    * @return
    */
-  public Bitmap extractAlpha(Bitmap bm) {
+  public static Bitmap extractAlpha(Bitmap bm) {
 
     if (bm.hasAlpha()) {
       Log.d(TAG, "Bitmap has alpha()");
@@ -665,7 +665,7 @@ public class ManipulaImagem {
    * 
    * @return the resulting decoded bitmap, or null if it could not be decoded.
    */
-  public Bitmap getBitmapFromFile(String filename) {
+  public static Bitmap getBitmapFromFile(String filename) {
 
     Bitmap bm = null;
 
@@ -697,7 +697,7 @@ public class ManipulaImagem {
    * 
    * @return o bitmap lido ou null caso haja algum erro
    */
-  public Bitmap getBitmapFromFile(File f) {
+  public static Bitmap getBitmapFromFile(File f) {
 
     Bitmap bm = null;
 
@@ -735,7 +735,7 @@ public class ManipulaImagem {
    * 
    * @return data The decoded bitmap, or null if the image could not be decode.
    */
-  public Bitmap getBitmapFromByteArray(byte[] data) {
+  public static Bitmap getBitmapFromByteArray(byte[] data) {
 
     Bitmap bm = null;
 
@@ -763,7 +763,7 @@ public class ManipulaImagem {
    * 
    * @return
    */
-  public Bitmap getBitmapFromResource(Resources res, int id) {
+  public static Bitmap getBitmapFromResource(Resources res, int id) {
 
     // Bitmap bm = BitmapFactory.decodeResource(getResources(),
     // R.drawable.foto1);
@@ -788,7 +788,7 @@ public class ManipulaImagem {
    * 
    * @return um Bitmap de tamanho escalado
    */
-  public Bitmap getScaledBitmap(Bitmap bm, int factor) {
+  public static Bitmap getScaledBitmap(Bitmap bm, int factor) {
 
     int dstWidth = bm.getWidth() * factor / 100;
     int dstHeight = bm.getHeight() * factor / 100;
@@ -818,7 +818,7 @@ public class ManipulaImagem {
    * @return um bitmap com seu tamanho alterado
    * 
    */
-  public Bitmap getScaledBitmap2(Bitmap bm, int newWidth, int newHeight) {
+  public static Bitmap getScaledBitmap2(Bitmap bm, int newWidth, int newHeight) {
 
     Log.v(TAG, "getScaledBitmap2() - original Bitmap size:" + getStringBitmapSize(bm));
 
@@ -851,7 +851,7 @@ public class ManipulaImagem {
    * 
    * @return The decoded bitmap, or null if the image data could not be decoded.
    */
-  public Bitmap getBitmapRegion(String filename, Rect rect, Options options) {
+  public static Bitmap getBitmapRegion(String filename, Rect rect, Options options) {
 
     BitmapRegionDecoder brd = null;
 
@@ -892,7 +892,7 @@ public class ManipulaImagem {
    * 
    * @return Um bitmap rotacionado
    */
-  public Bitmap getRotatedBitmap(Resources res, int id, int angle) {
+  public static Bitmap getRotatedBitmap(Resources res, int id, int angle) {
 
     Bitmap bm = BitmapFactory.decodeResource(res, id);
 
@@ -998,7 +998,7 @@ public class ManipulaImagem {
    * 
    * @return true se o arquivo for gravado com sucesso ou false caso contrário.
    */
-  public boolean gravaBitmapArquivo(Bitmap bm, String filename) {
+  public static boolean gravaBitmapArquivo(Bitmap bm, String filename) {
 
     boolean salvou = false;
 
@@ -1062,7 +1062,7 @@ public class ManipulaImagem {
    * 
    * @return
    */
-  public boolean gravaBitmapArquivo2(Bitmap bm, String filename) {
+  public static boolean gravaBitmapArquivo2(Bitmap bm, String filename) {
 
     boolean salvou = false;
 
@@ -1113,7 +1113,7 @@ public class ManipulaImagem {
    * @return true se o arquivo foi gerado com sucesso ou false em caso de algum
    *         erro
    */
-  public boolean gravaBitmapArquivo3(Uri uri) {
+  public static boolean gravaBitmapArquivo3(Uri uri) {
 
     boolean salvou = false;
 
@@ -1167,7 +1167,7 @@ public class ManipulaImagem {
    *         nulo
    * 
    */
-  public String getStringBitmapSize(Bitmap bm) {
+  public static String getStringBitmapSize(Bitmap bm) {
 
     String s = null;
 
@@ -1193,7 +1193,7 @@ public class ManipulaImagem {
    * @return true se o bitmap contiver uma imagem formato landscape
    * 
    */
-  public boolean isLandscape(Bitmap bm) {
+  public static boolean isLandscape(Bitmap bm) {
     boolean ret = false;
     if (bm != null) {
       ret = bm.getWidth() > bm.getHeight();
@@ -1212,7 +1212,7 @@ public class ManipulaImagem {
    * @return true se o bitmap contiver uma imagem formato portrait
    * 
    */
-  public boolean isPortrait(Bitmap bm) {
+  public static boolean isPortrait(Bitmap bm) {
     boolean ret = false;
     if (bm != null) {
       ret = bm.getHeight() > bm.getWidth();
@@ -1235,7 +1235,7 @@ public class ManipulaImagem {
    * @return um Bitmap com overlay
    * 
    */
-  public Bitmap overlay(Bitmap bmp1, Bitmap bmp2) {
+  public static Bitmap overlay(Bitmap bmp1, Bitmap bmp2) {
 
     if ((bmp1 == null) || (bmp2 == null)) {
       return null;
@@ -1261,7 +1261,7 @@ public class ManipulaImagem {
    * 
    * @return
    */
-  public Bitmap overlay2(Bitmap bmp1, Bitmap bmp2) {
+  public static Bitmap overlay2(Bitmap bmp1, Bitmap bmp2) {
 
     // Bitmap bmOverlay = Bitmap.createBitmap(500, 500, bmp1.getConfig());
 
@@ -1306,7 +1306,7 @@ public class ManipulaImagem {
    * @return Um bitmap contendo a imagem de fundo sobreposta da imagem de frente
    * 
    */
-  public Bitmap overlay3(Bitmap bmp1, Bitmap bmp2) {
+  public static Bitmap overlay3(Bitmap bmp1, Bitmap bmp2) {
 
     int w = 0;
     int h = 0;
@@ -1391,7 +1391,7 @@ public class ManipulaImagem {
    * 
    * @return Bitmap
    */
-  public Bitmap overlay4(Bitmap bmp1, Bitmap bmp2) {
+  public static Bitmap overlay4(Bitmap bmp1, Bitmap bmp2) {
 
     int w = 0;
     int h = 0;
@@ -1457,7 +1457,7 @@ public class ManipulaImagem {
    *          Nome do arquivo
    * 
    */
-  public void showFile(File f) {
+  public static void showFile(File f) {
 
     Log.v(TAG, "showFile():");
     if (f != null) {
@@ -1476,7 +1476,7 @@ public class ManipulaImagem {
    * @param imageView
    * 
    */
-  public void showImageViewInfo(final ImageView imageView) {
+  public static void showImageViewInfo(final ImageView imageView) {
 
     int bottom = imageView.getBottom();
     int top = imageView.getTop();
@@ -1502,7 +1502,7 @@ public class ManipulaImagem {
    * @param bm
    * 
    */
-  public void showBitmapInfo2(Bitmap bm) {
+  public static void showBitmapInfo2(Bitmap bm) {
 
     // TODO transformar ...
     if (bm == null) {
@@ -1541,7 +1541,7 @@ public class ManipulaImagem {
    * @param bm
    *          The source bitmap
    */
-  public void showBitmapInfo(Bitmap bm) {
+  public static void showBitmapInfo(Bitmap bm) {
 
     if (bm != null) {
 
@@ -1627,7 +1627,7 @@ public class ManipulaImagem {
    *         de cada uma das figuras) É importante notar que todas as imagem
    *         deverão ter a mesma largura.
    */
-  public Bitmap verticalJoin(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3) {
+  public static Bitmap verticalJoin(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3) {
 
     if (bmp1 == null || bmp2 == null || bmp3 == null) {
       Log.w(TAG, "verticalJoin() - Pelo menos uma imagem é null");
@@ -1708,7 +1708,7 @@ public class ManipulaImagem {
    *          imageView
    * 
    */
-  public void updateBitmap(Bitmap bm, ImageView image) {
+  public static void updateBitmap(Bitmap bm, ImageView image) {
 
     if ((bm != null) && (image != null)) {
 
@@ -1733,7 +1733,7 @@ public class ManipulaImagem {
    * 
    * @return
    */
-  private int msgDialog(Context ctx, String msg, String sim, String nao) {
+  private static int msgDialog(Context ctx, String msg, String sim, String nao) {
 
     // TODO esse método está com problemas ...
     AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
@@ -1778,7 +1778,7 @@ public class ManipulaImagem {
    * 
    * @return Retorna o bitmap gravado
    */
-  public Bitmap XXX(Bitmap bmp) {
+  public static Bitmap XXX(Bitmap bmp) {
 
     String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
 
@@ -1825,7 +1825,7 @@ public class ManipulaImagem {
    * @param filename
    * @return
    */
-  public Bitmap XXX1(Bitmap bitmap, String filename) {
+  public static Bitmap XXX1(Bitmap bitmap, String filename) {
 
     OutputStream fos = null;
 
@@ -1881,7 +1881,7 @@ public class ManipulaImagem {
    * @return true se o arquivo existir e for um arquivo
    * 
    */
-  private boolean isValidFile(File f) {
+  private static boolean isValidFile(File f) {
 
     if (f == null) {
       return false;

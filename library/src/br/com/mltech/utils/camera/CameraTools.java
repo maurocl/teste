@@ -40,7 +40,6 @@ public class CameraTools {
   private static final String JPEG_FILE_PREFIX = "IMG_";
   private static final String JPEG_FILE_SUFFIX = ".jpg";
 
-  private Camera mCamera;
   private String mCurrentPhotoPath;
   private ImageView mImageView;
   private Bitmap mImageBitmap;
@@ -53,9 +52,6 @@ public class CameraTools {
    */
   public CameraTools() {
     super();
-
-    mCamera = null;
-
   }
 
   /**
@@ -68,7 +64,7 @@ public class CameraTools {
    * @return true caso o dispositivo possua uma câmera ou false caso contrario.
    * 
    */
-  public boolean checkCameraHardware(Context context) {
+  public static boolean checkCameraHardware(Context context) {
 
     if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
       // this device has a camera
@@ -82,6 +78,39 @@ public class CameraTools {
   }
 
   /**
+   * chooseFileDir()
+   * 
+   * @return
+   */
+  private static Uri chooseFileDir(String nomeArquivo) {
+
+    if (isExternalStorageMounted() == false) {
+      Log.w(TAG, "chooseFileDir() - Erro - sdcard não foi montado.");
+      return null;
+    }
+
+    File fotoDiretorio = new File(Environment.getExternalStorageDirectory(), "fotoevento");
+
+    if (!fotoDiretorio.exists()) {
+      Log.d(TAG, "chooseFileDir() - criando o diretório ...");
+      fotoDiretorio.mkdirs();
+    }
+
+    File fotoArquivo = new File(fotoDiretorio, nomeArquivo);
+
+    Uri fotoUri = null;
+
+    if (fotoArquivo != null) {
+
+      fotoUri = Uri.fromFile(fotoArquivo);
+
+    }
+
+    return fotoUri;
+
+  }
+
+  /**
    * checkCameraFeatures(Context context)
    * 
    * Verifica as features das câmeras
@@ -91,7 +120,7 @@ public class CameraTools {
    * 
    * @return true ou false
    */
-  public boolean checkCameraFeatures(Context context) {
+  public static boolean checkCameraFeatures(Context context) {
 
     if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
 
@@ -152,6 +181,42 @@ public class CameraTools {
     File image = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, directory);
 
     return image;
+
+  }
+
+  
+  /**
+   * deleteExternalStoragePublicPicture()
+   * 
+   * Apaga (ou remove) uma imagem da área pública de armzenamento externo
+   * 
+   */
+  public static void deleteExternalStoragePublicPicture() {
+
+    // Create a path where we will place our picture in the user's
+    // public pictures directory and delete the file.
+    // If external storage is not currently mounted this will fail.
+    File path = getExternalStoragePublicDirectoryPictures();
+    File file = new File(path, "DemoPicture.jpg");
+    file.delete();
+
+  }
+
+  
+  /**
+   * exibeCameraInfo(int cameraId, CameraInfo cameraInfo)
+   * 
+   * @param cameraId
+   * @param cameraInfo
+   * 
+   */
+  public static void exibeCameraInfo(int cameraId, CameraInfo cameraInfo) {
+
+    Camera.getCameraInfo(cameraId, cameraInfo);
+
+    Log.d(TAG, "exibeCameraInfo() - cameraInfo.facing=" + cameraInfo.facing);
+
+    Log.d(TAG, "exibeCameraInfo() - cameraInfo.orientation=" + cameraInfo.orientation);
 
   }
 
@@ -230,7 +295,7 @@ public class CameraTools {
    *         camera esteja vazia
    * 
    */
-  public String getParametersFlatten(Camera c) {
+  public static String getParametersFlatten(Camera c) {
 
     if (c == null) {
       // não há instância da câmera
@@ -252,7 +317,7 @@ public class CameraTools {
    * @return String contendo a data atual no formato: yyyyMMdd_HHmmss
    * 
    */
-  private String getTimeStamp() {
+  private static String getTimeStamp() {
 
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
@@ -308,7 +373,7 @@ public class CameraTools {
    * 
    * @return um arquivo
    */
-  public File getAlbumStorageDir(String albumName) {
+  public static File getAlbumStorageDir(String albumName) {
 
     /*
      * File (File dir, String name)
@@ -326,12 +391,19 @@ public class CameraTools {
   }
 
   /**
-   * showParametersDetail(Camera c)
+   * getParametersDetail(Camera c)
    * 
-   * Exibe os detalhes dos parâmetros de configuração da câmera
-   * 
+   * @param c
    */
-  public void showParametersDetail(Camera c) {
+  public static HashMap<String, List<String>> getParametersDetail(Camera c) {
+
+    HashMap<String, List<String>> hash = new HashMap<String, List<String>>();
+
+    ArrayList<String> lista = null;
+
+    if (c == null) {
+      return null;
+    }
 
     Parameters params = c.getParameters();
 
@@ -339,188 +411,56 @@ public class CameraTools {
     // Creates a single string with all the parameters set in this
     // Camera.Parameters object.
     // flattened a String of parameters (key-value paired) that are
-    // semi-colon
-    // delimited
-
-    Log.d(TAG, "flatten=" + params.flatten());
+    // semi-colon delimited
 
     String flatten = params.flatten();
 
     // Divide a string contendo os parâmetros separados por ";"
     String[] lines = flatten.split(";");
 
-    int index = 0;
-    if (lines != null) {
-
-      Log.d(TAG, "Nº de linhas: " + lines.length);
-      for (String line : lines) {
-
-        // divide um parâmetro em pares do tipo key-value paired
-        String[] chavesValores = line.split("=");
-
-        // a chave é representada pelo lado esquerdo da atribuição
-        // o valor é representado pelo lado direito da atribuição
-        String chave = null, valor = null;
-
-        // os múltiplos valores das chaves (se existirem) são separados
-        // por ","
-        String[] valoresPossiveis = null;
-
-        if (chavesValores != null && chavesValores.length == 2) {
-
-          chave = chavesValores[0];
-          valor = chavesValores[1];
-
-          if (valor != null) {
-            valoresPossiveis = valor.split(",");
-          }
-
-        }
-
-        Log.d(TAG, "chave: " + chave);
-        Log.d(TAG, "valor(es): " + valor + " (" + valoresPossiveis.length + ") values");
-        for (String value : valoresPossiveis) {
-          Log.d(TAG, "  " + value);
-        }
-
-        Log.d(TAG, ++index + ": " + line);
-      }
-    }
-
-  }
-
-  /* Photo album for this application */
-  // private String getAlbumName() {
-  // return getString(R.string.album_name);
-  // // return "nomeAlbum";
-  // }
-
-  /**
-   * handleSmallCameraPhoto(Intent intent)
-   * 
-   * @param intent
-   * 
-   */
-  private void handleSmallCameraPhoto(Intent intent) {
-
-    Bundle extras = intent.getExtras();
-
-    if (extras != null) {
-
-      mImageBitmap = (Bitmap) extras.get("data");
-
-      mImageView.setImageBitmap(mImageBitmap);
-
-      mImageView.setVisibility(View.VISIBLE);
-
-    }
-
-  }
-
-  /**
-   * chooseFileDir()
-   * 
-   * @return
-   */
-  private Uri chooseFileDir(String nomeArquivo) {
-
-    if (isExternalStorageMounted() == false) {
-      Log.w(TAG, "chooseFileDir() - Erro - sdcard não foi montado.");
+    if (lines == null) {
       return null;
     }
 
-    File fotoDiretorio = new File(Environment.getExternalStorageDirectory(), "fotoevento");
+    for (String line : lines) {
 
-    if (!fotoDiretorio.exists()) {
-      Log.d(TAG, "Criando o diretório ...");
-      fotoDiretorio.mkdirs();
+      // divide um parâmetro em pares do tipo key-value paired
+      String[] chavesValores = line.split("=");
+
+      // a chave é representada pelo lado esquerdo da atribuição
+      // o valor é representado pelo lado direito da atribuição
+      String chave = null, valor = null;
+
+      // os múltiplos valores das chaves (se existirem) são separados
+      // por ","
+      String[] valoresPossiveis = null;
+
+      if (chavesValores != null && chavesValores.length == 2) {
+
+        chave = chavesValores[0];
+        valor = chavesValores[1];
+
+        lista = new ArrayList<String>();
+
+        if (valor != null) {
+          valoresPossiveis = valor.split(",");
+          for (String value : valoresPossiveis) {
+            lista.add(value);
+          }
+        }
+
+      }
+
+      hash.put(chave, lista);
+
     }
+    showHash(hash);
 
-    File fotoArquivo = new File(fotoDiretorio, nomeArquivo);
-
-    Uri fotoUri = null;
-
-    if (fotoArquivo != null) {
-
-      fotoUri = Uri.fromFile(fotoArquivo);
-
-    }
-
-    return fotoUri;
+    return hash;
 
   }
 
-  /**
-   * obtemNomeArquivo(String extensao)
-   * 
-   * gera um nome de arquivo a partir do numero de mili segundos atuais
-   * retornados pelo sistema
-   * 
-   * extensao=".jpg"
-   */
-  File obtemNomeArquivo(String extensao) {
-
-    // Obtém um nome de arquivo
-    String arquivo = Environment.getExternalStorageDirectory() + File.pathSeparator + +System.currentTimeMillis() + extensao;
-
-    // Cria o arquivo
-    File file = new File(arquivo);
-
-    Log.d(TAG, "===> arquivo=" + file.getAbsolutePath());
-
-    return file;
-
-  }
-
-  /**
-   * isExternalStorageMounted()
-   * 
-   * Verifica se há algum disco externo disponível e montado no dispositivo.
-   * 
-   * @return true, caso haja ou false, caso contrário
-   */
-  public boolean isExternalStorageMounted() {
-
-    boolean isMounted = false;
-
-    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-      isMounted = true;
-    } else {
-      isMounted = false;
-    }
-
-    return isMounted;
-
-  }
-
-  /**
-   * isExternalMediaMounted()
-   * 
-   * @return true se uma media de armazenamento externo estiver montada; retorna
-   *         false, caso contrário.
-   * 
-   */
-
-  public boolean isExternalMediaMounted() {
-
-    boolean isMounted;
-
-    // Obtém o estado corrente do principal dispositivo de armazenamento
-    // externo
-    isMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
-
-    if (isMounted) {
-      // dispositivo está montado
-      Log.d(TAG, "Media externa está montada.");
-    } else {
-      // dispositivo não não está montado
-      Log.w(TAG, "Media externa não está montada.");
-    }
-
-    return isMounted;
-
-  }
-
+  
   /**
    * getDir2(String dirName)
    * 
@@ -530,7 +470,7 @@ public class CameraTools {
    * @param dirName
    * @return
    */
-  public File getDir2(String dirName) {
+  public static File getDir2(String dirName) {
 
     File storageDir = null;
 
@@ -587,7 +527,7 @@ public class CameraTools {
    * @return Um nome de arquivo
    * 
    */
-  public File getStorageDir(String name) {
+  public static File getStorageDir(String name) {
 
     File f = null;
 
@@ -608,11 +548,13 @@ public class CameraTools {
   /**
    * getExternalStoragePublicDirectory()
    * 
+   * Obtém o nome do diretório público onde estão armazenadas as imagens
+   * 
    * @return O nome do diretório público onde são armazenada as imagens
    *         (pictures)
    * 
    */
-  public File getExternalStoragePublicDirectoryPictures() {
+  public static File getExternalStoragePublicDirectoryPictures() {
 
     String type = Environment.DIRECTORY_PICTURES;
 
@@ -622,13 +564,114 @@ public class CameraTools {
 
   }
 
+  
+  /* Photo album for this application */
+  // private String getAlbumName() {
+  // return getString(R.string.album_name);
+  // // return "nomeAlbum";
+  // }
+
+  /**
+   * handleSmallCameraPhoto(Intent intent)
+   * 
+   * @param intent
+   * 
+   */
+  private void handleSmallCameraPhoto(Intent intent) {
+
+    Bundle extras = intent.getExtras();
+
+    if (extras != null) {
+
+      mImageBitmap = (Bitmap) extras.get("data");
+
+      mImageView.setImageBitmap(mImageBitmap);
+
+      mImageView.setVisibility(View.VISIBLE);
+
+    }
+
+  }
+
+  /**
+   * hasExternalStoragePublicPicture()
+   * 
+   * @return true se o arquivo existir no diretório ou false, caso contrário.
+   * 
+   */
+  public static boolean hasExternalStoragePublicPicture(String filename) {
+
+    // Create a path where we will place our picture in the user's
+    // public pictures directory and check if the file exists.
+
+    // If external storage is not currently mounted this will think the
+    // picture doesn't exist.
+
+    File path = getExternalStoragePublicDirectoryPictures();
+
+    File file = new File(path, filename);
+
+    return file.exists();
+
+  }
+  
+  /**
+   * isExternalStorageMounted()
+   * 
+   * Verifica se há algum disco externo disponível e montado no dispositivo.
+   * 
+   * @return true, caso haja ou false, caso contrário
+   */
+  public static boolean isExternalStorageMounted() {
+
+    boolean isMounted = false;
+
+    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+      isMounted = true;
+    } else {
+      isMounted = false;
+    }
+
+    return isMounted;
+
+  }
+
+  /**
+   * isExternalMediaMounted()
+   * 
+   * @return true se uma media de armazenamento externo estiver montada; retorna
+   *         false, caso contrário.
+   * 
+   */
+
+  public static boolean isExternalMediaMounted() {
+
+    boolean isMounted;
+
+    // Obtém o estado corrente do principal dispositivo de armazenamento
+    // externo
+    isMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+
+    if (isMounted) {
+      // dispositivo está montado
+      Log.d(TAG, "Media externa está montada.");
+    } else {
+      // dispositivo não não está montado
+      Log.w(TAG, "Media externa não está montada.");
+    }
+
+    return isMounted;
+
+  }
+
+ 
   /**
    * createExternalStoragePublicPicture()
    * 
    * Cria um storage externo público para armazenamento de figuras (pictures)
    * 
    */
-  public void createExternalStoragePublicPicture() {
+  public static void createExternalStoragePublicPicture() {
 
     // Create a path where we will place our picture in the user's
     // public pictures directory.
@@ -686,111 +729,30 @@ public class CameraTools {
 
   }
 
-  /**
-   * deleteExternalStoragePublicPicture()
-   * 
-   * Apaga (ou remove) uma figura de uma área de armzenamento externa pública
-   * 
-   */
-  void deleteExternalStoragePublicPicture() {
-
-    // Create a path where we will place our picture in the user's
-    // public pictures directory and delete the file.
-    // If external storage is not currently mounted this will fail.
-    File path = getExternalStoragePublicDirectoryPictures();
-    File file = new File(path, "DemoPicture.jpg");
-    file.delete();
-  }
-
-  /**
-   * hasExternalStoragePublicPicture()
-   * 
-   * @return true se o arquivo existir no diretório ou false, caso contrário.
-   * 
-   */
-  boolean hasExternalStoragePublicPicture(String filename) {
-
-    // Create a path where we will place our picture in the user's
-    // public pictures directory and check if the file exists.
-
-    // If external storage is not currently mounted this will think the
-    // picture doesn't exist.
-
-    File path = getExternalStoragePublicDirectoryPictures();
-
-    File file = new File(path, filename);
-
-    return file.exists();
-
-  }
+ 
+ 
 
   // ---------------------------------------------------------
 
   /**
-   * showUri(Uri uri)
+   * obtemNomeArquivo(String extensao)
    * 
-   * Exibe informações sobre uma Uri
+   * gera um nome de arquivo a partir do numero de mili segundos atuais
+   * retornados pelo sistema
    * 
-   * @param uri
+   * extensao=".jpg"
    */
-  public void showUri(Uri uri) {
+  private static File obtemNomeArquivo(String extensao) {
 
-    Log.v(TAG, "Exibe informações sobre uma Uri:");
-    Log.v(TAG, "  uri=" + uri);
-    Log.v(TAG, "  uri.getAuthority=" + uri.getAuthority());
-    Log.v(TAG, "  uri.getHost=" + uri.getHost());
-    Log.v(TAG, "  uri.getQuery=" + uri.getQuery());
-    Log.v(TAG, "  uri.getPath=" + uri.getPath());
-    Log.v(TAG, "  uri.getPort=" + uri.getPort());
+    // Obtém um nome de arquivo
+    String arquivo = Environment.getExternalStorageDirectory() + File.pathSeparator + +System.currentTimeMillis() + extensao;
 
-  }
+    // Cria o arquivo
+    File file = new File(arquivo);
 
-  /**
-   * showCameraInfo()
-   * 
-   * Exibe informações sobre a configuração de todas as câmeras
-   * 
-   */
-  public void showCameraInfo() {
+    Log.d(TAG, "obtemNomeArquivo() ===> arquivo=" + file.getAbsolutePath());
 
-    Camera camera = null;
-
-    int num = Camera.getNumberOfCameras();
-
-    Log.d(TAG, "showCameraInfo() - número de câmera(s) disponível(eis):  " + num);
-
-    for (int i = 0; i < num; i++) {
-
-      camera = getCameraInstance(i);
-
-      if (camera != null) {
-
-        Log.d(TAG, "showCameraInfo() - *** Detalhes de configuração da câmera: " + i);
-        showParametersDetail(camera);
-
-      } else {
-
-        Log.d(TAG, "showCameraInfo() - câmera " + i + " não está disponível");
-
-      }
-
-    }
-
-  }
-
-  /**
-   * exibeCameraInfo(int cameraId, CameraInfo cameraInfo)
-   * 
-   * @param cameraId
-   * @param cameraInfo
-   */
-  public void exibeCameraInfo(int cameraId, CameraInfo cameraInfo) {
-
-    Camera.getCameraInfo(cameraId, cameraInfo);
-
-    Log.d(TAG, "exibeCameraInfo() - cameraInfo.facing=" + cameraInfo.facing);
-
-    Log.d(TAG, "exibeCameraInfo() - cameraInfo.orientation=" + cameraInfo.orientation);
+    return file;
 
   }
 
@@ -868,9 +830,9 @@ public class CameraTools {
    *          Instância de um arquivo (File)
    * 
    */
-  public void ShowFileDetails(File f, String msg) {
+  public static void showFileDetails(File f, String msg) {
 
-    Log.v(TAG, " ==> " + msg);
+    Log.v(TAG, "ShowFileDetails() ==> " + msg);
 
     if (f.exists()) {
       Log.v(TAG, "f=" + f.getAbsolutePath() + " existe");
@@ -893,83 +855,16 @@ public class CameraTools {
   }
 
   /**
-   * getParametersDetail(Camera c)
-   * 
-   * @param c
-   */
-  public HashMap<String, List<String>> getParametersDetail(Camera c) {
-
-    HashMap<String, List<String>> hash = new HashMap<String, List<String>>();
-
-    ArrayList<String> lista = null;
-
-    if(c==null) {
-      return null;
-    }
-    
-    Parameters params = c.getParameters();
-
-    // O método flatten retorna uma String
-    // Creates a single string with all the parameters set in this
-    // Camera.Parameters object.
-    // flattened a String of parameters (key-value paired) that are
-    // semi-colon
-    // delimited
-
-    String flatten = params.flatten();
-
-    // Divide a string contendo os parâmetros separados por ";"
-    String[] lines = flatten.split(";");
-
-    if (lines == null) {
-      return null;
-    }
-
-    for (String line : lines) {
-
-      // divide um parâmetro em pares do tipo key-value paired
-      String[] chavesValores = line.split("=");
-
-      // a chave é representada pelo lado esquerdo da atribuição
-      // o valor é representado pelo lado direito da atribuição
-      String chave = null, valor = null;
-
-      // os múltiplos valores das chaves (se existirem) são separados
-      // por ","
-      String[] valoresPossiveis = null;
-
-      if (chavesValores != null && chavesValores.length == 2) {
-
-        chave = chavesValores[0];
-        valor = chavesValores[1];
-
-        lista = new ArrayList<String>();
-
-        if (valor != null) {
-          valoresPossiveis = valor.split(",");
-          for (String value : valoresPossiveis) {
-            lista.add(value);
-          }
-        }
-
-      }
-
-      hash.put(chave, lista);
-
-    }
-    showHash(hash);
-
-    return hash;
-
-  }
-
-  /**
    * showHash(HashMap<String, List<String>> hash)
    * 
+   * Exibe os dados de um HashMap onde a chave é uma string e o valor é uma
+   * lista de strings
+   * 
    * @param hash
+   *          instância do HashMap
    * 
    */
-  void showHash(HashMap<String, List<String>> hash) {
+  private static void showHash(HashMap<String, List<String>> hash) {
 
     int num = 0;
 
@@ -979,16 +874,132 @@ public class CameraTools {
 
       List<String> listaValues = hash.get(chave);
 
-      Log.d(TAG, "chave(" + num + ")=" + chave);
+      Log.d(TAG, "showHash() chave(" + num + ")=" + chave);
 
       if (listaValues != null) {
 
         for (String s2 : listaValues) {
-          Log.d(TAG, "  value=" + s2);
+          Log.d(TAG, "  showHash() - value=" + s2);
         }
 
       }
 
+    }
+
+  }
+
+  /**
+   * showUri(Uri uri)
+   * 
+   * Exibe informações sobre uma Uri
+   * 
+   * @param uri
+   */
+  public static void showUri(Uri uri) {
+
+    Log.v(TAG, "showUri() - exibe informações sobre uma Uri:");
+    Log.v(TAG, "  uri=" + uri);
+    Log.v(TAG, "  uri.getAuthority=" + uri.getAuthority());
+    Log.v(TAG, "  uri.getHost=" + uri.getHost());
+    Log.v(TAG, "  uri.getQuery=" + uri.getQuery());
+    Log.v(TAG, "  uri.getPath=" + uri.getPath());
+    Log.v(TAG, "  uri.getPort=" + uri.getPort());
+
+  }
+
+  /**
+   * showCameraInfo()
+   * 
+   * Exibe informações sobre a configuração de todas as câmeras
+   * 
+   */
+  public static void showCameraInfo() {
+
+    Camera camera = null;
+
+    int num = Camera.getNumberOfCameras();
+
+    Log.d(TAG, "showCameraInfo() - número de câmera(s) disponível(eis):  " + num);
+
+    for (int i = 0; i < num; i++) {
+
+      camera = getCameraInstance(i);
+
+      if (camera != null) {
+
+        Log.d(TAG, "showCameraInfo() - *** Detalhes de configuração da câmera: " + i);
+        showParametersDetail(camera);
+
+      } else {
+
+        Log.d(TAG, "showCameraInfo() - câmera " + i + " não está disponível");
+
+      }
+
+    }
+
+  }
+
+  /**
+   * showParametersDetail(Camera c)
+   * 
+   * Exibe os detalhes dos parâmetros de configuração da câmera
+   * 
+   */
+  public static void showParametersDetail(Camera c) {
+
+    Parameters params = c.getParameters();
+
+    // O método flatten retorna uma String
+    // Creates a single string with all the parameters set in this
+    // Camera.Parameters object.
+    // flattened a String of parameters (key-value paired) that are
+    // semi-colon
+    // delimited
+
+    Log.d(TAG, "flatten=" + params.flatten());
+
+    String flatten = params.flatten();
+
+    // Divide a string contendo os parâmetros separados por ";"
+    String[] lines = flatten.split(";");
+
+    int index = 0;
+    if (lines != null) {
+
+      Log.d(TAG, "Nº de linhas: " + lines.length);
+      for (String line : lines) {
+
+        // divide um parâmetro em pares do tipo key-value paired
+        String[] chavesValores = line.split("=");
+
+        // a chave é representada pelo lado esquerdo da atribuição
+        // o valor é representado pelo lado direito da atribuição
+        String chave = null, valor = null;
+
+        // os múltiplos valores das chaves (se existirem) são separados
+        // por ","
+        String[] valoresPossiveis = null;
+
+        if (chavesValores != null && chavesValores.length == 2) {
+
+          chave = chavesValores[0];
+          valor = chavesValores[1];
+
+          if (valor != null) {
+            valoresPossiveis = valor.split(",");
+          }
+
+        }
+
+        Log.d(TAG, "chave: " + chave);
+        Log.d(TAG, "valor(es): " + valor + " (" + valoresPossiveis.length + ") values");
+        for (String value : valoresPossiveis) {
+          Log.d(TAG, "  " + value);
+        }
+
+        Log.d(TAG, ++index + ": " + line);
+      }
     }
 
   }
