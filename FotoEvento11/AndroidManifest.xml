@@ -95,23 +95,27 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        
-          <activity
+        <activity
             android:name=".DummyActivity2"
             android:label="Câmera Simples fornecida pelo Android" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        
-           <activity
+        <activity
             android:name=".DummyActivity3"
             android:label="Câmera Simples fornecida pelo Android" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-          
+        <activity
+            android:name=".ActivityCameraSimplesDummy"
+            android:label="" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

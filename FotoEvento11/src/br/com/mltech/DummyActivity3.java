@@ -33,7 +33,8 @@ import br.com.mltech.utils.ManipulaImagem;
 /**
  * DummyActivity3
  * 
- * Activity responsável pela ...
+ * Activity responsável pela sequencia de passos para obtenção das informações
+ * de um participante, tirar uma ou mais fotos e enviar um email.
  * 
  * @author maurocl
  * 
@@ -42,22 +43,11 @@ public class DummyActivity3 extends Activity implements Constantes {
 
   private static final String TAG = "DummyActivity3";
 
-  // TODO criar um diretório inicial, um lugar para configuração ...
-  public static final String PATH_MOLDURAS = "/mnt/sdcard/Pictures/fotoevento/molduras/";
-  public static final String PATH_FOTOS = "/mnt/sdcard/Pictures/fotoevento/fotos/";
-
-  // Definição da Activies chamadas
-  private static final int ACTIVITY_TIRA_FOTO_3 = 113;
-  private static final int ACTIVITY_CHOOSER = 150;
-  private static final int ACTIVITY_PARTICIPANTE = 102;
-
   // Definição dos atributos da aplicação
   private static Contratante mContratante;
   private static Evento mEvento;
   private static Participante mParticipante;
   private static Participacao mParticipacao;
-
-  //
   private SharedPreferences mPreferences;
 
   // Nome do arquivo onde está armazenado a última foto
@@ -107,67 +97,18 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     if (imagem == null) {
       Log.w(TAG, "onCreate() - Não foi possível obter uma instância da classe ManipulaImagm");
-    }
-
-    showBundle(savedInstanceState);
-
-    // ---------------------------------------------------------------------
-    mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
-
-    String molduraPolaroid = null;
-    String molduraCabine = null;
-
-    if (mPreferences == null) {
-
-      Log.w(TAG, "mPreferences is null. Falha na execução do comandos getSharedPreferences()");
-      // molduraPolaroid = PATH_MOLDURAS +
-      // "moldura-polaroid-340x416-red.png";
-      // molduraCabine = PATH_MOLDURAS + "moldura-cabine-132x568-red.png";
-
-    } else {
-
-      // Obtém a localização do arquivo contendo a moldura formato polaroid
-      molduraPolaroid = mPreferences.getString("evento_borda_polaroid", "");
-      // Obtém a localização do arquivo contendo a moldura formato cabine
-      molduraCabine = mPreferences.getString("evento_borda_cabine", "");
-
-    }
-
-    if ((molduraPolaroid != null) && (molduraPolaroid.equals(""))) {
-      Log.d(TAG, "onCreate() - Moldura formato Polaroid não foi configurada");
       estadoFinal();
     }
 
-    if ((molduraCabine != null) && (molduraCabine.equals(""))) {
-
-      Log.d(TAG, "onCreate() - Moldura formato Cabine não foi configurada");
-      estadoFinal();
+    if (savedInstanceState != null) {
+      showBundle(savedInstanceState);
     }
 
-    // ----------------------------------------------------------
-    // o arquivo contendo a moldura é lido no inicio da activity
-    // ----------------------------------------------------------
-    Log.d(TAG, "Lendo arquivo contendo moldura formato Polaroid");
-    mBitmapMolduraPolaroid = leArquivoMoldura(molduraPolaroid);
-    Log.d(TAG, "onCreate() - mBitmapMolduraPolaroid =" + mBitmapMolduraPolaroid);
+    // Carrega as molduras para fotos Polaroid e Cabine
+    carregaMolduras();
 
-    Log.d(TAG, "Lendo arquivo contendo moldura formato Cabine");
-    mBitmapMolduraCabine = leArquivoMoldura(molduraCabine);
-    Log.d(TAG, "onCreate() - mBitmapMolduraCabine = " + mBitmapMolduraCabine);
-
-    //-----------------------------------------------
-    // obtem o nº da câmera usada para tirar as fotos
-    //-----------------------------------------------
-    String s = getSharedPreference("pref_email", "preferencias_num_camera_frontal");
-
-    Log.w(TAG, "onCreate() - Nº da câmera frontal=" + s);
-
-    if ((s != null) && (!s.equals(""))) {
-      mCurrentCamera = Integer.valueOf(s);
-    } else {
-      mCurrentCamera = 0;
-      Log.w(TAG, "onCreate() - Nº da câmera frontal não foi definido. Assumindo o valor 0");
-    }
+    // Obtem o identificado da câmera que será usada para tirar as fotos
+    mCurrentCamera = obtemIdentificadorCamera();
 
     // ---------------------------------------------------------------------
 
@@ -180,17 +121,92 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       public void onClick(View v) {
 
-        iniciaProcesso();
-
-        /*
-         * boolean b = iniciaVariaveis(); if (b == false) { Log.w(TAG,
-         * "onCreate() - Não foi possível inicializar as variáveis");
-         * estadoFinal(); }
-         */
+        iniciaMaquinaDeEstados();
 
       }
 
     });
+
+  }
+
+  /**
+   * carregaMolduras()
+   * 
+   * mBitmapMolduraPolaroid. mBitmapMolduraCabine.
+   * 
+   * mBitmapMolduraPolaroid. mBitmapMolduraCabine.
+   * 
+   */
+  private void carregaMolduras() {
+
+    mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
+
+    if (mPreferences == null) {
+
+      Log.w(TAG, "mPreferences is null. Falha na execução do comandos getSharedPreferences()");
+      return;
+
+    }
+
+    String molduraPolaroid = null;
+    String molduraCabine = null;
+
+    // o arquivo de configuração possui a informação da localização das molduras
+
+    // Obtém a localização do arquivo contendo a moldura formato polaroid
+    molduraPolaroid = mPreferences.getString("evento_borda_polaroid", "");
+
+    // Obtém a localização do arquivo contendo a moldura formato cabine
+    molduraCabine = mPreferences.getString("evento_borda_cabine", "");
+
+    if ((molduraPolaroid != null) && (molduraPolaroid.equals(""))) {
+      Log.d(TAG, "carregaMolduras() - moldura formato Polaroid não foi configurada.");
+      estadoFinal();
+    }
+
+    if ((molduraCabine != null) && (molduraCabine.equals(""))) {
+      Log.d(TAG, "carregaMolduras() - moldura formato Cabine não foi configurada.");
+      estadoFinal();
+    }
+
+    // ----------------------------------------------------------
+    // o arquivo contendo a moldura é lido no inicio da activity
+    // ----------------------------------------------------------
+    Log.d(TAG, "carregaMolduras() - lendo arquivo contendo moldura formato Polaroid");
+    mBitmapMolduraPolaroid = leArquivoMoldura(molduraPolaroid);
+    Log.d(TAG, "carregaMolduras() - mBitmapMolduraPolaroid =" + mBitmapMolduraPolaroid);
+
+    Log.d(TAG, "carregaMolduras() - Lendo arquivo contendo moldura formato Cabine");
+    mBitmapMolduraCabine = leArquivoMoldura(molduraCabine);
+    Log.d(TAG, "carregaMolduras() - mBitmapMolduraCabine = " + mBitmapMolduraCabine);
+
+  }
+
+  /**
+   * obtemIdentificadorCamera()
+   * 
+   * @return
+   * 
+   */
+  private int obtemIdentificadorCamera() {
+
+    int num = 0;
+
+    // -----------------------------------------------
+    // obtem o nº da câmera usada para tirar as fotos
+    // -----------------------------------------------
+    String s = getSharedPreference("pref_email", "preferencias_num_camera_frontal");
+
+    Log.i(TAG, "obtemIdentificadorCamera() - Nº da câmera frontal=" + s);
+
+    if ((s != null) && (!s.equals(""))) {
+      num = Integer.valueOf(s);
+    } else {
+      num = 0;
+      Log.w(TAG, "obtemIdentificadorCamera() - Nº da câmera frontal não foi definido. Assumindo o valor 0");
+    }
+
+    return num;
 
   }
 
@@ -204,9 +220,9 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     super.onActivityResult(requestCode, resultCode, data);
 
-    Log.i(TAG,"===============================================================================");
+    Log.i(TAG, "===============================================================================");
     Log.i(TAG, "onActivityResult(request " + requestCode + ", result=" + resultCode + ", data " + data + ") ...");
-    Log.i(TAG,"===============================================================================");
+    Log.i(TAG, "===============================================================================");
 
     if (requestCode == ACTIVITY_PARTICIPANTE) {
 
@@ -231,7 +247,7 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * iniciaProcesso()
    */
-  private void iniciaProcesso() {
+  private void iniciaMaquinaDeEstados() {
 
     boolean b = iniciaVariaveis();
 
@@ -338,8 +354,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     // Cria uma nova Intent para chamar a Activity Participante
     Intent intentParticipante = new Intent(this, ParticipanteActivity.class);
 
-    // Inclui o parâmetro mEvento (com as informações sobre o evento em
-    // curso)
+    // Inclui o parâmetro mEvento (com as informações sobre o evento em curso)
     intentParticipante.putExtra(EVENTO, mEvento);
 
     // Inicia a Activity
@@ -428,8 +443,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     // Libera os recursos relacionados a câmera
     xUri = null; // endereço onde a foto será armazenada em caso de sucesso
-    mFilename = null; // nome do arquivo (full path) onde a foto está
-    // armazenada
+    mFilename = null; // nome do arquivo (full path) onde a foto está armazenada
 
     // TODO poderia ser substituido por isCameraWorking ???
 
@@ -453,10 +467,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-    // File file = new File(PATH_FOTOS + "/" + System.currentTimeMillis() +
-    // ".png");
-
-    // arquivo com o nome da foto
+    // cria o arquivo com o nome da foto
     File file = new File(PATH_FOTOS + "/" + timeStamp + ".png");
 
     Log.i(TAG, "obtemFoto() - f.getAbsolutePath()=" + file.getAbsolutePath());
@@ -530,109 +541,36 @@ public class DummyActivity3 extends Activity implements Constantes {
     Log.d(TAG, "resultActivityTiraFoto3() ==> Executando o resultado do processamento da ACTIVITY_TiraFoto3");
     Log.d(TAG, "resultActivityTiraFoto3   ==> resultCode=" + resultCode);
 
+    // testa o resultado da execução da activity ACTIVITY_TiraFoto3
     if (resultCode == RESULT_OK) {
 
+      // testa as confições necessária para continuar processando a foto
+      testaCondicoesFotos(data);
+
       // activity executada com sucesso
+      xxxx(data);
 
-      Log.i(TAG, "resultActivityTiraFoto3() - xUri: " + xUri);
-      Log.i(TAG, "resultActivityTiraFoto3() - mFilename: " + mFilename);
+      // atualiza o modo da tela para portrait
+      atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
 
-      if (xUri == null) {
-        // Uri is null
-        Log.d(TAG, "resultActivityTiraFoto3() - xUri is null ==> nenhuma foto foi obtida");
-        estadoFinal();
-      }
+      // grava foto redimensionada
+      gravaFotoRedimensionada();
 
-      if (data != null) {
-        showBundle(data.getExtras());
-      }
+      String fotoComMoldura = null;
 
-      if (mParticipacao == null) {
-        // mParticipacao é nulo
-        Log.w(TAG, "resultActivityTiraFoto3() - mParticipação é nulo");
-        estadoFinal();
-      }
-
-      // uma foto foi tirada e encontra-se no endereço xUri
-
-      // a foto encontra-se no caminho dado por xUri.getPath();
-      // uma foto foi tirada e encontra-se no endereço xUri
-      // exibe informações sobre a localização da foto armazenada no
-      // sistema
-      Log.d(TAG, "resultActivityTiraFoto3() - Foto tirada e armazenada em xUri.getPath()=" + xUri.getPath());
-
-      // atualiza o caminho onde a foto foi armazenada.
-      // getPath(): Gets the decoded path. (obtem o caminho decodificado)
-      // the decoded path, or null if this is not a hierarchical URI
-      // (like "mailto:nobody@google.com") or the URI is invalid
-      // armazena o caminho onde se encontra a foto original
-
-      // TODO alterar o caminho de onde se encontra a foto
-      mParticipacao.setNomeArqFoto(xUri.getPath());
-
-      Log.d(TAG, "resultActivityTiraFoto3() - mParticipacao=" + mParticipacao);
-
-      // atualiza a orientação da tela para Portrait
-      int orientacao = this.getResources().getConfiguration().orientation;
-
-      if (orientacao == Configuration.ORIENTATION_LANDSCAPE) {
-        Log.d(TAG, "resultActivityTiraFoto3() - Orientação da tela em LANDSCAPE");
-
-        this.setRequestedOrientation(Configuration.ORIENTATION_PORTRAIT);
-
-      } else if (orientacao == Configuration.ORIENTATION_PORTRAIT) {
-        Log.d(TAG, "resultActivityTiraFoto3() - Orientação da tela em PORTRAIT");
-      }
-
-      // grava a foto redimensionada em um arquivo
-      boolean gravou = imagem.gravaBitmapArquivo3(xUri);
-
-      if (gravou) {
-        Log.i(TAG, "Arquivo: " + xUri + " gravado com sucesso.");
-      } else {
-        Log.w(TAG, "Falha na gravação do arquivo: " + xUri);
-        xUri = null;
-        mFilename = null;
-        estadoFinal();
-      }
-
-      if (mParticipacao != null) {
-
-        if (mParticipacao.getTipoFoto() == 1) {
-          // atualiza a máquina de estado
-          setEstado(2);
-          // Executa o próximo passo da máquina de estado
-          processaFotos();
-        } else if (mParticipacao.getTipoFoto() == 2) {
-
-          // Sistema de foto cabine selecionado
-          if (mNumFotosCabine < 3) {
-            // tirar mais fotos
-
-            fotosCabine[mNumFotosCabine] = xUri;
-
-            Log.i(TAG, "***** mNumFotosCabine=" + mNumFotosCabine);
-
-            mNumFotosCabine++;
-
-            obtemFoto();
-
-          } else {
-            // reseta o contador
-            mNumFotosCabine = 0;
-            // atualiza a máquina de estado
-            setEstado(2);
-            // Executa o próximo passo da máquina de estado
-            processaFotos();
-
-          }
-
-        }
-
+      switch (mParticipacao.getTipoFoto()) {
+        case TIPO_FOTO_POLAROID:
+          fotoComMoldura = processaFotoPolaroid();
+          break;
+        case TIPO_FOTO_CABINE:
+          fotoComMoldura = processaFotoCabine();
+          break;
+        default:
+          break;
       }
 
     } else {
-
+      // Foto foi cancelada ou houve algum outro tipo de problema
       // resultCode != RESULT_OK
 
       xUri = null;
@@ -648,13 +586,175 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
+   * xxxx(Intent data)
+   * 
+   * @param data
+   */
+  private void xxxx(Intent data) {
+
+    // activity executada com sucesso
+
+    // a foto encontra-se no caminho dado por xUri.getPath();
+    // uma foto foi tirada e encontra-se no endereço dado pela URI xUri
+    // exibe informações sobre a localização da foto armazenada no
+    // sistema
+    Log.i(TAG, "resultActivityTiraFoto3() - xUri: " + xUri);
+    Log.i(TAG, "resultActivityTiraFoto3() - mFilename: " + mFilename);
+    Log.i(TAG, "resultActivityTiraFoto3() - Foto tirada e armazenada em xUri.getPath()=" + xUri.getPath());
+
+    // atualiza o caminho onde a foto foi armazenada.
+    // getPath(): Gets the decoded path. (obtem o caminho decodificado)
+    // the decoded path, or null if this is not a hierarchical URI
+    // (like "mailto:nobody@google.com") or the URI is invalid
+    // armazena o caminho onde se encontra a foto original
+
+    // --------------------------------------------------
+    // TODO alterar o caminho de onde se encontra a foto
+    // --------------------------------------------------
+    mParticipacao.setNomeArqFoto(xUri.getPath());
+
+    Log.d(TAG, "resultActivityTiraFoto3() - mParticipacao=" + mParticipacao);
+
+  }
+
+  /**
+   * processaFotoPolaroid()
+   * 
+   * @return
+   */
+  private String processaFotoPolaroid() {
+
+    String fotoComMoldura = null;
+
+    // atualiza a máquina de estado
+    setEstado(2);
+
+    // Executa o próximo passo da máquina de estado
+    fotoComMoldura = processaFotos();
+
+    return fotoComMoldura;
+
+  }
+
+  /**
+   * processaFotoCabine()
+   * 
+   * @return
+   */
+  private String processaFotoCabine() {
+
+    String fotoComMoldura = null;
+
+    // Sistema de foto cabine selecionado
+    if (mNumFotosCabine < 3) {
+
+      // tirar mais fotos
+      fotosCabine[mNumFotosCabine] = xUri;
+
+      Log.i(TAG, "***** mNumFotosCabine=" + mNumFotosCabine);
+
+      mNumFotosCabine++;
+
+      obtemFoto();
+
+    } else {
+      // reseta o contador
+      mNumFotosCabine = 0;
+      processaFotoPolaroid();
+
+    }
+
+    return fotoComMoldura;
+
+  }
+
+  /**
+   * testaCondicoesFotos(Intent data)
+   * 
+   * @param data
+   *          Intent recebida da Activity processada
+   * 
+   */
+  private void testaCondicoesFotos(Intent data) {
+
+    if (xUri == null) {
+      Log.w(TAG, "testaCondicoesFotos() - xUri é nulo ==> nenhuma foto foi obtida");
+      estadoFinal();
+    }
+
+    if (data != null) {
+      showBundle(data.getExtras());
+    }
+
+    if (mParticipacao == null) {
+      Log.w(TAG, "testaCondicoesFotos() - mParticipação é nulo");
+      estadoFinal();
+    }
+
+  }
+
+  /**
+   * gravaFotoRedimensionada()
+   * 
+   * Grava foto redimesionada
+   * 
+   */
+  private void gravaFotoRedimensionada() {
+
+    // grava a foto redimensionada em um arquivo
+    boolean gravou = imagem.gravaBitmapArquivo3(xUri);
+
+    if (gravou) {
+
+      Log.i(TAG, "gravaFotoRedimensionada() - arquivo: " + xUri + " gravado com sucesso.");
+
+    } else {
+
+      Log.w(TAG, "gravaFotoRedimensionada() - falha na gravação do arquivo: " + xUri);
+
+      xUri = null;
+      mFilename = null;
+      estadoFinal();
+
+    }
+
+  }
+
+  /**
+   * atualizaModoTela(int novaOrientacao)
+   * 
+   * Atualiza a orientação da tela.
+   * 
+   * @param novaOrientacao
+   */
+  private void atualizaModoTela(int novaOrientacao) {
+
+    int orientacaoAtual = this.getResources().getConfiguration().orientation;
+
+    Log.d(TAG, "atualizaModoTela() - Orientação atual: " + orientacaoAtual);
+
+    if (novaOrientacao != orientacaoAtual) {
+      this.setRequestedOrientation(novaOrientacao);
+    }
+
+    if (orientacaoAtual == Configuration.ORIENTATION_LANDSCAPE) {
+      Log.d(TAG, "atualizaModoTela() - Orientação da tela em LANDSCAPE");
+    }
+
+    else if (orientacaoAtual == Configuration.ORIENTATION_PORTRAIT) {
+      Log.d(TAG, "atualizaModoTela() - Orientação da tela em PORTRAIT");
+    }
+
+  }
+
+  /**
    * processaFotos()
    * 
    * Responsável pelo processamento da foto, isto é, transformar a foto de
    * acordo com o formato e tipo solicitado.
    * 
    */
-  private void processaFotos() {
+  private String processaFotos() {
 
     Log.d(TAG, "===========================");
     Log.d(TAG, "====> processaFotos() <====");
@@ -681,9 +781,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     // exibe informações sobre a Uri de localização da foto
-    imagem.showUri(xUri);
-
-    // xUri.get
+    ManipulaImagem.showUri(xUri);
 
     // obtém o tipo da foto (se o formato da foto é Polaroid ou Cabine)
     tipoFoto = mParticipacao.getTipoFoto();
@@ -698,9 +796,6 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     /**
      * Processa a foto com o filtro desejado
-     * 
-     * 
-     * 
      */
     // TODO será que esse processo não deveria ser feito depois ???
     Bitmap bb = processoEfeitoFiltroFoto(efeitoFoto, null);
@@ -708,8 +803,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     // --------
 
     // nome do arquivo contendo a foto formatada como Polaroid ou Cabine já
-    // com
-    // a moldura aplicada
+    // com a moldura aplicada
     String arquivoFotoComMoldura = null;
 
     arquivoFotoComMoldura = processaTipoFoto(tipoFoto, pathCabine);
@@ -749,6 +843,8 @@ public class DummyActivity3 extends Activity implements Constantes {
     // O próximo passo é enviar o email com a foto já trabalhada.
     // Envia email com a foto pronta
     enviaEmail(lastUri);
+
+    return arquivoFotoComMoldura;
 
   }
 
@@ -907,8 +1003,10 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * gravaFotoPolaroidComMoldura(Bitmap bmFoto, Bitmap bmMoldura)
    * 
-   * @param bmFoto Foto 
-   * @param bmMoldura Moldura
+   * @param bmFoto
+   *          Foto
+   * @param bmMoldura
+   *          Moldura
    * 
    * @return o nome do arquivo onde a foto foi gravada ou null em caso de erro.
    */
@@ -1029,11 +1127,15 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
+   * formataFoto3x4(Bitmap foto, String nome)
+   * 
    * Redimensiona uma foto para o tamanho 3x4 (observe que nesse caso 3 é a
    * largura e 4 é a altura)
    * 
    * @param foto
+   *          bitmap com a foto
    * @param nome
+   *          nome do arquivo onde a foto será gravada
    * 
    * @return o bitmap com a foto ou null em caso de erro
    */
@@ -1065,6 +1167,7 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
+   * xxxabc(Bitmap bmMoldura)
    * 
    * @param bmMoldura
    * @return
@@ -1433,7 +1536,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       intent.putExtra(PARTICIPANTE, mParticipante);
       intent.putExtra(PARTICIPACAO, mParticipacao);
-      
+
       intent.putExtra("br.com.mltech.result", "OK");
 
       setResult(RESULT_OK, intent);
@@ -1451,20 +1554,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     }
 
-    // obtém informações sobre a configuração de orientação da tela
-    int orientacao = this.getResources().getConfiguration().orientation;
-
-    if (orientacao == Configuration.ORIENTATION_LANDSCAPE) {
-
-      // orientação está LANDSCAPE
-      Log.d(TAG, "Orientação da tela em LANDSCAPE");
-
-      // Altera a orientação para PORTRAIT
-      this.setRequestedOrientation(Configuration.ORIENTATION_PORTRAIT);
-
-    } else if (orientacao == Configuration.ORIENTATION_PORTRAIT) {
-      Log.d(TAG, "Orientação da tela em PORTRAIT");
-    }
+    atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
 
     // Termina a execução da Activity responsável por tirar e enviar uma
     // foto
@@ -1568,9 +1658,9 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     super.onRestoreInstanceState(savedInstanceState);
 
-    Log.d(TAG,"*********************************");
+    Log.d(TAG, "*********************************");
     Log.d(TAG, "*** onRestoreInstanceState() ***");
-    Log.d(TAG,"*********************************");
+    Log.d(TAG, "*********************************");
 
     if (savedInstanceState == null) {
       Log.w(TAG, "onRestoreInstanceState() - savedInstaceState é nulo");
@@ -1579,17 +1669,14 @@ public class DummyActivity3 extends Activity implements Constantes {
     if (savedInstanceState.containsKey(PARTICIPANTE)) {
       mParticipante = (Participante) savedInstanceState.getSerializable(PARTICIPANTE);
     }
-    
+
     if (savedInstanceState.containsKey(PARTICIPACAO)) {
       mParticipacao = (Participacao) savedInstanceState.getSerializable(PARTICIPACAO);
     }
 
     showBundle(savedInstanceState);
-    
-    
+
   }
-  
-  
 
   /**
    * isExternalMediaMounted()
@@ -1609,10 +1696,10 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     if (isMounted) {
       // dispositivo está montado
-      Log.d(TAG, "Media externa está montada.");
+      Log.d(TAG, "isExternalMediaMounted() - Media externa está montada.");
     } else {
       // dispositivo não não está montado
-      Log.w(TAG, "Media externa não está montada.");
+      Log.w(TAG, "isExternalMediaMounted() - Media externa não está montada.");
     }
 
     return isMounted;

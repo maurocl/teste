@@ -925,17 +925,17 @@ public class FotoEventoActivity extends Activity {
     f = ct.getDir2("fotoevento/fotos");
 
     if (DEBUG == 1) {
-      ct.ShowFileDetails(f, "fotoevento/fotos");
+      ct.showFileDetails(f, "fotoevento/fotos");
     }
 
     f = ct.getDir2("fotoevento/molduras");
     if (DEBUG == 1) {
-      ct.ShowFileDetails(f, "fotoevento/molduras");
+      ct.showFileDetails(f, "fotoevento/molduras");
     }
 
     f = ct.getDir2("fotoevento/telainicial");
     if (DEBUG == 1) {
-      ct.ShowFileDetails(f, "fotoevento/telainicial");
+      ct.showFileDetails(f, "fotoevento/telainicial");
     }
 
     return true;

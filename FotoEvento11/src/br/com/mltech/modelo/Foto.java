@@ -1,6 +1,7 @@
 package br.com.mltech.modelo;
 
 import java.io.File;
+import java.io.Serializable;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -11,30 +12,42 @@ import android.net.Uri;
  * @author maurocl
  * 
  */
-public class Foto {
+public class Foto implements Serializable {
 
+  /**
+   * serialVersionUID
+   */
+  private static final long serialVersionUID = -5873671630650408409L;
+
+  // dimensões da foto (largura x altura)
   private Dimensao dimensao;
 
-  // nome do arquivo
+  // nome do arquivo onde a foto está armazenada
   private String arquivo;
 
   // bitmap contendo a imagem (foto)
   private Bitmap imagem;
 
+  //
   private byte[] dados;
 
-  private Uri uri;
-
   /**
+   * Foto(String arquivo)
    * 
    * @param arquivo
+   *          nome do arquivo que contém a foto
+   * 
    */
   public Foto(String arquivo) {
     this.arquivo = arquivo;
+    this.dimensao = null;
+    imagem = null;
+    dados = null;
+  
   }
 
   /**
-   * 
+   * Foto(String arquivo, byte[] dados)
    * @param arquivo
    * @param dados
    */
@@ -44,9 +57,11 @@ public class Foto {
   }
 
   /**
+   * Foto(String arquivo, Bitmap bm)
    * 
    * @param arquivo
    * @param bm
+   * 
    */
   public Foto(String arquivo, Bitmap bm) {
     this.arquivo = arquivo;
@@ -54,26 +69,11 @@ public class Foto {
   }
 
   /**
+   * isLandscape()
    * 
-   * @param uri
-   */
-  public Foto(Uri uri) {
-    this.uri = uri;
-  }
-
-  /**
+   * Quando a razão entre a largura e a algura for > 0
    * 
-   * @param uri
-   * @param dados
-   */
-  public Foto(Uri uri, byte[] dados) {
-    this.uri = uri;
-    this.dados = dados;
-  }
-
-  /**
-   * 
-   * @return
+   * @return true se landscape ou false caso contrário
    */
   public boolean isLandscape() {
     if (getDimensao() != null) {
@@ -85,8 +85,11 @@ public class Foto {
   }
 
   /**
+   * isPortrait()
    * 
-   * @return
+   * Quando a razão entre a largura e a algura for <= 0
+   * 
+   * @return true se Portrait e false caso contrário
    */
   public boolean isPortrait() {
     if (getDimensao() != null) {
@@ -98,10 +101,12 @@ public class Foto {
   }
 
   /**
+   * redimensiona(int largura, int altura)
    * 
    * @param largura
    * @param altura
-   * @return
+   * 
+   * @return a foto redimensionada ou null em caso de erro
    */
   public Foto redimensiona(int largura, int altura) {
     return null;
@@ -148,10 +153,12 @@ public class Foto {
   }
 
   /**
+   * getFilename()
    * 
    * @return
    */
   private File getFilename() {
+
     File f = new File(getArquivo());
     if ((f != null) && (f.exists())) {
       return f;
@@ -160,6 +167,7 @@ public class Foto {
   }
 
   /**
+   * getImagem()
    * 
    * @return
    */
@@ -168,22 +176,33 @@ public class Foto {
   }
 
   /**
+   * setImagem(Bitmap imagem)
    * 
    * @param imagem
+   * 
    */
   public void setImagem(Bitmap imagem) {
+
     this.imagem = imagem;
+
+    if (imagem != null) {
+      Dimensao d = new Dimensao(imagem.getWidth(), imagem.getHeight());
+      this.dimensao = d;
+    }
+
   }
 
   /**
+   * getBitmap()
    * 
    * @return
    */
   public Bitmap getBitmap() {
-    return null;
+    return imagem;
   }
 
   /**
+   * tamanho()
    * 
    * @return
    */
@@ -200,6 +219,7 @@ public class Foto {
   }
 
   /**
+   * setDimensao(Dimensao dimensao)
    * 
    * @param dimensao
    */
@@ -208,19 +228,53 @@ public class Foto {
   }
 
   /**
+   * getArquivo()
    * 
    * @return
+   * 
    */
   public String getArquivo() {
     return arquivo;
   }
 
   /**
+   * setArquivo(String arquivo)
    * 
    * @param arquivo
+   * 
    */
   public void setArquivo(String arquivo) {
     this.arquivo = arquivo;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public byte[] getDados() {
+    return dados;
+  }
+
+  /**
+   * 
+   * @param dados
+   */
+  public void setDados(byte[] dados) {
+    this.dados = dados;
+  }
+
+  /**
+   * getUri()
+   * 
+   * @return
+   */
+  public Uri getUri() {
+        
+    File f = new File(arquivo);
+    
+    Uri uri = Uri.fromFile(f);
+    
+    return uri;
   }
 
   /**
@@ -231,4 +285,6 @@ public class Foto {
     return "Foto [dimensao=" + dimensao + ", arquivo=" + arquivo + ", imagem=" + imagem + "]";
   }
 
+  
+  
 }

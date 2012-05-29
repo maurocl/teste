@@ -1,22 +1,25 @@
 package br.com.mltech;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import br.com.mltech.modelo.Foto;
+import br.com.mltech.utils.ManipulaImagem;
 
 /**
  * CameraSimples
@@ -24,192 +27,427 @@ import android.widget.ImageView;
  * @author maurocl
  * 
  */
-public class CameraSimples extends Activity {
+public class CameraSimples extends Activity implements OnClickListener {
 
   public static final String TAG = "CameraSimples";
 
   public static final int TIRA_FOTO = 111;
 
+  private Button btnConfirma;
+  private Button btnLista;
   private ImageView image;
-  private File file;
-  private Uri outputFileUri;
+  
+  private static File file;
+  private static Uri outputFileUri;
 
+  ManipulaImagem mi;
+
+  public static int contador = 0;
+
+  public static int i = 0;
+  public int j = 0;
+  
+  public static int numCreate=0;
+  public static int numRestart=0;
+  
+  public static int numFotosCarregadas=0;
+  public static int numFotosTiradas=0;
+
+  public static List<Foto> listaFotos;
+  
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
 
-    Log.d(TAG, "*** onCreate() ***");
+    // retorna informações sobre a intent que iniciou essa activity
+    Intent intent = getIntent();
+    
+    if(intent.getExtras()!=null) {
+      Log.w(TAG, "A intent que inicou essa activity possui um bundle");
+    }
+    
+    
+    Log.d(TAG, "*** onCreate() contador=" + contador + " ***");
 
     setContentView(R.layout.camerasimples);
+    
+    contador++;
+    numCreate++;
+    i++;
+    j++;
 
-    Button btnConfirma = (Button) findViewById(R.id.btnConfirma);
+    mi = new ManipulaImagem();
+    if (mi == null) {
+      Log.w(TAG, "não foi possível criar uma instância da classe ManipulaImagem.");
+      return;
+    }
+    
+    // cria uma lista de fotos
+    listaFotos = new ArrayList<Foto>();
 
+    btnConfirma = (Button) findViewById(R.id.btnConfirma);
+    btnConfirma.setOnClickListener(this);
+
+    btnLista = (Button) findViewById(R.id.btnLista);
+    btnLista.setOnClickListener(this);
+    
     image = (ImageView) findViewById(R.id.imageView1);
 
-    btnConfirma.setOnClickListener(new OnClickListener() {
+    showXXX();
 
-      public void onClick(View v) {
+  }
 
-        /*
-        String arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
+  /**
+   * onClick(View v)
+   * 
+   * @param v
+   * 
+   */
+  public void onClick(View v) {
 
-        Log.d(TAG, "*** onClick() ***");
+    if (v == btnConfirma) {
+      processaBotaoConfirma();
+    }
+    else if(v==btnLista) {
+      processaBotaoLista();
+    }
 
-        file = new File(arquivo);
+  }
 
-        Log.d(TAG, "arquivo=" + file.getAbsolutePath());
+  /**
+   * processaBotaoConfirma()
+   */
+  private void processaBotaoConfirma() {
 
-        outputFileUri = Uri.fromFile(file);
+    Log.d(TAG, "============================");
+    Log.d(TAG, "===> processaBotaoConfirma()");
+    Log.d(TAG, "============================");
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+    // nome do arquivo onde a foto será armazenada
+    String arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
 
-        Log.d(TAG, "*** before ***");
-        startActivityForResult(intent, TIRA_FOTO);
-        Log.d(TAG, "*** after ***");
-        */
+    // ---------------------------------
+    //
+    // ---------------------------------
+    //
+    //executaActivityTiraFoto(arquivo);
+    executaActivityTiraFotoDummy(arquivo);
+
+  }
+
+  /**
+   * processaBotaoLista
+   */
+  private void processaBotaoLista() {
+    Log.i(TAG,"");
+    Log.i(TAG,"----------------------");
+    Log.i(TAG,"- processaBotaoLista()");
+    Log.i(TAG,"----------------------");
+    
+    if(listaFotos==null) {
+      Log.w(TAG,"processaBotaoLista() - lista está vazia !");
+      return;
+    }
+    
+    Log.d(TAG,"Nº de fotos: "+listaFotos.size());
+    
+    for(Foto foto: listaFotos) {
+      if(foto!=null) {
+        Log.d(TAG,foto.toString());
+      }
+    }
+    
+  }
+  
+  /**
+   * executaActivityTiraFoto()
+   */
+  private void executaActivityTiraFoto(String arquivo) {
+
+    file = new File(arquivo);
+
+    Log.d(TAG, "executaActivityTiraFoto() - arquivo=" + file.getAbsolutePath());
+
+    outputFileUri = Uri.fromFile(file);
+
+    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+    startActivityForResult(intent, TIRA_FOTO);
+
+  }
+
+  /**
+   * executaActivityTiraFotoDummy(String arquivo)
+   * 
+   * @param arquivo
+   */
+  private void executaActivityTiraFotoDummy(String arquivo) {
+
+    file = new File(arquivo);
+
+    Log.d(TAG, "executaActivityTiraFoto() - arquivo=" + file.getAbsolutePath());
+
+    outputFileUri = Uri.fromFile(file);
+
+    // Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+    // intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+    
+    Intent intent = new Intent(this, ActivityCameraSimplesDummy.class);
+    intent.putExtra("nome", "mauro");
+    
+    intent.putExtra("x", outputFileUri);
+
+    startActivityForResult(intent, TIRA_FOTO);
+
+  }
+
+  /**
+   * onActivityResult(int requestCode, int resultCode, Intent data)
+   */
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    super.onActivityResult(requestCode, resultCode, data);
+    
+    
+
+    Log.d(TAG,"-----------------------------------------------------------------");
+    Log.d(TAG, "*** onActivityResult() - requestCode=" + requestCode + ", resultCode=" + resultCode);
+    Log.d(TAG, "*** onActivityResult() - data=" + ((data == null) ? "null" : "not null"));
+    Log.d(TAG,"-----------------------------------------------------------------");
+
+    numFotosTiradas++;
+    
+    if (resultCode == RESULT_OK) {
+
+      if (requestCode == TIRA_FOTO) {
+        
+        if(data!=null) {
+          
+          Log.w(TAG,"data.getData()= " + data.getData());
+          Log.w(TAG,"extra: "+data.getStringExtra("extra1"));
+          Log.w(TAG,"file: "+data.getStringExtra("file"));
+          
+          //File ff = new File(data.getStringExtra("file"));
+          file = new File(data.getStringExtra("file"));
+          
+          outputFileUri = Uri.fromFile(file);
+          
+        }
+        
+
+        carregaImagem();
 
       }
-    });
 
+    } else if (resultCode == RESULT_CANCELED) {
+      // operação cancelada
+      Log.w(TAG, "onActivityResult() - Operação cancelada pelo usuário");
+      return;
+    } else {
+      Log.w(TAG, "onActivityResult() - não foi possível tratar o valor: " + resultCode);
+      return;
+    }
+
+    Log.d(TAG,">>> alterando a orientação da tela");
+    atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
+
+  }
+
+  /**
+   * carregaImagem()
+   * 
+   * Carrega uma imagem a partir de um arquivo
+   * 
+   * 
+   */
+  private void carregaImagem() {
+
+    Log.d(TAG, "carregaImagem()");
+
+    if (file == null) {
+      //
+      Log.w(TAG, "carregaImagem() ==> file é nulo");
+      return;
+    }
+
+    Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+    if (bm == null) {
+      Log.w(TAG, "carregaImage() - não foi possível carregar o bitmap a partir do arquivo: " + file.getAbsolutePath());
+      return;
+    }
+
+    // redimensiona o bitmap
+    bm = Bitmap.createScaledBitmap(bm, 200, 200, true);
+
+    // exibe o bitmap
+    image.setImageBitmap(bm);
+
+    numFotosCarregadas++;
+    
+    // cria uma foto
+    Foto foto = new Foto(file.getAbsolutePath());    
+    foto.setImagem(bm);
+    
+    // adiciona a nova foto a lista de fotos
+    listaFotos.add(foto);
+    
+    Log.i(TAG, "++++ numFotosTiradas: "+numFotosTiradas+", numFotosCarregadas: " +  numFotosCarregadas);
+    
   }
 
   /**
    * 
    */
   @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  protected void onStart() {
 
-    super.onActivityResult(requestCode, resultCode, data);
+    super.onStart();
+    Log.d(TAG, "*** onStart() ***");
+    showXXX();
 
-    Log.d(TAG, "requestCode=" + requestCode + ", resultCode=" + resultCode);
+  }
 
-    Log.d(TAG, "data=" + ((data == null) ? "null" : "not null"));
+  /**
+   * 
+   */
 
-    if (requestCode == TIRA_FOTO) {
+  @Override
+  protected void onResume() {
 
-      if (resultCode != RESULT_OK) {
-        // operação cancelada
-        Log.w(TAG, "Operação cancelada pelo usuário");
-      }
+    super.onResume();
+    Log.d(TAG, "*** onResume() ***");
+    showXXX();
+  }
 
-      carregaImagem();
+  /**
+   * 
+   */
 
+  @Override
+  protected void onPause() {
+
+    super.onPause();
+    Log.d(TAG, "*** onPause() ***");
+    showXXX();
+  }
+
+  /**
+   * 
+   */
+
+  @Override
+  protected void onStop() {
+
+    super.onStop();
+    Log.d(TAG, "*** onStop() ***");
+    showXXX();
+  }
+
+  /**
+   * 
+   */
+
+  @Override
+  protected void onRestart() {
+
+    super.onRestart();
+    Log.w(TAG, "*******************");
+    Log.w(TAG, "*** onRestart() ***");
+    Log.w(TAG, "*******************");
+    contador++;
+    i++;
+    j++;
+    numRestart++;
+    showXXX();
+  }
+
+  /**
+   * 
+   */
+
+  @Override
+  protected void onDestroy() {
+    // TODO Auto-generated method stub
+    super.onDestroy();
+    Log.d(TAG, "*** onDestroy() ***");
+    showXXX();
+  }
+
+  /**
+   * onRestoreInstanceState(Bundle savedInstanceState)
+   */
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+    super.onRestoreInstanceState(savedInstanceState);
+        
+    Log.i(TAG, "*** onRestoreInstanceState(j="+j+")");
     
-      
-      
+    if(savedInstanceState.containsKey("j")) {
+      j = savedInstanceState.getInt("j");
     }
+    
+    showXXX();
+    
+  }
+
+  /**
+   * onSaveInstanceState(Bundle outState) 
+   */
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+
+    super.onSaveInstanceState(outState);
+    Log.i(TAG, "*** onSaveInstanceState()");
+    
+    outState.putInt("j", j);
+    
+    showXXX();
+  }
+
+  /**
+   * showXXX()
+   */
+  void showXXX() {
+    Log.v(TAG, "    showXXX() - file: " + file);
+    Log.v(TAG, "    showXXX() - outputFileUri: " + outputFileUri);
+    Log.v(TAG, "    showXXX() - Contador: " + contador + ", i=" + i + ", j=" + j);
+    Log.v(TAG, "    showXXX() - numCreate: " + numCreate + ", numRestart: " + numRestart);
 
   }
 
   /**
+   * atualizaModoTela(int novaOrientacao)
    * 
+   * Atualiza a orientação da tela.
+   * 
+   * @param novaOrientacao
    */
-  private void carregaImagem() {
+  private void atualizaModoTela(int novaOrientacao) {
 
-    Log.d(TAG, "carregaImage()");
+    int orientacaoAtual = this.getResources().getConfiguration().orientation;
 
-    if (file != null) {
+    Log.d(TAG, "atualizaModoTela() - Orientação atual: " + orientacaoAtual);
 
-      Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
-
-      if (bm != null) {
-
-        bm = Bitmap.createScaledBitmap(bm, 100, 100, true);
-
-        image.setImageBitmap(bm);
-
-      } else {
-        Log.d(TAG, "Bitmap gerado é nulo");
-      }
-
-    } else {
-      Log.w(TAG, "==> file is null");
+    if (novaOrientacao != orientacaoAtual) {
+      this.setRequestedOrientation(novaOrientacao);
     }
 
-  }
-
-  /**
-   * 
-   */
-  private void salvaImagem() {
-
-    Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
-
-  }
-
-  private boolean gravaArquivo(byte[] data, String nomeArquivo) {
-
-    /*********************************************************************************************
-     * Quando o telefone está conectado e em testes ele não permite montar o
-     * cartão de mem´roia
-     ********************************************************************************************/
-
-    boolean b = false;
-
-    FileOutputStream fos = null;
-
-    File imageFile = null;
-
-    File picsDir = null;
-
-    try {
-
-      try {
-
-        Log.d(TAG, "**** getExternalStorageState()=" + Environment.getExternalStorageState());
-
-        // if (Environment.getExternalStorageState() ==
-        // Environment.MEDIA_MOUNTED) {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-
-          if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
-
-            Log.d(TAG, "MEDIA montada porém está ReadOnly");
-          } else {
-            Log.d(TAG, "MEDIA montada RW");
-          }
-
-          // cria uma arquivo para armazernar a foto
-          imageFile = new File(picsDir, nomeArquivo);
-
-          fos = new FileOutputStream(imageFile);
-          fos.write(data);
-
-          Log.d(TAG, "Arquivo: " + imageFile.getName() + " foi gerado e ocupa " + imageFile.length() + " bytes");
-
-          b = true;
-
-        } else {
-          Log.w(TAG, "MEDIA não está montada");
-        }
-
-      } catch (FileNotFoundException e) {
-
-        Log.d(TAG, "File not found exception: " + imageFile.getName());
-
-      } catch (IOException e) {
-
-        Log.d(TAG, "IOException: " + imageFile.getName());
-
-      } catch (Exception e) {
-
-        Log.d(TAG, "Falha na gravação do arquivo: " + imageFile.getName());
-
-      } finally {
-
-        if (fos != null) {
-          fos.close();
-        }
-
-      }
-
-    } catch (IOException e) {
-      Log.d(TAG, "IOException", e);
+    if (orientacaoAtual == Configuration.ORIENTATION_LANDSCAPE) {
+      Log.d(TAG, "atualizaModoTela() - Orientação da tela em LANDSCAPE");
     }
 
-    return b;
+    else if (orientacaoAtual == Configuration.ORIENTATION_PORTRAIT) {
+      Log.d(TAG, "atualizaModoTela() - Orientação da tela em PORTRAIT");
+    }
 
   }
 

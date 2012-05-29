@@ -92,7 +92,7 @@ public class ParticipanteActivity extends Activity {
 
       if (mParticipante == null) {
         mParticipante = new Participante();
-        Log.w(TAG, "onCreate() - Criando um novo Participante");
+        Log.d(TAG, "onCreate() - Criando um novo Participante");
       }
       else {
 
@@ -103,7 +103,7 @@ public class ParticipanteActivity extends Activity {
       if (mParticipacao == null) {
 
         mParticipacao = new Participacao();
-        Log.w(TAG, "onCreate() - Criando uma nova Participacao");
+        Log.d(TAG, "onCreate() - Criando uma nova Participacao");
 
       } else {
 
@@ -200,9 +200,9 @@ public class ParticipanteActivity extends Activity {
 
         Log.d(TAG, "onCreate() - *** Botão Enviar do Participante foi selecionado ***");
 
-        Log.d(TAG, "onCreate() - groupFormatoFoto.isSelected()=" + groupFormatoFoto.isSelected());
+        Log.v(TAG, "onCreate() - groupFormatoFoto.isSelected()=" + groupFormatoFoto.isSelected());
 
-        Log.d(TAG, "onCreate() - groupEfeitoFoto.isSelected()=" + groupEfeitoFoto.isSelected());
+        Log.v(TAG, "onCreate() - groupEfeitoFoto.isSelected()=" + groupEfeitoFoto.isSelected());
 
         boolean radio1isChecked = ((RadioButton) findViewById(R.id.radioOp1)).isChecked();
         boolean radio2isChecked = ((RadioButton) findViewById(R.id.radioOp2)).isChecked();
@@ -211,11 +211,11 @@ public class ParticipanteActivity extends Activity {
         boolean radioPbIsChecked = ((RadioButton) findViewById(R.id.radioPB)).isChecked();
 
         
-        Log.d(TAG, "onCreate() - radio1isChecked=" + radio1isChecked);
-        Log.d(TAG, "onCreate() - radio2isChecked=" + radio2isChecked);
+        Log.v(TAG, "onCreate() - radio1isChecked=" + radio1isChecked);
+        Log.v(TAG, "onCreate() - radio2isChecked=" + radio2isChecked);
         
-        Log.d(TAG, "onCreate() - radioCorIsChecked=" + radioCorIsChecked);
-        Log.d(TAG, "onCreate() - radioPbIsChecked=" + radioPbIsChecked);
+        Log.v(TAG, "onCreate() - radioCorIsChecked=" + radioCorIsChecked);
+        Log.v(TAG, "onCreate() - radioPbIsChecked=" + radioPbIsChecked);
         
         
         Participante novoParticipante = new Participante(editNome.getText().toString(), editEmail.getText().toString(),

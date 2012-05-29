@@ -8,25 +8,33 @@ package br.com.mltech.modelo;
  */
 public class Moldura extends Foto {
 
+  /**
+   * serialVersionUID
+   */
+  private static final long serialVersionUID = 3479924442144647933L;
+
   // largura da moldura
   private int largura;
 
   // altura da moldura
   private int altura;
 
+  // descrição da moldura
   private String descricao;
 
   /**
+   * Moldura(String arquivo)
    * 
    * @param arquivo
    */
   public Moldura(String arquivo) {
     super(arquivo);
-    // TODO Auto-generated constructor stub
+    
   }
 
   /**
    * getLargura()
+   * 
    * @return
    */
   public int getLargura() {
@@ -43,6 +51,7 @@ public class Moldura extends Foto {
 
   /**
    * getAltura()
+   * 
    * @return
    */
   public int getAltura() {
@@ -51,7 +60,9 @@ public class Moldura extends Foto {
 
   /**
    * setAltura(int altura)
-   * @param altura
+   * 
+   * @param altura altura 
+   * 
    */
   public void setAltura(int altura) {
     this.altura = altura;
@@ -59,7 +70,9 @@ public class Moldura extends Foto {
 
   /**
    * getDescricao()
-   * @return
+   * 
+   * @return descrição da moldura
+   * 
    */
   public String getDescricao() {
     return descricao;
@@ -67,7 +80,9 @@ public class Moldura extends Foto {
 
   /**
    * setDescricao(String descricao)
+   * 
    * @param descricao
+   * 
    */
   public void setDescricao(String descricao) {
     this.descricao = descricao;
