@@ -1,5 +1,11 @@
 package br.com.mltech.modelo;
 
+import java.io.File;
+
+import android.graphics.Bitmap;
+import android.util.Log;
+import br.com.mltech.utils.ManipulaImagem;
+
 /**
  * Moldura
  * 
@@ -7,6 +13,8 @@ package br.com.mltech.modelo;
  * 
  */
 public class Moldura extends Foto {
+  
+  public static final String TAG = "Moldura";
 
   /**
    * serialVersionUID
@@ -29,7 +37,7 @@ public class Moldura extends Foto {
    */
   public Moldura(String arquivo) {
     super(arquivo);
-    
+
   }
 
   /**
@@ -43,6 +51,7 @@ public class Moldura extends Foto {
 
   /**
    * setLargura(int largura)
+   * 
    * @param largura
    */
   public void setLargura(int largura) {
@@ -61,7 +70,8 @@ public class Moldura extends Foto {
   /**
    * setAltura(int altura)
    * 
-   * @param altura altura 
+   * @param altura
+   *          altura
    * 
    */
   public void setAltura(int altura) {
@@ -89,11 +99,51 @@ public class Moldura extends Foto {
   }
 
   /**
-	 * toString()
-	 */
+   * toString()
+   */
   @Override
   public String toString() {
     return "Moldura [largura=" + largura + ", altura=" + altura + ", descricao=" + descricao + "]";
+  }
+
+  /**
+   * leArquivoMoldura(String arquivoMoldura)
+   * 
+   * Carrega arquivo de moldura
+   * 
+   * @param arquivoMoldura
+   *          Nome do arquivo
+   * 
+   * @return um bitmap com o arquivo contendo a moldura ou null no caso de algum
+   *         problema
+   * 
+   */
+  public Bitmap leArquivoMoldura(String arquivoMoldura) {
+
+    //Log.d(TAG, "leArquivoMoldura() - arquivoMoldura: [" + arquivoMoldura + "].");
+
+    File moldura = new File(arquivoMoldura);
+
+    if ((moldura != null) && (!moldura.exists())) {
+      //Log.w(TAG, "leArquivoMoldura() - arquivoMoldura: [" + arquivoMoldura + "] não existe.");
+      return null;
+    }
+
+    // lê o bitmap contendo a moldura
+    Bitmap bmMoldura = ManipulaImagem.getBitmapFromFile(moldura);
+
+    if (bmMoldura == null) {
+
+      Log.w(TAG, "leArquivoMoldura() - arquivo contento a moldura está vazio.");
+      return null;
+
+    } else {
+      Log.v(TAG, "leArquivoMoldura() - largura x altura da moldura: " + ManipulaImagem.getStringBitmapSize(bmMoldura));
+
+      return bmMoldura;
+
+    }
+
   }
 
 }
