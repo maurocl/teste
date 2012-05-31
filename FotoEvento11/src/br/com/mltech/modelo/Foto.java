@@ -1,18 +1,34 @@
 package br.com.mltech.modelo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
+import android.util.Log;
+import br.com.mltech.utils.ManipulaImagem;
 
 /**
  * Foto
+ * 
+ * Representa uma foto
+ * 
+ * Permite ler e gravar uma foto.
+ * 
+ * Permite redimensionar uma foto gerando uma nova foto
  * 
  * @author maurocl
  * 
  */
 public class Foto implements Serializable {
+
+  public static final String TAG = "Foto";
 
   /**
    * serialVersionUID
@@ -25,10 +41,13 @@ public class Foto implements Serializable {
   // nome do arquivo onde a foto está armazenada
   private String arquivo;
 
+  // arquivo
+  private File filename;
+
   // bitmap contendo a imagem (foto)
   private Bitmap imagem;
 
-  //
+  // dados
   private byte[] dados;
 
   /**
@@ -39,33 +58,272 @@ public class Foto implements Serializable {
    * 
    */
   public Foto(String arquivo) {
+
     this.arquivo = arquivo;
     this.dimensao = null;
     imagem = null;
     dados = null;
-  
-  }
 
-  /**
-   * Foto(String arquivo, byte[] dados)
-   * @param arquivo
-   * @param dados
-   */
-  public Foto(String arquivo, byte[] dados) {
-    this.arquivo = arquivo;
-    this.dados = dados;
   }
 
   /**
    * Foto(String arquivo, Bitmap bm)
    * 
    * @param arquivo
-   * @param bm
+   *          onde a foto está armazenada
+   * @param bitmap
+   *          bitmap
    * 
    */
-  public Foto(String arquivo, Bitmap bm) {
+  public Foto(String arquivo, Bitmap bitmap) {
+
     this.arquivo = arquivo;
-    this.imagem = bm;
+    this.imagem = bitmap;
+    this.dados = null;
+
+    if (getImagem() != null) {
+      dimensao = new Dimensao(getImagem().getWidth(), getImagem().getHeight());
+    }
+
+    this.filename = new File(this.arquivo);
+
+  }
+
+  // Getters and Settes
+
+  /**
+   * getFilename()
+   * 
+   * @return uma instância da classe File
+   */
+  public File getFilename() {
+
+    if (filename == null) {
+      filename = new File(getArquivo());
+    }
+
+    return this.filename;
+
+  }
+
+  /**
+   * setFilename(File filename)
+   * 
+   * @param filename
+   * 
+   */
+  public void setFilename(File filename) {
+    this.filename = filename;
+  }
+
+  /**
+   * getImagem()
+   * 
+   * @return o bitmap da foto ou null
+   * 
+   */
+  public Bitmap getImagem() {
+    return imagem;
+  }
+
+  /**
+   * setImagem(Bitmap imagem)
+   * 
+   * Atualiza a imagem da foto e sua dimensão
+   * 
+   * @param imagem
+   *          o bitmap da foto
+   * 
+   */
+  public void setImagem(Bitmap imagem) {
+
+    this.imagem = imagem;
+
+    if (imagem != null) {
+      Dimensao d = new Dimensao(imagem.getWidth(), imagem.getHeight());
+      this.dimensao = d;
+    }
+
+  }
+
+  /**
+   * getDimensao()
+   * 
+   * Retora a dimensão de uma foto: sua largura e altura
+   * 
+   * @return um objeto da classe Dimensao com a largura e altura da foto
+   */
+  public Dimensao getDimensao() {
+    return dimensao;
+  }
+
+  /**
+   * setDimensao(Dimensao dimensao)
+   * 
+   * Atualiza as dimensões da foto
+   * 
+   * @param dimensao
+   */
+  public void setDimensao(Dimensao dimensao) {
+    this.dimensao = dimensao;
+  }
+
+  /**
+   * getArquivo()
+   * 
+   * Obtém o nomo do arquivo onde uma foto está gravada
+   * 
+   * @return
+   * 
+   */
+  public String getArquivo() {
+    return arquivo;
+  }
+
+  /**
+   * setArquivo(String arquivo)
+   * 
+   * @param arquivo
+   * 
+   */
+  public void setArquivo(String arquivo) {
+    this.arquivo = arquivo;
+    filename = new File(arquivo);
+  }
+
+  /**
+   * getDados()
+   * 
+   * @return
+   */
+  public byte[] getDados() {
+    return dados;
+  }
+
+  /**
+   * setDados(byte[] dados)
+   * 
+   * @param dados
+   * 
+   */
+  public void setDados(byte[] dados) {
+    this.dados = dados;
+  }
+
+  // -----------------
+  // Outros métodos
+  // -----------------
+
+  /**
+   * Grava uma foto em um arquivo
+   * 
+   * Formato .jpg com "compressão de 75%"
+   * 
+   * @return true caso a foto seja salva ou false em caso de erro
+   * 
+   */
+  public boolean gravar() throws FileNotFoundException, IOException {
+
+    return gravar(Bitmap.CompressFormat.JPEG, 75);
+
+  }
+
+  /**
+   * gravar(CompressFormat formato, int quality)
+   * 
+   * @param formato
+   *          Bitmap.CompressFormat.JPEG,
+   * @param quality
+   *          valor de 0 (pior qualidade) a 100 (melhor qualidade)
+   * 
+   * @return true
+   * 
+   * @throws FileNotFoundException
+   * @throws IOException
+   * 
+   */
+  public boolean gravar(CompressFormat formato, int quality) throws FileNotFoundException, IOException {
+
+    // a foto armazenada em imagem será salva
+    if (getImagem() == null) {
+      // bitmap não pode ser vazio
+      return false;
+    }
+
+    if (getFilename() == null) {
+      // arquivo não pode ser vazio
+      return false;
+    }
+
+    boolean salvou = false;
+
+    OutputStream out = new FileOutputStream(getFilename());
+
+    // salvou = getImagem().compress(Bitmap.CompressFormat.JPEG, 75, out);
+    salvou = getImagem().compress(formato, quality, out);
+
+    out.close();
+
+    return salvou;
+
+  }
+
+  /**
+   * ler()
+   * 
+   * Lê uma foto armazenada em um arquivo
+   * 
+   * @return true se a foto pode ser lida ou false em caso de erro
+   * 
+   */
+  public boolean ler() {
+
+    // a foto será lida do filename e armazenada no bitmap imagem
+
+    if (getFilename() == null) {
+      Log.w(TAG, "ler() -  o nome do arquivo está vazio");
+      return false;
+    }
+
+    if ((getFilename() != null) && (!getFilename().exists())) {
+      Log.w(TAG, "ler() - o nome do arquivo não existe");
+      // arquivo não existe
+      return false;
+    }
+
+    // lê o bitmap
+    Bitmap bitmap = ManipulaImagem.getBitmapFromFile(getFilename());
+
+    if (bitmap == null) {
+
+      // bitmap está vazio
+      Log.w(TAG, "ler() - Bitmap está vazio");
+
+      return false;
+    }
+
+    // guarda a imagem
+    Log.d(TAG, "ler() - atualiza imagem");
+    this.setImagem(bitmap);
+
+    xxx();
+    
+    return true;
+
+  }
+
+  /**
+   * getUri()
+   * 
+   * Retorna a Uri do arquivo
+   * 
+   * @return Uri do arquivo
+   */
+  public Uri getUri() {
+
+    Uri uri = Uri.fromFile(getFilename());
+
+    return uri;
   }
 
   /**
@@ -76,6 +334,7 @@ public class Foto implements Serializable {
    * @return true se landscape ou false caso contrário
    */
   public boolean isLandscape() {
+
     if (getDimensao() != null) {
       return (getDimensao().getLargura() > getDimensao().getAltura());
     } else {
@@ -92,6 +351,7 @@ public class Foto implements Serializable {
    * @return true se Portrait e false caso contrário
    */
   public boolean isPortrait() {
+
     if (getDimensao() != null) {
       return (getDimensao().getLargura() <= getDimensao().getAltura());
     } else {
@@ -109,172 +369,20 @@ public class Foto implements Serializable {
    * @return a foto redimensionada ou null em caso de erro
    */
   public Foto redimensiona(int largura, int altura) {
-    return null;
-  }
 
-  /**
-   * Grava uma foto em um arquivo
-   * 
-   * @return
-   */
-  public boolean gravar() {
+    boolean filter = true;
 
-    // a foto armazenada em imagem será salva
-    if (getImagem() == null) {
-      return false;
-    }
+    // Creates a new bitmap, scaled from an existing bitmap
+    Bitmap bitmap = Bitmap.createScaledBitmap(getImagem(), largura, altura, filter);
 
-    if (getFilename() == null) {
-      return false;
-    }
+    Foto f = new Foto(null, bitmap);
 
-    return false;
-  }
+    Dimensao d = new Dimensao(largura, altura);
 
-  /**
-   * Lê uma foto armazenada em um arquivo
-   * 
-   * @return
-   * 
-   */
-  public boolean ler() {
-    // a foto será lida do filename e armazenada no bitmap imagem
+    f.setDimensao(d);
 
-    if (getFilename() == null) {
-      return false;
-    }
+    return f;
 
-    if (!getFilename().exists()) {
-      // arquivo não existe
-    }
-
-    return false;
-
-  }
-
-  /**
-   * getFilename()
-   * 
-   * @return
-   */
-  private File getFilename() {
-
-    File f = new File(getArquivo());
-    if ((f != null) && (f.exists())) {
-      return f;
-    }
-    return null;
-  }
-
-  /**
-   * getImagem()
-   * 
-   * @return
-   */
-  public Bitmap getImagem() {
-    return imagem;
-  }
-
-  /**
-   * setImagem(Bitmap imagem)
-   * 
-   * @param imagem
-   * 
-   */
-  public void setImagem(Bitmap imagem) {
-
-    this.imagem = imagem;
-
-    if (imagem != null) {
-      Dimensao d = new Dimensao(imagem.getWidth(), imagem.getHeight());
-      this.dimensao = d;
-    }
-
-  }
-
-  /**
-   * getBitmap()
-   * 
-   * @return
-   */
-  public Bitmap getBitmap() {
-    return imagem;
-  }
-
-  /**
-   * tamanho()
-   * 
-   * @return
-   */
-  public String tamanho() {
-    return null;
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public Dimensao getDimensao() {
-    return dimensao;
-  }
-
-  /**
-   * setDimensao(Dimensao dimensao)
-   * 
-   * @param dimensao
-   */
-  public void setDimensao(Dimensao dimensao) {
-    this.dimensao = dimensao;
-  }
-
-  /**
-   * getArquivo()
-   * 
-   * @return
-   * 
-   */
-  public String getArquivo() {
-    return arquivo;
-  }
-
-  /**
-   * setArquivo(String arquivo)
-   * 
-   * @param arquivo
-   * 
-   */
-  public void setArquivo(String arquivo) {
-    this.arquivo = arquivo;
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public byte[] getDados() {
-    return dados;
-  }
-
-  /**
-   * 
-   * @param dados
-   */
-  public void setDados(byte[] dados) {
-    this.dados = dados;
-  }
-
-  /**
-   * getUri()
-   * 
-   * @return
-   */
-  public Uri getUri() {
-        
-    File f = new File(arquivo);
-    
-    Uri uri = Uri.fromFile(f);
-    
-    return uri;
   }
 
   /**
@@ -285,6 +393,21 @@ public class Foto implements Serializable {
     return "Foto [dimensao=" + dimensao + ", arquivo=" + arquivo + ", imagem=" + imagem + "]";
   }
 
-  
-  
+  /**
+   * 
+   */
+  public void xxx() {
+
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    if (getImagem() != null) {
+      getImagem().compress(CompressFormat.PNG, 100, bos);
+      this.dados = bos.toByteArray();
+    }
+    
+    if(getDados()!=null) {
+      Log.d(TAG,"xxx() - nº de bytes: "+getDados().length);
+    }
+
+  }
+
 }

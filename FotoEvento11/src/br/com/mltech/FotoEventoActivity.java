@@ -31,6 +31,7 @@ import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Parametros;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
+import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.camera.CameraTools;
 
 /**
@@ -925,17 +926,17 @@ public class FotoEventoActivity extends Activity {
     f = ct.getDir2("fotoevento/fotos");
 
     if (DEBUG == 1) {
-      ct.showFileDetails(f, "fotoevento/fotos");
+      FileUtils.showFileDetails(f, "fotoevento/fotos");
     }
 
     f = ct.getDir2("fotoevento/molduras");
     if (DEBUG == 1) {
-      ct.showFileDetails(f, "fotoevento/molduras");
+      FileUtils.showFileDetails(f, "fotoevento/molduras");
     }
 
     f = ct.getDir2("fotoevento/telainicial");
     if (DEBUG == 1) {
-      ct.showFileDetails(f, "fotoevento/telainicial");
+      FileUtils.showFileDetails(f, "fotoevento/telainicial");
     }
 
     return true;

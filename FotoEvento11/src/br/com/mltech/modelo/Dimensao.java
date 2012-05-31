@@ -2,11 +2,17 @@ package br.com.mltech.modelo;
 
 public class Dimensao {
 
+  // largura da dimensão
   private int largura;
+  
+  // altura da dimensão
   private int altura;
 
   /**
    * Dimensao()
+   * 
+   * Construtor
+   * 
    */
   public Dimensao() {
     this(0, 0);
@@ -14,6 +20,8 @@ public class Dimensao {
 
   /**
    * Dimensao(int w, int h)
+   * 
+   * Construtor
    * 
    * @param w
    *          largura
@@ -33,10 +41,13 @@ public class Dimensao {
    * 
    */
   public double aspectRatio() {
+    
     if (altura != 0) {
       return largura / altura;
     }
+    
     return -1;
+    
   }
 
   /**

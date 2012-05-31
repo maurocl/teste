@@ -3,7 +3,6 @@ package br.com.mltech;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,7 +27,9 @@ import br.com.mltech.modelo.Contratante;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
+import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
+
 
 /**
  * DummyActivity3
@@ -101,7 +102,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     if (savedInstanceState != null) {
-      showBundle(savedInstanceState);
+      //FileUtils.showBundle(savedInstanceState);
     }
 
     // Carrega as molduras para fotos Polaroid e Cabine
@@ -403,7 +404,7 @@ public class DummyActivity3 extends Activity implements Constantes {
       return;
     }
 
-    showBundle(data.getExtras());
+    FileUtils.showBundle(data.getExtras());
 
     if (data.getSerializableExtra(PARTICIPANTE) != null) {
       mParticipante = (Participante) data.getSerializableExtra(PARTICIPANTE);
@@ -416,6 +417,8 @@ public class DummyActivity3 extends Activity implements Constantes {
     // Exibe as informações sobre o participante e sua participaçÃO
     Log.d(TAG, "resultActivityParticipante() - mParticipante=" + mParticipante);
     Log.d(TAG, "resultActivityParticipante() - mParticipacao=" + mParticipacao);
+
+    // obs: nesse ponto já sabemos qual será o tipo da foto
 
     // Atualiza o estado da máquina de estados
     setEstado(1);
@@ -430,6 +433,9 @@ public class DummyActivity3 extends Activity implements Constantes {
    * Executa a Intent ACTION_IMAGE_CAPTURE a fim de obter uma foto da câmera
    * 
    * A imagem capturada será armazenada na variável xUri
+   * 
+   * As condições iniciais para tirar uma foto são: - fornecer uma Url apontando
+   * para o arquivo onde a foto será armazenada.
    * 
    */
   private void obtemFoto() {
@@ -458,6 +464,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     // estadoFinal();
     // }
 
+    // testa para saber se câmera selecionada está disponível
     if (isCameraWorking(mCurrentCamera)) {
       Log.i(TAG, "obtemFoto() - instância da Camera obtida com sucesso");
     } else {
@@ -683,7 +690,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     if (data != null) {
-      showBundle(data.getExtras());
+      FileUtils.showBundle(data.getExtras());
     }
 
     if (mParticipacao == null) {
@@ -908,8 +915,8 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * formataFotoPolaroid(Bitmap bmMoldura)
    * 
-   * foto formato Polaroid exige o redimensionamento da foto bem como a inclusão
-   * da moldura.
+   * A foto formato Polaroid exige o redimensionamento da foto bem como a
+   * inclusão da moldura.
    * 
    * Observe que a moldura está relacionada ao evento em andamento. Portanto é
    * necessário ter informações sobre o evento
@@ -932,7 +939,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     // Cria um bitmap a partir da Uri da foto
-    Bitmap foto = imagem.criaBitmap(xUri);
+    Bitmap foto = ManipulaImagem.criaBitmap(xUri);
 
     if (foto == null) {
       Log.w(TAG, "formataFotoPolaroid() - foto é nula");
@@ -940,7 +947,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     // Exibe informações a respeito da foto
-    imagem.showBitmapInfo(foto);
+    ManipulaImagem.showBitmapInfo(foto);
 
     // Redimensiona a foto para o formato Polaroid
     // Bitmap fotoRedimensionada = imagem.getScaledBitmap2(foto, 228, 302);
@@ -949,7 +956,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     // redimensiona a foto original para 9x12 para manter a proporção 3:4
     // --------------------------------------------------------------------------
 
-    Bitmap bmFoto9x12 = imagem.getScaledBitmap2(foto, 340, 454);
+    Bitmap bmFoto9x12 = ManipulaImagem.getScaledBitmap2(foto, 340, 454);
 
     String arqSaida = null;
 
@@ -958,6 +965,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     // grava a foto redimensionada (foto9x12) em um arquivo
     boolean gravou = imagem.gravaBitmapArquivo(bmFoto9x12, arqSaida);
+
     if (gravou) {
       // foto armazenada com sucesso
       Log.i(TAG, "formataFotoPolaroid() - (Foto9x12): " + arqSaida + " gravado com sucesso.");
@@ -976,12 +984,12 @@ public class DummyActivity3 extends Activity implements Constantes {
     Rect rect = new Rect(0, 0, 302, 302);
 
     // Obtem um bitmap com a foto redimensionada para 8x8
-    Bitmap bmFoto8x8 = imagem.getBitmapRegion(arqSaida, rect, options);
+    Bitmap bmFoto8x8 = ManipulaImagem.getBitmapRegion(arqSaida, rect, options);
 
     arqSaida = PATH_FOTOS + getFilename(xUri) + "_8x8.png";
 
     // grava a foto redimensionada em um arquivo
-    boolean gravou2 = imagem.gravaBitmapArquivo(bmFoto8x8, arqSaida);
+    boolean gravou2 = ManipulaImagem.gravaBitmapArquivo(bmFoto8x8, arqSaida);
 
     if (gravou2) {
       // foto armazenada com sucesso
@@ -1024,7 +1032,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     if ((bmFoto != null) && (bmMoldura != null)) {
 
-      fotoComMoldura = imagem.overlay4(bmFoto, bmMoldura);
+      fotoComMoldura = ManipulaImagem.overlay4(bmFoto, bmMoldura);
 
       if (fotoComMoldura == null) {
         Log.w(TAG, "gravaFotoPolaroidComMoldura() - erro na conversão da foto");
@@ -1037,16 +1045,20 @@ public class DummyActivity3 extends Activity implements Constantes {
     String arqSaida = PATH_FOTOS + getFilename(xUri) + ".jpg";
 
     // grava a foto das imagens "juntada"
-    boolean gravou = imagem.gravaBitmapArquivo2(fotoComMoldura, arqSaida);
+    boolean gravou = ManipulaImagem.gravaBitmapArquivo2(fotoComMoldura, arqSaida);
 
     if (gravou) {
+
       // foto armazenada com sucesso
       Toast.makeText(this, "Foto gravada no arquivo: " + arqSaida, Toast.LENGTH_SHORT).show();
       Log.d(TAG, "gravaFotoPolaroidComMoldura() - Foto gravada no arquivo: " + arqSaida);
+
     } else {
+
       // falha na gravação da foto
       Toast.makeText(this, "Falha na gravação da foto no arquivo: " + arqSaida, Toast.LENGTH_SHORT).show();
       Log.d(TAG, "gravaFotoPolaroidComMoldura() - Falha na gravação da foto no arquivo: " + arqSaida);
+
     }
 
     return arqSaida;
@@ -1134,34 +1146,38 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * @param foto
    *          bitmap com a foto
+   * 
    * @param nome
    *          nome do arquivo onde a foto será gravada
    * 
    * @return o bitmap com a foto ou null em caso de erro
+   * 
    */
   Bitmap formataFoto3x4(Bitmap foto, String nome) {
 
     // redimensiona a foto foto para 3x4
-    Bitmap fotoRedimensionada = imagem.getScaledBitmap2(foto, 113, 151);
+    Bitmap foto3x4 = ManipulaImagem.getScaledBitmap2(foto, 113, 151);
 
-    if (fotoRedimensionada == null) {
+    if (foto3x4 == null) {
       Log.w(TAG, "formataFoto3x4() - erro no redimensionamento da foto");
       return null;
     }
 
     // Define o nome da foto redimensionada
-    String arqSaida = PATH_FOTOS + nome;
+    String nomeArquivo = PATH_FOTOS + nome;
 
     // grava a foto redimensionada em um arquivo
-    boolean gravou = imagem.gravaBitmapArquivo(fotoRedimensionada, arqSaida);
+    boolean gravou = ManipulaImagem.gravaBitmapArquivo(foto3x4, nomeArquivo);
 
     if (gravou) {
       // foto armazenada com sucesso
-      return fotoRedimensionada;
+      return foto3x4;
+
     } else {
       // falha na gravação da foto
       Log.w(TAG, "formataFoto3x4() - falha na gravação da foto");
       return null;
+
     }
 
   }
@@ -1170,27 +1186,26 @@ public class DummyActivity3 extends Activity implements Constantes {
    * xxxabc(Bitmap bmMoldura)
    * 
    * @param bmMoldura
+   * 
    * @return
+   * 
    */
-  String xxxabc(Bitmap bmMoldura) {
+  private String xxxabc(Bitmap bmMoldura) {
 
     // Cria um bitmap a partir da Uri da foto
     Bitmap foto = imagem.criaBitmap(xUri);
 
     // Exibe informações a respeito da foto
-    imagem.showBitmapInfo(foto);
-
-    // Redimensiona a foto para o formato Polaroid
-    // Bitmap fotoRedimensionada = imagem.getScaledBitmap2(foto, 228, 302);
+    ManipulaImagem.showBitmapInfo(foto);
 
     // primeiro, scala a foto para 9x12 cm para manter a proporção
-    Bitmap fotoRedimensionada = imagem.getScaledBitmap2(foto, 340, 454);
+    Bitmap foto9x12 = imagem.getScaledBitmap2(foto, 340, 454);
 
     // Define o nome da foto redimensionada
-    String arqSaida = PATH_FOTOS + "polaroid-escalada.png";
+    String nomeArquivo = PATH_FOTOS + "polaroid-escalada.png";
 
     // grava a foto redimensionada em um arquivo
-    boolean gravou = imagem.gravaBitmapArquivo(fotoRedimensionada, arqSaida);
+    boolean gravou = imagem.gravaBitmapArquivo(foto9x12, nomeArquivo);
 
     // redimensiona a foto 9x12 para 8x8, isto é, copia uma "janela" 8x8 da
     // foto
@@ -1200,7 +1215,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     Rect rect = new Rect(0, 0, 302, 302);
 
     //
-    fotoRedimensionada = imagem.getBitmapRegion(arqSaida, rect, options);
+    foto9x12 = imagem.getBitmapRegion(nomeArquivo, rect, options);
 
     if (gravou) {
       // foto armazenada com sucesso
@@ -1210,9 +1225,9 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     Bitmap fotoComMoldura = null;
 
-    if ((fotoRedimensionada != null) && (bmMoldura != null)) {
+    if ((foto9x12 != null) && (bmMoldura != null)) {
 
-      fotoComMoldura = imagem.overlay4(fotoRedimensionada, bmMoldura);
+      fotoComMoldura = imagem.overlay4(foto9x12, bmMoldura);
 
       if (fotoComMoldura == null) {
         Log.w(TAG, "formataFotoPolaroid() - erro na conversão da foto");
@@ -1222,10 +1237,10 @@ public class DummyActivity3 extends Activity implements Constantes {
       Log.w(TAG, "formataFotoPolaroid() - ERRO");
     }
 
-    arqSaida = PATH_FOTOS + "polaroid-escalada-com-moldura.jpg";
+    nomeArquivo = PATH_FOTOS + "polaroid-escalada-com-moldura.jpg";
 
     // grava a foto das imagens "juntada"
-    gravou = imagem.gravaBitmapArquivo2(fotoComMoldura, arqSaida);
+    gravou = imagem.gravaBitmapArquivo2(fotoComMoldura, nomeArquivo);
 
     if (gravou) {
       // foto armazenada com sucesso
@@ -1236,7 +1251,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     // o nome completo do arquivo onde a foto com moldura foi armazenada
-    return arqSaida;
+    return nomeArquivo;
 
   }
 
@@ -1247,6 +1262,8 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * Verifica inicialmente se todas as condições necessárias estão satisfeita
    * para o envio do email com a foto anexada.
+   * 
+   * Usa: mParticipante e mContratante
    * 
    * @param lastUri
    *          Uri onde a foto está armazenada
@@ -1275,44 +1292,47 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     if (xUri == null) {
       // Log.d(TAG, "xUri é null");
-      Log.d(TAG, "enviaEmail() - não há foto");
+      Log.w(TAG, "enviaEmail() - não há foto");
       erro = true;
     }
 
-    if (!erro) {
-
-      // não há erro conhecido
-
-      // carrega as preferências sobre o envio de email
-      SharedPreferences emailPreferences = getSharedPreferences("pref_email", MODE_PRIVATE);
-
-      if (emailPreferences == null) {
-        Log.w(TAG, "enviaEmail() - SharedPreferences não foi encontrada.");
-      }
-
-      /**
-       * Assunto do email
-       */
-      String subject = emailPreferences.getString("preferencias_assunto", "Evento Inicial");
-
-      /**
-       * Corpo do email
-       */
-      String body = emailPreferences.getString("preferencias_descricao", "Segue as informações sobre o evento");
-
-      emailPreferences = null;
-
-      // obtém o email do participante do evento
-      String to = mParticipante.getEmail();
-
-      // obtém o email do contratante do evento
-      // ele será copiado em BCC no email enviado
-      String cc = mContratante.getEmail();
-
-      // envia o email
-      sendEmail(to, cc, subject, body, lastUri);
-
+    if (erro) {
+      // TODO o que fazer ???
     }
+
+    // carrega as preferências sobre o envio de email
+    SharedPreferences emailPreferences = getSharedPreferences("pref_email", MODE_PRIVATE);
+
+    if (emailPreferences == null) {
+      Log.w(TAG, "enviaEmail() - SharedPreferences não foi encontrada.");
+    }
+
+    /**
+     * Assunto do email
+     * 
+     * Recupera o "subject" do email do arquivo de preferências
+     */
+    String subject = emailPreferences.getString("preferencias_assunto", "Evento Inicial");
+
+    /**
+     * Corpo do email
+     * 
+     * Recupera o "corpo" do email do arquivo de preferências
+     * 
+     */
+    String body = emailPreferences.getString("preferencias_descricao", "Segue as informações sobre o evento");
+
+    emailPreferences = null;
+
+    // obtém o email do participante do evento
+    String to = mParticipante.getEmail();
+
+    // obtém o email do contratante do evento
+    // ele será copiado em BCC no email enviado
+    String cc = mContratante.getEmail();
+
+    // envia o email
+    sendEmail(to, cc, subject, body, lastUri);
 
   }
 
@@ -1322,14 +1342,18 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * @param emailParticipante
    *          Endereço de email do participante do evento
+   * 
    * @param emailContratante
    *          Endereço de email do contratante do evento
+   * 
    * @param subject
    *          String usada como "Subject" do email
+   * 
    * @param text
    *          String usada como "Body" do email (o conteúdo da mensagem)
+   * 
    * @param imageUri
-   *          URL da foto processada
+   *          Uri da foto
    * 
    */
   private void sendEmail(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri) {
@@ -1367,7 +1391,7 @@ public class DummyActivity3 extends Activity implements Constantes {
      */
     emailIntent.putExtra(Intent.EXTRA_TEXT, text);
 
-    // Imagem
+    // Anexa a foto ao email
     emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, imageUri);
 
     Log.d(TAG, "sendEmail() - Anexando o arquivo: " + imageUri + " aos anexos ...");
@@ -1434,6 +1458,8 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * sendEmailRedesSociais()
    * 
+   * Usa mEvento (informações sobre o evento).
+   * 
    */
   private void sendEmailRedesSociais() {
 
@@ -1445,13 +1471,17 @@ public class DummyActivity3 extends Activity implements Constantes {
     // TODO talvez pudesse ser feito após o envio do email ???
 
     if (mEvento.isEnviaFacebook()) {
+
       // enviar foto ao Facebook
       // TODO qual texto ???
       Log.d(TAG, "sendEmailRedesSociais() - Envia foto ao Facebook ...");
+
     } else if (mEvento.isEnviaTwitter()) {
+
       // enviar foto ao Twitter
       // TODO qual texto ?
       Log.d(TAG, "sendEmailRedesSociais() - Envia foto ao Twitter ...");
+
     }
 
   }
@@ -1465,12 +1495,13 @@ public class DummyActivity3 extends Activity implements Constantes {
    *          Resultado a execução da activity
    * @param data
    *          Intent retornada
+   * 
    */
   private void resultActivityChooser(int resultCode, Intent data) {
 
     Log.d(TAG, "resultActivityChooser() ===> processando resultado da ACTIVITY CHOOSER: resultCode=" + resultCode);
 
-    // Obtém o intent
+    // Obtém o intent usado para execução da activity de envio de email
     Intent intent = this.getIntent();
 
     if (intent != null) {
@@ -1480,10 +1511,14 @@ public class DummyActivity3 extends Activity implements Constantes {
       }
     }
 
+    // verifica os dados retornados pela Activity que enviou o email
     if (data != null) {
+
       Log.w(TAG, "resultActivityChooser() - dados recebidos não foram trabalhados");
+
       // The action of this intent or null if none is specified.
       Log.w(TAG, "resultActivityChooser() - data.getAction()=" + data.getAction());
+
     }
 
     if (resultCode == 0) {
@@ -1500,12 +1535,15 @@ public class DummyActivity3 extends Activity implements Constantes {
       estadoFinal();
 
     } else if (resultCode == RESULT_CANCELED) {
+      // envio do email foi cancelado pelo usuário
       Log.d(TAG, "resultActivityChooser() - ACTIVITY_CHOOSER - o envio de email foi cancelado");
       estadoFinal();
 
     } else {
+
       Log.d(TAG, "resultActivityChooser() - ACTIVITY_CHOOSER - resultCode " + resultCode + " não pde ser tratado");
       estadoFinal();
+
     }
 
   }
@@ -1534,11 +1572,13 @@ public class DummyActivity3 extends Activity implements Constantes {
       // estado final atingido com sucesso
       Log.i(TAG, "estadoFinal() - final do processamento");
 
+      // retorna as informações sobre o participante a sobre sua participação
       intent.putExtra(PARTICIPANTE, mParticipante);
       intent.putExtra(PARTICIPACAO, mParticipacao);
 
       intent.putExtra("br.com.mltech.result", "OK");
 
+      // estabelece o resultado da execução da Activity
       setResult(RESULT_OK, intent);
 
     } else {
@@ -1550,6 +1590,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       intent.putExtra("br.com.mltech.result", "NOT_OK");
 
+      // estabelece o resultado da execução da Activity
       setResult(RESULT_CANCELED, intent);
 
     }
@@ -1649,7 +1690,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     outState.putSerializable(PARTICIPANTE, mParticipante);
     outState.putSerializable(PARTICIPACAO, mParticipacao);
 
-    showBundle(outState);
+    FileUtils.showBundle(outState);
 
   }
 
@@ -1674,18 +1715,20 @@ public class DummyActivity3 extends Activity implements Constantes {
       mParticipacao = (Participacao) savedInstanceState.getSerializable(PARTICIPACAO);
     }
 
-    showBundle(savedInstanceState);
+    FileUtils.showBundle(savedInstanceState);
 
   }
 
   /**
    * isExternalMediaMounted()
    * 
+   * Verifica se há um dispositivo de armazenamento externo disponível para
+   * gravação.
+   * 
    * @return true se uma media de armazenamento externo estiver montada ou
    *         false, caso contrário.
    * 
    */
-
   public boolean isExternalMediaMounted() {
 
     boolean isMounted;
@@ -1696,10 +1739,10 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     if (isMounted) {
       // dispositivo está montado
-      Log.d(TAG, "isExternalMediaMounted() - Media externa está montada.");
+      Log.d(TAG, "isExternalMediaMounted() - media externa está montada.");
     } else {
       // dispositivo não não está montado
-      Log.w(TAG, "isExternalMediaMounted() - Media externa não está montada.");
+      Log.w(TAG, "isExternalMediaMounted() - media externa não está montada.");
     }
 
     return isMounted;
@@ -1718,6 +1761,7 @@ public class DummyActivity3 extends Activity implements Constantes {
   void showAlert(String msg) {
 
     if (msg == null) {
+      // retorna se a mensagem for nula
       return;
     }
 
@@ -1735,65 +1779,41 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    */
   public void showVariables() {
+
     Log.v(TAG, "=================================");
     Log.v(TAG, "showVariables() - Variáveis de atributo:");
+
     if (mContratante != null) {
       // Log.v(TAG, "  mContratante=" + mContratante);
     }
+
     if (mEvento != null) {
       // Log.v(TAG, "  mEvento=" + mEvento);
     }
+
     if (mParticipante != null) {
       // Log.v(TAG, "  mParticipante=" + mParticipante);
     }
+
     if (mParticipacao != null) {
       // Log.v(TAG, "  mParticipacao=" + mParticipacao);
     }
+
     if (mFilename != null) {
       Log.v(TAG, "  mFilename=" + mFilename);
     }
+
     if (xUri != null) {
       Log.v(TAG, "  xUri=" + xUri);
     }
+
     Log.v(TAG, "  mEstado=" + mEstado + ", mContador=" + mContador);
     Log.v(TAG, "  mCurrentCamera=" + mCurrentCamera);
     Log.v(TAG, "=================================");
-  }
-
-  /**
-   * showBundle(Bundle b)
-   * 
-   * Exibe todas as chaves/valores armazenadas no bundle
-   * 
-   * @param bundle
-   *          Instância da classe Bundle
-   * 
-   */
-  private void showBundle(Bundle bundle) {
-
-    if (bundle == null) {
-      Log.w(TAG, "showBundle() - bundle está vazio");
-      return;
-    }
-
-    // Obtém um conjunto de chaves do Bundle
-    Set<String> setChaves = bundle.keySet();
-
-    // Obtém o tamanho do conjunto
-    int size = bundle.size();
-
-    // Exibe o nº de elementos do conjunto
-    Log.d(TAG, "showBundle() - bundle size=" + size);
-
-    int i = 0;
-
-    for (String chave : setChaves) {
-      i++;
-      Log.d(TAG, "  " + i + ") " + chave);
-    }
 
   }
 
+ 
   /**
    * getCameraInstance(int cameraID)
    * 
@@ -1834,9 +1854,10 @@ public class DummyActivity3 extends Activity implements Constantes {
    * isCameraWorking(int cameraID)
    * 
    * Verifica se a câmera identificada por cameraID está em funcionamento. Para
-   * fazer essa verificação é tentado abrir a câmera. Caso ela consiga ser
-   * aberta indica que a câmera está disponível e nesse caso simplesmente
-   * liberamos a câmera para uso. Se houver erro indica que há problemas;
+   * fazer essa verificação tentamos abrir a câmera. Caso ela consiga ser aberta
+   * indica que a câmera está disponível e nesse caso simplesmente liberamos a
+   * câmera para uso. Se houver erro indica que a câmera não está disponível
+   * para uso pela aplicação.
    * 
    * @param cameraID
    *          Identificador da câmera do dispositivo
@@ -1861,7 +1882,11 @@ public class DummyActivity3 extends Activity implements Constantes {
       return true;
 
     } else {
-      Log.i(TAG, "isCameraWorking() - erro na liberação da câmera: " + cameraID);
+
+      Log.i(TAG, "isCameraWorking() - Câmera: " + cameraID + " não está disponível para uso pela aplicação");
+
+      Toast.makeText(this, "Câmera: " + cameraID + " não está disponível para uso pela aplicação", Toast.LENGTH_LONG).show();
+
       return false;
 
     }
@@ -1878,6 +1903,7 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * @return um bitmap com o arquivo contendo a moldura ou null no caso de algum
    *         problema
+   * 
    */
   private Bitmap leArquivoMoldura(String arquivoMoldura) {
 
@@ -1885,13 +1911,13 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     File moldura = new File(arquivoMoldura);
 
-    if (!moldura.exists()) {
+    if ((moldura != null) && (!moldura.exists())) {
       Log.w(TAG, "leArquivoMoldura() - arquivoMoldura: [" + arquivoMoldura + "] não existe.");
-
+      return null;
     }
 
     // lê o bitmap contendo a moldura
-    Bitmap bmMoldura = imagem.getBitmapFromFile(moldura);
+    Bitmap bmMoldura = ManipulaImagem.getBitmapFromFile(moldura);
 
     if (bmMoldura == null) {
 
@@ -1899,7 +1925,7 @@ public class DummyActivity3 extends Activity implements Constantes {
       return null;
 
     } else {
-      Log.v(TAG, "leArquivoMoldura() - largura x altura da moldura: " + imagem.getStringBitmapSize(bmMoldura));
+      Log.v(TAG, "leArquivoMoldura() - largura x altura da moldura: " + ManipulaImagem.getStringBitmapSize(bmMoldura));
 
       return bmMoldura;
 

@@ -18,6 +18,10 @@ import android.graphics.Paint;
  */
 public class FotoPolaroid {
 
+  public static final String TAG = "FotoPolaroid";
+  
+  public static final int TIPO_FOTO_POLAROID = 1;
+  
   // Foto
   private Foto foto;
 
@@ -145,6 +149,25 @@ public class FotoPolaroid {
 
   }
 
-  
+  /**
+   * hasFoto() 
+   * 
+   * @return
+   * 
+   */
+  public boolean hasFoto() {
+    return this.getFoto()!=null;
+  }
 
+  /**
+   * hasMoldura()
+   * 
+   * @return
+   * 
+   */
+  public boolean hasMoldura() {
+    return this.getMoldura()!=null;
+  }
+
+  
 }
