@@ -524,7 +524,7 @@ public class ManipulaImagem {
   /**
    * criaBitmap(Uri uri)
    * 
-   * Tenta criar um bitmap a partir de um arquivo identificado por uma Uri
+   * Tenta criar um bitmap a partir do um arquivo identificado pela Uri fornecida
    * 
    * @param uri
    *          Uri do arquivo contendo uma imagem
@@ -535,7 +535,8 @@ public class ManipulaImagem {
   public static Bitmap criaBitmap(Uri uri) {
 
     if (uri == null) {
-      Log.d(TAG, "criaBitmap() - uri é null");
+      // Uri vazia
+      Log.d(TAG, "criaBitmap() - não foi possível cria o bitmap pois a Uri fornecida está vazia");
       return null;
     }
 
@@ -710,7 +711,7 @@ public class ManipulaImagem {
 
       if (f.isFile()) {
 
-        showFile(f);
+        FileUtils.showFile(f);
 
         bm = BitmapFactory.decodeFile(f.getAbsolutePath());
 
@@ -807,27 +808,27 @@ public class ManipulaImagem {
   /**
    * getScaledBitmap2(Bitmap bm, int newWidth, int newHeight)
    * 
-   * Esse método retorna um novo bitmap de tamanho reduzido;
+   * Esse método retorna um novo bitmap com o novo valor para largura e altura
+   * 
+   * Observe que não é feito nenhuma verificacao quanto ao aspect ratio do bitmap que fica por conta do usuário do método
    * 
    * @param bm
    *          Bitmap original
    * 
-   * @param newWidth
-   * @param newHeight
+   * @param newWidth largura solicitada
+   * @param newHeight altura solicitada
    * 
-   * @return um bitmap com seu tamanho alterado
+   * @return um bitmap com seu tamanho alterado segundo as informações fornecidas
    * 
    */
   public static Bitmap getScaledBitmap2(Bitmap bm, int newWidth, int newHeight) {
 
+    if(bm==null) {
+      Log.w(TAG, "getScaledBitmap2() - bitmap é nulo");
+      return null;
+    }
+    
     Log.v(TAG, "getScaledBitmap2() - original Bitmap size:" + getStringBitmapSize(bm));
-
-    // Tamanho original do bitmap
-    float origWidth = bm.getWidth();
-
-    float scaledFactor = newWidth / origWidth;
-
-    Log.d(TAG, "getScaledBitmap2() - scaledFactor = " + scaledFactor);
 
     Log.d(TAG, "getScaledBitmap2() - new w=" + newWidth + ", new h=" + newHeight);
 
@@ -835,8 +836,6 @@ public class ManipulaImagem {
 
     // Creates a new bitmap, scaled from an existing bitmap
     Bitmap bitmap = Bitmap.createScaledBitmap(bm, newWidth, newHeight, filter);
-
-    // showBitmapInfo(bitmap);
 
     return bitmap;
 
@@ -991,8 +990,11 @@ public class ManipulaImagem {
    * 
    * Grava um bitmap em um arquivo.
    * 
+   * O bitmap será gravado no formato .png e sem compressão.
+   * 
    * @param bm
    *          Bitmap contendo a imagem
+   *          
    * @param filename
    *          Nome completo do arquivo onde a imagem será gravada
    * 
@@ -1014,24 +1016,20 @@ public class ManipulaImagem {
       return false;
     }
 
-    File f = new File(filename);
-
-    // transforma o nome do arquivo em uma URI
-    URI uri = f.toURI();
-
-    Log.v(TAG, "gravaBitmapArquivo() - uri=" + uri);
-
     OutputStream out = null;
 
     try {
 
+      // cria o outputstream para gravar os dados 
       out = new FileOutputStream(filename);
 
       salvou = bm.compress(Bitmap.CompressFormat.PNG, 100, out);
 
       if (salvou) {
+        // dados foram comprimidos com sucesso ao stream especificado
         Log.i(TAG, "gravaBitmapArquivo() - arquivo: " + filename + " gravado com sucesso");
       } else {
+        // falha na gravação dos dados
         Log.i(TAG, "gravaBitmapArquivo() - falha na gravação do arquivo: " + filename);
       }
 
@@ -1039,15 +1037,21 @@ public class ManipulaImagem {
       Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo: " + filename, e);
 
     } finally {
+      
       if (out != null) {
+        
         try {
+          
           out.close();
+          
         } catch (IOException e) {
 
           Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo", e);
 
         }
+        
       }
+      
     }
 
     return salvou;
@@ -1448,25 +1452,7 @@ public class ManipulaImagem {
 
   }
 
-  /**
-   * showFile(File f)
-   * 
-   * Exibe informações sobre um arquivo.
-   * 
-   * @param f
-   *          Nome do arquivo
-   * 
-   */
-  public static void showFile(File f) {
-
-    Log.v(TAG, "showFile():");
-    if (f != null) {
-      Log.v(TAG, "  getName()=" + f.getName());
-      Log.v(TAG, "  getAbsolutePath()=" + f.getAbsolutePath());
-      Log.v(TAG, "  getPath()=" + f.getPath());
-    }
-
-  }
+ 
 
   /**
    * showImageViewInfo(final ImageView image)
@@ -1871,28 +1857,5 @@ public class ManipulaImagem {
 
   }
 
-  /**
-   * isValidFile(File f)
-   * 
-   * Verifica se um arquivo existe e é um arquivo
-   * 
-   * @param f
-   * 
-   * @return true se o arquivo existir e for um arquivo
-   * 
-   */
-  private static boolean isValidFile(File f) {
-
-    if (f == null) {
-      return false;
-    }
-
-    if (f.exists() || f.isFile()) {
-      return true;
-    }
-
-    return false;
-
-  }
-
+ 
 }

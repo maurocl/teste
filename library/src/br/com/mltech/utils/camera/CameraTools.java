@@ -184,7 +184,6 @@ public class CameraTools {
 
   }
 
-  
   /**
    * deleteExternalStoragePublicPicture()
    * 
@@ -202,7 +201,6 @@ public class CameraTools {
 
   }
 
-  
   /**
    * exibeCameraInfo(int cameraId, CameraInfo cameraInfo)
    * 
@@ -460,15 +458,16 @@ public class CameraTools {
 
   }
 
-  
   /**
    * getDir2(String dirName)
    * 
    * Retorna o diretório solicitado dentro de
-   * getExternalStoragePublicDirectoryPictures Cria-o caso ele não exista
+   * getExternalStoragePublicDirectoryPictures.
+   * Cria-o caso ele não exista
    * 
-   * @param dirName
-   * @return
+   * @param dirName Nome do diretório (no sistema de arquivos)
+   * 
+   * @return uma instância de File referenciando um diretório
    */
   public static File getDir2(String dirName) {
 
@@ -477,38 +476,42 @@ public class CameraTools {
     boolean b = false;
 
     if (!isExternalStorageMounted()) {
-      Log.w(TAG, "External storage is not mounted READ/WRITE.");
+      Log.w(TAG, "getDir2() - diretório não poderá ser armazenamento pois o dispositivo externo não está montado para leitura/escrita.");
       return null;
     }
 
-    // obtem o diretório onde estão armazenadas as figuras publicas
+    // obtem o (caminho do) diretório onde estão armazenadas as figuras publicas
     // no dispositivo de armazenamento externo
     File path = getExternalStoragePublicDirectoryPictures();
 
+    // Referencia o diretório
     storageDir = new File(path, dirName);
 
     if (storageDir != null) {
 
       // cria o diretório formado pelo nome completo
 
+      // cria o diretório (e sua arvore de subdiretórios) se necessário
       b = storageDir.mkdirs();
 
       if (b == false) {
 
         // diretório não foi criado
         if (storageDir.exists()) {
+          
           // diretório já existente e por isso não foi criado
-          Log.w(TAG, "Diretório: " + dirName + " já existe");
+          Log.w(TAG, "getDir2() - Diretório: " + dirName + " já existe.");
 
         } else {
-          // diretório ainda não existe e não pode ser criado.
-          Log.w(TAG, "Falha na criação do diretório: " + dirName);
+          
+          // diretório ainda não existe porém não pode ser criado.
+          Log.w(TAG, "getDir2() - Falha na criação do diretório: " + dirName);
 
         }
 
       } else {
         // diretório criado com sucesso pois ele ainda não existia
-        Log.w(TAG, "Diretório criado com sucesso: " + dirName);
+        Log.w(TAG, "getDir2() - Diretório: "+dirName+" criado com sucesso: ");
       }
 
     }
@@ -533,6 +536,13 @@ public class CameraTools {
 
     String type = Environment.DIRECTORY_PICTURES;
 
+    /*
+     * Get a top-level public external storage directory for placing files of a
+     * particular type. This is where the user will typically place and manage
+     * their own files, so you should be careful about what you put here to
+     * ensure you don't erase their files or get in the way of their own
+     * organization.
+     */
     File dir = Environment.getExternalStoragePublicDirectory(type);
 
     if (dir != null) {
@@ -564,7 +574,6 @@ public class CameraTools {
 
   }
 
-  
   /* Photo album for this application */
   // private String getAlbumName() {
   // return getString(R.string.album_name);
@@ -614,7 +623,7 @@ public class CameraTools {
     return file.exists();
 
   }
-  
+
   /**
    * isExternalStorageMounted()
    * 
@@ -664,7 +673,6 @@ public class CameraTools {
 
   }
 
- 
   /**
    * createExternalStoragePublicPicture()
    * 
@@ -729,32 +737,7 @@ public class CameraTools {
 
   }
 
- 
- 
-
   // ---------------------------------------------------------
-
-  /**
-   * obtemNomeArquivo(String extensao)
-   * 
-   * gera um nome de arquivo a partir do numero de mili segundos atuais
-   * retornados pelo sistema
-   * 
-   * extensao=".jpg"
-   */
-  private static File obtemNomeArquivo(String extensao) {
-
-    // Obtém um nome de arquivo
-    String arquivo = Environment.getExternalStorageDirectory() + File.pathSeparator + +System.currentTimeMillis() + extensao;
-
-    // Cria o arquivo
-    File file = new File(arquivo);
-
-    Log.d(TAG, "obtemNomeArquivo() ===> arquivo=" + file.getAbsolutePath());
-
-    return file;
-
-  }
 
   /**
    * setUpPhotoFile()
@@ -821,38 +804,7 @@ public class CameraTools {
 
   }
 
-  /**
-   * ShowFileDetails(File f, String msg)
-   * 
-   * Exibe informações sobre um arquivo
-   * 
-   * @param f
-   *          Instância de um arquivo (File)
-   * 
-   */
-  public static void showFileDetails(File f, String msg) {
-
-    Log.v(TAG, "ShowFileDetails() ==> " + msg);
-
-    if (f.exists()) {
-      Log.v(TAG, "f=" + f.getAbsolutePath() + " existe");
-    } else {
-      Log.v(TAG, "f=" + f.getAbsolutePath() + " não existe");
-    }
-
-    if (f.isDirectory()) {
-      Log.v(TAG, "f=" + f.getAbsolutePath() + " é um diretório");
-    } else {
-      Log.v(TAG, "f=" + f.getAbsolutePath() + " não é um diretório");
-    }
-
-    if (f.isFile()) {
-      Log.v(TAG, "f=" + f.getAbsolutePath() + " é um arquivo");
-    } else {
-      Log.v(TAG, "f=" + f.getAbsolutePath() + " não é um arquivo");
-    }
-
-  }
+ 
 
   /**
    * showHash(HashMap<String, List<String>> hash)
@@ -885,25 +837,6 @@ public class CameraTools {
       }
 
     }
-
-  }
-
-  /**
-   * showUri(Uri uri)
-   * 
-   * Exibe informações sobre uma Uri
-   * 
-   * @param uri
-   */
-  public static void showUri(Uri uri) {
-
-    Log.v(TAG, "showUri() - exibe informações sobre uma Uri:");
-    Log.v(TAG, "  uri=" + uri);
-    Log.v(TAG, "  uri.getAuthority=" + uri.getAuthority());
-    Log.v(TAG, "  uri.getHost=" + uri.getHost());
-    Log.v(TAG, "  uri.getQuery=" + uri.getQuery());
-    Log.v(TAG, "  uri.getPath=" + uri.getPath());
-    Log.v(TAG, "  uri.getPort=" + uri.getPort());
 
   }
 

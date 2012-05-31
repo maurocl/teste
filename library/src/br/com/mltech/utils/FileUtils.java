@@ -1,8 +1,10 @@
 package br.com.mltech.utils;
 
 import java.io.File;
+import java.util.Set;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import br.com.mltech.utils.camera.CameraTools;
 
@@ -134,13 +136,14 @@ public class FileUtils {
     return false;
 
   }
- 
+
   /**
    * isValidDirectory(File f)
    * 
    * Verifica se um diretório existe.
    * 
-   * @param f referência a um diretório no sistema de arquivos
+   * @param f
+   *          referência a um diretório no sistema de arquivos
    * 
    * @return true se o diretório existir
    * 
@@ -158,7 +161,40 @@ public class FileUtils {
     return false;
 
   }
-  
+
+  /**
+   * showBundle(Bundle b)
+   * 
+   * Exibe todas as chaves/valores armazenadas no bundle
+   * 
+   * @param bundle
+   *          Instância da classe Bundle
+   * 
+   */
+  public static void showBundle(Bundle bundle) {
+
+    if (bundle == null) {
+      Log.w(TAG, "showBundle() - bundle não contem nenhum elemento.");
+      return;
+    }
+
+    // Obtém um conjunto de chaves do Bundle
+    Set<String> setChaves = bundle.keySet();
+
+    // Obtém o tamanho do conjunto
+    int size = bundle.size();
+
+    // Exibe o nº de elementos do conjunto
+    Log.d(TAG, "showBundle() - nº de elementos do bundle: " + size);
+
+    int i = 0;
+
+    for (String chave : setChaves) {
+      i++;
+      Log.d(TAG, "  " + i + ") " + chave);
+    }
+
+  }
 
   /**
    * showFile(File f)
