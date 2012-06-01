@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -50,6 +51,9 @@ public class Foto implements Serializable {
   // dados
   private byte[] dados;
 
+  // formato de gravação da foto
+  private Bitmap.CompressFormat formatoGravacao;
+
   /**
    * Foto(String arquivo)
    * 
@@ -89,7 +93,7 @@ public class Foto implements Serializable {
 
   }
 
-  // Getters and Settes
+  // Getters and Setters
 
   /**
    * getFilename()
@@ -184,6 +188,7 @@ public class Foto implements Serializable {
    * setArquivo(String arquivo)
    * 
    * @param arquivo
+   *          nome completo do arquivo
    * 
    */
   public void setArquivo(String arquivo) {
@@ -194,10 +199,23 @@ public class Foto implements Serializable {
   /**
    * getDados()
    * 
-   * @return
+   * @return um array de bytes de uma imagem
    */
   public byte[] getDados() {
-    return dados;
+
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+    if (getImagem() != null) {
+      getImagem().compress(CompressFormat.PNG, 100, bos);
+      this.dados = bos.toByteArray();
+    }
+
+    if (getDados() != null) {
+      Log.d(TAG, "getDados() - nº de bytes: " + getDados().length);
+    }
+
+    return this.dados;
+
   }
 
   /**
@@ -215,16 +233,28 @@ public class Foto implements Serializable {
   // -----------------
 
   /**
-   * Grava uma foto em um arquivo
+   * gravar()
    * 
-   * Formato .jpg com "compressão de 75%"
+   * Grava uma foto em um arquivo
    * 
    * @return true caso a foto seja salva ou false em caso de erro
    * 
    */
   public boolean gravar() throws FileNotFoundException, IOException {
 
-    return gravar(Bitmap.CompressFormat.JPEG, 75);
+    boolean gravou = false;
+
+    if (this.getFormato() == null) {
+      this.setFormato(Bitmap.CompressFormat.PNG);
+    }
+
+    if (this.getFormato() == Bitmap.CompressFormat.JPEG) {
+      gravou = gravar(this.getFormato(), 75);
+    } else if (this.getFormato() == Bitmap.CompressFormat.PNG) {
+      gravou = gravar(this.getFormato(), 100);
+    }
+
+    return gravou;
 
   }
 
@@ -239,6 +269,7 @@ public class Foto implements Serializable {
    * @return true
    * 
    * @throws FileNotFoundException
+   *           se o arquivo não for encontrado
    * @throws IOException
    * 
    */
@@ -250,7 +281,7 @@ public class Foto implements Serializable {
       return false;
     }
 
-    if (getFilename() == null) {
+    if (getArquivo() == null) {
       // arquivo não pode ser vazio
       return false;
     }
@@ -259,7 +290,6 @@ public class Foto implements Serializable {
 
     OutputStream out = new FileOutputStream(getFilename());
 
-    // salvou = getImagem().compress(Bitmap.CompressFormat.JPEG, 75, out);
     salvou = getImagem().compress(formato, quality, out);
 
     out.close();
@@ -306,8 +336,6 @@ public class Foto implements Serializable {
     Log.d(TAG, "ler() - atualiza imagem");
     this.setImagem(bitmap);
 
-    xxx();
-    
     return true;
 
   }
@@ -321,7 +349,7 @@ public class Foto implements Serializable {
    */
   public Uri getUri() {
 
-    Uri uri = Uri.fromFile(getFilename());
+    Uri uri = Uri.fromFile(this.getFilename());
 
     return uri;
   }
@@ -386,28 +414,56 @@ public class Foto implements Serializable {
   }
 
   /**
+   * getFormato()
+   * 
+   * @return o formato de gravação da foto (imagem)
+   * 
+   */
+  public Bitmap.CompressFormat getFormato() {
+    return formatoGravacao;
+  }
+
+  /**
+   * setFormato(Bitmap.CompressFormat formato)
+   * 
+   * Estabelece o formato de gravação da foto
+   * 
+   * @param formato
+   *          formato de gravação da foto
+   * 
+   *          Bitmap.CompressFormat.JPEG Bitmap.CompressFormat.PNG
+   * 
+   */
+  public void setFormato(Bitmap.CompressFormat formato) {
+    this.formatoGravacao = formato;
+  }
+
+
+  /**
    * toString()
    */
   @Override
   public String toString() {
-    return "Foto [dimensao=" + dimensao + ", arquivo=" + arquivo + ", imagem=" + imagem + "]";
+    return "Foto [dimensao=" + dimensao + ", arquivo=" + arquivo + ", filename=" + filename + ", imagem=" + imagem + ", dados="
+        + Arrays.toString(dados) + ", formato=" + formatoGravacao + "]";
   }
-
+  
   /**
    * 
+   * armazena todos os bytes da imagem em um array de bytes
    */
-  public void xxx() {
-
-    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    if (getImagem() != null) {
-      getImagem().compress(CompressFormat.PNG, 100, bos);
-      this.dados = bos.toByteArray();
-    }
-    
-    if(getDados()!=null) {
-      Log.d(TAG,"xxx() - nº de bytes: "+getDados().length);
-    }
-
-  }
+  /*
+   * public void xxx() {
+   * 
+   * ByteArrayOutputStream bos = new ByteArrayOutputStream();
+   * 
+   * if (getImagem() != null) { getImagem().compress(CompressFormat.PNG, 100,
+   * bos); this.dados = bos.toByteArray(); }
+   * 
+   * if (getDados() != null) { Log.d(TAG, "xxx() - nº de bytes: " +
+   * getDados().length); }
+   * 
+   * }
+   */
 
 }

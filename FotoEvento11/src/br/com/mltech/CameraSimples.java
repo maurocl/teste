@@ -22,11 +22,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import br.com.mltech.modelo.Foto;
 import br.com.mltech.modelo.FotoCabine;
+import br.com.mltech.modelo.FotoPolaroid;
 import br.com.mltech.modelo.Moldura;
 import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
-
-
 
 /**
  * CameraSimples
@@ -68,6 +67,19 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
   // Lista de todas as fotos tiradas
   private static List<Foto> listaFotos;
 
+  // Foto
+  private static Foto foto;
+
+  // FotoCabine
+  private static FotoCabine fotoCabine;
+
+  // FotoPolaroid
+  private static FotoPolaroid fotoPolaroid;
+
+  // Molduras
+  private static Moldura molduraPolaroid;
+  private static Moldura molduraCabine;
+
   // Contador geral (iniciado em onCreate())
   public static int contador = 0;
 
@@ -85,12 +97,6 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
 
   //
   public static int numFotosTiradas = 0;
-
-  // Foto
-  private static Foto foto;
-
-  // FotoCabine
-  private static FotoCabine fotoCabine;
 
   // nº de fotos tiradas
   private static int contadorCabine = 0;
@@ -179,24 +185,28 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
     Log.d(TAG, "===> processaBotaoConfirma()");
     Log.d(TAG, "============================");
 
-    int opcao = 1;
+    int opcao = 3;
 
     // nome do arquivo onde a foto será armazenada
-    String arquivo = null;
+    String arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
+    ;
 
     switch (opcao) {
       case 0:
-        arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
+        // tira uma foto
         executaActivityTiraFoto(arquivo);
         break;
       case 1:
-        arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
+        // simula uma foto
         executaActivityTiraFotoDummy(arquivo);
         break;
       case 2:
+        // processa 3 fotos
         processaFotoCabine();
         break;
-
+      case 3:
+        executaActivityTiraFotoPolaroid(arquivo);
+        break;
     }
 
   }
@@ -241,20 +251,29 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
   }
 
   /**
+   * 
    * executaActivityTiraFoto()
+   * 
+   * Executa a Activity que captura uma foto
+   * 
+   * @param arquivo nome do arquivo onde a foto será armazenada
+   * 
    */
   private void executaActivityTiraFoto(String arquivo) {
 
     file = new File(arquivo);
 
+    outputFileUri = Uri.fromFile(file);
+    
     Log.d(TAG, "executaActivityTiraFoto() - arquivo=" + file.getAbsolutePath());
 
-    outputFileUri = Uri.fromFile(file);
-
+    // cria um intent com a ação MediaStore.ACTION_IMAGE_CAPTURE
     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+    // especifica o parâmetro com a URI onde a foto deve ser armazenada
     intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 
+    // inicia a Activity com requestCode TIRA_FOTO
     startActivityForResult(intent, TIRA_FOTO);
 
   }
@@ -262,37 +281,71 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
   /**
    * executaActivityTiraFotoDummy(String arquivo)
    * 
-   * @param arquivo
+   * Executa a Activity que tira uma foto de "mentirinha", isto é, apenas retorna uma
+   * imagem pre-armazenada como se fosse uma foto
+   * 
+   * @param arquivo nome do arquivo onde a foto será armazenada
    */
   private void executaActivityTiraFotoDummy(String arquivo) {
 
     file = new File(arquivo);
 
-    Log.d(TAG, "executaActivityTiraFoto() - arquivo=" + file.getAbsolutePath());
+    Log.d(TAG, "executaActivityTiraFotoDummy() - arquivo=" + file.getAbsolutePath());
+
+    outputFileUri = Uri.fromFile(file);
+    
+    Log.i(TAG, "executaActivityTiraFotoDummy - outputFileUri=" + outputFileUri);
+
+    // cria um intent ActivityCameraSimplesDummy
+    Intent intent = new Intent(this, ActivityCameraSimplesDummy.class);
+
+    intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
+
+    // inicia a Activity com requestCode TIRA_FOTO
+    startActivityForResult(intent, TIRA_FOTO);
+
+  }
+
+  /**
+   * executaActivityTiraFotoPolaroid(String arquivo)
+   * 
+   * @param arquivo
+   */
+  private void executaActivityTiraFotoPolaroid(String arquivo) {
+
+    file = new File(arquivo);
+
+    Log.d(TAG, "executaActivityTiraFotoDummy() - arquivo=" + file.getAbsolutePath());
 
     outputFileUri = Uri.fromFile(file);
 
     Intent intent = new Intent(this, ActivityCameraSimplesDummy.class);
 
-    Log.i(TAG, "outputFileUri=" + outputFileUri);
+    Log.i(TAG, "executaActivityTiraFotoDummy - outputFileUri=" + outputFileUri);
 
-    intent.putExtra("br.com.mltech.arquivo", outputFileUri);
+    intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
 
-    startActivityForResult(intent, TIRA_FOTO);
+    startActivityForResult(intent, TIRA_FOTO_POLAROID);
 
   }
 
   /**
    * executaActivityTiraFotoCabine()
    * 
-   * @param arquivo
+   * 
+   * 
    */
   private void executaActivityTiraFotoCabine() {
 
     //
     // cria um arquivo para armazenar a foto
     //
-    String arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
+
+    // String arquivo = Environment.getExternalStorageDirectory() + "/" +
+    // System.currentTimeMillis() + ".jpg";
+
+    String arquivo = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/"
+        + System.currentTimeMillis() + ".jpg";
 
     file = new File(arquivo);
 
@@ -306,6 +359,7 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
     // contadorCabine)
     fotoCabine.setFoto(contadorCabine, foto);
 
+    // especifica a Uri onde a foto deve ser armazenada
     outputFileUri = Uri.fromFile(file);
 
     Intent intent = null;
@@ -314,19 +368,21 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
 
     if (flag == 0) {
 
+      // simulação de "tirar uma foto"
       intent = new Intent(this, ActivityCameraSimplesDummy.class);
 
-      intent.putExtra("br.com.mltech.arquivo", outputFileUri);
+      intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
 
     } else if (flag == 1) {
 
+      // tira uma foto verdadeira
       intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
       intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
 
     }
 
-    // inicia a nova Activity
+    // inicia a nova Activity relacionada na Intent
     startActivityForResult(intent, TIRA_FOTO_CABINE);
 
   }
@@ -388,37 +444,50 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
    * 
    * @param resultCode
    *          resultado da execução da activity
+   * 
    * @param data
    *          dados retornados da execução da activity
    * 
    */
   private void processaActivityResultTiraFoto(int resultCode, Intent data) {
 
-    if (resultCode == RESULT_OK) {
+    if (data == null) {
+      Log.w(TAG, "processaActivityResultTiraFoto() - data (Intent) é vazia");
+      return;
+    }
 
-      if (data != null) {
+    if (resultCode == RESULT_CANCELED) {
 
-        Log.w(TAG, "data.getData()= " + data.getData());
-        Log.w(TAG, "extra: " + data.getStringExtra("extra1"));
-        Log.w(TAG, "file: " + data.getStringExtra("file"));
+      // operação cancelada
+      Log.w(TAG, "processaActivityResultTiraFoto() - Operação cancelada pelo usuário");
+      return;
 
-        // File ff = new File(data.getStringExtra("file"));
-        file = new File(data.getStringExtra("file"));
+    }
 
-        outputFileUri = Uri.fromFile(file);
+    else if (resultCode == RESULT_OK) {
 
-      }
+      Log.d(TAG, "processaActivityResultTiraFoto() - data.getData()= " + data.getData());
+
+      Log.d(TAG, "processaActivityResultTiraFoto() - extra: " + data.getStringExtra("extra1"));
+
+      Log.d(TAG, "processaActivityResultTiraFoto() - outputFileUri: " + data.getStringExtra("outputFileUri"));
+
+      file = new File(data.getStringExtra("outputFileUri"));
+
+      outputFileUri = Uri.fromFile(file);
 
       if (file != null) {
+        
+        Bitmap b = ManipulaImagem.criaBitmap(outputFileUri);
 
         // cria uma Foto
-        foto = new Foto(file.getAbsolutePath());
-
+        foto = new Foto(file.getAbsolutePath(),b);
+        
         if (!foto.ler()) {
-          Log.w(TAG, "Erro na leitura ...");
+          Log.w(TAG, "processaActivityResultTiraFoto() - Erro na leitura ...");
         }
 
-        Log.i(TAG, "foto f=" + foto);
+        Log.i(TAG, "processaActivityResultTiraFoto() - foto f=" + foto);
 
       }
 
@@ -431,9 +500,7 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
     } else if (resultCode == RESULT_CANCELED) {
 
       // operação cancelada
-      Log.w(TAG, "onActivityResult() - Operação cancelada pelo usuário");
-
-    } else {
+      Log.w(TAG, "processaActivityResultTiraFoto() - Operação cancelada pelo usuário");
 
     }
 
@@ -448,25 +515,178 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
    */
   private void processaActivityResultPolaroid(int resultCode, Intent data) {
 
-    if (resultCode == RESULT_OK) {
+    if (data == null) {
+      Log.w(TAG, "processaActivityResultPolaroid - data (Intent) é vazia");
+    }
+
+    if (resultCode == RESULT_CANCELED) {
+
+      // operação cancelada
+      Log.w(TAG, "processaActivityResultPolaroid() - Operação cancelada pelo usuário");
+      return;
+
+    } else if (resultCode == RESULT_OK) {
 
       if (data != null) {
 
+        Log.d(TAG, "processaActivityResultPolaroid() - data.getData()= " + data.getData());
+
+        Log.d(TAG, "processaActivityResultPolaroid() - extra: " + data.getStringExtra("extra1"));
+
+        Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + data.getStringExtra("outputFileUri"));
+
+        file = new File(data.getStringExtra("outputFileUri"));
+
+      } else {
+        file = null;
       }
 
-    } else if (resultCode == RESULT_CANCELED) {
+      outputFileUri = Uri.fromFile(file);
 
-      // operação cancelada
-      Log.w(TAG, "onActivityResult() - Operação cancelada pelo usuário");
+      if (file != null) {
 
-    } else {
+        // cria uma Foto
+        foto = new Foto(file.getAbsolutePath());
+
+        Bitmap abc = ManipulaImagem.criaBitmap(outputFileUri);
+
+        // armazena o bitmap
+        foto.setImagem(abc);
+
+        if (!foto.ler()) {
+          Log.w(TAG, "processaActivityResultPolaroid() - Erro na leitura ...");
+        }
+
+        Log.i(TAG, "processaActivityResultPolaroid() - foto f=" + foto);
+
+      }
+
+      // atualiza a imagem na activity
+      image.setImageBitmap(foto.getImagem());
+
+      // exibe a imagem
+      carregaImagem();
+
+      // ---------------------
+
+      try {
+
+        molduraPolaroid = new Moldura(PATH_MOLDURAS + "polaroid_340_416_red.png");
+
+        molduraPolaroid.leArquivoMoldura(PATH_MOLDURAS + "polaroid_340_416_red.png");
+
+        fotoPolaroid = new FotoPolaroid(foto, molduraPolaroid);
+
+        // CriaFotoPolaroid
+        criaFotoPolaroid();
+
+        fotoPolaroid.formatar();
+
+        Bitmap bit = fotoPolaroid.overlay(fotoPolaroid.getFoto8x8().getImagem(), fotoPolaroid.getMoldura().getImagem());
+
+        foto = new Foto(fotoPolaroid.getFoto().getArquivo());
+
+        if (bit != null) {
+          foto.setImagem(bit);
+
+          image.setImageBitmap(bit);
+
+        }
+
+        Log.i(TAG, "processaActivityResultPolaroid() - fotoPolaroid=" + fotoPolaroid.toString());
+
+        Log.i(TAG, "processaActivityResultPolaroid() - foto=" + foto.toString());
+
+      } catch (FileNotFoundException e) {
+        Log.w(TAG, "processaActivityResultPolaroid - FileNotFound exception", e);
+      } catch (IOException e) {
+        Log.w(TAG, "processaActivityResultPolaroid - IO Exception", e);
+      }
+
+      Log.w(TAG, "processaActivityResultPolaroid - FIM");
 
     }
 
   }
 
   /**
+   * criaFotoPolaroid(Foto foto) throws FileNotFoundException, IOException
+   * 
+   * @param foto
+   * 
+   * @throws FileNotFoundException
+   * @throws IOException
+   * 
+   */
+  private void criaFotoPolaroid() throws FileNotFoundException, IOException {
+
+    Log.i(TAG, "criaFotoPolaroid() - iniciando ...");
+
+    if (fotoPolaroid != null) {
+      // fotoPolaroid.formatar();
+      Log.w(TAG, "criaFotoPolaroid() - fotoPolaroid não é nula");
+    } else {
+
+      Log.w(TAG, "criaFotoPolaroid() - fotoPolaroid é nula");
+    }
+
+    // pega a foto e redimensiona para o tamanho 9x12
+
+    // pega a foto e redimensiona para o tamanho 8x8
+
+    // cria uma nova foto
+    Foto fotoFinal = null;
+
+    // obtém o nome de um arquivo
+    File file1 = FileUtils.obtemNomeArquivo(".png");
+
+    if (file1 != null) {
+
+      // exibe o caminho do arquivo
+      Log.d(TAG, "criaFotoPolaroid()  - file1=" + file1.getAbsolutePath());
+    } else {
+      Log.w(TAG, "criaFotoPolaroid()  - file1 está vazio");
+    }
+
+    // cria uma foto com o arquivo criado
+    fotoFinal = new Foto(file1.getAbsolutePath());
+
+    Bitmap imagem1 = null;
+
+    if ((foto != null) && (foto.getImagem() != null)) {
+
+      // gera um bitmap com a imagem redimensionada
+      imagem1 = ManipulaImagem.getScaledBitmap2(foto.getImagem(), 113, 151);
+
+    }
+
+    Log.w(TAG, "criaFotoPolaroid() - imagem1=" + imagem1);
+
+    // Log.i(TAG, "criaFotoPolaroid() - foto=" + fotoPolaroid.toString());
+
+    // atualiza a foto
+    fotoFinal.setImagem(imagem1);
+
+    // grava o a foto
+    boolean b = fotoFinal.gravar();
+
+    if (b) {
+      // foto gravada com sucesso
+      Log.w(TAG, "criaFotoPolaroid() - sucesso - b=" + b);
+    } else {
+      // falha na gravação da foto
+      Log.w(TAG, "criaFotoPolaroid() - falha - b=" + b);
+    }
+
+    Log.w(TAG, "criaFotoPolaroid() - fim");
+
+  }
+
+  /**
    * processaActivityResultCabine(int resultCode, Intent data)
+   * 
+   * Processa o resultado da execução da Activity responsável por obter uma
+   * foto.
    * 
    * @param resultCode
    *          resultado da execução da activity
@@ -493,20 +713,19 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
 
       }
 
-      Log.i(TAG, "processaActivityResultCabine() - contadorCabine=" + contadorCabine);
+      Log.i(TAG, "processaActivityResultCabine() - processando o recebimento da foto - contadorCabine=" + contadorCabine);
 
-      // atualiza a foto cabine
-
-      // incrementa o contador
+      // incrementa o contador de fotos para compor uma foto no formato cabine
       contadorCabine++;
 
-      if (contadorCabine <= 2) {
+      if (contadorCabine < 3) {
 
+        // obtem uma foto foto
         executaActivityTiraFotoCabine();
 
       } else {
 
-        // três foto já foram tiradas
+        // três foto já foram obtidas (tiradas)
         fimExecucaoActivityTiraFotoCabine();
 
       }
@@ -515,6 +734,8 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
 
       // operação cancelada
       Log.w(TAG, "processaActivityResultCabine() - Operação cancelada pelo usuário na foto: " + contadorCabine);
+      // TODO aqui deveremos "cancelar" a fotoCabine fazendo-a null (entre
+      // outras coisas)
 
     } else {
       Log.w(TAG, "processaActivityResultCabine() - Operação não suportada pelo usuário");
@@ -528,37 +749,26 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
    * Após tirar as três fotos é necessário: - converter as foto para o formato
    * 3x4 - montar a foto formato cabine juntando as fotos 3x4 e a moldura
    * 
+   * fotoCabine.getFoto[0] --> Foto fotoCabine.getFoto[1] --> Foto
+   * fotoCabine.getFoto[2] --> Foto
+   * 
    */
   private void fimExecucaoActivityTiraFotoCabine() {
 
     Log.d(TAG, "fimExecucaoActivityTiraFotoCabine()");
 
-    // cria um array com as foto de FotoCabine
-    Foto[] fotos = fotoCabine.getFotos();
-
-    int i = 0;
-
-    // percorre as fotos do array
-    for (Foto f : fotos) {
-
-      Log.i(TAG, "fimExecucaoActivityTiraFotoCabine() - foto[" + i + "] = " + f.toString());
-
-      // decodifica o bitmap referente ao arquivo com a foto
-      Bitmap bm = BitmapFactory.decodeFile(f.getArquivo());
-
-      if (bm == null) {
-        Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - bitmap nulo !!!");
-      }
-
-      // armazena o bitmap (imagem) na foto
-      f.setImagem(bm);
-
-      i++;
-
+    if (fotoCabine == null) {
+      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - fotoCabine é nula");
+      return;
     }
 
+    // exibe infomações sobre a foto formato cabine
+    showFotoCabine();
+
+    //
+    Log.d(TAG, fotoCabine.toString());
+
     // nesse ponto todas as foto já possuem seu bitmap
-    // TODO por que não fazer isso direto em fotoCabine ???
 
     Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - agora é montar a foto cabine ...");
 
@@ -574,6 +784,44 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
     } catch (IOException e) {
 
       Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - IOException", e);
+
+    }
+
+  }
+
+  /**
+   * showFotoCabine()
+   */
+  public void showFotoCabine() {
+
+    // contador local de fotos
+    int i = 0;
+
+    if (fotoCabine == null) {
+      Log.w(TAG, "showFotoCabine() - fotoCabine é nula");
+      return;
+    }
+
+    //
+    // percorre as fotos
+    //
+    for (Foto foto : fotoCabine.getFotos()) {
+
+      // exibe informações sobre a foto
+      Log.i(TAG, "showFotoCabine() - foto[" + i + "] = " + foto.toString());
+
+      // decodifica o bitmap referente ao arquivo com a foto
+      Bitmap bm = BitmapFactory.decodeFile(foto.getArquivo());
+
+      if (bm == null) {
+        Log.d(TAG, "showFotoCabine() - não foi possível decodificar a foto a partir do arquivo " + foto.getArquivo()
+            + " - bitmap nulo !!!");
+      }
+
+      // armazena o bitmap (imagem) na foto
+      foto.setImagem(bm);
+
+      i++;
 
     }
 
@@ -599,7 +847,7 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
       return null;
     }
 
-    // cria um array contendo referências a três i Foto
+    // cria um array contendo referências a três instâncias de Foto
     Foto[] fotos3x4 = new Foto[3];
 
     // preenche o array com as fotos armazenadas em fotoCabine
@@ -608,17 +856,17 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
     int i = 0;
 
     // processa cada uma das fotos e faz o redimensionamento para o tamanho 3x4
-    for (Foto f : fotos) {
+    for (Foto foto : fotos) {
 
       // transforma cada foto em 3x4
-      Log.i(TAG, "montaFotoCabine() - foto[" + i + "] = " + f.toString());
+      Log.i(TAG, "montaFotoCabine() - foto[" + i + "] = " + foto.toString());
 
       // obtém o nome de um arquivo
       File file1 = FileUtils.obtemNomeArquivo(".png");
 
       if (file1 != null) {
         // exibe o caminho do arquivo
-        Log.d(TAG, "  montaFotoCabine() - " + file1.getAbsolutePath());
+        Log.d(TAG, "  montaFotoCabine(" + i + ") - " + file1.getAbsolutePath());
       } else {
         Log.w(TAG, "  montaFotoCabine() - file1 está vazio");
       }
@@ -677,7 +925,7 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
     for (int j = 0; j < 3; j++) {
 
       bitmapFotos[j] = fotos3x4[j].getImagem();
-      Log.w(TAG, "montaFotoCabine() - j=" + j);
+      Log.d(TAG, "montaFotoCabine() - j=" + j);
 
     }
 
@@ -728,7 +976,7 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
     listaFotos.add(foto);
 
     Log.i(TAG, " ");
-    Log.i(TAG, "===> numFotosTiradas: " + numFotosTiradas + ", numFotosCarregadas: " + numFotosCarregadas);
+    Log.i(TAG, "carregaImagem() ===> numFotosTiradas: " + numFotosTiradas + ", numFotosCarregadas: " + numFotosCarregadas);
     Log.i(TAG, " ");
 
   }

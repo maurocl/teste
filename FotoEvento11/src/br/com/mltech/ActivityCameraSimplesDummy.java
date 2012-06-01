@@ -1,6 +1,6 @@
 package br.com.mltech;
 
-import java.util.Set;
+import java.io.File;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -48,32 +48,48 @@ public class ActivityCameraSimplesDummy extends Activity {
 
       Log.d(TAG, "onCreate() - Parâmetros:");
 
-      Set<String> chaves = i.getExtras().keySet();
+      FileUtils.showBundle(i.getExtras());
 
-      for (String chave : chaves) {
-        Log.i(TAG, "  chave=" + chave);
-      }
+      if (i.getExtras().containsKey("br.com.mltech.outputFileUri")) {
 
-      if (i.getExtras().containsKey("br.com.mltech.arquivo")) {
+        uri = (Uri) i.getParcelableExtra("br.com.mltech.outputFileUri");
 
-        uri = (Uri) i.getParcelableExtra("br.com.mltech.arquivo");
-
-        Log.i(TAG, "br.com.mltech.arquivo=" + uri);
+        Log.i(TAG, "onCreate() - br.com.mltech.outputFileUri: " + uri);
 
       }
 
     }
 
     // TODO gambiarra !!!
-    Bitmap bitmap = BitmapFactory.decodeFile("/mnt/sdcard/1338317354741.jpg");
+     // meuArquivo é um bitmap existente do sistema de arquivos e que será usado
+    // para "foto" de retorno (exemplo)
+    //String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/20120528_155116.jpg";
+    String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
 
-    boolean b = ManipulaImagem.gravaBitmapArquivo(bitmap, uri.getPath());
+    if (FileUtils.isValidFile(new File(meuArquivo))) {
+      Log.d(TAG, "onCreate() - meu arquivo " + meuArquivo + " existe");
+    }
+
+    boolean b;
+
+    // Lê o arquivo e armazena o bitmap
+    Bitmap bitmap = BitmapFactory.decodeFile(meuArquivo);
+
+    // Grava o bitmap no "novo arquivo" dado pela Uri
+    b = ManipulaImagem.gravaBitmapArquivo(bitmap, uri.getPath());
+
+    if (b) {
+      Log.d(TAG, "onCreate() - Imagem gravada com sucesso em: " + uri.getPath());
+    }
 
     // Cria um intent de resposta
     Intent resp = new Intent();
 
     // preenche os parâmetros de retorno
-    resp.putExtra("file", "/mnt/sdcard/1338317354741.jpg");
+    // resp.putExtra("file", "/mnt/sdcard/1338317354741.jpg");
+
+    resp.putExtra("outputFileUri", uri.getPath());
+
     resp.putExtra("extra1", "1234");
 
     // estabelece o resultado da execução da activity

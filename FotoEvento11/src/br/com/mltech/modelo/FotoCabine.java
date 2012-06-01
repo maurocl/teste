@@ -1,5 +1,7 @@
 package br.com.mltech.modelo;
 
+import java.util.Arrays;
+
 import br.com.mltech.utils.ManipulaImagem;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -283,5 +285,17 @@ public class FotoCabine {
 
   }
 
+ 
+  
+  /**
+   * toString()
+   * 
+   */
+  @Override
+  public String toString() {
+    return "FotoCabine [moldura=" + moldura + ", fotos=" + Arrays.toString(fotos) + "]";
+  }
+
+  
   
 }
