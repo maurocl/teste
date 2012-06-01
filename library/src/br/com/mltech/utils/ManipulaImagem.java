@@ -1134,7 +1134,7 @@ public class ManipulaImagem {
   }
 
   /**
-   * gravaBitmapArquivo2(Bitmap bm, String filename)
+   * gravaBitmapArquivo3(Bitmap bm, String filename)
    * 
    * @param bm
    * @param filename
@@ -1193,7 +1193,7 @@ public class ManipulaImagem {
    *         erro
    */
   public static boolean gravaBitmapArquivo3(Uri uri) {
-
+    
     boolean salvou = false;
 
     if (uri == null) {
