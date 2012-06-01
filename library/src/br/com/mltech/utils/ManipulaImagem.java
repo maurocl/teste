@@ -524,7 +524,8 @@ public class ManipulaImagem {
   /**
    * criaBitmap(Uri uri)
    * 
-   * Tenta criar um bitmap a partir do um arquivo identificado pela Uri fornecida
+   * Tenta criar um bitmap a partir do um arquivo identificado pela Uri
+   * fornecida
    * 
    * @param uri
    *          Uri do arquivo contendo uma imagem
@@ -536,7 +537,7 @@ public class ManipulaImagem {
 
     if (uri == null) {
       // Uri vazia
-      Log.d(TAG, "criaBitmap() - não foi possível cria o bitmap pois a Uri fornecida está vazia");
+      Log.d(TAG, "criaBitmap() - não foi possível criar o bitmap pois a Uri fornecida está vazia");
       return null;
     }
 
@@ -544,14 +545,74 @@ public class ManipulaImagem {
     File file = new File(uri.getPath());
 
     // cria um bitmap a partir do arquivo
-    Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-
-    Log.v(TAG, "criaBitmap() - tamanho da imagem criada: " + getStringBitmapSize(bitmap));
+    Bitmap bitmap = criaBitmap(file);
 
     return bitmap;
 
   }
 
+  /**
+   * criaBitmap(Uri uri)
+   * 
+   * Tenta criar um bitmap a partir do nome de arquivo fornecido
+   * 
+   * @param arquivo 
+   *          Nome completo do arquivo
+   * 
+   * @return um Bitmap ou null caso não seja possível criar o bitmap
+   * 
+   */
+  public static Bitmap criaBitmap(String arquivo) {
+
+    if (arquivo == null) {
+      // arquivo é nulo
+      Log.d(TAG, "criaBitmap() - não foi possível cria o bitmap pois o nome de arquivo fornecido está vazio");
+      return null;
+    }
+
+    // cria-se um arquivo
+    File file = new File(arquivo);
+    
+    Bitmap bitmap = criaBitmap(file);
+
+    return bitmap;
+
+  }
+
+  /**
+   * criaBitmap(File file)
+   * 
+   * Tenta criar um bitmap a partir de uma referência a arquivo (File)
+   * 
+   * @param arquivo 
+   *          Objeto da classe File apontando para o nome do arquivo
+   * 
+   * @return um Bitmap ou null caso não seja possível criar o bitmap
+   * 
+   */
+  public static Bitmap criaBitmap(File file) {
+
+    if (file == null) {
+      Log.d(TAG, "criaBitmap() - não foi possível cria o bitmap pois arquivo possui referencia nula");
+      return null;
+    }
+
+    Bitmap bitmap = null;
+    
+    if (file != null && file.exists()) {
+
+      // cria um bitmap a partir do arquivo
+      bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+      Log.v(TAG, "criaBitmap() - tamanho da imagem criada: " + getStringBitmapSize(bitmap));
+
+    }
+
+    return bitmap;
+
+  }
+
+  
   /**
    * combineImages(Bitmap c, Bitmap s)
    * 
@@ -659,7 +720,7 @@ public class ManipulaImagem {
   /**
    * getBitmapFromFile(String filename)
    * 
-   * Lê um bitmap armazenado em um arquivo localizado no SDCARD
+   * Lê um bitmap armazenado em um arquivo do sistema de arquivos
    * 
    * @param filename
    *          Nome do arquivo (fullname)
@@ -674,10 +735,13 @@ public class ManipulaImagem {
 
     if (f != null && f.exists() && f.isFile()) {
 
+      // f referencia um arquivo existente.
+
       // showFile(f);
 
       Log.v(TAG, "getBitmapFromFile() - getAbsolutePath()=" + f.getAbsolutePath());
 
+      // Decodifica o bitmap armazenado no arquivo
       bm = BitmapFactory.decodeFile(f.getAbsolutePath());
 
     } else {
@@ -704,25 +768,30 @@ public class ManipulaImagem {
 
     if (f == null) {
 
-      Log.w(TAG, "getBitmapFile() - arquivo é nulo");
+      Log.w(TAG, "getBitmapFromFile() - arquivo fornecido é nulo");
       return null;
 
     } else {
 
-      if (f.isFile()) {
+      if (f.exists() && f.isFile()) {
 
         FileUtils.showFile(f);
 
+        // Decodifica o bitmap armazenado no arquivo
         bm = BitmapFactory.decodeFile(f.getAbsolutePath());
 
       } else if (f.isDirectory()) {
-        Log.w(TAG, "getBitmapFile() - arquivo: " + f.getAbsolutePath() + " é um diretório.");
+
+        Log.w(TAG, "getBitmapFromFile() - arquivo: " + f.getAbsolutePath() + " não existe ou é um diretório.");
+
         return null;
+
       }
 
     }
 
     return bm;
+
   }
 
   /**
@@ -732,7 +801,8 @@ public class ManipulaImagem {
    * imageData for where the decoder should begin parsing. length the number of
    * bytes, beginning at offset, to parse
    * 
-   * @param um array de bytes contendo a imagem
+   * @param um
+   *          array de bytes contendo a imagem
    * 
    * @return data The decoded bitmap, or null if the image could not be decode.
    */
@@ -755,10 +825,13 @@ public class ManipulaImagem {
   /**
    * getBitmapFromResource(Resources res, int id)
    * 
+   * Obtém um bitmap armazenado em um recurso.
+   * 
    * Exemplo de uso: getBitmapFromResource(getResources(), R.drawable.foto1)
    * 
    * @param res
    *          Resource
+   * 
    * @param id
    *          Resource ID
    * 
@@ -766,15 +839,12 @@ public class ManipulaImagem {
    */
   public static Bitmap getBitmapFromResource(Resources res, int id) {
 
-    // Bitmap bm = BitmapFactory.decodeResource(getResources(),
-    // R.drawable.foto1);
     Bitmap bm = BitmapFactory.decodeResource(res, id);
 
-    // text.setText(Integer.toString(bMap.getWidth()) + " x " +
-    // Integer.toString(bMap.getHeight()));
-    Log.v(TAG, Integer.toString(bm.getWidth()) + " x " + Integer.toString(bm.getHeight()));
+    Log.v(TAG, "getBitmapFromResource() - " + Integer.toString(bm.getWidth()) + " x " + Integer.toString(bm.getHeight()));
 
     return bm;
+
   }
 
   /**
@@ -808,29 +878,35 @@ public class ManipulaImagem {
   /**
    * getScaledBitmap2(Bitmap bm, int newWidth, int newHeight)
    * 
-   * Esse método retorna um novo bitmap com o novo valor para largura e altura
+   * Esse método retorna um novo bitmap redimensionado pela largura e altura
+   * fornecida
    * 
-   * Observe que não é feito nenhuma verificacao quanto ao aspect ratio do bitmap que fica por conta do usuário do método
+   * Observe que não é feito nenhuma verificacao quanto ao aspect ratio do
+   * bitmap que fica por conta do usuário do método
    * 
    * @param bm
    *          Bitmap original
    * 
-   * @param newWidth largura solicitada
-   * @param newHeight altura solicitada
+   * @param newWidth
+   *          largura solicitada
    * 
-   * @return um bitmap com seu tamanho alterado segundo as informações fornecidas
+   * @param newHeight
+   *          altura solicitada
+   * 
+   * @return um bitmap com seu tamanho alterado segundo as informações
+   *         fornecidas
    * 
    */
   public static Bitmap getScaledBitmap2(Bitmap bm, int newWidth, int newHeight) {
 
-    if(bm==null) {
+    if (bm == null) {
       Log.w(TAG, "getScaledBitmap2() - bitmap é nulo");
       return null;
     }
-    
-    Log.v(TAG, "getScaledBitmap2() - original Bitmap size:" + getStringBitmapSize(bm));
 
-    Log.d(TAG, "getScaledBitmap2() - new w=" + newWidth + ", new h=" + newHeight);
+    Log.v(TAG, "getScaledBitmap2() - tamanho do bitmap original : " + getStringBitmapSize(bm));
+
+    Log.d(TAG, "getScaledBitmap2() - tamanho redimensionado:  largura=" + newWidth + ", altura=" + newHeight);
 
     boolean filter = true;
 
@@ -860,22 +936,21 @@ public class ManipulaImagem {
 
       brd = BitmapRegionDecoder.newInstance(filename, true);
 
-      if (brd != null) {
-
-        bitmap = brd.decodeRegion(rect, options);
-
-        if (bitmap == null) {
-          Log.w(TAG, "getBitmapRegion() - bitmap is null");
-        }
-
-      } else {
-        Log.w(TAG, "getBitmapRegion() - brd is null");
-      }
-
     } catch (IOException e) {
 
       Log.w(TAG, "getBitmapRegion() - ", e);
 
+    }
+
+    if (brd == null) {
+      Log.w(TAG, "getBitmapRegion() - BitmapRegionDecoder é nulo");
+      return null;
+    }
+
+    bitmap = brd.decodeRegion(rect, options);
+
+    if (bitmap == null) {
+      Log.w(TAG, "getBitmapRegion() - bitmap é nulo");
     }
 
     return bitmap;
@@ -994,7 +1069,7 @@ public class ManipulaImagem {
    * 
    * @param bm
    *          Bitmap contendo a imagem
-   *          
+   * 
    * @param filename
    *          Nome completo do arquivo onde a imagem será gravada
    * 
@@ -1020,7 +1095,7 @@ public class ManipulaImagem {
 
     try {
 
-      // cria o outputstream para gravar os dados 
+      // cria o outputstream para gravar os dados
       out = new FileOutputStream(filename);
 
       salvou = bm.compress(Bitmap.CompressFormat.PNG, 100, out);
@@ -1037,21 +1112,21 @@ public class ManipulaImagem {
       Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo: " + filename, e);
 
     } finally {
-      
+
       if (out != null) {
-        
+
         try {
-          
+
           out.close();
-          
+
         } catch (IOException e) {
 
           Log.w(TAG, "gravaBitmapArquivo() - Erro na criação do arquivo", e);
 
         }
-        
+
       }
-      
+
     }
 
     return salvou;
@@ -1452,8 +1527,6 @@ public class ManipulaImagem {
 
   }
 
- 
-
   /**
    * showImageViewInfo(final ImageView image)
    * 
@@ -1554,6 +1627,7 @@ public class ManipulaImagem {
    * 
    */
   void showBitmapOptions(Options options) {
+
     Log.v(TAG, "showBitmapOptions()=options=" + options);
     Log.v(TAG, "showBitmapOptions() - inDensity: " + options.inDensity);
     Log.v(TAG, "showBitmapOptions() - inSampleSize: " + options.inSampleSize);
@@ -1561,6 +1635,7 @@ public class ManipulaImagem {
     Log.v(TAG, "showBitmapOptions() - inTargetDensity: " + options.inTargetDensity);
     Log.v(TAG, "showBitmapOptions() - outHeight: " + options.outHeight);
     Log.v(TAG, "showBitmapOptions() - outWidth: " + options.outWidth);
+
   }
 
   /**
@@ -1857,5 +1932,4 @@ public class ManipulaImagem {
 
   }
 
- 
 }
