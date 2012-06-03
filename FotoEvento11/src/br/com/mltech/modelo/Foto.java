@@ -81,11 +81,15 @@ public class Foto implements Serializable {
    */
   public Foto(String arquivo, Bitmap bitmap) {
 
+    if((arquivo==null) || (bitmap==null)) {
+      return;          
+    }
+    
     this.arquivo = arquivo;
     this.imagem = bitmap;
     this.dados = null;
 
-    if (getImagem() != null) {
+    if (this.getImagem() != null) {
       dimensao = new Dimensao(getImagem().getWidth(), getImagem().getHeight());
     }
 
@@ -206,12 +210,11 @@ public class Foto implements Serializable {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
     if (getImagem() != null) {
-      getImagem().compress(CompressFormat.PNG, 100, bos);
-      this.dados = bos.toByteArray();
-    }
-
-    if (getDados() != null) {
-      Log.d(TAG, "getDados() - nº de bytes: " + getDados().length);
+      boolean b = getImagem().compress(CompressFormat.PNG, 100, bos);
+      if(b) {
+        this.dados = bos.toByteArray();
+        Log.d(TAG, "getDados() - nº de bytes: " + getDados().length);
+      }
     }
 
     return this.dados;

@@ -13,12 +13,20 @@ import android.net.Uri;
 import android.util.Log;
 import br.com.mltech.utils.ManipulaImagem;
 
+/**
+ * FotoBitmap
+ * 
+ * @author maurocl
+ *
+ */
 public class FotoBitmap {
 
   private static final String TAG = "FotoBitmap";
 
+  // nome do arquivo onde está armazenado o bitmap
   private String arquivo;
 
+  // imagem no formato bitmap
   private Bitmap bitmap;
 
   // dados
@@ -28,6 +36,9 @@ public class FotoBitmap {
   private Bitmap.CompressFormat formatoGravacao;
 
   /**
+   * FotoBitmap(String arquivo, Bitmap bitmap)
+   * 
+   * Construtor
    * 
    */
   public FotoBitmap(String arquivo, Bitmap bitmap) {
@@ -37,7 +48,7 @@ public class FotoBitmap {
   }
 
   /**
-   * read()
+   * load()
    * 
    * Lê um bitmap de um arquivo
    * 
@@ -78,9 +89,9 @@ public class FotoBitmap {
   }
 
   /**
-   * gravar()
+   * save()
    * 
-   * Grava uma foto em um arquivo
+   * Grava uma imagem um arquivo
    * 
    * @return true caso a foto seja salva ou false em caso de erro
    * 
@@ -94,9 +105,9 @@ public class FotoBitmap {
     }
 
     if (this.getFormatoGravacao() == Bitmap.CompressFormat.JPEG) {
-      gravou = write(this.getFormatoGravacao(), 75);
+      gravou = save(this.getFormatoGravacao(), 75);
     } else if (this.getFormatoGravacao() == Bitmap.CompressFormat.PNG) {
-      gravou = write(this.getFormatoGravacao(), 100);
+      gravou = save(this.getFormatoGravacao(), 100);
     }
 
     return gravou;
@@ -118,7 +129,7 @@ public class FotoBitmap {
    * @throws IOException
    * 
    */
-  public boolean write(CompressFormat formato, int quality) throws FileNotFoundException, IOException {
+  public boolean save(CompressFormat formato, int quality) throws FileNotFoundException, IOException {
 
     // a foto armazenada em imagem será salva
     if (getBitmap() == null) {
@@ -146,8 +157,10 @@ public class FotoBitmap {
   }
 
   /**
+   * getUri() 
    * 
-   * @return
+   * @return retorna uma URI identificando o bitmap
+   * 
    */
   public Uri getUri() {
 
@@ -186,6 +199,7 @@ public class FotoBitmap {
   // ---------------------------------------------------------------------------------------
 
   /**
+   * getArquivo()
    * 
    * @return
    */
@@ -194,6 +208,7 @@ public class FotoBitmap {
   }
 
   /**
+   * setArquivo(String arquivo)
    * 
    * @param arquivo
    */
@@ -202,6 +217,7 @@ public class FotoBitmap {
   }
 
   /**
+   * getBitmap()
    * 
    * @return
    */
@@ -210,6 +226,7 @@ public class FotoBitmap {
   }
 
   /**
+   * setBitmap(Bitmap bitmap) 
    * 
    * @param bitmap
    */
@@ -218,6 +235,7 @@ public class FotoBitmap {
   }
 
   /**
+   * getDados()
    * 
    * @return
    */
@@ -239,14 +257,17 @@ public class FotoBitmap {
   }
 
   /**
+   * setDados(byte[] dados)
    * 
    * @param dados
+   * 
    */
   public void setDados(byte[] dados) {
     this.dados = dados;
   }
 
   /**
+   * getFormatoGravacao()
    * 
    * @return
    */
@@ -255,7 +276,8 @@ public class FotoBitmap {
   }
 
   /**
-   * 
+   * setFormatoGravacao(Bitmap.CompressFormat formatoGravacao)
+   *  
    * @param formatoGravacao
    */
   public void setFormatoGravacao(Bitmap.CompressFormat formatoGravacao) {

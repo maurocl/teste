@@ -1,8 +1,12 @@
 package br.com.mltech;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,7 +15,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.net.Uri;
@@ -25,10 +31,15 @@ import android.widget.Button;
 import android.widget.Toast;
 import br.com.mltech.modelo.Contratante;
 import br.com.mltech.modelo.Evento;
+import br.com.mltech.modelo.Foto;
+import br.com.mltech.modelo.FotoCabine;
+import br.com.mltech.modelo.FotoPolaroid;
+import br.com.mltech.modelo.Moldura;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
+import br.com.mltech.utils.camera.CameraTools;
 
 /**
  * DummyActivity3
@@ -43,11 +54,45 @@ public class DummyActivity3 extends Activity implements Constantes {
 
   private static final String TAG = "DummyActivity3";
 
+  // indica qual Activity será executada (0 = Tira foto normal; 1 = tira foto
+  // dummy)
+  private static int FLAG = 0;
+
+  private static final int TIRA_FOTO = 200;
+
+  private static final int TIRA_FOTO_POLAROID = 201;
+
+  private static final int TIRA_FOTO_CABINE = 202;
+
+  // ------------------
+  // variáveis da classe
+  // ------------------
+
+  private static File file;
+
+  private static Uri outputFileUri;
+
+  // Lista de todas as fotos tiradas
+  private static List<Foto> listaFotos;
+
+  // Foto
+  private static Foto foto;
+
+  // FotoCabine
+  private static FotoCabine fotoCabine;
+
+  // FotoPolaroid
+  private static FotoPolaroid fotoPolaroid;
+
   // Definição dos atributos da aplicação
   private static Contratante mContratante;
+
   private static Evento mEvento;
+
   private static Participante mParticipante;
+
   private static Participacao mParticipacao;
+
   private SharedPreferences mPreferences;
 
   // Nome do arquivo onde está armazenado a última foto
@@ -73,10 +118,48 @@ public class DummyActivity3 extends Activity implements Constantes {
 
   // Bitmaps contendo as molduras
   private static Bitmap mBitmapMolduraPolaroid;
+
   private static Bitmap mBitmapMolduraCabine;
+
+  // Molduras
+  private static Moldura molduraPolaroid;
+
+  private static Moldura molduraCabine;
 
   // Contador do nº de fotos cabine
   private static int mNumFotosCabine = 0;
+
+  // Contador geral (iniciado em onCreate())
+  public static int contador = 0;
+
+  public static int i = 0;
+
+  // public int j = 0;
+
+  // nº de vezes que o método onCreate() é chamado
+  public static int numCreate = 0;
+
+  // nº de vezes que o método onRestart() é chamado
+  public static int numRestart = 0;
+
+  // número de fotos carregas
+  public static int numFotosCarregadas = 0;
+
+  // nº de fotos efetivamente tiradas
+  public static int numFotosTiradas = 0;
+
+  // nº de fotos tiradas
+  private static int contadorCabine = 0;
+
+  // ---------------------------------------------
+  // área de inicialização de variáveis estáticas
+  // ---------------------------------------------
+  static {
+    // cria uma lista de fotos
+    listaFotos = new ArrayList<Foto>();
+    fotoCabine = new FotoCabine();
+
+  }
 
   /**
    * onCreate(Bundle savedInstanceState)
@@ -104,6 +187,10 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     // incrementa o nº de vezes que a activity foi reiniciada
     mContador++;
+
+    contador++;
+    numCreate++;
+    i++;
 
     Button btn0 = (Button) findViewById(R.id.btn0);
 
@@ -164,20 +251,29 @@ public class DummyActivity3 extends Activity implements Constantes {
     // ----------------------------------------------------------
     // o arquivo contendo a moldura é lido no inicio da activity
     // ----------------------------------------------------------
-    Log.d(TAG, "carregaMolduras() - lendo arquivo contendo moldura formato Polaroid");    
-    mBitmapMolduraPolaroid = leArquivoMoldura(arquivoMolduraPolaroid);    
+    Log.d(TAG, "carregaMolduras() - lendo arquivo contendo moldura formato Polaroid");
+    mBitmapMolduraPolaroid = leArquivoMoldura(arquivoMolduraPolaroid);
     Log.d(TAG, "carregaMolduras() - mBitmapMolduraPolaroid =" + mBitmapMolduraPolaroid);
 
-    Log.d(TAG, "carregaMolduras() - Lendo arquivo contendo moldura formato Cabine");    
-    mBitmapMolduraCabine = leArquivoMoldura(arquivoMolduraCabine);    
+    Log.d(TAG, "carregaMolduras() - Lendo arquivo contendo moldura formato Cabine");
+    mBitmapMolduraCabine = leArquivoMoldura(arquivoMolduraCabine);
     Log.d(TAG, "carregaMolduras() - mBitmapMolduraCabine = " + mBitmapMolduraCabine);
+
+    molduraPolaroid = new Moldura(arquivoMolduraPolaroid, "Moldura Polaroid 1");
+    molduraPolaroid.setImagem(mBitmapMolduraPolaroid);
+
+    molduraCabine = new Moldura(arquivoMolduraCabine, "Moldura Cabine 1");
+    molduraCabine.setImagem(mBitmapMolduraCabine);
 
   }
 
   /**
    * obtemIdentificadorCamera()
    * 
-   * @return
+   * Verifica se existe uma configuração explicita para o nº da câmera frontal
+   * 
+   * @return o nº da câmera frontal ou 0 caso esse parâmetro não esteja
+   *         cadastrado
    * 
    */
   private int obtemIdentificadorCamera() {
@@ -207,6 +303,25 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * Trata o resultado da execução das Activities
    * 
+   * Processa o resultado da execução das Activities
+   * 
+   * É chamado quando a activcity lançada retorna, dando a você o requestCode
+   * com o qual você iniciou, o resultCode retornado e qualquer dado adicional
+   * resultado do processamento da activity. O resultCode será RESULT_CANCELED
+   * se a activity retornar explicitamente esse valor, não retornar nenhum valor
+   * ou haver algum crash dureante a operação.
+   * 
+   * Esse método será chamado imediatamente antes da execução do onResume()
+   * quando sua activity é reinicializada.
+   * 
+   * Called when an activity you launched exits, giving you the requestCode you
+   * started it with, the resultCode it returned, and any additional data from
+   * it. The resultCode will be RESULT_CANCELED if the activity explicitly
+   * returned that, didn't return any result, or crashed during its operation.
+   * 
+   * You will receive this call immediately before onResume() when your activity
+   * is re-starting.
+   * 
    */
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -216,23 +331,89 @@ public class DummyActivity3 extends Activity implements Constantes {
     Log.i(TAG, "onActivityResult(request " + requestCode + ", result=" + resultCode + ", data " + data + ") ...");
     Log.i(TAG, "===============================================================================");
 
-    if (requestCode == ACTIVITY_PARTICIPANTE) {
+    numFotosTiradas++;
 
-      resultActivityParticipante(resultCode, data);
+    switch (requestCode) {
 
-    } else if (requestCode == ACTIVITY_TIRA_FOTO_3) {
+      case ACTIVITY_PARTICIPANTE:
 
-      resultActivityTiraFoto3(resultCode, data);
+        resultActivityParticipante(resultCode, data);
+        break;
 
-    } else if (requestCode == ACTIVITY_CHOOSER) {
+      case ACTIVITY_TIRA_FOTO_3:
 
-      resultActivityChooser(resultCode, data);
+        resultActivityTiraFoto3(resultCode, data);
+        break;
 
-    } else {
+      case ACTIVITY_CHOOSER:
 
-      Log.w(TAG, "onActivityResult() - Erro ... requestCode: " + requestCode + " não pode ser processado");
+        resultActivityChooser(resultCode, data);
+        break;
+
+      case TIRA_FOTO:
+
+        processaActivityResultTiraFoto(resultCode, data);
+        meuMetodo(requestCode);
+        break;
+
+      case TIRA_FOTO_POLAROID:
+
+        processaActivityResultPolaroid(resultCode, data);
+        meuMetodo(requestCode);
+        break;
+
+      case TIRA_FOTO_CABINE:
+
+        processaActivityResultCabine(resultCode, data);
+        meuMetodo(requestCode);
+        break;
+
+      default:
+        Log.w(TAG, "onActivityResult() - Erro ... requestCode: " + requestCode + " não pode ser processado");
+        break;
 
     }
+
+    Log.d(TAG, "onActivityResult() - >>> alterando a orientação da tela (se necessário)");
+    atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
+
+  }
+
+  /**
+   * meuMetodo(int requestCode)
+   * 
+   * @param requestCode
+   */
+  private void meuMetodo(int requestCode) {
+
+    String msg = null;
+
+    switch (requestCode) {
+
+      case TIRA_FOTO:
+        msg = "TIRA_FOTO";
+        break;
+
+      case TIRA_FOTO_POLAROID:
+        msg = "TIRA_FOTO_POLAROID";
+        break;
+
+      case TIRA_FOTO_CABINE:
+        msg = "TIRA_FOTO_CABINE";
+        break;
+
+      default:
+        Log.w(TAG, "meuMetodo() - Erro ... requestCode: " + requestCode + " não pode ser processado");
+        break;
+
+    }
+
+    showAlert(msg);
+
+    String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
+    File fff = new File(meuArquivo);
+
+    // enviaEmail(Uri.fromFile(fff));
 
   }
 
@@ -241,9 +422,9 @@ public class DummyActivity3 extends Activity implements Constantes {
    */
   private void iniciaMaquinaDeEstados() {
 
-    boolean b = iniciaVariaveis();
+    boolean sucesso = iniciaVariaveis();
 
-    if (b == false) {
+    if (!sucesso) {
       Log.w(TAG, "iniciaProcesso() - Não foi possível inicializar as variáveis");
       estadoFinal();
     }
@@ -268,7 +449,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     Log.d(TAG, "iniciaVariaveis() - Número de Câmeras disponíveis no hardware: " + numCameras);
 
     // verifica se a câmera fotogrática está em operação
-    if (isCameraWorking(mCurrentCamera)) {
+    if (CameraTools.isCameraWorking(mCurrentCamera)) {
 
       Log.i(TAG, "iniciaVariaveis() - Camera: [" + mCurrentCamera + "] está em funcionamento...");
 
@@ -325,6 +506,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     // Altera o estado atual
     setEstado(0);
+
     // Inicia a obtenção dos Participantes
     startActivityParticipante();
 
@@ -375,10 +557,13 @@ public class DummyActivity3 extends Activity implements Constantes {
     if (resultCode == RESULT_CANCELED) {
 
       // operação cancelada
+
       Log.d(TAG, "resultCode=RESULT_CANCELED - Participante cancelou sua participação");
+
       // Limpa as variáveis
       mParticipante = null;
       mParticipacao = null;
+
       return;
 
     } else if (resultCode != RESULT_OK) {
@@ -395,17 +580,20 @@ public class DummyActivity3 extends Activity implements Constantes {
       return;
     }
 
+    // exibe a lista de valores retornados
     FileUtils.showBundle(data.getExtras());
 
+    // atualiza o participante
     if (data.getSerializableExtra(PARTICIPANTE) != null) {
       mParticipante = (Participante) data.getSerializableExtra(PARTICIPANTE);
     }
 
+    // atualiza a participacao
     if (data.getSerializableExtra(PARTICIPACAO) != null) {
       mParticipacao = (Participacao) data.getSerializableExtra(PARTICIPACAO);
     }
 
-    // Exibe as informações sobre o participante e sua participaçÃO
+    // Exibe as informações sobre o participante e sua participação
     Log.d(TAG, "resultActivityParticipante() - mParticipante=" + mParticipante);
     Log.d(TAG, "resultActivityParticipante() - mParticipacao=" + mParticipacao);
 
@@ -413,8 +601,63 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     // Atualiza o estado da máquina de estados
     setEstado(1);
+
     // Processa o próximo estado
-    obtemFoto();
+    tirarFotos();
+
+  }
+
+  /**
+   * tirarFotos()
+   * 
+   * Tira as fotos de acordo com a solicitação do participante
+   * 
+   */
+  void tirarFotos() {
+
+    if (mParticipacao == null) {
+      Log.d(TAG, "tirarFotos() - não é possível obter as informações do participante");
+      estadoFinal();
+    }
+
+    if (mEvento == null) {
+      Log.d(TAG, "tirarFotos() - não é possível obter as informações sobre o evento");
+      estadoFinal();
+    }
+
+    // obtém o tipo da foto (se o formato da foto é Polaroid ou Cabine)
+    int tipoFoto = mParticipacao.getTipoFoto();
+
+    Log.i(TAG, "tirarFotos() - tipoFoto: " + tipoFoto);
+
+    if (tipoFoto == TIPO_FOTO_POLAROID) {
+
+      // TODO alterar currentTimeMillis por TimeStamp
+
+      // arquivoFotoComMoldura = formataFotoPolaroid(mBitmapMolduraPolaroid);
+      String arquivo = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/"
+          + System.currentTimeMillis() + ".png";
+
+      Log.i(TAG, "tirarFotos() - tipoFoto: POLAROID");
+      executaActivityTiraFotoPolaroid(arquivo);
+
+    } else if (tipoFoto == TIPO_FOTO_CABINE) {
+
+      Log.i(TAG, "tirarFotos() - tipoFoto: CABINE");
+      // arquivoFotoComMoldura = formataFotoCabine(pathCabine);
+      // arquivoFotoComMoldura = formataFotoCabine2(mBitmapMolduraCabine);
+      executaActivityTiraFotoCabine();
+
+    } else {
+      Log.w(TAG, "tirarFotos() - tipo de foto: " + tipoFoto + " não suportado.");
+      estadoFinal();
+
+    }
+
+    //
+    // Processa o próximo estado
+    //
+    // obtemFoto();
 
   }
 
@@ -446,35 +689,24 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     Log.d(TAG, "obtemFoto() - mCurrentCamera: " + mCurrentCamera);
 
-    // Obtém informações sobre a câmera (atualmente configurada)
-    // c = getCameraInstance(mCurrentCamera);
-
-    // if(c==null) {
-    // não foi possível conectar-se a câmera
-    // Log.w(TAG,"Não foi possível conectar-se a câmera: "+mCurrentCamera);
-    // estadoFinal();
-    // }
-
     // testa para saber se câmera selecionada está disponível
-    if (isCameraWorking(mCurrentCamera)) {
+    if (CameraTools.isCameraWorking(mCurrentCamera)) {
+
       Log.i(TAG, "obtemFoto() - instância da Camera obtida com sucesso");
+
     } else {
+
       Log.w(TAG, "obtemFoto() - Erro da obtenção da instância da Camera " + mCurrentCamera + ". Processo abortado !");
+
+      Toast.makeText(this, "Câmera: " + mCurrentCamera + " não está disponível para uso pela aplicação", Toast.LENGTH_LONG).show();
+
       estadoFinal();
+
     }
 
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-    // cria o arquivo com o nome da foto
-    File file = new File(PATH_FOTOS + "/" + timeStamp + ".png");
+    File file = obtemNomeArquivo();
 
     Log.i(TAG, "obtemFoto() - f.getAbsolutePath()=" + file.getAbsolutePath());
-
-    if (file.exists()) {
-      Log.w(TAG, "obtemFoto() - ARQUIVO EXISTE !!!");
-    } else {
-      Log.w(TAG, "obtemFoto() - ARQUIVO não EXISTE !!!");
-    }
 
     // atualiza o nome do arquivo onde a foto será armazenada
     mFilename = file.getAbsolutePath();
@@ -496,6 +728,46 @@ public class DummyActivity3 extends Activity implements Constantes {
       Log.i(TAG, "obtemFoto() ===> xUri=" + xUri.getPath() + ", xUri=" + xUri);
     }
 
+    Intent intentTiraFoto = criaIntentFoto();
+
+    // --------------------------------------------------------------
+    // Inicia a Activity
+    // cria e inicia a Intent ACTION_IMAGE_CAPTURE
+    // --------------------------------------------------------------
+    startActivityForResult(intentTiraFoto, ACTIVITY_TIRA_FOTO_3);
+
+    // --------------------------------------------------------------
+
+  }
+
+  /**
+   * obtemNomeArquivo()
+   * 
+   * Obtem o nome do arquivo que será usado para armazenar a foto
+   * 
+   * @return uma referência ao nome do arquivo criado
+   * 
+   */
+  private File obtemNomeArquivo() {
+
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+    // cria o arquivo com o nome da foto
+    File file = new File(PATH_FOTOS + "/" + timeStamp + ".png");
+
+    return file;
+
+  }
+
+  /**
+   * criaIntentFoto()
+   * 
+   * Cria a intent que será usada para tirar uma foto
+   * 
+   * @return
+   */
+  private Intent criaIntentFoto() {
+
     // --------------------------------------------------------------
 
     // --------------------------------------------------------------
@@ -507,14 +779,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     // Passa como parâmetro a Uri onde a foto deve ser gravada
     intentTiraFoto.putExtra(MediaStore.EXTRA_OUTPUT, xUri);
     // --------------------------------------------------------------
-
-    // --------------------------------------------------------------
-    // Inicia a Activity
-    // cria e inicia a Intent ACTION_IMAGE_CAPTURE
-    // --------------------------------------------------------------
-    startActivityForResult(intentTiraFoto, ACTIVITY_TIRA_FOTO_3);
-
-    // --------------------------------------------------------------
+    return intentTiraFoto;
 
   }
 
@@ -714,33 +979,6 @@ public class DummyActivity3 extends Activity implements Constantes {
       mFilename = null;
       estadoFinal();
 
-    }
-
-  }
-
-  /**
-   * atualizaModoTela(int novaOrientacao)
-   * 
-   * Atualiza a orientação da tela.
-   * 
-   * @param novaOrientacao
-   */
-  private void atualizaModoTela(int novaOrientacao) {
-
-    int orientacaoAtual = this.getResources().getConfiguration().orientation;
-
-    Log.d(TAG, "atualizaModoTela() - Orientação atual: " + orientacaoAtual);
-
-    if (novaOrientacao != orientacaoAtual) {
-      this.setRequestedOrientation(novaOrientacao);
-    }
-
-    if (orientacaoAtual == Configuration.ORIENTATION_LANDSCAPE) {
-      Log.d(TAG, "atualizaModoTela() - Orientação da tela em LANDSCAPE");
-    }
-
-    else if (orientacaoAtual == Configuration.ORIENTATION_PORTRAIT) {
-      Log.d(TAG, "atualizaModoTela() - Orientação da tela em PORTRAIT");
     }
 
   }
@@ -1603,6 +1841,7 @@ public class DummyActivity3 extends Activity implements Constantes {
    *          novo estado (próximo estado)
    */
   private void setEstado(int e) {
+
     Log.i(TAG, "----------------------------------------------------------");
     Log.i(TAG, "Transição do estado: " + mEstado + " para o estado: " + e);
     Log.i(TAG, "----------------------------------------------------------");
@@ -1618,9 +1857,13 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    */
   private int getEstado() {
+
     return mEstado;
   }
 
+  /**
+   * onRestart()
+   */
   @Override
   protected void onRestart() {
 
@@ -1630,9 +1873,20 @@ public class DummyActivity3 extends Activity implements Constantes {
     Log.d(TAG, "*** onRestart() - A aplicação foi restartada ... ***");
     Log.d(TAG, "****************************************************");
     Log.d(TAG, "*");
+
+    contador++;
+    i++;
+
+    numRestart++;
+    showXXX();
+
     showVariables();
 
   }
+
+  /**
+   * onStart()
+   */
 
   @Override
   protected void onStart() {
@@ -1640,7 +1894,12 @@ public class DummyActivity3 extends Activity implements Constantes {
     super.onStart();
     Log.d(TAG, "*** onStart() ***");
     showVariables();
+
   }
+
+  /**
+   * onResume()
+   */
 
   @Override
   protected void onResume() {
@@ -1650,6 +1909,9 @@ public class DummyActivity3 extends Activity implements Constantes {
     showVariables();
   }
 
+  /**
+   * onPause()
+   */
   @Override
   protected void onPause() {
 
@@ -1658,6 +1920,9 @@ public class DummyActivity3 extends Activity implements Constantes {
     showVariables();
   }
 
+  /**
+   * onStop()
+   */
   @Override
   protected void onStop() {
 
@@ -1672,6 +1937,10 @@ public class DummyActivity3 extends Activity implements Constantes {
     showVariables();
   }
 
+  /**
+   * onSaveInstanceState(Bundle outState)
+   */
+
   @Override
   protected void onSaveInstanceState(Bundle outState) {
 
@@ -1681,9 +1950,17 @@ public class DummyActivity3 extends Activity implements Constantes {
     outState.putSerializable(PARTICIPANTE, mParticipante);
     outState.putSerializable(PARTICIPACAO, mParticipacao);
 
+    Log.i(TAG, "*** onSaveInstanceState()");
+
+    showXXX();
+
     FileUtils.showBundle(outState);
 
   }
+
+  /**
+   * onRestoreInstanceState(Bundle savedInstanceState)
+   */
 
   @Override
   protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -1708,35 +1985,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     FileUtils.showBundle(savedInstanceState);
 
-  }
-
-  /**
-   * isExternalMediaMounted()
-   * 
-   * Verifica se há um dispositivo de armazenamento externo disponível para
-   * gravação.
-   * 
-   * @return true se uma media de armazenamento externo estiver montada ou
-   *         false, caso contrário.
-   * 
-   */
-  public boolean isExternalMediaMounted() {
-
-    boolean isMounted;
-
-    // Obtém o estado corrente do principal dispositivo de armazenamento
-    // externo
-    isMounted = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
-
-    if (isMounted) {
-      // dispositivo está montado
-      Log.d(TAG, "isExternalMediaMounted() - media externa está montada.");
-    } else {
-      // dispositivo não não está montado
-      Log.w(TAG, "isExternalMediaMounted() - media externa não está montada.");
-    }
-
-    return isMounted;
+    showXXX();
 
   }
 
@@ -1800,6 +2049,9 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     Log.v(TAG, "  mEstado=" + mEstado + ", mContador=" + mContador);
     Log.v(TAG, "  mCurrentCamera=" + mCurrentCamera);
+
+    showXXX();
+
     Log.v(TAG, "=================================");
 
   }
@@ -1837,49 +2089,6 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     return c; // returns null se a câmera estiver indisponível
-
-  }
-
-  /**
-   * isCameraWorking(int cameraID)
-   * 
-   * Verifica se a câmera identificada por cameraID está em funcionamento. Para
-   * fazer essa verificação tentamos abrir a câmera. Caso ela consiga ser aberta
-   * indica que a câmera está disponível e nesse caso simplesmente liberamos a
-   * câmera para uso. Se houver erro indica que a câmera não está disponível
-   * para uso pela aplicação.
-   * 
-   * @param cameraID
-   *          Identificador da câmera do dispositivo
-   * 
-   * @return true se for possível obter ima instância da classe Camera ou false,
-   *         caso contrário.
-   */
-  boolean isCameraWorking(int cameraID) {
-
-    Camera c = getCameraInstance(cameraID);
-
-    if (c != null) {
-      // foi possível obter uma instância da câmera
-      // então, é necessário liberar a câmera para que possa ser usada
-      // pela
-      // aplicação
-      c.release();
-      c = null;
-
-      Log.i(TAG, "isCameraWorking() - câmera: " + cameraID + " liberada com sucesso");
-
-      return true;
-
-    } else {
-
-      Log.i(TAG, "isCameraWorking() - Câmera: " + cameraID + " não está disponível para uso pela aplicação");
-
-      Toast.makeText(this, "Câmera: " + cameraID + " não está disponível para uso pela aplicação", Toast.LENGTH_LONG).show();
-
-      return false;
-
-    }
 
   }
 
@@ -1944,6 +2153,816 @@ public class DummyActivity3 extends Activity implements Constantes {
     preferences = null;
 
     return sValue;
+
+  }
+
+  /**
+   * showXXX()
+   * 
+   * Exibe o valor de algumas variáveis selecionadas
+   * 
+   */
+  private void showXXX() {
+
+    // TODO alterar o nome para showClassVariables
+
+    Log.v(TAG, "    showXXX() - file: " + file);
+    Log.v(TAG, "    showXXX() - outputFileUri: " + outputFileUri);
+    Log.v(TAG, "    showXXX() - Contador: " + contador + ", i=" + i);
+    Log.v(TAG, "    showXXX() - numCreate: " + numCreate + ", numRestart: " + numRestart);
+
+  }
+
+  /**
+   * processaBotaoConfirma()
+   * 
+   * Processa a ação disparada pelo pressionamento do botão Confirma
+   * 
+   */
+  private void processaBotaoConfirma() {
+
+    Log.d(TAG, "");
+    Log.d(TAG, "============================");
+    Log.d(TAG, "===> processaBotaoConfirma()");
+    Log.d(TAG, "============================");
+
+    int opcao = 3;
+
+    // nome do arquivo onde a foto será armazenada
+    String arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
+    ;
+
+    switch (opcao) {
+      case 0:
+        // tira uma foto
+        executaActivityTiraFoto(arquivo);
+        break;
+      case 1:
+        // simula uma foto
+        executaActivityTiraFotoDummy(arquivo);
+        break;
+      case 2:
+        // processa 3 fotos
+        processaFotoCabine();
+        break;
+      case 3:
+        executaActivityTiraFotoPolaroid(arquivo);
+        break;
+    }
+
+  }
+
+  /**
+   * processaBotaoLista
+   */
+  private void processaBotaoLista() {
+
+    Log.i(TAG, "");
+    Log.i(TAG, "----------------------");
+    Log.i(TAG, "- processaBotaoLista()");
+    Log.i(TAG, "----------------------");
+
+    if (listaFotos == null) {
+      Log.w(TAG, "processaBotaoLista() - lista está vazia !");
+      return;
+    }
+
+    Log.d(TAG, "processaBotaoLista() - nº de fotos: " + listaFotos.size());
+
+    for (Foto foto : listaFotos) {
+      if (foto != null) {
+        Log.d(TAG, foto.toString());
+      }
+    }
+
+  }
+
+  /**
+   * executaActivityTiraFoto()
+   * 
+   * Executa a Activity que captura uma foto
+   * 
+   * @param arquivo
+   *          nome do arquivo onde a foto será armazenada
+   * 
+   */
+  private void executaActivityTiraFoto(String arquivo) {
+
+    file = new File(arquivo);
+
+    outputFileUri = Uri.fromFile(file);
+
+    Log.d(TAG, "executaActivityTiraFoto() - arquivo=" + file.getAbsolutePath());
+
+    // cria um intent com a ação MediaStore.ACTION_IMAGE_CAPTURE
+    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+    // especifica o parâmetro com a URI onde a foto deve ser armazenada
+    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+    // inicia a Activity com requestCode TIRA_FOTO
+    startActivityForResult(intent, TIRA_FOTO);
+
+  }
+
+  /**
+   * executaActivityTiraFotoDummy(String arquivo)
+   * 
+   * Executa a Activity que tira uma foto de "mentirinha", isto é, apenas
+   * retorna uma imagem pre-armazenada como se fosse uma foto
+   * 
+   * @param arquivo
+   *          nome do arquivo onde a foto será armazenada
+   */
+  private void executaActivityTiraFotoDummy(String arquivo) {
+
+    file = new File(arquivo);
+
+    Log.d(TAG, "executaActivityTiraFotoDummy() - arquivo=" + file.getAbsolutePath());
+
+    outputFileUri = Uri.fromFile(file);
+
+    Log.i(TAG, "executaActivityTiraFotoDummy - outputFileUri=" + outputFileUri);
+
+    // cria um intent ActivityCameraSimplesDummy
+    Intent intent = new Intent(this, ActivityCameraSimplesDummy.class);
+
+    intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
+
+    // inicia a Activity com requestCode TIRA_FOTO
+    startActivityForResult(intent, TIRA_FOTO);
+
+  }
+
+  /**
+   * executaActivityTiraFotoPolaroid(String arquivo)
+   * 
+   * @param arquivo
+   *          nome do arquivo onde a foto original será armazenada
+   * 
+   */
+  private void executaActivityTiraFotoPolaroid(String arquivo) {
+
+    file = new File(arquivo);
+
+    Log.d(TAG, "executaActivityTiraFotoPolaroid() - arquivo=" + file.getAbsolutePath());
+
+    outputFileUri = Uri.fromFile(file);
+
+    Intent intent = null;
+
+    // ------------------------------------------
+
+    if (FLAG == 0) {
+
+      // simulação de "tirar uma foto"
+      intent = new Intent(this, ActivityCameraSimplesDummy.class);
+
+      intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
+
+    } else if (FLAG == 1) {
+
+      // tira uma foto verdadeira
+      intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+      intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+    }
+
+    startActivityForResult(intent, TIRA_FOTO_POLAROID);
+
+  }
+
+  /**
+   * executaActivityTiraFotoCabine()
+   * 
+   * 
+   * 
+   */
+  private void executaActivityTiraFotoCabine() {
+
+    //
+    // cria um arquivo para armazenar a foto
+    //
+
+    // String arquivo = Environment.getExternalStorageDirectory() + "/" +
+    // System.currentTimeMillis() + ".jpg";
+
+    // String arquivo =
+    // Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+    // + "/" + System.currentTimeMillis() + ".jpg";
+
+    // TODO melhorar a construçaõ abaixo
+    String arquivo = (FileUtils.obtemNomeArquivo(".png")).getAbsolutePath();
+
+    file = new File(arquivo);
+
+    Log.d(TAG, "==> executaActivityTiraFotoCabine(" + contadorCabine + ") - arquivo=" + file.getAbsolutePath());
+
+    // cria uma instância da classe Foto e armazena o caminho onde a foto tirada
+    // deve ser armazenada
+    Foto foto = new Foto(file.getAbsolutePath());
+
+    // relaciona a "Foto criada" a primeira foto cabine (dada pelo indice
+    // contadorCabine)
+    fotoCabine.setFoto(contadorCabine, foto);
+
+    // especifica a Uri onde a foto deve ser armazenada
+    outputFileUri = Uri.fromFile(file);
+
+    Intent intent = null;
+
+    if (FLAG == 0) {
+
+      // simulação de "tirar uma foto"
+      intent = new Intent(this, ActivityCameraSimplesDummy.class);
+
+      intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
+
+    } else if (FLAG == 1) {
+
+      // tira uma foto verdadeira
+      intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+      intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+    }
+
+    // inicia a nova Activity relacionada na Intent
+    startActivityForResult(intent, TIRA_FOTO_CABINE);
+
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //
+  // ---------------------------------------------------------------------------
+
+  /**
+   * processaActivityResultTiraFoto(int resultCode, Intent data)
+   * 
+   * @param resultCode
+   *          resultado da execução da activity
+   * 
+   * @param data
+   *          dados retornados da execução da activity
+   * 
+   */
+  private void processaActivityResultTiraFoto(int resultCode, Intent data) {
+
+    if (data == null) {
+      Log.w(TAG, "processaActivityResultTiraFoto() - data (Intent) é vazia");
+      return;
+    }
+
+    if (resultCode == RESULT_CANCELED) {
+
+      // operação cancelada
+      Log.w(TAG, "processaActivityResultTiraFoto() - Operação cancelada pelo usuário");
+      return;
+
+    }
+
+    else if (resultCode == RESULT_OK) {
+
+      Log.d(TAG, "processaActivityResultTiraFoto() - data.getData()= " + data.getData());
+
+      Log.d(TAG, "processaActivityResultTiraFoto() - extra: " + data.getStringExtra("extra1"));
+
+      Log.d(TAG, "processaActivityResultTiraFoto() - outputFileUri: " + data.getStringExtra("outputFileUri"));
+
+      file = new File(data.getStringExtra("outputFileUri"));
+
+      outputFileUri = Uri.fromFile(file);
+
+      if (file != null) {
+
+        // cria um Bitmap a partir do arquivo lido
+        Bitmap bitmapFoto = ManipulaImagem.criaBitmap(outputFileUri);
+
+        // cria uma Foto
+        foto = new Foto(file.getAbsolutePath(), bitmapFoto);
+
+        if (!foto.ler()) {
+          Log.w(TAG, "processaActivityResultTiraFoto() - Erro na leitura ...");
+        }
+
+        Log.i(TAG, "processaActivityResultTiraFoto() - foto f=" + foto);
+
+      }
+
+      // atualiza a imagem na activity
+      // image.setImageBitmap(foto.getImagem());
+
+      // exibe a imagem
+      carregaImagem();
+
+    } else if (resultCode == RESULT_CANCELED) {
+
+      // operação cancelada
+      Log.w(TAG, "processaActivityResultTiraFoto() - Operação cancelada pelo usuário");
+
+    }
+
+  }
+
+  /**
+   * processaActivityResultPolaroid(int resultCode, Intent data)
+   * 
+   * Processa a foto retornada como uma foto formato Polaroid
+   * 
+   * @param resultCode
+   * @param data
+   * 
+   *          Use a variável de classe: file
+   * 
+   */
+  private String processaActivityResultPolaroid(int resultCode, Intent data) {
+
+    if (data == null) {
+      Log.w(TAG, "processaActivityResultPolaroid - data (Intent) é vazia");
+    }
+
+    if (resultCode == RESULT_CANCELED) {
+
+      // operação cancelada
+      Log.w(TAG, "processaActivityResultPolaroid() - Operação cancelada pelo usuário");
+      estadoFinal();
+
+    } else if (resultCode == RESULT_OK) {
+
+      if (data != null) {
+
+        Log.d(TAG, "processaActivityResultPolaroid() - data.getData()= " + data.getData());
+
+        Log.d(TAG, "processaActivityResultPolaroid() - extra: " + data.getStringExtra("extra1"));
+
+        Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + data.getStringExtra("outputFileUri"));
+
+        // nome do arquivo onde o bitmap está armazenado
+        file = new File(data.getStringExtra("outputFileUri"));
+
+      } else {
+
+        file = null;
+
+      }
+
+      // cria uma URI com o nome do arquivo
+      outputFileUri = Uri.fromFile(file);
+
+      // foto = obtemFotoCamera(outputFileUri);
+
+      // exibe a imagem
+      carregaImagem();
+
+      Bitmap fp = formatarPolaroid(outputFileUri);
+
+      if (fp != null) {
+
+        boolean b = ManipulaImagem.gravaBitmapArquivo(fp, "fotoPolaroid.jpg");
+
+        if (!b) {
+          // foto não foi gravada
+          return null;
+        }
+
+      }
+
+      Log.w(TAG, "processaActivityResultPolaroid - FIM");
+
+    }
+
+    return null;
+
+  }
+
+  /**
+   * obtemFotoCamera(Uri uri)
+   * 
+   * @param uri
+   * @return
+   */
+  public Foto obtemFotoCamera(Uri uri) {
+
+    if (uri == null) {
+      return null;
+    }
+
+    File file = new File(uri.getPath());
+
+    //
+    // cria um objeto Foto
+    //
+    Foto fotoX = new Foto(file.getAbsolutePath());
+
+    // cria um bitmap a partir de uma Uri
+    Bitmap bitmap = ManipulaImagem.criaBitmap(uri);
+
+    // armazena o bitmap
+    fotoX.setImagem(bitmap);
+
+    // nesse ponto a foto está completa
+
+    // aqui temos um objeto da classe Foto
+    Log.i(TAG, "obtemFotoCamera() - fotoX: " + fotoX);
+
+    return fotoX;
+
+  }
+
+  /**
+   * processaActivityResultCabine(int resultCode, Intent data)
+   * 
+   * Processa o resultado da execução da Activity responsável por obter uma
+   * foto.
+   * 
+   * @param resultCode
+   *          resultado da execução da activity
+   * 
+   * @param data
+   *          dados retornados da execução da activity
+   * 
+   */
+  private FotoCabine processaActivityResultCabine(int resultCode, Intent data) {
+
+    if (resultCode == RESULT_OK) {
+      // activity executada com sucesso
+
+      if (data != null) {
+
+        // Log.d(TAG, "processaActivityResultCabine() - data não é nula");
+
+        // Bundle bundle = data.getExtras();
+
+        // Set<String> xx = bundle.keySet();
+
+        // exibe a lista do nome das chaves
+        // Log.d(TAG, xx.toString());
+
+      }
+
+      Log.i(TAG, "processaActivityResultCabine() - processando o recebimento da foto - contadorCabine=" + contadorCabine);
+
+      // incrementa o contador de fotos para compor uma foto no formato cabine
+      contadorCabine++;
+
+      if (contadorCabine < 3) {
+
+        // obtem uma foto foto
+        executaActivityTiraFotoCabine();
+
+      } else {
+
+        // três foto já foram obtidas (tiradas)
+        fimExecucaoActivityTiraFotoCabine();
+
+      }
+
+    } else if (resultCode == RESULT_CANCELED) {
+
+      // operação cancelada
+      Log.w(TAG, "processaActivityResultCabine() - Operação cancelada pelo usuário na foto: " + contadorCabine);
+      // TODO aqui deveremos "cancelar" a fotoCabine fazendo-a null (entre
+      // outras coisas)
+
+    } else {
+      Log.w(TAG, "processaActivityResultCabine() - Operação não suportada pelo usuário");
+    }
+
+    return null;
+
+  }
+
+  /**
+   * fimExecucaoActivityTiraFotoCabine()
+   * 
+   * Após tirar as três fotos é necessário: - converter as foto para o formato
+   * 3x4 - montar a foto formato cabine juntando as fotos 3x4 e a moldura
+   * 
+   * fotoCabine.getFoto[0] --> Foto fotoCabine.getFoto[1] --> Foto
+   * fotoCabine.getFoto[2] --> Foto
+   * 
+   */
+  private void fimExecucaoActivityTiraFotoCabine() {
+
+    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine()");
+
+    if (fotoCabine == null) {
+      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - fotoCabine é nula");
+      return;
+    }
+
+    // exibe infomações sobre a foto formato cabine
+    showFotoCabine();
+
+    //
+    Log.d(TAG, fotoCabine.toString());
+
+    // nesse ponto todas as foto já possuem seu bitmap
+
+    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - agora é montar a foto cabine ...");
+
+    //
+    try {
+
+      montaFotoCabine();
+
+    } catch (FileNotFoundException e) {
+
+      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - FileNotFound exception", e);
+
+    } catch (IOException e) {
+
+      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - IOException", e);
+
+    }
+
+  }
+
+  /**
+   * showFotoCabine()
+   */
+  public void showFotoCabine() {
+
+    // contador local de fotos
+    int i = 0;
+
+    if (fotoCabine == null) {
+      Log.w(TAG, "showFotoCabine() - fotoCabine é nula");
+      return;
+    }
+
+    //
+    // percorre as fotos
+    //
+    for (Foto foto : fotoCabine.getFotos()) {
+
+      // exibe informações sobre a foto
+      Log.i(TAG, "showFotoCabine() - foto[" + i + "] = " + foto.toString());
+
+      // decodifica o bitmap referente ao arquivo com a foto
+      Bitmap bm = BitmapFactory.decodeFile(foto.getArquivo());
+
+      if (bm == null) {
+        Log.d(TAG, "showFotoCabine() - não foi possível decodificar a foto a partir do arquivo " + foto.getArquivo()
+            + " - bitmap nulo !!!");
+      }
+
+      // armazena o bitmap (imagem) na foto
+      foto.setImagem(bm);
+
+      i++;
+
+    }
+
+  }
+
+  /**
+   * montaFotoCabine()
+   * 
+   * cria uma foto com moldura cabine a partir de três fotos 3x4 e uma moldura
+   * 
+   * @return uma instância da classe Foto
+   * 
+   * @throws IOException
+   * 
+   * @throws FileNotFoundException
+   * 
+   */
+  public Foto montaFotoCabine() throws FileNotFoundException, IOException {
+
+    if (fotoCabine == null) {
+      // foto não existe
+      Log.w(TAG, "montaFotoCabine() - fotoCabine está vazia");
+      return null;
+    }
+
+    // cria um array contendo referências a três instâncias de Foto
+    Foto[] fotos3x4 = new Foto[3];
+
+    // preenche o array com as fotos armazenadas na fotoCabine
+    Foto[] fotos = fotoCabine.getFotos();
+
+    int i = 0;
+
+    // processa cada uma das fotos e faz o redimensionamento para o tamanho 3x4
+    for (Foto foto : fotos) {
+
+      // transforma cada foto em 3x4
+      Log.i(TAG, "montaFotoCabine() - foto[" + i + "] = " + foto.toString());
+
+      // obtém o nome de um arquivo
+      File file1 = FileUtils.obtemNomeArquivo(".png");
+
+      if (file1 != null) {
+        // exibe o caminho do arquivo
+        Log.d(TAG, "  montaFotoCabine(" + i + ") - " + file1.getAbsolutePath());
+      } else {
+        Log.w(TAG, "  montaFotoCabine() - file1 está vazio");
+      }
+
+      // cria uma foto com o arquivo criado
+      fotos3x4[i] = new Foto(file1.getAbsolutePath());
+
+      // gera um bitmap com a imagem redimensionada em 3x4
+      Bitmap imagem1 = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 113, 151);
+
+      // atualiza a foto
+      fotos3x4[i].setImagem(imagem1);
+
+      // grava o a foto
+      boolean gravou = fotos3x4[i].gravar();
+
+      if (gravou) {
+        Log.d(TAG, "  montaFotoCabine() - arquivo " + fotos3x4[i].getArquivo() + " gravado com sucesso");
+      } else {
+        Log.w(TAG, "  montaFotoCabine() - falha na gravação do arquivo: " + fotos3x4[i].getArquivo());
+      }
+
+      i++;
+
+    }
+
+    // onde armazenar essas fotos ???
+
+    String arquivoMoldura = PATH_MOLDURAS + "cabine_132_568_red.png";
+
+    Log.i(TAG, "arquivoMoldura = " + arquivoMoldura);
+
+    // obtem a moldura da Foto Cabine
+    Moldura moldura = fotoCabine.getMoldura();
+
+    if (moldura == null) {
+      Log.w(TAG, "montaFotoCabine() - moldura nula");
+      moldura = new Moldura(arquivoMoldura);
+
+    }
+
+    // atualiza o nome do arquivo
+    moldura.setArquivo(arquivoMoldura);
+
+    // lê o arquivo contendo a moldura
+    moldura.leArquivoMoldura(arquivoMoldura);
+
+    // obtem a imagem (bitmap) da moldura
+    Bitmap bmMoldura = moldura.getImagem();
+
+    // Sobrepõe a moldura as três foto 3x4
+
+    // array contendo as três fotos
+    Bitmap[] bitmapFotos = new Bitmap[3];
+
+    for (int j = 0; j < 3; j++) {
+
+      bitmapFotos[j] = fotos3x4[j].getImagem();
+      Log.d(TAG, "montaFotoCabine() - j=" + j);
+
+    }
+
+    // gera um arquivo com as três foto molduradas
+    String nomeDoArquivo = ManipulaImagem.processaFotoFormatoCabine2(bitmapFotos[0], bitmapFotos[1], bitmapFotos[2], bmMoldura);
+
+    // cria a foto final
+    Foto fotoFinal = new Foto(nomeDoArquivo);
+    fotoFinal.ler();
+
+    // atualiza a imagem na activity
+    // image.setImageBitmap(fotoFinal.getImagem());
+
+    Log.i(TAG, "montaFotoCabine() - fotoFinal: " + fotoFinal.toString());
+
+    return foto;
+
+  }
+
+  /**
+   * carregaImagem()
+   * 
+   * Esse Carrega uma imagem a partir de um arquivo
+   * 
+   * Decodifica a imagem armazenada no arquivo e tenta criar um bitmap que será
+   * redimencionado e exibido.
+   * 
+   * Cria-se uma foto e acrescenta-a a lista de fotos tiradas.
+   * 
+   */
+  private void carregaImagem() {
+
+    // TODO avaliar a necessidade desse método
+
+    Log.d(TAG, "carregaImagem()");
+
+    /*
+     * if (file == null) { // Log.w(TAG,
+     * "carregaImagem() ==> o arquivo contendo a imagem é nulo"); return; }
+     */
+
+    // exibe o bitmap
+    // image.setImageBitmap(foto.getImagem());
+
+    // atualiza o nº de fotos carregadas
+    numFotosCarregadas++;
+
+    //
+    // Aadiciona a nova foto a lista de fotos
+    //
+    listaFotos.add(foto);
+
+    Log.i(TAG, " ");
+    Log.i(TAG, "carregaImagem() ===> numFotosTiradas: " + numFotosTiradas + ", numFotosCarregadas: " + numFotosCarregadas);
+    Log.i(TAG, " ");
+
+  }
+
+  /**
+   * atualizaModoTela(int novaOrientacao)
+   * 
+   * Atualiza a orientação da tela.
+   * 
+   * @param novaOrientacao
+   */
+  private void atualizaModoTela(int novaOrientacao) {
+
+    int orientacaoAtual = this.getResources().getConfiguration().orientation;
+
+    Log.d(TAG, "atualizaModoTela() - Orientação atual: " + orientacaoAtual + " - " + getScreenOrientation(orientacaoAtual));
+
+    if (novaOrientacao != orientacaoAtual) {
+      this.setRequestedOrientation(novaOrientacao);
+      Log.d(TAG, "atualizaModoTela() - nova orientação: " + novaOrientacao + " - " + getScreenOrientation(novaOrientacao));
+    }
+
+  }
+
+  /**
+   * getScreenOrientation(int orientacao)
+   * 
+   * Retorna uma string com representando a orientação da tela: Landscape ou
+   * Portrait
+   * 
+   * @param orientacao
+   *          Configuration.ORIENTATION_LANDSCAPE ou
+   *          Configuration.ORIENTATION_PORTRAIT
+   * 
+   * @return uma string
+   */
+  private static String getScreenOrientation(int orientacao) {
+
+    String s = null;
+
+    if (orientacao == Configuration.ORIENTATION_LANDSCAPE) {
+      s = "Landscape";
+    } else if (orientacao == Configuration.ORIENTATION_PORTRAIT) {
+      s = "Portrait";
+    } else {
+      s = "Não suportado";
+    }
+
+    return s;
+
+  }
+
+  /**
+   * formatarPolaroid(Uri uriFotoOriginal)
+   * 
+   * Recebe o endereço de uma foto redimensiona a foto insere a moldura e
+   * transforma a foto no tamanho 9x11
+   * 
+   * @return um bitmap
+   */
+  public Bitmap formatarPolaroid(Uri uriFotoOriginal) {
+
+    // Cria um bitmap a partir da Uri da foto
+    Bitmap bmFotoOriginal = ManipulaImagem.criaBitmap(uriFotoOriginal);
+
+    // redimensiona a foto original para 9x12 para manter a proporção 3:4
+    Bitmap bmFoto9x12 = ManipulaImagem.getScaledBitmap2(bmFotoOriginal, 340, 454);
+
+    // Define o nome da foto redimensionada
+    String nomeArquivo = PATH_FOTOS + FileUtils.getFilename(uriFotoOriginal) + "_9x12.png";
+
+    boolean gravou = ManipulaImagem.gravaBitmapArquivo(bmFoto9x12, nomeArquivo);
+
+    if (!gravou) {
+      Log.d(TAG, "formatarPolaroid() - foto não pode ser gravada");
+      return null;
+    }
+
+    // redimensiona a foto 9x12 para 8x8, isto é, copia uma "janela" 8x8 da foto
+    Options options = new Options();
+
+    Rect rect = new Rect(0, 0, 302, 302);
+
+    // Obtem um bitmap com a foto redimensionada para 8x8
+    Bitmap bmFoto8x8 = ManipulaImagem.getBitmapRegion(nomeArquivo, rect, options);
+
+    nomeArquivo = PATH_FOTOS + FileUtils.getFilename(uriFotoOriginal) + "_8x8.png";
+
+    Bitmap bmFotoComMoldura = ManipulaImagem.overlay4(bmFoto8x8, mBitmapMolduraPolaroid);
+
+    // o nome completo do arquivo onde a foto com moldura foi armazenada
+    return bmFotoComMoldura;
 
   }
 

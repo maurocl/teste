@@ -40,7 +40,7 @@ import br.com.mltech.utils.camera.CameraTools;
  * @author maurocl
  * 
  */
-public class FotoEventoActivity extends Activity {
+public class FotoEventoActivity extends Activity implements Constantes{
 
   private static final String TAG = "FotoEventoActivity";
 
@@ -53,9 +53,7 @@ public class FotoEventoActivity extends Activity {
 
   private static final int ACTIVITY_LOGIN = 103;
   private static final int ACTIVITY_MANUTENCAO = 104;
-  // private static final int ACTIVITY_PARTICIPANTE = 102;
   private static final int ACTIVITY_DUMMY3 = 120;
-
   private static final int ACTIVITY_CAMERA = 105;
 
   //
@@ -82,8 +80,6 @@ public class FotoEventoActivity extends Activity {
   //
   private boolean mAdminAccount = false;
 
-  private CameraTools ct;
-
   /**
    * onCreate(Bundle savedInstanceState)
    * 
@@ -103,10 +99,15 @@ public class FotoEventoActivity extends Activity {
 
     Log.i(TAG, "*** onCreate() ***");
 
-    ct = new CameraTools();
-
     // prepara o ambiente para execução da aplicação
-    boolean b = preparaAmbiente();
+    boolean resultado = preparaAmbiente();
+    
+    if(resultado==true) {
+      Log.d(TAG,"onCreate() - ambiente preparado para execução do software");
+    }
+    else {
+      Log.d(TAG,"onCreate() - ambiente não está preparado para execução do software");
+    }
 
     // Lê a configuração das preferências do sistema
     if (mPreferences == null) {
@@ -180,10 +181,10 @@ public class FotoEventoActivity extends Activity {
 
           Bundle bundle = new Bundle();
 
-          bundle.putSerializable("br.com.mltech.contratante", mContratante);
-          bundle.putSerializable("br.com.mltech.evento", mEvento);
-          bundle.putSerializable("br.com.mltech.participante", mParticipante);
-          bundle.putSerializable("br.com.mltech.participacao", mParticipacao);
+          bundle.putSerializable(CONTRATANTE, mContratante);
+          bundle.putSerializable(EVENTO, mEvento);
+          bundle.putSerializable(PARTICIPANTE, mParticipante);
+          bundle.putSerializable(PARTICIPACAO, mParticipacao);
 
           launchActivity(FotoEventoActivity.this, DummyActivity3.class, bundle, ACTIVITY_DUMMY3);
 
@@ -345,14 +346,17 @@ public class FotoEventoActivity extends Activity {
 
   /**
    * lancaActivityManutencao()
+   * 
+   * Lança a Activity responsável pela manutenção da aplicação
+   * 
    */
   private void launchActivityManutencao() {
 
     Intent intent = new Intent(FotoEventoActivity.this, ManutencaoActivity.class);
-
-    intent.putExtra("br.com.mltech.contratante", mContratante);
-    intent.putExtra("br.com.mltech.evento", mEvento);
-    intent.putExtra("br.com.mltech.lista", (ArrayList<Participacao>) mListaParticipacao);
+    
+    intent.putExtra(CONTRATANTE, mContratante);    
+    intent.putExtra(EVENTO, mEvento);
+    intent.putExtra(LISTA, (ArrayList<Participacao>) mListaParticipacao);
 
     startActivityForResult(intent, ACTIVITY_MANUTENCAO);
 
@@ -370,29 +374,6 @@ public class FotoEventoActivity extends Activity {
      */
 
     launchActivity(FotoEventoActivity.this, LoginActivity.class, null, ACTIVITY_LOGIN);
-
-  }
-
-  /**
-   * launchActivityCamera()
-   */
-  private void launchActivityCamera() {
-
-    // TODO esse método precisa verificação
-    int escolha = 2;
-
-    Bundle params = null;
-
-    if (escolha == 1) {
-
-      params = new Bundle();
-      params.putString("msg", "Olá");
-
-      launchActivity(FotoEventoActivity.this, CameraActivity.class, params, ACTIVITY_CAMERA);
-
-    } else if (escolha == 2) {
-
-    }
 
   }
 
@@ -459,42 +440,6 @@ public class FotoEventoActivity extends Activity {
     } else {
       Log.d(TAG, "resultActivityManutencao() - Erro ... resultCode não conhecido: " + resultCode);
     }
-
-  }
-
-  /**
-   * activityParticipanteResult(int resultCode, Intent data)
-   * 
-   * @param resultCode
-   *          Resultado da execução da Activity
-   * @param data
-   *          É esperado que a Activity participante retorne as informações
-   *          sobre o participante e sua participação.
-   * 
-   */
-  private void resultActivityParticipante(int resultCode, Intent data) {
-
-    Log.d(TAG, "resultActivityParticipante() ==> processando ACTIVITY_PARTICIPANTE");
-
-    if (resultCode == RESULT_CANCELED) {
-      Log.d(TAG, "resultActivityParticipante() - resultCode=RESULT_CANCELED - Participante cancelou sua participação");
-      return;
-    } else if (resultCode != RESULT_OK) {
-      Log.w(TAG, "resultActivityParticipante() - resultCode não conhecido: " + resultCode);
-      return;
-    }
-
-    if (data == null) {
-      // caso a Intent não retorne nada houve algum problema
-      Log.w(TAG, "resultActivityParticipante() - A intent não retornou os dados esperados");
-      return;
-    }
-
-    mParticipante = (Participante) data.getSerializableExtra("br.com.mltech.participante");
-    mParticipacao = (Participacao) data.getSerializableExtra("br.com.mltech.participacao");
-
-    Log.d(TAG, "resultActivityParticipante() - mParticipante=" + mParticipante);
-    Log.d(TAG, "resultActivityParticipante() - mParticipacao=" + mParticipacao);
 
   }
 
@@ -906,16 +851,19 @@ public class FotoEventoActivity extends Activity {
    */
   private boolean preparaAmbiente() {
 
+    /*
     if (ct == null) {
       Log.w(TAG, "preparaAmbiente() - CameraTools não foi instanciado");
       return false;
     }
+*/
 
-    if (!ct.isExternalStorageMounted()) {
+    if (!CameraTools.isExternalStorageMounted()) {
       Log.i(TAG, "preparaAmbiente() - SDCARD não está montado");
 
       // TODO aqui seria melhor exibir uma caixa de diálogo
       Toast.makeText(this, "SDCARD não está montado !!!", Toast.LENGTH_LONG).show();
+      
       return false;
     }
 
@@ -923,18 +871,18 @@ public class FotoEventoActivity extends Activity {
 
     File f = null;
 
-    f = ct.getDir2("fotoevento/fotos");
+    f = CameraTools.getDir2("fotoevento/fotos");
 
     if (DEBUG == 1) {
       FileUtils.showFileDetails(f, "fotoevento/fotos");
     }
 
-    f = ct.getDir2("fotoevento/molduras");
+    f = CameraTools.getDir2("fotoevento/molduras");
     if (DEBUG == 1) {
       FileUtils.showFileDetails(f, "fotoevento/molduras");
     }
 
-    f = ct.getDir2("fotoevento/telainicial");
+    f = CameraTools.getDir2("fotoevento/telainicial");
     if (DEBUG == 1) {
       FileUtils.showFileDetails(f, "fotoevento/telainicial");
     }

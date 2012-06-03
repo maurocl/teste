@@ -30,7 +30,7 @@ public class Moldura extends Foto {
    * @param arquivo
    */
   public Moldura(String arquivo) {
-    this(arquivo, null);
+    super(arquivo);
 
   }
 
@@ -49,6 +49,19 @@ public class Moldura extends Foto {
 
   }
 
+  /**
+   * Moldura(String arquivo, Bitmap imagem) 
+   * 
+   * @param arquivo
+   * @param imagem
+   * 
+   */
+  public Moldura(String arquivo, Bitmap imagem) {
+    super(arquivo);
+    this.setImagem(imagem);
+    this.descricao = null;
+  }
+  
   /**
    * getDescricao()
    * 

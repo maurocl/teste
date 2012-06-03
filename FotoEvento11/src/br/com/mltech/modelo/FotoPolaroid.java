@@ -346,7 +346,7 @@ public class FotoPolaroid {
   }
 
   /**
-   * Bitmap overlay4(Bitmap bmp1, Bitmap bmp2)
+   * Bitmap overlay(Bitmap bmp1, Bitmap bmp2)
    * 
    * Executa o overlay para fotos no formato polaroid
    * 
@@ -433,12 +433,12 @@ public class FotoPolaroid {
   public Bitmap overlay4(Foto foto, Moldura moldura) {
 
     if (foto == null) {
-      Log.d(TAG, "foto está vazia");
+      Log.d(TAG, "FotoPolaroid() - foto está vazia");
       return null;
     }
 
     if (moldura == null) {
-      Log.d(TAG, "moldura está vazia");
+      Log.d(TAG, "FotoPolaroid() - moldura está vazia");
       return null;
     }
 
@@ -449,7 +449,43 @@ public class FotoPolaroid {
 
   }
 
-  
+  /**
+   * getFoto9x12()
+   * 
+   * @return
+   */
+  public Foto getFoto9x12() {
+    return foto9x12;
+  }
+
+  /**
+   * setFoto9x12() 
+   * 
+   * @param foto9x12
+   */
+  public void setFoto9x12(Foto foto9x12) {
+    this.foto9x12 = foto9x12;
+  }
+
+  /**
+   * getFoto8x8()
+   * 
+   * @return
+   */
+  public Foto getFoto8x8() {
+    return foto8x8;
+  }
+
+  /**
+   * setFoto8x8(Foto foto8x8)
+   * 
+   * @param foto8x8
+   * 
+   */
+  public void setFoto8x8(Foto foto8x8) {
+    this.foto8x8 = foto8x8;
+  }
+
   /**
    * toString()
    */
@@ -458,26 +494,4 @@ public class FotoPolaroid {
     return "FotoPolaroid [foto=" + foto + ", foto9x12=" + foto9x12 + ", foto8x8=" + foto8x8 + ", moldura=" + moldura + "]";
   }
 
-  
-  public Foto getFoto9x12() {
-    return foto9x12;
-  }
-
-  
-  public void setFoto9x12(Foto foto9x12) {
-    this.foto9x12 = foto9x12;
-  }
-
-  
-  public Foto getFoto8x8() {
-    return foto8x8;
-  }
-
-  
-  public void setFoto8x8(Foto foto8x8) {
-    this.foto8x8 = foto8x8;
-  }
-
-  
-  
 }
