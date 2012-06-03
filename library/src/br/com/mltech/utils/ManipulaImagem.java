@@ -42,13 +42,20 @@ public class ManipulaImagem {
   private static final String TAG = "ManipulaImagem";
 
   public static final String PATH_MOLDURAS = "/mnt/sdcard/Pictures/fotoevento/molduras/";
+
   public static final String PATH_FOTOS = "/mnt/sdcard/Pictures/fotoevento/fotos/";
 
   /**
    * processaFotoFormatoPolaroid(File f, File moldura)
    * 
+   * Cria uma foto no formato Poladoid (inclui moldura 12x9 e redimensiona a foto para 8x8cm)
+   * 
+   * Lê o bitmap contendo a foto do sistema de arquivos
+   * Lê o bitmap contendo a moldura do sistema de arquivos
+   * 
    * @param foto
    *          Arquivo que possui a foto
+   *          
    * @param moldura
    *          Arquivo que possui a moldura
    * 
@@ -56,11 +63,8 @@ public class ManipulaImagem {
    */
   public static Bitmap processaFotoFormatoPolaroid(File foto, File moldura) {
 
-    Bitmap bmp1 = null;
-    Bitmap bmp2 = null;
-
-    bmp1 = getBitmapFromFile(foto); // foto
-    bmp2 = getBitmapFromFile(moldura); // moldura
+    Bitmap bmp1 = getBitmapFromFile(foto); // foto
+    Bitmap bmp2 = getBitmapFromFile(moldura); // moldura
 
     // cria um novo bitmap com a moldura sobreposta a foto
     Bitmap bitmap = overlay4(bmp1, bmp2);
@@ -78,6 +82,7 @@ public class ManipulaImagem {
    * 
    * @param sFilename
    *          Caminho completo do arquivo
+   *          
    * @param sMoldura
    *          Caminho completo da moldura
    * 
@@ -270,8 +275,6 @@ public class ManipulaImagem {
    * processaFotoFormatoCabine2(Bitmap foto1, Bitmap foto2, Bitmap foto3, Bitmap
    * bmMoldura)
    * 
-   * 
-   * 
    * Testa o funcionamento da criação de uma única foto a partir de três outras
    * fotos. Carrega as imagens a partir de um arquivo localizado em memória
    * externa (sdcard).
@@ -280,11 +283,16 @@ public class ManipulaImagem {
    * resultante em um arquivo
    * 
    * @param bmFoto1
+   *          Bitmap da primeira foto
    * @param bmFoto2
+   *          Bitmap da segunda foto
    * @param bmFoto3
-   * @param bmMoldura
+   *          Bitmap da terceira foto
    * 
-   * @return
+   * @param bmMoldura
+   *          Bitmap da moldura
+   * 
+   * @return string
    * 
    */
   public static String processaFotoFormatoCabine2(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3, Bitmap bmMoldura) {
@@ -319,12 +327,16 @@ public class ManipulaImagem {
     Bitmap bmImgJoin = verticalJoin(bmFoto1, bmFoto2, bmFoto3);
 
     if (bmImgJoin != null) {
+
       Log.i(TAG, "processaFotoFormatoCabine2() - Imagens foram juntadas com sucesso");
       Log.v(TAG, "processaFotoFormatoCabine2() -  ==> Tamanho da foto após join: " + getStringBitmapSize(bmImgJoin));
       // imagem.exibeBitmap(mImageView, bmImagem);
+
     } else {
+
       Log.w(TAG, "processaFotoFormatoCabine2() - Erro no merge das três fotos");
       return null;
+
     }
 
     Bitmap scaledBitmap = null;
@@ -335,15 +347,17 @@ public class ManipulaImagem {
     boolean gravou = gravaBitmapArquivo(bmImgJoin, arqSaida);
 
     if (!gravou) {
+
       Log.w(TAG, "processaFotoFormatoCabine2() - Erro na gravação do arquivo contendo as três fotos: " + arqSaida);
       return null;
+
     } else {
 
       Log.i(TAG, "processaFotoFormatoCabine2() - arquivo: " + arqSaida + " gravado com sucesso");
+
     }
 
-    // Obtém uma imagem em escala
-    // scaledBitmap = imagem.getScaledBitmap(bmImgJoin);
+    // Obtém uma imagem redimensionada
     scaledBitmap = getScaledBitmap2(bmImgJoin, 113, 453);
 
     if (scaledBitmap == null) {
@@ -402,6 +416,7 @@ public class ManipulaImagem {
    * 
    */
   public static Bitmap aplicaFiltroCores(Bitmap bi) {
+
     return null;
   }
 
@@ -415,6 +430,7 @@ public class ManipulaImagem {
    * 
    */
   public static Bitmap aplicaFiltroPB(Bitmap bi) {
+
     return null;
   }
 
@@ -556,7 +572,7 @@ public class ManipulaImagem {
    * 
    * Tenta criar um bitmap a partir do nome de arquivo fornecido
    * 
-   * @param arquivo 
+   * @param arquivo
    *          Nome completo do arquivo
    * 
    * @return um Bitmap ou null caso não seja possível criar o bitmap
@@ -572,7 +588,7 @@ public class ManipulaImagem {
 
     // cria-se um arquivo
     File file = new File(arquivo);
-    
+
     Bitmap bitmap = criaBitmap(file);
 
     return bitmap;
@@ -584,7 +600,7 @@ public class ManipulaImagem {
    * 
    * Tenta criar um bitmap a partir de uma referência a arquivo (File)
    * 
-   * @param arquivo 
+   * @param arquivo
    *          Objeto da classe File apontando para o nome do arquivo
    * 
    * @return um Bitmap ou null caso não seja possível criar o bitmap
@@ -598,7 +614,7 @@ public class ManipulaImagem {
     }
 
     Bitmap bitmap = null;
-    
+
     if (file != null && file.exists()) {
 
       // cria um bitmap a partir do arquivo
@@ -612,7 +628,6 @@ public class ManipulaImagem {
 
   }
 
-  
   /**
    * combineImages(Bitmap c, Bitmap s)
    * 
@@ -699,6 +714,8 @@ public class ManipulaImagem {
   /**
    * extractAlpha(Bitmap bm)
    * 
+   * 
+   * 
    * @param bm
    * 
    * @return
@@ -706,9 +723,13 @@ public class ManipulaImagem {
   public static Bitmap extractAlpha(Bitmap bm) {
 
     if (bm.hasAlpha()) {
+
       Log.d(TAG, "Bitmap has alpha()");
+
     } else {
+
       Log.d(TAG, "Bitmap hasn't alpha()");
+
     }
 
     Bitmap b = bm.extractAlpha();
@@ -731,15 +752,16 @@ public class ManipulaImagem {
 
     Bitmap bm = null;
 
+    if (filename == null) {
+      Log.w(TAG, "getBitmapFromFile() - o nome do arquivo é nulo");
+      return null;
+    }
+
     File f = new File(filename);
 
     if (f != null && f.exists() && f.isFile()) {
 
-      // f referencia um arquivo existente.
-
-      // showFile(f);
-
-      Log.v(TAG, "getBitmapFromFile() - getAbsolutePath()=" + f.getAbsolutePath());
+      Log.v(TAG, "getBitmapFromFile() - arquivo " + f.getAbsolutePath() + " lido com sucesso");
 
       // Decodifica o bitmap armazenado no arquivo
       bm = BitmapFactory.decodeFile(f.getAbsolutePath());
@@ -748,6 +770,7 @@ public class ManipulaImagem {
       Log.w(TAG, "getBitmapFile() - não foi possível ler o arquivo: " + f.getAbsolutePath());
     }
 
+    // retorna o bitmap lido do arquivo
     return bm;
 
   }
@@ -900,7 +923,7 @@ public class ManipulaImagem {
   public static Bitmap getScaledBitmap2(Bitmap bm, int newWidth, int newHeight) {
 
     if (bm == null) {
-      Log.w(TAG, "getScaledBitmap2() - bitmap é nulo");
+      Log.w(TAG, "getScaledBitmap2() - não é possível redimensionar um bitmap nulo");
       return null;
     }
 
@@ -911,8 +934,10 @@ public class ManipulaImagem {
     boolean filter = true;
 
     // Creates a new bitmap, scaled from an existing bitmap
+    // Cria um novo bitmap redimensionado a partir de um bitmap existente
     Bitmap bitmap = Bitmap.createScaledBitmap(bm, newWidth, newHeight, filter);
 
+    // retorna o novo bitmap
     return bitmap;
 
   }
@@ -925,6 +950,7 @@ public class ManipulaImagem {
    * @param options
    * 
    * @return The decoded bitmap, or null if the image data could not be decoded.
+   * 
    */
   public static Bitmap getBitmapRegion(String filename, Rect rect, Options options) {
 
@@ -1193,7 +1219,7 @@ public class ManipulaImagem {
    *         erro
    */
   public static boolean gravaBitmapArquivo3(Uri uri) {
-    
+
     boolean salvou = false;
 
     if (uri == null) {
@@ -1231,6 +1257,117 @@ public class ManipulaImagem {
     }
 
     return salvou;
+
+  }
+
+  /**
+   * gravaBitmapArquivo4(Bitmap bitmap, String filename)
+   * 
+   * @param bitmap
+   *          bitmap que será gravado
+   * @param filename
+   *          nome do arquivo
+   * 
+   * @return um bitmap
+   * 
+   */
+  public static Bitmap gravaBitmapArquivo4(Bitmap bitmap, String filename) {
+
+    OutputStream fos = null;
+
+    /*
+     * Standard directory in which to place pictures that are available to the
+     * user. Note that this is primarily a convention for the top-level public
+     * directory, as the media scanner will find and collect pictures in any
+     * directory.
+     */
+    File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+    File file = new File(filename);
+
+    File completePath = new File(dir + "/" + file);
+
+    Log.d(TAG, "Gravando o bitmap em: " + completePath.getAbsolutePath());
+
+    try {
+      fos = new FileOutputStream(completePath);
+      fos.flush();
+    } catch (FileNotFoundException e) {
+      Log.w(TAG, "Arquivo: " + filename + " não foi encontrado", e);
+    } catch (IOException e) {
+      Log.w(TAG, "IOException: ", e);
+    }
+
+    /*
+     * Write a compressed version of the bitmap to the specified outputstream.
+     * If this returns true, the bitmap can be reconstructed by passing a
+     * corresponding inputstream to BitmapFactory.decodeStream().
+     * 
+     * Note: not all Formats support all bitmap configs directly, so it is
+     * possible that the returned bitmap from BitmapFactory could be in a
+     * different bitdepth, and/or may have lost per-pixel alpha (e.g. JPEG only
+     * supports opaque pixels).
+     */
+
+    boolean gravou = bitmap.compress(CompressFormat.PNG, 100, fos);
+
+    if (gravou) {
+      return bitmap;
+    }
+    else {
+
+      return null;
+    }
+
+  }
+
+  /**
+   * gravaBitmapArquivo5(Bitmap bmp)
+   * 
+   * Cria uma string com o número que indica a data e hora atual em milisegundos
+   * Obtém o diretório padrão onde são criados as figuras (pictures)
+   * 
+   * @param bmp
+   * 
+   * @return Retorna o bitmap gravado
+   */
+  public static Bitmap gravaBitmapArquivo5(Bitmap bmp) {
+
+    String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
+
+    OutputStream fos = null;
+
+    try {
+
+      // Write file to SDCard
+      fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + tmpImg);
+
+      /*
+       * Write a compressed version of the bitmap to the specified outputstream.
+       * If this returns true, the bitmap can be reconstructed by passing a
+       * corresponding inputstream to BitmapFactory.decodeStream().
+       * 
+       * Note: not all Formats support all bitmap configs directly, so it is
+       * possible that the returned bitmap from BitmapFactory could be in a
+       * different bitdepth, and/or may have lost per-pixel alpha (e.g. JPEG
+       * only supports opaque pixels).
+       */
+
+      boolean gravou = bmp.compress(CompressFormat.PNG, 100, fos);
+
+      if (gravou) {
+        // o bitmap poderá ser reconstruido
+      } else {
+        // o bitmap não poderá ser reconstruido
+      }
+
+    } catch (IOException e) {
+
+      Log.e(TAG, "problem combining images", e);
+
+    }
+
+    return bmp;
 
   }
 
@@ -1273,6 +1410,7 @@ public class ManipulaImagem {
    * 
    */
   public static boolean isLandscape(Bitmap bm) {
+
     boolean ret = false;
     if (bm != null) {
       ret = bm.getWidth() > bm.getHeight();
@@ -1292,6 +1430,7 @@ public class ManipulaImagem {
    * 
    */
   public static boolean isPortrait(Bitmap bm) {
+
     boolean ret = false;
     if (bm != null) {
       ret = bm.getHeight() > bm.getWidth();
@@ -1558,7 +1697,10 @@ public class ManipulaImagem {
   /**
    * showBitmapInfo2(Bitmap bm)
    * 
+   * Exibe informações detalhadas sobre um bitmap.
+   * 
    * @param bm
+   *          Instância de um bitmap
    * 
    */
   public static void showBitmapInfo2(Bitmap bm) {
@@ -1570,13 +1712,13 @@ public class ManipulaImagem {
     }
 
     Config config = bm.getConfig();
-    int density = bm.getDensity();
+    // int density = bm.getDensity();
     int h = bm.getHeight();
     int w = bm.getWidth();
-    boolean hasAlpha = bm.hasAlpha();
-    boolean isMutable = bm.isMutable();
-    boolean isRecycled = bm.isRecycled();
-    String s = bm.toString();
+    // boolean hasAlpha = bm.hasAlpha();
+    // boolean isMutable = bm.isMutable();
+    // boolean isRecycled = bm.isRecycled();
+    // String s = bm.toString();
 
     Log.v(TAG, "getConfig= " + bm.getConfig());
     Log.v(TAG, "getDensity= " + bm.getDensity());
@@ -1806,6 +1948,7 @@ public class ManipulaImagem {
     builder.setPositiveButton(sim, new DialogInterface.OnClickListener() {
 
       public void onClick(DialogInterface dialog, int id) {
+
         // MyActivity7.this.finish();
         dialog.dismiss();
         // opcao = 1;
@@ -1816,6 +1959,7 @@ public class ManipulaImagem {
     builder.setNegativeButton(nao, new DialogInterface.OnClickListener() {
 
       public void onClick(DialogInterface dialog, int id) {
+
         dialog.cancel();
         // opcao = 0;
       }
@@ -1827,108 +1971,6 @@ public class ManipulaImagem {
 
     // return opcao;
     return 0;
-
-  }
-
-  /**
-   * 
-   * Cria uma string com o número que indica a data e hora atual em milisegundos
-   * Obtém o diretório padrão onde são criados as figuras (pictures)
-   * 
-   * @param bmp
-   * 
-   * @return Retorna o bitmap gravado
-   */
-  public static Bitmap XXX(Bitmap bmp) {
-
-    String tmpImg = String.valueOf(System.currentTimeMillis()) + ".png";
-
-    OutputStream fos = null;
-
-    try {
-
-      // Write file to SDCard
-      fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/" + tmpImg);
-
-      /*
-       * Write a compressed version of the bitmap to the specified outputstream.
-       * If this returns true, the bitmap can be reconstructed by passing a
-       * corresponding inputstream to BitmapFactory.decodeStream().
-       * 
-       * Note: not all Formats support all bitmap configs directly, so it is
-       * possible that the returned bitmap from BitmapFactory could be in a
-       * different bitdepth, and/or may have lost per-pixel alpha (e.g. JPEG
-       * only supports opaque pixels).
-       */
-
-      boolean b = bmp.compress(CompressFormat.PNG, 100, fos);
-
-      if (b) {
-        // o bitmap poderá ser reconstruido
-      } else {
-        // o bitmap não poderá ser reconstruido
-      }
-
-    } catch (IOException e) {
-
-      Log.e(TAG, "problem combining images", e);
-
-    }
-
-    return bmp;
-
-  }
-
-  /**
-   * XXX1(Bitmap bitmap, String filename)
-   * 
-   * @param bitmap
-   * @param filename
-   * @return
-   */
-  public static Bitmap XXX1(Bitmap bitmap, String filename) {
-
-    OutputStream fos = null;
-
-    /*
-     * Standard directory in which to place pictures that are available to the
-     * user. Note that this is primarily a convention for the top-level public
-     * directory, as the media scanner will find and collect pictures in any
-     * directory.
-     */
-    File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
-    File file = new File(filename);
-
-    File completePath = new File(dir + "/" + file);
-
-    Log.d(TAG, "Gravando o bitmap em: " + completePath.getAbsolutePath());
-
-    // os = new FileOutputStream(Environment.getExternalStorageDirectory() +
-    // "/"
-    // + tmpImg);
-
-    try {
-      fos = new FileOutputStream(completePath);
-    } catch (FileNotFoundException e) {
-      Log.w(TAG, "Arquivo: " + filename + " não foi encontrado");
-      e.printStackTrace();
-    }
-
-    /*
-     * Write a compressed version of the bitmap to the specified outputstream.
-     * If this returns true, the bitmap can be reconstructed by passing a
-     * corresponding inputstream to BitmapFactory.decodeStream().
-     * 
-     * Note: not all Formats support all bitmap configs directly, so it is
-     * possible that the returned bitmap from BitmapFactory could be in a
-     * different bitdepth, and/or may have lost per-pixel alpha (e.g. JPEG only
-     * supports opaque pixels).
-     */
-
-    bitmap.compress(CompressFormat.PNG, 100, fos);
-
-    return bitmap;
 
   }
 

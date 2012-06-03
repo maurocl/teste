@@ -26,6 +26,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 /**
  * CameraTools
@@ -35,13 +36,16 @@ import android.widget.ImageView;
  */
 public class CameraTools {
 
-  public static final String TAG = "CameraTools";
+  private static final String TAG = "CameraTools";
 
   private static final String JPEG_FILE_PREFIX = "IMG_";
+
   private static final String JPEG_FILE_SUFFIX = ".jpg";
 
   private String mCurrentPhotoPath;
+
   private ImageView mImageView;
+
   private Bitmap mImageBitmap;
 
   /**
@@ -51,6 +55,7 @@ public class CameraTools {
    * 
    */
   public CameraTools() {
+
     super();
   }
 
@@ -60,6 +65,7 @@ public class CameraTools {
    * Verifica se um dispositivo possui uma câmera.
    * 
    * @param context
+   *          Contexto da aplicação.
    * 
    * @return true caso o dispositivo possua uma câmera ou false caso contrario.
    * 
@@ -113,7 +119,7 @@ public class CameraTools {
   /**
    * checkCameraFeatures(Context context)
    * 
-   * Verifica as features das câmeras
+   * Verifica as features básicas das câmeras
    * 
    * @param context
    *          Contexto da aplicação
@@ -122,30 +128,28 @@ public class CameraTools {
    */
   public static boolean checkCameraFeatures(Context context) {
 
-    if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-
-      Log.d(TAG, "FEATURE_CAMERA");
-      // this device has a camera
-
-      if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS)) {
-        Log.d(TAG, "FEATURE_CAMERA_AUTOFOCUS");
-      }
-
-      if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-        Log.d(TAG, "FEATURE_CAMERA_FLASH");
-      }
-
-      if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
-        Log.d(TAG, "FEATURE_CAMERA_FRONT");
-      }
-
-      return true;
-
-    } else {
+    if (checkCameraHardware(context) == false) {
       // no câmera on this device
       Log.w(TAG, "checkCameraFeatures() - O dispositivo não possui câmera.");
       return false;
     }
+
+    Log.d(TAG, "checkCameraFeatures() - FEATURE_CAMERA");
+    // this device has a camera
+
+    if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS)) {
+      Log.d(TAG, "checkCameraFeatures() - FEATURE_CAMERA_AUTOFOCUS");
+    }
+
+    if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+      Log.d(TAG, "checkCameraFeatures() - FEATURE_CAMERA_FLASH");
+    }
+
+    if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
+      Log.d(TAG, "checkCameraFeatures() - FEATURE_CAMERA_FRONT");
+    }
+
+    return true;
 
   }
 
@@ -226,6 +230,7 @@ public class CameraTools {
    * @return Retorna o nº de câmeras físicas disponíveis em um dispositivo
    */
   public static int getNumCameras() {
+
     return Camera.getNumberOfCameras();
   }
 
@@ -336,20 +341,13 @@ public class CameraTools {
 
     if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 
-      // storageDir =
-      // mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
+      // cria o diretório
+      if (!storageDir.mkdirs()) {
 
-      if (storageDir != null) {
-
-        // cria o diretório
-        if (!storageDir.mkdirs()) {
-
-          if (!storageDir.exists()) {
-            // diretório já existente
-            Log.d("CameraSample", "failed to create directory");
-            return null;
-          }
-
+        if (!storageDir.exists()) {
+          // diretório já existente
+          Log.d("CameraSample", "failed to create directory");
+          return null;
         }
 
       }
@@ -391,7 +389,8 @@ public class CameraTools {
   /**
    * getParametersDetail(Camera c)
    * 
-   * @param c
+   * @param c 
+   * 
    */
   public static HashMap<String, List<String>> getParametersDetail(Camera c) {
 
@@ -462,10 +461,10 @@ public class CameraTools {
    * getDir2(String dirName)
    * 
    * Retorna o diretório solicitado dentro de
-   * getExternalStoragePublicDirectoryPictures.
-   * Cria-o caso ele não exista
+   * getExternalStoragePublicDirectoryPictures. Cria-o caso ele não exista
    * 
-   * @param dirName Nome do diretório (no sistema de arquivos)
+   * @param dirName
+   *          Nome do diretório (no sistema de arquivos)
    * 
    * @return uma instância de File referenciando um diretório
    */
@@ -476,7 +475,8 @@ public class CameraTools {
     boolean b = false;
 
     if (!isExternalStorageMounted()) {
-      Log.w(TAG, "getDir2() - diretório não poderá ser armazenamento pois o dispositivo externo não está montado para leitura/escrita.");
+      Log.w(TAG,
+          "getDir2() - diretório não poderá ser armazenamento pois o dispositivo externo não está montado para leitura/escrita.");
       return null;
     }
 
@@ -498,12 +498,12 @@ public class CameraTools {
 
         // diretório não foi criado
         if (storageDir.exists()) {
-          
+
           // diretório já existente e por isso não foi criado
           Log.w(TAG, "getDir2() - Diretório: " + dirName + " já existe.");
 
         } else {
-          
+
           // diretório ainda não existe porém não pode ser criado.
           Log.w(TAG, "getDir2() - Falha na criação do diretório: " + dirName);
 
@@ -511,7 +511,7 @@ public class CameraTools {
 
       } else {
         // diretório criado com sucesso pois ele ainda não existia
-        Log.w(TAG, "getDir2() - Diretório: "+dirName+" criado com sucesso: ");
+        Log.w(TAG, "getDir2() - Diretório: " + dirName + " criado com sucesso: ");
       }
 
     }
@@ -652,7 +652,6 @@ public class CameraTools {
    *         false, caso contrário.
    * 
    */
-
   public static boolean isExternalMediaMounted() {
 
     boolean isMounted;
@@ -663,13 +662,54 @@ public class CameraTools {
 
     if (isMounted) {
       // dispositivo está montado
-      Log.d(TAG, "Media externa está montada.");
+      Log.d(TAG, "isExternalMediaMounted() - Media externa está montada.");
     } else {
       // dispositivo não não está montado
-      Log.w(TAG, "Media externa não está montada.");
+      Log.w(TAG, "isExternalMediaMounted() - Media externa não está montada.");
     }
 
     return isMounted;
+
+  }
+
+  /**
+   * isCameraWorking(int cameraID)
+   * 
+   * Verifica se a câmera identificada por cameraID está em funcionamento. Para
+   * fazer essa verificação tentamos abrir a câmera. Caso ela consiga ser aberta
+   * indica que a câmera está disponível e nesse caso simplesmente liberamos a
+   * câmera para uso. Se houver erro indica que a câmera não está disponível
+   * para uso pela aplicação.
+   * 
+   * @param cameraID
+   *          Identificador da câmera do dispositivo
+   * 
+   * @return true se for possível obter ima instância da classe Camera ou false,
+   *         caso contrário.
+   */
+  public static boolean isCameraWorking(int cameraID) {
+
+    Camera c = getCameraInstance(cameraID);
+
+    if (c != null) {
+      // foi possível obter uma instância da câmera
+      // então, é necessário liberar a câmera para que possa ser usada
+      // pela
+      // aplicação
+      c.release();
+      c = null;
+
+      Log.i(TAG, "isCameraWorking() - câmera: " + cameraID + " liberada com sucesso");
+
+      return true;
+
+    } else {
+
+      Log.i(TAG, "isCameraWorking() - Câmera: " + cameraID + " não está disponível para uso pela aplicação");
+
+      return false;
+
+    }
 
   }
 
@@ -724,6 +764,7 @@ public class CameraTools {
           new MediaScannerConnection.OnScanCompletedListener() {
 
             public void onScanCompleted(String path, Uri uri) {
+
               Log.i("ExternalStorage", "Scanned " + path + ":");
               Log.i("ExternalStorage", "-> uri=" + uri);
             }
@@ -803,8 +844,6 @@ public class CameraTools {
      */
 
   }
-
- 
 
   /**
    * showHash(HashMap<String, List<String>> hash)

@@ -1,6 +1,8 @@
 package br.com.mltech.utils;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Set;
 
 import android.net.Uri;
@@ -19,6 +21,19 @@ public class FileUtils {
   public static final String TAG = "FileUtils";
 
   /**
+   * getTimeStamp()
+   * 
+   * Cria um nome de arquivo baseado na data e hora atual
+   * 
+   * @return string
+   */
+  private static String getTimeStamp() {
+    
+    return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    
+  }
+  
+  /**
    * obtemNomeArquivo(String extensao)
    * 
    * gera um nome de arquivo a partir do numero de mili segundos atuais
@@ -26,7 +41,7 @@ public class FileUtils {
    * 
    * extensao=".jpg"
    */
-  public static java.io.File obtemNomeArquivo(String extensao) {
+  public static File obtemNomeArquivo(String extensao) {
 
     // Obtém um nome de arquivo no diretório publico para armazenamento de
     // imagens (pictures)
@@ -43,6 +58,48 @@ public class FileUtils {
 
   }
 
+  /**
+   * obtemNomeArquivo()
+   * 
+   * @return
+   */
+  public static File obtemNomeArquivo() {
+
+    // cria o arquivo com o nome da foto
+    File file = new File(CameraTools.getExternalStoragePublicDirectoryPictures() + "/" + getTimeStamp() + ".png");
+
+    return file;
+
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public static File obtemNomeArquivoPNG() {
+
+    // cria o arquivo com o nome da foto
+    File file = new File(CameraTools.getExternalStoragePublicDirectoryPictures() + "/" + getTimeStamp() + ".png");
+
+    return file;
+
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public static File obtemNomeArquivoJPEG() {
+
+    // cria o arquivo com o nome da foto
+    File file = new File(CameraTools.getExternalStoragePublicDirectoryPictures() + "/" + getTimeStamp() + ".jpg");
+
+    return file;
+
+  }
+
+  
+  
   /**
    * getFileExtension(Uri uri)
    * 
