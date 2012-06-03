@@ -23,81 +23,97 @@ import br.com.mltech.utils.ManipulaImagem;
  */
 public class ActivityCameraSimplesDummy extends Activity {
 
-  public static final String TAG = "ActivityCameraSimplesDummy";
+	public static final String TAG = "ActivityCameraSimplesDummy";
 
-  /**
-   * onCreate(Bundle savedInstanceState)
-   */
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+	/**
+	 * onCreate(Bundle savedInstanceState)
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 
-    super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
 
-    this.setContentView(R.layout.preferencias);
+		this.setContentView(R.layout.preferencias);
 
-    Log.d(TAG, "*** onCreate() ***");
+		Log.d(TAG, "*** onCreate() ***");
 
-    Uri uri = null;
+		Uri uri = null;
 
-    // Obtem a intent usada para chamar essa Activity
-    Intent i = getIntent();
+		// Obtem a intent usada para chamar essa Activity
+		Intent i = getIntent();
 
-    if (i.getExtras() != null) {
+		if (i.getExtras() != null) {
 
-      // foram passados parâmetros para Activity
+			// foram passados parâmetros para Activity
 
-      Log.d(TAG, "onCreate() - Parâmetros:");
+			Log.d(TAG, "onCreate() - Parâmetros:");
 
-      FileUtils.showBundle(i.getExtras());
+			FileUtils.showBundle(i.getExtras());
 
-      if (i.getExtras().containsKey("br.com.mltech.outputFileUri")) {
+			if (i.getExtras().containsKey("br.com.mltech.outputFileUri")) {
 
-        uri = (Uri) i.getParcelableExtra("br.com.mltech.outputFileUri");
+				uri = (Uri) i.getParcelableExtra("br.com.mltech.outputFileUri");
 
-        Log.i(TAG, "onCreate() - br.com.mltech.outputFileUri: " + uri);
+				Log.i(TAG, "onCreate() - br.com.mltech.outputFileUri: " + uri);
 
-      }
+			}
 
-    }
+		}
 
-    // TODO gambiarra !!!
-     // meuArquivo é um bitmap existente do sistema de arquivos e que será usado
-    // para "foto" de retorno (exemplo)
-    //String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/20120528_155116.jpg";
-    String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
+		// TODO gambiarra !!!
+		// meuArquivo é um bitmap existente do sistema de arquivos e que será usado
+		// para "foto" de retorno (exemplo)
+		// String meuArquivo =
+		// "/mnt/sdcard/Pictures/fotoevento/fotos/20120528_155116.jpg";
+		
+		String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
+		
+		//String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/20120527_172457.png";
 
-    if (FileUtils.isValidFile(new File(meuArquivo))) {
-      Log.d(TAG, "onCreate() - meu arquivo " + meuArquivo + " existe");
-    }
+		// Cria um intent de resposta
+		Intent resp = new Intent();
+		
+		if (FileUtils.isValidFile(new File(meuArquivo))) {
+			
+			Log.d(TAG, "onCreate() - meu arquivo " + meuArquivo + " existe");
 
-    boolean b;
+			boolean gravou;
 
-    // Lê o arquivo e armazena o bitmap
-    Bitmap bitmap = BitmapFactory.decodeFile(meuArquivo);
+			// Lê o arquivo e armazena o bitmap
+			Bitmap bitmap = BitmapFactory.decodeFile(meuArquivo);
 
-    // Grava o bitmap no "novo arquivo" dado pela Uri
-    b = ManipulaImagem.gravaBitmapArquivo(bitmap, uri.getPath());
+			// Grava o bitmap no "novo arquivo" dado pela Uri
+			gravou = ManipulaImagem.gravaBitmapArquivo(bitmap, uri.getPath());
 
-    if (b) {
-      Log.d(TAG, "onCreate() - Imagem gravada com sucesso em: " + uri.getPath());
-    }
+			if (gravou) {				
+				Log.d(TAG, "onCreate() - Imagem gravada com sucesso em: " + uri.getPath());
+			} else {
+				Log.e(TAG, "onCreate() - ");
+			}
+		
+			resp.putExtra("outputFileUri", uri.getPath());
 
-    // Cria um intent de resposta
-    Intent resp = new Intent();
+			// estabelece o resultado da execução da activity
+			setResult(RESULT_OK, resp);
 
-    // preenche os parâmetros de retorno
-    // resp.putExtra("file", "/mnt/sdcard/1338317354741.jpg");
+		} else {
+		
 
-    resp.putExtra("outputFileUri", uri.getPath());
+			Log.e(TAG, "onCreate() - meu arquivo " + meuArquivo + " NÃO existe.");
+			
+			Log.d(TAG, "onCreate() - meu arquivo " + meuArquivo + " NÃO existe.");
+			// Cria um intent de resposta
+			
+			resp.putExtra("outputFileUri", (String) null);
 
-    resp.putExtra("extra1", "1234");
+			// estabelece o resultado da execução da activity
+			setResult(RESULT_CANCELED, resp);
+			
+		}
 
-    // estabelece o resultado da execução da activity
-    setResult(RESULT_OK, resp);
+		// finaliza a activity
+		finish();
 
-    // finaliza a activity
-    finish();
-
-  }
+	}
 
 }
