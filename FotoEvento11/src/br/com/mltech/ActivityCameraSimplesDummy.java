@@ -1,7 +1,5 @@
 package br.com.mltech;
 
-import java.io.File;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,97 +21,158 @@ import br.com.mltech.utils.ManipulaImagem;
  */
 public class ActivityCameraSimplesDummy extends Activity {
 
-	public static final String TAG = "ActivityCameraSimplesDummy";
+  public static final String TAG = "ActivityCameraSimplesDummy";
 
-	/**
-	 * onCreate(Bundle savedInstanceState)
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+  /**
+   * onCreate(Bundle savedInstanceState)
+   */
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
 
-		super.onCreate(savedInstanceState);
+    super.onCreate(savedInstanceState);
 
-		this.setContentView(R.layout.preferencias);
+    this.setContentView(R.layout.preferencias);
 
-		Log.d(TAG, "*** onCreate() ***");
+    Log.d(TAG, "*** onCreate() ***");
 
-		Uri uri = null;
+    Uri uri = null;
 
-		// Obtem a intent usada para chamar essa Activity
-		Intent i = getIntent();
+    // Obtem a intent usada para chamar essa Activity
+    Intent intent = getIntent();
 
-		if (i.getExtras() != null) {
+    Uri data = intent.getData();
 
-			// foram passados parâmetros para Activity
+    Log.d(TAG, "onCreate() - data: " + data);
+    Log.d(TAG, "onCreate() - getExtras: " + intent.getExtras());
 
-			Log.d(TAG, "onCreate() - Parâmetros:");
+    if (uri == null) {
+      Log.w(TAG, "onCreate() - URI fornecida para gravação da foto é nula");
+      
+    }
 
-			FileUtils.showBundle(i.getExtras());
+    if (intent.getExtras() != null) {
 
-			if (i.getExtras().containsKey("br.com.mltech.outputFileUri")) {
+      // foram passados parâmetros para Activity
 
-				uri = (Uri) i.getParcelableExtra("br.com.mltech.outputFileUri");
+      Log.d(TAG, "onCreate() - Parâmetros:");
 
-				Log.i(TAG, "onCreate() - br.com.mltech.outputFileUri: " + uri);
+      // exibe a lista de parâmetros recebidos
+      FileUtils.showBundle(intent.getExtras());
 
-			}
+      if (intent.getExtras().containsKey("br.com.mltech.outputFileUri")) {
 
-		}
+        uri = (Uri) intent.getParcelableExtra("br.com.mltech.outputFileUri");
 
-		// TODO gambiarra !!!
-		// meuArquivo é um bitmap existente do sistema de arquivos e que será usado
-		// para "foto" de retorno (exemplo)
-		// String meuArquivo =
-		// "/mnt/sdcard/Pictures/fotoevento/fotos/20120528_155116.jpg";
-		
-		String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
-		
-		//String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/20120527_172457.png";
+        Log.i(TAG, "onCreate() - br.com.mltech.outputFileUri: " + uri);
 
-		// Cria um intent de resposta
-		Intent resp = new Intent();
-		
-		if (FileUtils.isValidFile(new File(meuArquivo))) {
-			
-			Log.d(TAG, "onCreate() - meu arquivo " + meuArquivo + " existe");
+      }
 
-			boolean gravou;
+    }
 
-			// Lê o arquivo e armazena o bitmap
-			Bitmap bitmap = BitmapFactory.decodeFile(meuArquivo);
+    // TODO gambiarra !!!
+    // meuArquivo é um bitmap existente do sistema de arquivos e que será usado
+    // para "foto" de retorno (exemplo)
 
-			// Grava o bitmap no "novo arquivo" dado pela Uri
-			gravou = ManipulaImagem.gravaBitmapArquivo(bitmap, uri.getPath());
+    // Cria um intent de resposta
+    Intent respostaIntent = new Intent();
 
-			if (gravou) {				
-				Log.d(TAG, "onCreate() - Imagem gravada com sucesso em: " + uri.getPath());
-			} else {
-				Log.e(TAG, "onCreate() - ");
-			}
-		
-			resp.putExtra("outputFileUri", uri.getPath());
+    String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
 
-			// estabelece o resultado da execução da activity
-			setResult(RESULT_OK, resp);
+    if (validaArquivo(meuArquivo, uri)) {
 
-		} else {
-		
+      //respostaIntent.putExtra("outputFileUri", uri.getPath());
+      
+      respostaIntent.putExtra("outputFileUri", uri);
+      
+      // estabelece o resultado da execução da activity
+      setResult(RESULT_OK, respostaIntent);
 
-			Log.e(TAG, "onCreate() - meu arquivo " + meuArquivo + " NÃO existe.");
-			
-			Log.d(TAG, "onCreate() - meu arquivo " + meuArquivo + " NÃO existe.");
-			// Cria um intent de resposta
-			
-			resp.putExtra("outputFileUri", (String) null);
+    }
+    else {
 
-			// estabelece o resultado da execução da activity
-			setResult(RESULT_CANCELED, resp);
-			
-		}
+      respostaIntent.putExtra("outputFileUri", (String) null);
 
-		// finaliza a activity
-		finish();
+      // estabelece o resultado da execução da activity
+      setResult(RESULT_CANCELED, respostaIntent);
 
-	}
+    }
+
+    // finaliza a activity
+    finish();
+
+  }
+
+  /**
+   * validaArquivo(String meuArquivo, Uri uri)
+   * 
+   * @param meuArquivo
+   * @param uri
+   * 
+   * @return
+   */
+  private boolean validaArquivo(String meuArquivo, Uri uri) {
+
+    if (meuArquivo == null) {
+      Log.w(TAG, "validaArquivo() - arquivo é nulo");
+      return false;
+    }
+    else {
+      Log.d(TAG, "validaArquivo() - arquivo " + meuArquivo + " existe");
+    }
+
+    if (uri == null) {
+      Log.w(TAG, "validaArquivo() - uri é nula");
+      return false;
+    }
+    else {
+      Log.d(TAG, "validaArquivo() - URI " + uri);
+    }
+
+    // Lê o arquivo e armazena o bitmap
+    Bitmap bitmap = BitmapFactory.decodeFile(meuArquivo);
+
+    if (bitmap == null) {
+      Log.d(TAG, "validaArquivo() - bitmap não pode ser decodificado a partir do arquivo " + meuArquivo);
+      return false;
+    }
+    else {
+      Log.d(TAG, "validaArquivo() - bitmap decodificado com sucesso");
+    }
+
+    boolean gravou = ManipulaImagem.gravaBitmapArquivo(bitmap, uri.getPath());
+
+    if (gravou) {
+      // Grava o bitmap no "novo arquivo" dado pela Uri
+      Log.d(TAG, "validaArquivo() - Imagem gravada com sucesso em: " + uri.getPath());
+      return true;
+    } else {
+      Log.e(TAG, "validaArquivo() - Falha na gravação da imagem em " + uri.getPath());
+      return false;
+    }
+
+  }
+
+  /**
+   * xxx(int resultado, Bundle bundle)
+   * 
+   * @param resultado
+   * @param bundle
+   * @return
+   */
+  Intent xxx(int resultado, Bundle bundle) {
+
+    // Cria um intent de resposta
+    Intent respostaIntent = new Intent();
+
+    if (bundle != null) {
+      respostaIntent.putExtras(bundle);
+    }
+
+    // estabelece o resultado da execução da activity
+    setResult(resultado, respostaIntent);
+
+    return respostaIntent;
+
+  }
 
 }
