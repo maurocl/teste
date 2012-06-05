@@ -27,6 +27,12 @@ public interface Constantes {
   public static final String PARTICIPANTE = "br.com.mltech.participante";
   public static final String PARTICIPACAO = "br.com.mltech.participacao";
   public static final String LISTA = "br.com.mltech.lista";
+  
+  public static final String USUARIO = "br.com.mltech.usuario";
+  public static final String SENHA = "br.com.mltech.senha";
+  
+  public static final String USUARIOVALIDADO = "br.com.mltech.usuarioValidado";
+  
 
   // TODO criar um diretório inicial, um lugar para configuração ...
   public static final String PATH_MOLDURAS = "/mnt/sdcard/Pictures/fotoevento/molduras/";
