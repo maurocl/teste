@@ -12,20 +12,29 @@ import android.widget.EditText;
 /**
  * Activity Login
  * 
- * Responsável por pegar as informações de login e senha para acesso a telas
+ * Activity responsável por pegar as informações de login e senha para acesso a telas
  * protegidas.
  * 
  * @author maurocl
  * 
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements OnClickListener, Constantes {
 
   private static final String TAG = "LoginActivity";
 
   private static final String USER = "root";
+
   private static final String PASS = "root";
 
-  private boolean mUsuarioValidado;
+  private static boolean mUsuarioValidado;
+
+  Button btnLogin;
+
+  Button btnCancelar;
+
+  EditText usuario;
+
+  EditText senha;
 
   /**
    * onCreate(Bundle savedInstanceState)
@@ -37,93 +46,116 @@ public class LoginActivity extends Activity {
 
     setContentView(R.layout.login);
 
-    final EditText usuario = (EditText) findViewById(R.id.usuario);
-    final EditText senha = (EditText) findViewById(R.id.senha);
+    usuario = (EditText) findViewById(R.id.usuario);
+    senha = (EditText) findViewById(R.id.senha);
 
-    final Button btnLogin = (Button) findViewById(R.id.btnLogin);
-    final Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
+    Button btnLogin = (Button) findViewById(R.id.btnLogin);
+    btnLogin.setOnClickListener(this);
 
-    // Trata o click do botão login
-    btnLogin.setOnClickListener(new OnClickListener() {
-
-      /**
-       * 
-       */
-      public void onClick(View v) {
-       
-        Log.d(TAG, "onClick() - Botão Login clicado");
-
-        final String sUsuario = usuario.getText().toString().toLowerCase();
-
-        final String sSenha = senha.getText().toString().toLowerCase();
-
-        Log.d(TAG, "onClick() ==> usuario: " + sUsuario);
-        Log.d(TAG, "onClick() ==> senha: " + sSenha);
-
-        mUsuarioValidado = verificaUsuarioSenha(sUsuario, sSenha);
-
-        Intent it = new Intent();
-
-        if (mUsuarioValidado) {
-          it.putExtra("br.com.mltech.usuarioValidado", "OK");
-          Log.d(TAG, "onClick() - Usuário validado");
-        } else {
-          it.putExtra("br.com.mltech.usuarioValidado", "FALHOU");
-          Log.d(TAG, "onClick() - Usuário NÃO validado");
-        }
-
-        it.putExtra("br.com.mltech.usuario", usuario.getText().toString());
-        it.putExtra("br.com.mltech.senha", senha.getText().toString());
-
-        setResult(RESULT_OK, it);
-
-        finish();
-
-      }
-
-      // TODO verificar o que fazer - remover
-      /**
-       * verificaUsuarioSenha
-       * 
-       * @param usuario
-       * @param senha
-       * 
-       * @return true caso o usuário e senha estejam corretas ou false caso
-       *         contrário.
-       */
-      /*
-       * private boolean verificaUsuarioSenha(String usuario, String senha) {
-       * 
-       * boolean b;
-       * 
-       * if ("root".equals(usuario) && "root".equals(senha)) { // usário
-       * validado Log.d(TAG, "Usuário validado com sucesso !"); b = true; } else
-       * { // usuário não é válido Log.w(TAG, "Usuário não válido !"); b =
-       * false; }
-       * 
-       * return b; }
-       */
-
-    });
-
-    // Trata o click do botão cancelar
-    btnCancelar.setOnClickListener(new OnClickListener() {
-
-      /**
-       * 
-       */
-      public void onClick(View v) {
-
-        Log.d(TAG, "onClick() - Botão Cancelar clicado");
-        Intent it = new Intent();
-        setResult(RESULT_CANCELED, it);
-        finish();
-
-      }
-    });
+    Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
+    btnCancelar.setOnClickListener(this);
 
   }
 
+  /**
+   * onClick(View v)
+   * 
+   * Trata os eventos dos botões
+   * 
+   * @param v
+   *          View
+   */
+  public void onClick(View v) {
+
+    if (v == btnLogin) {
+      processaLogin();
+    } else if (v == btnCancelar) {
+      processaCancelar();
+    }
+
+  }
+
+  /**
+   * processaLogin()
+   * 
+   * Processa ação do botão login
+   * 
+   */
+  private void processaLogin() {
+
+    Log.d(TAG, "onClick() - Botão Login clicado");
+
+    final String sUsuario = usuario.getText().toString().toLowerCase();
+
+    final String sSenha = senha.getText().toString().toLowerCase();
+
+    Log.d(TAG, "onClick() ==> usuario: " + sUsuario);
+    Log.d(TAG, "onClick() ==> senha: " + sSenha);
+
+    mUsuarioValidado = verificaUsuarioSenha(sUsuario, sSenha);
+
+    Intent it = new Intent();
+
+    if (mUsuarioValidado) {
+      it.putExtra(USUARIOVALIDADO, "OK");
+      Log.d(TAG, "onClick() - Usuário validado");
+    } else {
+      it.putExtra(USUARIOVALIDADO, "FALHOU");
+      Log.d(TAG, "onClick() - Usuário NÃO validado");
+    }
+
+    it.putExtra(USUARIO, usuario.getText().toString());
+    it.putExtra(SENHA, senha.getText().toString());
+
+    setResult(RESULT_OK, it);
+
+    finish();
+
+  }
+
+  /**
+   * processaCancelar()
+   * 
+   * Processa ação do botão cancelar
+   * 
+   */
+  public void processaCancelar() {
+
+    Log.d(TAG, "onClick() - Botão Cancelar clicado");
+    Intent it = new Intent();
+    setResult(RESULT_CANCELED, it);
+    finish();
+
+  }
+
+  /**
+   * verificaUsuarioSenha(String usuario, String senha)
+   * 
+   * @param usuario nome do usuário
+   * @param senha password do usuário
+   * 
+   * @return true caso o usuário e senha estejam corretas ou false caso
+   *         contrário.
+   */
+  private boolean verificaUsuarioSenha(String usuario, String senha) {
+
+    boolean usuarioValidado;
+
+    if (USER.equals(usuario) && PASS.equals(senha)) {
+      // usário validado
+      Log.d(TAG, "verificaUsuarioSenha() - usuário validado com sucesso !");
+      usuarioValidado = true;
+    } else {
+      // usuário não é válido
+      Log.w(TAG, "verificaUsuarioSenha() - usuário não válido !");
+      usuarioValidado = false;
+    }
+
+    return usuarioValidado;
+
+  }
+
+  // TODO verificar o que fazer - remover
   /**
    * verificaUsuarioSenha
    * 
@@ -133,22 +165,16 @@ public class LoginActivity extends Activity {
    * @return true caso o usuário e senha estejam corretas ou false caso
    *         contrário.
    */
-  private boolean verificaUsuarioSenha(String usuario, String senha) {
-
-    boolean b;
-
-    if (USER.equals(usuario) && PASS.equals(senha)) {
-      // usário validado
-      Log.d(TAG, "Usuário validado com sucesso !");
-      b = true;
-    } else {
-      // usuário não é válido
-      Log.w(TAG, "Usuário não válido !");
-      b = false;
-    }
-
-    return b;
-
-  }
+  /*
+   * private boolean verificaUsuarioSenha(String usuario, String senha) {
+   * 
+   * boolean b;
+   * 
+   * if ("root".equals(usuario) && "root".equals(senha)) { // usário validado
+   * Log.d(TAG, "Usuário validado com sucesso !"); b = true; } else { // usuário
+   * não é válido Log.w(TAG, "Usuário não válido !"); b = false; }
+   * 
+   * return b; }
+   */
 
 }
