@@ -144,7 +144,7 @@ public class DummyActivity3 extends Activity implements Constantes {
   public static int numFotosTiradas = 0;
 
   // nº de fotos tiradas
-  private static int contadorCabine = 0;
+  private static int indiceFoto = 0;
 
   // ---------------------------------------------
   // área de inicialização de variáveis estáticas
@@ -301,7 +301,7 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * Processa o resultado da execução das Activities
    * 
-   * É chamado quando a activcity lançada retorna, dando a você o requestCode
+   * É chamado quando a activity lançada retorna, dando a você o requestCode
    * com o qual você iniciou, o resultCode retornado e qualquer dado adicional
    * resultado do processamento da activity. O resultCode será RESULT_CANCELED
    * se a activity retornar explicitamente esse valor, não retornar nenhum valor
@@ -320,12 +320,12 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    */
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-  
+
     super.onActivityResult(requestCode, resultCode, data);
 
-    Log.i(TAG, "===============================================================================");
+    Log.i(TAG, "-------------------------------------------------------------------------------");
     Log.i(TAG, "onActivityResult(request " + requestCode + ", result=" + resultCode + ", data " + data + ") ...");
-    Log.i(TAG, "===============================================================================");
+    Log.i(TAG, "-------------------------------------------------------------------------------");
 
     numFotosTiradas++;
 
@@ -363,8 +363,8 @@ public class DummyActivity3 extends Activity implements Constantes {
       case TIRA_FOTO_CABINE:
 
         sNomeArquivo = processaActivityResultCabine(resultCode, data);
-        if(sNomeArquivo!=null) {
-          //meuMetodo(requestCode, sNomeArquivo);
+        if (sNomeArquivo != null) {
+          meuMetodo(requestCode, sNomeArquivo);
         }
         break;
 
@@ -415,17 +415,16 @@ public class DummyActivity3 extends Activity implements Constantes {
     showAlert(msg);
 
     File fff = null;
-    
-    if(meuArquivo!=null) {
+
+    if (meuArquivo != null) {
       fff = new File(meuArquivo);
-    }else {
+    } else {
       String meuArquivoPadrao = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
       fff = new File(meuArquivoPadrao);
     }
 
-    
     showAlert("Envia email");
-    
+
     enviaEmail(Uri.fromFile(fff));
 
     Log.w(TAG, "meuMetodo() - fim");
@@ -679,6 +678,8 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * cria uma intent para solicitar uma foto a uma activity
    * 
+   * Observe que a variável FLAG é usada para "escolher" a activity
+   * 
    * @return uma Intent
    * 
    */
@@ -773,21 +774,23 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       Log.d(TAG, "processaActivityResultPolaroid() - data.getData()= " + data.getData());
 
-      Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + data.getStringExtra("outputFileUri"));
+      // Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " +
+      // data.getStringExtra("outputFileUri"));
+      Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + data.getParcelableExtra("outputFileUri"));
 
       // nome do arquivo onde o bitmap está armazenado
-      file = new File(data.getStringExtra("outputFileUri"));
+      // file = new File(data.getStringExtra("outputFileUri"));
 
     } else {
 
       // não houve retorno de dados
       Log.w(TAG, "processaActivityResultPolaroid - data (Intent) é vazia");
-      file = null;
+      // file = null;
 
     }
 
     // cria uma URI para referenciar o arquivo
-    outputFileUri = Uri.fromFile(file);
+    // outputFileUri = Uri.fromFile(file);
 
     Log.w(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
 
@@ -799,7 +802,10 @@ public class DummyActivity3 extends Activity implements Constantes {
       return null;
     }
 
-    String meuArquivo = FileUtils.getFilename(file);
+    // String meuArquivo = FileUtils.getFilename(file);
+    String meuArquivo = outputFileUri.getPath();
+
+    meuArquivo = FileUtils.getFilename(outputFileUri);
 
     // cria um novo arquivo para armazenar a foto com a moldura
     meuArquivo2 = PATH_FOTOS + "/" + meuArquivo + ".jpg";
@@ -847,30 +853,35 @@ public class DummyActivity3 extends Activity implements Constantes {
     // TODO melhorar a construção abaixo
     String arquivo = (FileUtils.obtemNomeArquivo(".png")).getAbsolutePath();
 
+    // cria um File usando o nome do arquivo gerado
     file = new File(arquivo);
 
     Log.d(TAG, "==>");
-    Log.d(TAG, "==> executaActivityTiraFotoCabine(" + contadorCabine + ") - arquivo=" + file.getAbsolutePath());
+    Log.d(TAG, "==> executaActivityTiraFotoCabine() - contadorCabine: " + indiceFoto);
+    Log.d(TAG, "==> executaActivityTiraFotoCabine() - arquivo=" + file.getAbsolutePath());
     Log.d(TAG, "==> ");
 
-    // cria uma instância da classe Foto e armazena o caminho onde a foto tirada
+    // cria uma instância da classe Foto
+    // fornecendo o nome do arquivo onde a foto
     // deve ser armazenada
     Foto foto = new Foto(file.getAbsolutePath());
 
-    // relaciona a "Foto criada" a primeira foto cabine (dada pelo indice
-    // contadorCabine)
-    fotoCabine.setFoto(contadorCabine, foto);
+    // armazena a foto no índece dado pela variável contadorCabine no array de
+    // fotos do objeto FotoCabine
+    fotoCabine.setFoto(indiceFoto, foto);
 
-    // especifica a Uri onde a foto deve ser armazenada
+    // especifica a Uri do arquivo onde a foto deve ser armazenada
     outputFileUri = Uri.fromFile(file);
 
+    // cria uma intent para "tirar a foto"
     Intent intent = getIntentTirarFoto();
 
+    // exibe informações sobre a intent criada
     Log.d(TAG, "executaActivityTiraFotoCabine() - intent: " + intent);
 
     Log.d(TAG, "executaActivityTiraFotoCabine() - " + intent.getParcelableExtra("br.com.mltech.outputFileUri"));
 
-    // inicia a nova Activity relacionada na Intent
+    // inicia a activity responsável por obter a foto usando a intent criada.
     startActivityForResult(intent, TIRA_FOTO_CABINE);
 
   }
@@ -878,8 +889,8 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * processaActivityResultCabine(int resultCode, Intent data)
    * 
-   * Esta rotina é responsável por obter três foto da câmera.
-   * A variável contadorCabine controla o nº de fotos (varia de 0 a 2)
+   * Esta rotina é responsável por obter três foto da câmera. A variável
+   * contadorCabine controla o nº de fotos (varia de 0 a 2)
    * 
    * Processa o resultado da execução da Activity responsável por obter uma
    * foto.
@@ -893,32 +904,18 @@ public class DummyActivity3 extends Activity implements Constantes {
    */
   private String processaActivityResultCabine(int resultCode, Intent data) {
 
-    Foto fotoProcessada = null;
-    
+    Bitmap meuBitmap = null;
+
     if (resultCode == RESULT_OK) {
+
       // activity executada com sucesso
+      Log.i(TAG, "processaActivityResultCabine() - processando o recebimento da foto - indiceFoto=" + indiceFoto);
 
-      if (data != null) {
+      // incrementa o índice usado para armazenar a foto obtida no array de
+      // fotos
+      indiceFoto++;
 
-        // Log.d(TAG,
-        // "processaActivityResultCabine() - data não é nula");
-
-        // Bundle bundle = data.getExtras();
-
-        // Set<String> xx = bundle.keySet();
-
-        // exibe a lista do nome das chaves
-        // Log.d(TAG, xx.toString());
-
-      }
-
-      Log.i(TAG, "processaActivityResultCabine() - processando o recebimento da foto - contadorCabine=" + contadorCabine);
-
-      // incrementa o contador de fotos para compor uma foto no formato
-      // cabine
-      contadorCabine++;
-
-      if (contadorCabine < 3) {
+      if (indiceFoto < 3) {
 
         // obtem uma outra foto
         executaActivityTiraFotoCabine();
@@ -926,24 +923,262 @@ public class DummyActivity3 extends Activity implements Constantes {
       } else {
 
         // três foto já foram obtidas (tiradas)
-        fotoProcessada = fimExecucaoActivityTiraFotoCabine();
+        meuBitmap = fimExecucaoActivityTiraFotoCabine();
 
       }
 
     } else if (resultCode == RESULT_CANCELED) {
-      
+
       // operação cancelada
-      Log.w(TAG, "processaActivityResultCabine() - Operação cancelada pelo usuário na foto: " + contadorCabine);
+      Log.w(TAG, "processaActivityResultCabine() - Operação cancelada pelo usuário na foto: " + indiceFoto);
       // TODO aqui deveremos "cancelar" a fotoCabine fazendo-a null (entre
       // outras coisas)
-      fotoProcessada=null;
+      meuBitmap = null;
 
     } else {
       Log.w(TAG, "processaActivityResultCabine() - Operação não suportada pelo usuário");
     }
 
+    String arquivo = (FileUtils.obtemNomeArquivo(".png")).getAbsolutePath();
+
+    Foto fotoProcessada = new Foto(arquivo, meuBitmap);
+
+    boolean b;
+
+    try {
+
+      b = fotoProcessada.gravar();
+
+    } catch (FileNotFoundException e) {
+
+      e.printStackTrace();
+    } catch (IOException e) {
+
+      e.printStackTrace();
+    }
+
+    String s = null;
+
     // retorna o nome do arquivo onde a foto foi armazenada
-    return fotoProcessada.getArquivo();
+    if (fotoProcessada != null) {
+      s = fotoProcessada.getArquivo();
+    }
+
+    return s;
+
+  }
+
+  /**
+   * fimExecucaoActivityTiraFotoCabine()
+   * 
+   * @return uma instância de Foto ou null em caso de algum problema.
+   */
+  private Bitmap fimExecucaoActivityTiraFotoCabine() {
+
+    // Após tirar as três fotos é necessário:
+    // - converter as foto para o formato 3x4
+    // - montar a foto formato cabine juntando as fotos 3x4 e a moldura
+    // fotoCabine.getFoto[0] --> Foto
+    // fotoCabine.getFoto[1] --> Foto
+    // fotoCabine.getFoto[2] --> Foto
+
+    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine()");
+
+    if (fotoCabine == null) {
+      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - fotoCabine é nula");
+      return null;
+    }
+
+    // cria o bitmap correspondente a cada foto
+    criaBitmapFotoCabine(fotoCabine);
+
+    // Exibe o estado da instância da classe FotoCabine
+    Log.d(TAG, fotoCabine.toString());
+
+    // nesse ponto todas as foto já possuem seu bitmap
+
+    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - agora é montar a foto cabine ...");
+
+    Bitmap meuBitmap = null;
+
+    //
+    try {
+
+      meuBitmap = montaFotoCabine(fotoCabine);
+
+    } catch (FileNotFoundException e) {
+
+      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - execeção arquivo não encontrado (FileNotFound)", e);
+
+    } catch (IOException e) {
+
+      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - exceção de IO (IOException)", e);
+
+    }
+
+    return meuBitmap;
+
+  }
+
+  /**
+   * montaFotoCabine(fotoCabine)
+   * 
+   * cria uma foto com moldura cabine 3,5 x 15 cm a partir de três fotos 3x4 e
+   * uma moldura
+   * 
+   * @return uma instância da classe Foto
+   * 
+   * @throws IOException
+   * 
+   * @throws FileNotFoundException
+   * 
+   */
+  private Bitmap montaFotoCabine(FotoCabine fotoCabine) throws FileNotFoundException, IOException {
+
+    if (fotoCabine == null) {
+      // foto não existe
+      Log.w(TAG, "montaFotoCabine() - fotoCabine está vazia");
+      return null;
+    }
+
+    // cria um array contendo referências a três instâncias de Bitmap
+    Bitmap[] fotos3x4 = new Bitmap[3];
+
+    // preenche o array com as fotos armazenadas na fotoCabine
+    Foto[] fotos = fotoCabine.getFotos();
+
+    int i = 0;
+
+    // processa cada uma das fotos e faz o redimensionamento para o tamanho
+    // 3x4
+    for (Foto foto : fotos) {
+
+      // transforma cada foto em 3x4
+      Log.i(TAG, "montaFotoCabine() - foto[" + i + "] = " + foto.toString());
+
+      // gera um bitmap com a imagem redimensionada em 3x4
+      fotos3x4[i] = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 113, 151);
+
+      i++;
+
+    }
+
+    //
+    // gera um arquivo com as três foto molduradas
+    //
+    Bitmap b = processaFotoFormatoCabine3(fotos3x4[0], fotos3x4[1], fotos3x4[2],
+        mBitmapMolduraCabine);
+
+    return b;
+
+  }
+
+  private Foto montaFotoCabine_OLD(FotoCabine fotoCabine) throws FileNotFoundException, IOException {
+
+    if (fotoCabine == null) {
+      // foto não existe
+      Log.w(TAG, "montaFotoCabine() - fotoCabine está vazia");
+      return null;
+    }
+
+    // cria um array contendo referências a três instâncias de Foto
+    Foto[] fotos3x4 = new Foto[3];
+
+    // preenche o array com as fotos armazenadas na fotoCabine
+    Foto[] fotos = fotoCabine.getFotos();
+
+    int i = 0;
+
+    // processa cada uma das fotos e faz o redimensionamento para o tamanho
+    // 3x4
+    for (Foto foto : fotos) {
+
+      // transforma cada foto em 3x4
+      Log.i(TAG, "montaFotoCabine() - foto[" + i + "] = " + foto.toString());
+
+      // obtém o nome de um arquivo
+      File file1 = FileUtils.obtemNomeArquivo(".png");
+
+      if (file1 != null) {
+        // exibe o caminho do arquivo
+        Log.d(TAG, "  montaFotoCabine(" + i + ") - " + file1.getAbsolutePath());
+      } else {
+        Log.w(TAG, "  montaFotoCabine() - file1 está vazio");
+      }
+
+      // cria uma foto com o arquivo criado
+      fotos3x4[i] = new Foto(file1.getAbsolutePath());
+
+      // gera um bitmap com a imagem redimensionada em 3x4
+      Bitmap imagem1 = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 113, 151);
+
+      // atualiza a foto
+      fotos3x4[i].setImagem(imagem1);
+
+      // grava o a foto
+      boolean gravou = fotos3x4[i].gravar();
+
+      if (gravou) {
+        Log.d(TAG, "  montaFotoCabine() - arquivo " + fotos3x4[i].getArquivo() + " gravado com sucesso");
+      } else {
+        Log.w(TAG, "  montaFotoCabine() - falha na gravação do arquivo: " + fotos3x4[i].getArquivo());
+      }
+
+      i++;
+
+    }
+
+    // onde armazenar essas fotos ???
+
+    /*
+     * String arquivoMoldura = PATH_MOLDURAS + "cabine_132_568_red.png";
+     * 
+     * Log.i(TAG, "arquivoMoldura = " + arquivoMoldura);
+     * 
+     * // obtem a moldura da Foto Cabine Moldura moldura =
+     * fotoCabine.getMoldura();
+     * 
+     * if (moldura == null) { Log.w(TAG, "montaFotoCabine() - moldura nula");
+     * moldura = new Moldura(arquivoMoldura); }
+     * 
+     * // atualiza o nome do arquivo moldura.setArquivo(arquivoMoldura);
+     * 
+     * // lê o arquivo contendo a moldura
+     * moldura.leArquivoMoldura(arquivoMoldura);
+     * 
+     * // obtem a imagem (bitmap) da moldura Bitmap bmMoldura =
+     * moldura.getImagem();
+     */
+
+    // Sobrepõe a moldura as três foto 3x4
+
+    // array contendo as três fotos
+    Bitmap[] bitmapFotos = new Bitmap[3];
+
+    for (int j = 0; j < 3; j++) {
+
+      bitmapFotos[j] = fotos3x4[j].getImagem();
+      Log.d(TAG, "montaFotoCabine() - j=" + j);
+
+    }
+
+    //
+    // gera um arquivo com as três foto molduradas
+    //
+    String nomeDoArquivo = ManipulaImagem.processaFotoFormatoCabine2(bitmapFotos[0], bitmapFotos[1], bitmapFotos[2],
+        mBitmapMolduraCabine);
+
+    //
+    // cria a foto final
+    //
+    Foto fotoFinal = new Foto(nomeDoArquivo);
+
+    //
+    fotoFinal.ler();
+
+    Log.i(TAG, "montaFotoCabine() - fotoFinal: " + fotoFinal.toString());
+
+    return foto;
 
   }
 
@@ -2661,183 +2896,9 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
-   * fimExecucaoActivityTiraFotoCabine()
-   * 
-   * Após tirar as três fotos é necessário: - converter as foto para o formato
-   * 3x4 - montar a foto formato cabine juntando as fotos 3x4 e a moldura
-   * 
-   * fotoCabine.getFoto[0] --> Foto fotoCabine.getFoto[1] --> Foto
-   * fotoCabine.getFoto[2] --> Foto
-   * 
-   * @return uma instância de Foto ou null em caso de algum problema.
-   */
-  private Foto fimExecucaoActivityTiraFotoCabine() {
-
-    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine()");
-
-    if (fotoCabine == null) {
-      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - fotoCabine é nula");
-      return null;
-    }
-
-    // exibe infomações sobre a foto formato cabine
-    criaBitmapFotoCabine(fotoCabine);
-
-    // Exibe o estado da instância da classe FotoCabine
-    Log.d(TAG, fotoCabine.toString());
-
-    // nesse ponto todas as foto já possuem seu bitmap
-
-    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - agora é montar a foto cabine ...");
-
-    Foto minhaFoto = null;
-
-    //
-    try {
-
-      minhaFoto = montaFotoCabine();
-
-    } catch (FileNotFoundException e) {
-
-      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - execeção arquivo não encontrado (FileNotFound)", e);
-
-    } catch (IOException e) {
-
-      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - exceção de IO (IOException)", e);
-
-    }
-
-    return minhaFoto;
-
-  }
-
-  /**
-   * montaFotoCabine()
-   * 
-   * cria uma foto com moldura cabine 3,5 x 15 cm a partir de três fotos 3x4 e
-   * uma moldura
-   * 
-   * @return uma instância da classe Foto
-   * 
-   * @throws IOException
-   * 
-   * @throws FileNotFoundException
-   * 
-   */
-  private Foto montaFotoCabine() throws FileNotFoundException, IOException {
-
-    if (fotoCabine == null) {
-      // foto não existe
-      Log.w(TAG, "montaFotoCabine() - fotoCabine está vazia");
-      return null;
-    }
-
-    // cria um array contendo referências a três instâncias de Foto
-    Foto[] fotos3x4 = new Foto[3];
-
-    // preenche o array com as fotos armazenadas na fotoCabine
-    Foto[] fotos = fotoCabine.getFotos();
-
-    int i = 0;
-
-    // processa cada uma das fotos e faz o redimensionamento para o tamanho
-    // 3x4
-    for (Foto foto : fotos) {
-
-      // transforma cada foto em 3x4
-      Log.i(TAG, "montaFotoCabine() - foto[" + i + "] = " + foto.toString());
-
-      // obtém o nome de um arquivo
-      File file1 = FileUtils.obtemNomeArquivo(".png");
-
-      if (file1 != null) {
-        // exibe o caminho do arquivo
-        Log.d(TAG, "  montaFotoCabine(" + i + ") - " + file1.getAbsolutePath());
-      } else {
-        Log.w(TAG, "  montaFotoCabine() - file1 está vazio");
-      }
-
-      // cria uma foto com o arquivo criado
-      fotos3x4[i] = new Foto(file1.getAbsolutePath());
-
-      // gera um bitmap com a imagem redimensionada em 3x4
-      Bitmap imagem1 = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 113, 151);
-
-      // atualiza a foto
-      fotos3x4[i].setImagem(imagem1);
-
-      // grava o a foto
-      boolean gravou = fotos3x4[i].gravar();
-
-      if (gravou) {
-        Log.d(TAG, "  montaFotoCabine() - arquivo " + fotos3x4[i].getArquivo() + " gravado com sucesso");
-      } else {
-        Log.w(TAG, "  montaFotoCabine() - falha na gravação do arquivo: " + fotos3x4[i].getArquivo());
-      }
-
-      i++;
-
-    }
-
-    // onde armazenar essas fotos ???
-
-    /*
-     * String arquivoMoldura = PATH_MOLDURAS + "cabine_132_568_red.png";
-     * 
-     * Log.i(TAG, "arquivoMoldura = " + arquivoMoldura);
-     * 
-     * // obtem a moldura da Foto Cabine Moldura moldura =
-     * fotoCabine.getMoldura();
-     * 
-     * if (moldura == null) { Log.w(TAG, "montaFotoCabine() - moldura nula");
-     * moldura = new Moldura(arquivoMoldura); }
-     * 
-     * // atualiza o nome do arquivo moldura.setArquivo(arquivoMoldura);
-     * 
-     * // lê o arquivo contendo a moldura
-     * moldura.leArquivoMoldura(arquivoMoldura);
-     * 
-     * // obtem a imagem (bitmap) da moldura Bitmap bmMoldura =
-     * moldura.getImagem();
-     */
-
-    // Sobrepõe a moldura as três foto 3x4
-
-    // array contendo as três fotos
-    Bitmap[] bitmapFotos = new Bitmap[3];
-
-    for (int j = 0; j < 3; j++) {
-
-      bitmapFotos[j] = fotos3x4[j].getImagem();
-      Log.d(TAG, "montaFotoCabine() - j=" + j);
-
-    }
-
-    //
-    // gera um arquivo com as três foto molduradas
-    //
-    String nomeDoArquivo = ManipulaImagem.processaFotoFormatoCabine2(bitmapFotos[0], bitmapFotos[1], bitmapFotos[2],
-        mBitmapMolduraCabine);
-
-    //
-    // cria a foto final
-    //
-    Foto fotoFinal = new Foto(nomeDoArquivo);
-
-    //
-    fotoFinal.ler();
-
-    Log.i(TAG, "montaFotoCabine() - fotoFinal: " + fotoFinal.toString());
-
-    return foto;
-
-  }
-
-  /**
-   * criaBitmapFotoCabine(FotoCabine fc)
+   * criaBitmapFotoCabine(FotoCabine pFotoCabine)
    * 
    * Cria os bitmap das foto armazenadas no objeto FotoCabine
-   * 
    * 
    * @param pFotoCabine
    *          instância da classe FotoCabine
@@ -2852,14 +2913,14 @@ public class DummyActivity3 extends Activity implements Constantes {
     // contador local de fotos processadas
     int i = 0;
 
-    
     //
     // percorre as fotos armazenada em FotoCabine
     //
     for (Foto foto : pFotoCabine.getFotos()) {
 
       // exibe informações sobre a foto
-      Log.i(TAG, "criaBitmapFotoCabine() - processando foto[" + i + "] = " + pFotoCabine.toString());
+      Log.v(TAG, "criaBitmapFotoCabine() - processando foto[" + i + "] = " + pFotoCabine.toString());
+      Log.d(TAG, "criaBitmapFotoCabine() - processando foto[" + i + "] = " + foto);
 
       if (foto != null) {
 
@@ -3020,6 +3081,110 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     return s;
+
+  }
+
+  /**
+   * 
+   * @param bmFoto1
+   * @param bmFoto2
+   * @param bmFoto3
+   * @param bmMoldura
+   * @return
+   */
+  public static Bitmap processaFotoFormatoCabine3(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3, Bitmap bmMoldura) {
+
+    if (bmMoldura == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - Moldura formato Cabine está vazia !");
+      return null;
+    }
+
+    Bitmap bmImgJoin = mergeFotosCabine(bmFoto1, bmFoto2, bmFoto3);
+
+    if (bmImgJoin == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - não foi possível fazer o merge das três fotos !");
+      return null;
+    }
+
+    // Obtém uma imagem redimensionada
+    Bitmap scaledBitmap = ManipulaImagem.getScaledBitmap2(bmImgJoin, 113, 453);
+
+    if (scaledBitmap == null) {
+      //
+      Log.w(TAG, "processaFotoFormatoCabine3() - não foi possível redimensionar a foto");
+      return null;
+    }
+
+    // combina a foto com a moldura
+    Bitmap fotoComMoldura = ManipulaImagem.aplicaMolduraFoto(scaledBitmap, bmMoldura);
+
+    return fotoComMoldura;
+
+    /*
+     * String arqSaida = PATH_FOTOS + "xxx3-join-moldura.png";
+     * 
+     * boolean gravouImagemComMoldura =
+     * ManipulaImagem.gravaBitmapArquivo(fotoComMoldura, arqSaida);
+     * 
+     * if (gravouImagemComMoldura) {
+     * 
+     * // imagem escalonada gravada com sucesso Log.v(TAG,
+     * "processaFotoFormatoCabine2() - Imagem com moldura gravada com sucesso no arquivo "
+     * + arqSaida); } else { Log.v(TAG,
+     * "processaFotoFormatoCabine2() - Falha na gravação da imagem com moldura no arquivo: "
+     * + arqSaida); return null; }
+     * 
+     * return arqSaida;
+     */
+
+  }
+
+  /**
+   * mergeFotosCabine(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3)
+   * 
+   * @param bmFoto1
+   * @param bmFoto2
+   * @param bmFoto3
+   * 
+   * @return a bitmap com as fotos ou null em caso de algum erro
+   */
+  private static Bitmap mergeFotosCabine(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3) {
+
+    if (bmFoto1 == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - Foto1 está vazia !");
+      return null;
+    }
+
+    if (bmFoto2 == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - Foto2 está vazia !");
+      return null;
+    }
+
+    if (bmFoto3 == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - Foto3 está vazia !");
+      return null;
+    }
+
+    // =========================================================================
+    // Cria um novo bitmap a partir da composição das 3 fotos
+    // A foto será repetida na vertical, isto é, uma nova foto
+    // será colocada abaixo da outra.
+    // =========================================================================
+    Bitmap bmImgJoin = ManipulaImagem.verticalJoin(bmFoto1, bmFoto2, bmFoto3);
+
+    if (bmImgJoin != null) {
+
+      Log.i(TAG, "processaFotoFormatoCabin3() - Imagens foram juntadas com sucesso");
+      Log.v(TAG, "processaFotoFormatoCabine3() -  ==> Tamanho da foto após join: " + ManipulaImagem.getStringBitmapSize(bmImgJoin));
+
+    } else {
+
+      Log.w(TAG, "processaFotoFormatoCabine3() - Erro no merge das três fotos");
+      return null;
+
+    }
+
+    return bmImgJoin;
 
   }
 

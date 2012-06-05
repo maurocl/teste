@@ -42,7 +42,7 @@ public class Foto implements Serializable {
   // nome do arquivo onde a foto está armazenada
   private String arquivo;
 
-  // arquivo
+  // nome do arquivo onde a foto está armazenada
   private File filename;
 
   // bitmap contendo a imagem (foto)
@@ -73,6 +73,8 @@ public class Foto implements Serializable {
   /**
    * Foto(String arquivo, Bitmap bm)
    * 
+   * Construtor
+   * 
    * @param arquivo
    *          onde a foto está armazenada
    * @param bitmap
@@ -81,10 +83,11 @@ public class Foto implements Serializable {
    */
   public Foto(String arquivo, Bitmap bitmap) {
 
-    if((arquivo==null) || (bitmap==null)) {
-      return;          
+    if ((arquivo == null) || (bitmap == null)) {
+      Log.d(TAG, "Foto() - não foi possível criar uma foto pois os dados fornecidos são nulos");
+      return;
     }
-    
+
     this.arquivo = arquivo;
     this.imagem = bitmap;
     this.dados = null;
@@ -121,6 +124,7 @@ public class Foto implements Serializable {
    * 
    */
   public void setFilename(File filename) {
+
     this.filename = filename;
   }
 
@@ -131,6 +135,7 @@ public class Foto implements Serializable {
    * 
    */
   public Bitmap getImagem() {
+
     return imagem;
   }
 
@@ -148,6 +153,7 @@ public class Foto implements Serializable {
     this.imagem = imagem;
 
     if (imagem != null) {
+      // atualiza a dimensão da imagem
       Dimensao d = new Dimensao(imagem.getWidth(), imagem.getHeight());
       this.dimensao = d;
     }
@@ -162,6 +168,7 @@ public class Foto implements Serializable {
    * @return um objeto da classe Dimensao com a largura e altura da foto
    */
   public Dimensao getDimensao() {
+
     return dimensao;
   }
 
@@ -173,31 +180,37 @@ public class Foto implements Serializable {
    * @param dimensao
    */
   public void setDimensao(Dimensao dimensao) {
+
     this.dimensao = dimensao;
   }
 
   /**
    * getArquivo()
    * 
-   * Obtém o nomo do arquivo onde uma foto está gravada
+   * Obtém o nome do arquivo onde uma foto está gravada
    * 
-   * @return
+   * @return uma string contendo o nome do arquivo
    * 
    */
   public String getArquivo() {
+
     return arquivo;
   }
 
   /**
    * setArquivo(String arquivo)
    * 
+   * Estabelece o nome do arquivo e cria um objeto File (filename) associado ao
+   * arquivo.
+   * 
    * @param arquivo
    *          nome completo do arquivo
    * 
    */
   public void setArquivo(String arquivo) {
+
     this.arquivo = arquivo;
-    filename = new File(arquivo);
+    this.filename = new File(arquivo);
   }
 
   /**
@@ -209,9 +222,10 @@ public class Foto implements Serializable {
 
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-    if (getImagem() != null) {
-      boolean b = getImagem().compress(CompressFormat.PNG, 100, bos);
-      if(b) {
+    if (this.getImagem() != null) {
+      // grava o bitmap no output stream
+      boolean gravouComSucesso = this.getImagem().compress(CompressFormat.PNG, 100, bos);
+      if (gravouComSucesso) {
         this.dados = bos.toByteArray();
         Log.d(TAG, "getDados() - nº de bytes: " + getDados().length);
       }
@@ -228,6 +242,7 @@ public class Foto implements Serializable {
    * 
    */
   public void setDados(byte[] dados) {
+
     this.dados = dados;
   }
 
@@ -236,9 +251,36 @@ public class Foto implements Serializable {
   // -----------------
 
   /**
+   * getFormato()
+   * 
+   * @return o formato de gravação da foto (imagem)
+   * 
+   */
+  public Bitmap.CompressFormat getFormato() {
+
+    return formatoGravacao;
+  }
+
+  /**
+   * setFormato(Bitmap.CompressFormat formato)
+   * 
+   * Estabelece o formato de gravação da foto
+   * 
+   * @param formato
+   *          formato de gravação da foto
+   * 
+   *          Bitmap.CompressFormat.JPEG Bitmap.CompressFormat.PNG
+   * 
+   */
+  public void setFormato(Bitmap.CompressFormat formato) {
+
+    this.formatoGravacao = formato;
+  }
+
+  /**
    * gravar()
    * 
-   * Grava uma foto em um arquivo
+   * Armazena a foto no arquivo
    * 
    * @return true caso a foto seja salva ou false em caso de erro
    * 
@@ -263,6 +305,8 @@ public class Foto implements Serializable {
 
   /**
    * gravar(CompressFormat formato, int quality)
+   * 
+   * Grava uma foto em um arquivo com um dado padrão de qualidade.
    * 
    * @param formato
    *          Bitmap.CompressFormat.JPEG,
@@ -324,21 +368,22 @@ public class Foto implements Serializable {
       return false;
     }
 
-    // lê o bitmap
+    // obtém um bitmap a partir do arquivo
     Bitmap bitmap = ManipulaImagem.getBitmapFromFile(getFilename());
 
     if (bitmap == null) {
 
       // bitmap está vazio
-      Log.w(TAG, "ler() - Bitmap está vazio");
-
+      Log.w(TAG, "ler() - Bitmap não pode ser criado (está vazio)");
       return false;
+
     }
 
-    // guarda a imagem
+    // guarda a imagem - atualiza o atributo com o bitmap lido
     Log.d(TAG, "ler() - atualiza imagem");
     this.setImagem(bitmap);
 
+    // leitura feita com sucesso
     return true;
 
   }
@@ -355,6 +400,7 @@ public class Foto implements Serializable {
     Uri uri = Uri.fromFile(this.getFilename());
 
     return uri;
+
   }
 
   /**
@@ -417,56 +463,13 @@ public class Foto implements Serializable {
   }
 
   /**
-   * getFormato()
-   * 
-   * @return o formato de gravação da foto (imagem)
-   * 
-   */
-  public Bitmap.CompressFormat getFormato() {
-    return formatoGravacao;
-  }
-
-  /**
-   * setFormato(Bitmap.CompressFormat formato)
-   * 
-   * Estabelece o formato de gravação da foto
-   * 
-   * @param formato
-   *          formato de gravação da foto
-   * 
-   *          Bitmap.CompressFormat.JPEG Bitmap.CompressFormat.PNG
-   * 
-   */
-  public void setFormato(Bitmap.CompressFormat formato) {
-    this.formatoGravacao = formato;
-  }
-
-
-  /**
    * toString()
    */
   @Override
   public String toString() {
+
     return "Foto [dimensao=" + dimensao + ", arquivo=" + arquivo + ", filename=" + filename + ", imagem=" + imagem + ", dados="
         + Arrays.toString(dados) + ", formato=" + formatoGravacao + "]";
   }
-  
-  /**
-   * 
-   * armazena todos os bytes da imagem em um array de bytes
-   */
-  /*
-   * public void xxx() {
-   * 
-   * ByteArrayOutputStream bos = new ByteArrayOutputStream();
-   * 
-   * if (getImagem() != null) { getImagem().compress(CompressFormat.PNG, 100,
-   * bos); this.dados = bos.toByteArray(); }
-   * 
-   * if (getDados() != null) { Log.d(TAG, "xxx() - nº de bytes: " +
-   * getDados().length); }
-   * 
-   * }
-   */
 
 }

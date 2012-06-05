@@ -45,10 +45,8 @@ public class ActivityCameraSimplesDummy extends Activity {
     Log.d(TAG, "onCreate() - data: " + data);
     Log.d(TAG, "onCreate() - getExtras: " + intent.getExtras());
 
-    if (uri == null) {
-      Log.w(TAG, "onCreate() - URI fornecida para gravação da foto é nula");
-      
-    }
+    // exibe informações sobre a intent chamadora
+    showIntent(intent);
 
     if (intent.getExtras() != null) {
 
@@ -76,21 +74,23 @@ public class ActivityCameraSimplesDummy extends Activity {
     // Cria um intent de resposta
     Intent respostaIntent = new Intent();
 
+    // define o nome do arquivo padrão que será retornando quando uma foto for
+    // solicitada
     String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
 
     if (validaArquivo(meuArquivo, uri)) {
 
-      //respostaIntent.putExtra("outputFileUri", uri.getPath());
-      
+      // respostaIntent.putExtra("outputFileUri", uri.getPath());
+
       respostaIntent.putExtra("outputFileUri", uri);
-      
+
       // estabelece o resultado da execução da activity
       setResult(RESULT_OK, respostaIntent);
 
     }
     else {
 
-      respostaIntent.putExtra("outputFileUri", (String) null);
+      respostaIntent.putExtra("outputFileUri", (Uri) null);
 
       // estabelece o resultado da execução da activity
       setResult(RESULT_CANCELED, respostaIntent);
@@ -105,6 +105,10 @@ public class ActivityCameraSimplesDummy extends Activity {
   /**
    * validaArquivo(String meuArquivo, Uri uri)
    * 
+   * Verifica se o arquivo enviado existe
+   * 
+   * Verifica se a URI fornecida é diferente de null
+   * 
    * @param meuArquivo
    * @param uri
    * 
@@ -112,38 +116,65 @@ public class ActivityCameraSimplesDummy extends Activity {
    */
   private boolean validaArquivo(String meuArquivo, Uri uri) {
 
+    boolean ret = false;
+
     if (meuArquivo == null) {
       Log.w(TAG, "validaArquivo() - arquivo é nulo");
-      return false;
+      ret = false;
     }
     else {
-      Log.d(TAG, "validaArquivo() - arquivo " + meuArquivo + " existe");
+      Log.v(TAG, "validaArquivo() - arquivo " + meuArquivo + " existe");
+      ret = true;
     }
 
     if (uri == null) {
       Log.w(TAG, "validaArquivo() - uri é nula");
-      return false;
+      ret = false;
     }
     else {
-      Log.d(TAG, "validaArquivo() - URI " + uri);
+      Log.v(TAG, "validaArquivo() - URI " + uri);
+      ret = true;
     }
 
-    // Lê o arquivo e armazena o bitmap
+    if (ret) {
+      ret = gravaBitmapUri(meuArquivo, uri);
+    }
+
+    return ret;
+
+  }
+
+  /**
+   * gravaBitmapUri(String meuArquivo, Uri uri)
+   * 
+   * @param meuArquivo
+   * @param uri
+   * 
+   * @return
+   */
+  private boolean gravaBitmapUri(String meuArquivo, Uri uri) {
+
+    //
+    // cria um bitmap a partir do arquivo
+    //
     Bitmap bitmap = BitmapFactory.decodeFile(meuArquivo);
 
     if (bitmap == null) {
+      // bitmap não foi gerado
       Log.d(TAG, "validaArquivo() - bitmap não pode ser decodificado a partir do arquivo " + meuArquivo);
       return false;
     }
     else {
-      Log.d(TAG, "validaArquivo() - bitmap decodificado com sucesso");
+      // bitmap decodificado com sucesso
+      Log.v(TAG, "validaArquivo() - bitmap decodificado com sucesso");
     }
 
+    // grava o bitmap usando a URI recebida
     boolean gravou = ManipulaImagem.gravaBitmapArquivo(bitmap, uri.getPath());
 
     if (gravou) {
       // Grava o bitmap no "novo arquivo" dado pela Uri
-      Log.d(TAG, "validaArquivo() - Imagem gravada com sucesso em: " + uri.getPath());
+      Log.v(TAG, "validaArquivo() - Imagem gravada com sucesso em: " + uri.getPath());
       return true;
     } else {
       Log.e(TAG, "validaArquivo() - Falha na gravação da imagem em " + uri.getPath());
@@ -172,6 +203,27 @@ public class ActivityCameraSimplesDummy extends Activity {
     setResult(resultado, respostaIntent);
 
     return respostaIntent;
+
+  }
+
+  /**
+   * showIntent(Intent intent)
+   * 
+   * Exibe informações sobre uma Intent
+   * 
+   * @param intent
+   * 
+   */
+  private void showIntent(Intent intent) {
+
+    Log.d(TAG, "showIntent() - data(): " + intent.getData());
+    Log.d(TAG, "showIntent() - dataString(): " + intent.getDataString());
+
+    Log.v(TAG, "showIntent() - getAction(): " + intent.getAction());
+    Log.v(TAG, "showIntent() - getType(): " + intent.getType());
+    Log.v(TAG, "showIntent() - getPackage(): " + intent.getPackage());
+    Log.v(TAG, "showIntent() - getScheme: " + intent.getScheme());
+    Log.v(TAG, "showIntent() - getExtras(): " + intent.getExtras());
 
   }
 
