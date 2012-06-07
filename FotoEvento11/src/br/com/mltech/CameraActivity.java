@@ -18,9 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
-
-
-
+import br.com.mltech.utils.FileUtils;
 
 /**
  * CameraActivity
@@ -32,17 +30,19 @@ import android.widget.FrameLayout;
  */
 public class CameraActivity extends Activity {
 
-  public static final String TAG = "CameraActivity";
+  private static final String TAG = "CameraActivity";
 
-  private Camera mCamera;
-  private CameraPreview mPreview;
+  private static Camera mCamera;
 
-  private File imageFile;
-  private File picsDir;
+  private static CameraPreview mPreview;
 
-  private int flag = 0;
+  private static File imageFile;
 
-  FrameLayout layoutPreview;
+  private static File picsDir;
+
+  private static int flag = 0;
+
+  private FrameLayout layoutPreview;
 
   /**
    * onCreate(Bundle savedInstanceState)
@@ -83,22 +83,31 @@ public class CameraActivity extends Activity {
 
   }
 
+  /**
+   * 
+   */
   final ShutterCallback shutter = new ShutterCallback() {
 
     public void onShutter() {
-      // TODO Auto-generated method stub
+
       Log.d(TAG, "onShutter() callback disparado !!!");
     }
   };
 
+  /**
+   * 
+   */
   final PictureCallback raw = new PictureCallback() {
 
     public void onPictureTaken(byte[] data, Camera camera) {
-      // TODO Auto-generated method stub
+
       Log.d(TAG, "onPictureTaken - raw");
     }
   };
 
+  /**
+   * 
+   */
   final PictureCallback jpeg = new PictureCallback() {
 
     /**
@@ -171,7 +180,7 @@ public class CameraActivity extends Activity {
       mPreview = new CameraPreview(this, mCamera);
 
       layoutPreview.addView(mPreview);
-      
+
     }
 
   }
@@ -180,7 +189,7 @@ public class CameraActivity extends Activity {
    * onResume(3)
    * 
    * Esse callback é chamado a partir da sequencia: onCreate() --> onStart() -->
-   * on Resume() ou após ( a aplicação estar no estado Pause e retorna a
+   * onResume() ou após ( a aplicação estar no estado Pause e retorna a
    * funcionar) onPause() --> on Resume().
    * 
    */
@@ -252,6 +261,7 @@ public class CameraActivity extends Activity {
    */
   @Override
   protected void onStop() {
+
     super.onStop();
     Log.d(TAG, "*** onStop() ***");
   }
@@ -263,7 +273,8 @@ public class CameraActivity extends Activity {
    */
   @Override
   protected void onRestart() {
-    // TODO Auto-generated method stub
+
+    
     super.onRestart();
     Log.d(TAG, "*** onRestart() ***");
   }
@@ -285,6 +296,30 @@ public class CameraActivity extends Activity {
     } else {
       Log.d(TAG, "mCamera is null");
     }
+
+  }
+
+  /**
+   * onSaveInstanceState(Bundle outState)
+   */
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+
+    super.onSaveInstanceState(outState);
+
+    Log.d(TAG, "*** onSaveInstanceState() ***");
+
+  }
+
+  /**
+   * onRestoreInstanceState(Bundle savedInstanceState)
+   */
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+    super.onRestoreInstanceState(savedInstanceState);
+
+    Log.d(TAG, "*** onRestoreInstanceState() ***");
 
   }
 
@@ -311,15 +346,15 @@ public class CameraActivity extends Activity {
       c = Camera.open();
 
     } catch (RuntimeException e) {
-      Log.d(TAG, "RuntimeException error na obtenção de uma instância da câmera", e);
+      Log.w(TAG, "getCameraInstance() - RuntimeException error na obtenção de uma instância da câmera", e);
 
     } catch (Exception e) {
       // A câmera não existe ou não se encontra disponível
-      Log.d(TAG, "Erro na obtenção de uma instância da câmera", e);
+      Log.w(TAG, "getCameraInstance() - Erro na obtenção de uma instância da câmera", e);
     }
 
     if (c == null) {
-      Log.d(TAG, "CAMERA IS NULL");
+      Log.w(TAG, "getCameraInstance() - CAMERA IS NULL");
     }
 
     return c; // retorna null caso a camera não exista
@@ -337,20 +372,21 @@ public class CameraActivity extends Activity {
 
     picsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/fotos/");
 
-    Log.d(TAG, "picDir.absolutePath=" + picsDir.getAbsolutePath());
-    Log.d(TAG, "picDir.name=" + picsDir.getName());
+    Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.absolutePath=" + picsDir.getAbsolutePath());
+    Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.name=" + picsDir.getName());
 
     // Make sure the Pictures directory exists.
     b = picsDir.mkdirs();
 
     if (b) {
+      
       showFile(picsDir);
 
     } else {
-      Log.d(TAG, "Não foi possivel criar o diretório: " + picsDir.getName());
+      Log.w(TAG, "preparaDiretorioGravarFotos() - Não foi possivel criar o diretório: " + picsDir.getName());
 
       if (picsDir.exists()) {
-        Log.d(TAG, "Diretório " + picsDir.getName() + " já existe !");
+        Log.w(TAG, "preparaDiretorioGravarFotos() - Diretório " + picsDir.getName() + " já existe !");
       }
     }
 
@@ -362,21 +398,23 @@ public class CameraActivity extends Activity {
    */
   private void showFile(File f) {
 
-    Log.d(TAG, "f.getAbsolutePath=" + imageFile.getAbsolutePath());
-    Log.d(TAG, "f.getName()=" + imageFile.getName());
+    Log.d(TAG, "showFile(): ");
+    
+    Log.d(TAG, "  f.getAbsolutePath=" + imageFile.getAbsolutePath());
+    Log.d(TAG, "  f.getName()=" + imageFile.getName());
 
     String s1 = f.canRead() == true ? "R" : "-";
     String s2 = f.canWrite() == true ? "W" : "-";
     String s3 = f.canRead() == true ? "X" : "-";
 
     String permisao = s1 + s2 + s3;
-    Log.d(TAG, "Permissão do arquivo: " + permisao);
+    Log.d(TAG, "  Permissão do arquivo: " + permisao);
 
-    Log.d(TAG, "picsDir.canWrite(): " + picsDir.canWrite());
-    Log.d(TAG, "picsDir.canRead(): " + picsDir.canRead());
-    Log.d(TAG, "picsDir.canExecute(): " + picsDir.canExecute());
+    Log.d(TAG, "  picsDir.canWrite(): " + picsDir.canWrite());
+    Log.d(TAG, "  picsDir.canRead(): " + picsDir.canRead());
+    Log.d(TAG, "  picsDir.canExecute(): " + picsDir.canExecute());
 
-    Log.d(TAG, "picsDir.getAbsolutePath()=" + picsDir.getAbsolutePath());
+    Log.d(TAG, "  picsDir.getAbsolutePath()=" + picsDir.getAbsolutePath());
 
   };
 
@@ -393,14 +431,14 @@ public class CameraActivity extends Activity {
     if (mPreview != null) {
       sh = mPreview.getHolder();
     } else {
-      Log.d(TAG, "reiniciaCamera - mPreview is null");
+      Log.w(TAG, "reiniciaCamera() - mPreview está nulo");
     }
 
     try {
       mCamera.setPreviewDisplay(sh);
       mCamera.startPreview();
     } catch (IOException e) {
-      Log.d(TAG, "reiniciaCamera", e);
+      Log.w(TAG, "reiniciaCamera() - ", e);
     }
 
   }
@@ -442,6 +480,7 @@ public class CameraActivity extends Activity {
    * 
    * @param data
    *          Array de bytes
+   *          
    * @param nomeArquivo
    *          Nome do arquivo
    */
@@ -476,7 +515,7 @@ public class CameraActivity extends Activity {
           // cria uma arquivo para armazernar a foto
           imageFile = new File(picsDir, nomeArquivo);
 
-          showFile(imageFile);
+          FileUtils.showFile(imageFile);
 
           fos = new FileOutputStream(imageFile);
           fos.write(data);

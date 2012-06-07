@@ -290,7 +290,7 @@ public class RelatorioActivity extends Activity {
     }
 
     Log.d(TAG, "gravarArquivoCSV() - Nº total de participantes: " + numParticipantes);
-    Toast.makeText(this, numParticipantes + " foram exportados", Toast.LENGTH_SHORT).show();
+    Toast.makeText(this, numParticipantes + " participantes foram exportados", Toast.LENGTH_SHORT).show();
 
     b = true;
 

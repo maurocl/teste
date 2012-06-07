@@ -12,90 +12,107 @@ import android.view.SurfaceView;
  * CameraPreview
  * 
  * @author maurocl
- *
+ * 
  */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
-	private static final String TAG = "CameraPreview";
+  private static final String TAG = "CameraPreview";
 
-	private SurfaceHolder mHolder;
-	private Camera mCamera;
+  private static SurfaceHolder mHolder;
 
-	/**
-	 * CameraPreview(Context context, Camera camera)
-	 * 
-	 * @param context Interface to global information about an application environment.
-	 * @param camera
-	 * 
-	 */
-	public CameraPreview(Context context, Camera camera) {
+  private static Camera mCamera;
 
-		super(context);
+  /**
+   * CameraPreview(Context context, Camera camera)
+   * 
+   * @param context
+   *          Interface to global information about an application environment.
+   * @param camera
+   * 
+   */
+  public CameraPreview(Context context, Camera camera) {
 
-		this.mCamera = camera;
+    super(context);
 
-		this.mHolder = this.getHolder();
+    mCamera = camera;
 
-		mHolder.addCallback(this);
+    // obtem acesso a surface (superfície)
+    mHolder = this.getHolder();
 
-		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    // adiciona o tratator de eventos
+    mHolder.addCallback(this);
 
-		Log.d(TAG, "CameraPreview() inicializad");
+    mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-	}
+    Log.d(TAG, "CameraPreview() - inicializada");
 
-	/**
-	 * surfaceCreated(SurfaceHolder holder)
-	 */
-	public void surfaceCreated(SurfaceHolder holder) {
+  }
 
-		Log.d(TAG, "surfaceCreated() ...");
+  /**
+   * surfaceCreated(SurfaceHolder holder)
+   * 
+   * @param holder
+   * 
+   */
+  public void surfaceCreated(SurfaceHolder holder) {
 
-		try {
+    Log.d(TAG, "surfaceCreated() ...");
 
-			mCamera.setPreviewDisplay(holder);
+    try {
 
-			mCamera.startPreview();
+      mCamera.setPreviewDisplay(holder);
 
-		} catch (IOException e) {
+      mCamera.startPreview();
 
-			Log.d(TAG, "Error setting camera preview: " + e.getMessage());
-		} catch (Exception e) {
-			Log.d(TAG, "surfaceCreated - Error setting camera preview: ", e);
-		}
+    } catch (IOException e) {
 
-	}
+      Log.w(TAG, "surfaceCreated() - Error setting camera preview: " + e.getMessage());
 
-	/**
-	 * surfaceDestroyed(SurfaceHolder holder)
-	 */
-	public void surfaceDestroyed(SurfaceHolder holder) {
+    } catch (Exception e) {
+      Log.w(TAG, "surfaceCreated() - Error setting camera preview: ", e);
 
-		// empty. Take care of releasing the camera preview in your activity
+    }
 
-		Log.d(TAG, "surfaceDestroyed()");
+  }
 
-	}
+  /**
+   * surfaceDestroyed(SurfaceHolder holder)
+   * 
+   * @param holder
+   * 
+   */
+  public void surfaceDestroyed(SurfaceHolder holder) {
 
-	/**
-	 * surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-	 */
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
+    // empty. Take care of releasing the camera preview in your activity
 
-		if (mHolder.getSurface() == null) {
-			
-			// preview surface does not exist
-			Log.d(TAG, "surfaceChanged - getSurface() is null");
-			return;
-			
-		}
-		else {
-			
-			Log.d(TAG, "surfaceChanged");
-			
-		}
+    Log.d(TAG, "surfaceDestroyed()");
 
-	}
+  }
+
+  /**
+   * surfaceChanged(SurfaceHolder holder, int format, int width, int height)
+   * 
+   * @param holder
+   * @param format
+   * @param width
+   * @param height
+   * 
+   */
+  public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    if (mHolder.getSurface() == null) {
+
+      // preview surface does not exist
+      Log.d(TAG, "surfaceChanged - getSurface() is null");
+      return;
+
+    }
+    else {
+
+      Log.d(TAG, "surfaceChanged() - ");
+
+    }
+
+  }
 
 }

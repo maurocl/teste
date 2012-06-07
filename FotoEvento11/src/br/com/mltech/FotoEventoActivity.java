@@ -32,6 +32,7 @@ import br.com.mltech.modelo.Parametros;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.FileUtils;
+import br.com.mltech.utils.ManipulaImagem;
 import br.com.mltech.utils.camera.CameraTools;
 
 /**
@@ -40,7 +41,7 @@ import br.com.mltech.utils.camera.CameraTools;
  * @author maurocl
  * 
  */
-public class FotoEventoActivity extends Activity implements Constantes{
+public class FotoEventoActivity extends Activity implements Constantes {
 
   private static final String TAG = "FotoEventoActivity";
 
@@ -52,8 +53,11 @@ public class FotoEventoActivity extends Activity implements Constantes{
   /* Identificadores das Activities */
 
   private static final int ACTIVITY_LOGIN = 103;
+
   private static final int ACTIVITY_MANUTENCAO = 104;
+
   private static final int ACTIVITY_DUMMY3 = 120;
+
   private static final int ACTIVITY_CAMERA = 105;
 
   //
@@ -61,8 +65,11 @@ public class FotoEventoActivity extends Activity implements Constantes{
 
   // Definição do contrante, evento e participações
   private static Contratante mContratante;
+
   private static Evento mEvento;
+
   private static Participante mParticipante;
+
   private static Participacao mParticipacao;
 
   // Definição da lista de participação no evento
@@ -101,12 +108,12 @@ public class FotoEventoActivity extends Activity implements Constantes{
 
     // prepara o ambiente para execução da aplicação
     boolean resultado = preparaAmbiente();
-    
-    if(resultado==true) {
-      Log.d(TAG,"onCreate() - ambiente preparado para execução do software");
+
+    if (resultado == true) {
+      Log.d(TAG, "onCreate() - ambiente preparado para execução do software");
     }
     else {
-      Log.d(TAG,"onCreate() - ambiente não está preparado para execução do software");
+      Log.d(TAG, "onCreate() - ambiente não está preparado para execução do software");
     }
 
     // Lê a configuração das preferências do sistema
@@ -186,7 +193,8 @@ public class FotoEventoActivity extends Activity implements Constantes{
           bundle.putSerializable(PARTICIPANTE, mParticipante);
           bundle.putSerializable(PARTICIPACAO, mParticipacao);
 
-          launchActivity(FotoEventoActivity.this, DummyActivity3.class, bundle, ACTIVITY_DUMMY3);
+          //launchActivity(FotoEventoActivity.this, DummyActivity3.class, bundle, ACTIVITY_DUMMY3);
+          launchActivity(getBaseContext(), DummyActivity3.class, bundle, ACTIVITY_DUMMY3);
 
         } else {
           Toast.makeText(FotoEventoActivity.this, "Falta configuração !!!", Toast.LENGTH_LONG).show();
@@ -231,6 +239,7 @@ public class FotoEventoActivity extends Activity implements Constantes{
    */
   @Override
   protected void onDestroy() {
+
     super.onDestroy();
     Log.d(TAG, "*** onDestroy() ***");
   }
@@ -257,6 +266,7 @@ public class FotoEventoActivity extends Activity implements Constantes{
    * @param menu
    */
   private void criaMenuManutencao(Menu menu) {
+
     // ----------------------------------------------
     // Menu: Manutenção
     // ---------------------------------------------
@@ -266,6 +276,7 @@ public class FotoEventoActivity extends Activity implements Constantes{
     manutencao.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
       public boolean onMenuItemClick(MenuItem item) {
+
         launchActivityocessaClickItemMenuManutencao();
         return false;
       }
@@ -353,8 +364,8 @@ public class FotoEventoActivity extends Activity implements Constantes{
   private void launchActivityManutencao() {
 
     Intent intent = new Intent(FotoEventoActivity.this, ManutencaoActivity.class);
-    
-    intent.putExtra(CONTRATANTE, mContratante);    
+
+    intent.putExtra(CONTRATANTE, mContratante);
     intent.putExtra(EVENTO, mEvento);
     intent.putExtra(LISTA, (ArrayList<Participacao>) mListaParticipacao);
 
@@ -568,6 +579,7 @@ public class FotoEventoActivity extends Activity implements Constantes{
    * 
    * @param resultCode
    *          Resultado da execução da activity
+   *          
    * @param data
    *          Intent recebida (se houver)
    * 
@@ -581,6 +593,7 @@ public class FotoEventoActivity extends Activity implements Constantes{
     Log.d(TAG, "==> resultActivityDummy3() - resultCode=" + resultCode);
 
     if (data == null) {
+      
       // Activity não retornou dados
       Log.w(TAG, "resultActivityDummy3() - Activity Dummy3 não retornou dados");
 
@@ -590,10 +603,11 @@ public class FotoEventoActivity extends Activity implements Constantes{
 
       // Obtem o resultado da execução da activity
       result = data.getStringExtra("br.com.mltech.result");
-
-      mParticipante = (Participante) data.getSerializableExtra("br.com.mltech.participante");
-      mParticipacao = (Participacao) data.getSerializableExtra("br.com.mltech.participacao");
       
+      mParticipante = (Participante) data.getSerializableExtra(Constantes.PARTICIPANTE);
+      mParticipacao = (Participacao) data.getSerializableExtra(Constantes.PARTICIPACAO);
+
+      // exibe o resultado da execução da activity
       Log.i(TAG, "resultActivityDummy3() - result=" + result);
 
     }
@@ -605,19 +619,10 @@ public class FotoEventoActivity extends Activity implements Constantes{
 
     if (ss != null) {
 
-      Log.w(TAG, "resultActivityDummy3() - bundle ss possui as seguintes informações:");
+      Log.d(TAG, "resultActivityDummy3() - bundle ss possui as seguintes informações:");
+      FileUtils.showBundle(ss);
 
-      Set<String> chaves = ss.keySet();
-
-      for (String chave : chaves) {
-        Log.v(TAG, "    chave=" + chave);
-      }
-
-    } else {
-
-      Log.w(TAG, "resultActivityDummy3() - bundle ss está vazio");
-
-    }
+    } 
 
     if (resultCode == RESULT_OK) {
 
@@ -639,7 +644,7 @@ public class FotoEventoActivity extends Activity implements Constantes{
    * lerConfiguracoes(String name)
    * 
    * Lê as configurações gravadas em um arquivo de preferência. Inicia os
-   * atributos mContratante e mEvento
+   * atributos mContratante e mEvento.
    * 
    * @param name
    *          Identificador do sistema de preferências compartilhadas
@@ -653,98 +658,52 @@ public class FotoEventoActivity extends Activity implements Constantes{
 
     if (mPreferences == null) {
 
-    } else if (mPreferences == null) {
-
     }
-
-    // Lê todas as entradas
-    Map<?, ?> chaves = mPreferences.getAll();
-
-    // Obtem o conjunto de todas as entradas
-    Set<?> set = chaves.entrySet();
 
     // Exibe o nº de entradas no arquivo de preferências
-    Log.d(TAG, "lerConfiguracoes() - nº de entradas do arquivo de preferências=" + set.size());
-
-    Iterator<?> i = set.iterator();
-
-    int j = 0;
-
-    // Exibe os elementos
-    while (i.hasNext()) {
-
-      j++;
-
-      Entry<?, ?> me = (Entry<?, ?>) i.next();
-
-      if (DEBUG == 1) {
-        Log.d(TAG, "  " + j + ") " + me.getKey() + "=" + me.getValue());
-      }
-
-    }
+    Log.d(TAG, "lerConfiguracoes() - nº de entradas do arquivo de preferências");
 
     // Contratante
-    if ((mContratante == null) && (set.size() > 0)) {
+    if ((mContratante == null)) {
       // inicializa o contrante
 
       //
       mContratante = new Contratante();
 
-      mContratante.setNome((String) chaves.get("contratante_nome"));
-      mContratante.setEmail((String) chaves.get("contratante_email"));
-      mContratante.setTelefone((String) chaves.get("contratante_telefone"));
+      mContratante.setNome(mPreferences.getString(Constantes.CONTRATANTE_NOME, ""));
+      mContratante.setEmail(mPreferences.getString(Constantes.CONTRATANTE_EMAIL, ""));
+      mContratante.setTelefone(mPreferences.getString(Constantes.CONTRATANTE_TELEFONE, ""));
 
     }
 
     // Evento
-    if ((mEvento == null) && (set.size() > 0)) {
+    if (mEvento == null) {
 
       mEvento = new Evento();
 
       mEvento.setContratante(mContratante);
 
-      mEvento.setBordaPolaroid((String) chaves.get("evento_borda_polaroid"));
-      mEvento.setBordaCabine((String) chaves.get("evento_borda_cabine"));
+      mEvento.setNome(mPreferences.getString(Constantes.EVENTO_NOME, ""));
+      mEvento.setEmail(mPreferences.getString(Constantes.EVENTO_EMAIL, ""));
+      mEvento.setEndereco(mPreferences.getString(Constantes.EVENTO_ENDERECO, ""));
+      mEvento.setCidade(mPreferences.getString(Constantes.EVENTO_CIDADE, ""));
+      mEvento.setEstado(mPreferences.getString(Constantes.EVENTO_ESTADO, ""));
+      mEvento.setCep(mPreferences.getString(Constantes.EVENTO_CEP, ""));
+      mEvento.setData(mPreferences.getString(Constantes.EVENTO_DATA, ""));
+      mEvento.setTelefone(mPreferences.getString(Constantes.EVENTO_TELEFONE, ""));
+      mEvento.setBordaPolaroid(mPreferences.getString(Constantes.EVENTO_BORDA_POLAROID, ""));
+      mEvento.setBordaCabine(mPreferences.getString(Constantes.EVENTO_BORDA_CABINE, ""));
 
-      // TODO
-      // edit.putString("evento_envia_facebook", mEvento.isEnviaFacebook() ==
-      // true ? "true" : "false");
-      // edit.putString("evento_envia_twitter", mEvento.isEnviaTwitter() == true
-      // ? "true" : "false");
-
-      //
-
-      mEvento.setNome((String) chaves.get("evento_nome"));
-
-      mEvento.setEmail((String) chaves.get("evento_email"));
-
-      mEvento.setEndereco((String) chaves.get("evento_endereco"));
-      mEvento.setCidade((String) chaves.get("evento_cidade"));
-      mEvento.setEstado((String) chaves.get("evento_estado"));
-      mEvento.setCep((String) chaves.get("evento_cep"));
-
-      mEvento.setData((String) chaves.get("evento_data"));
-
-      mEvento.setTelefone((String) chaves.get("evento_telefone"));
-
-      /*
-       * 
-       * boolean b1, b2;
-       * 
-       * b1 = ((String) chaves.get("evento_envia_facebook")).equals("true") ?
-       * true : false; b2 = ((String)
-       * chaves.get("evento_envia_twitter")).equals("true") ? true : false;
-       * 
-       * mEvento.setEnviaFacebook(b1); mEvento.setEnviaTwitter(b2);
-       */
+      mEvento.setEnviaFacebook(mPreferences.getBoolean(Constantes.EVENTO_ENVIA_FACEBOOK, false));
+      mEvento.setEnviaTwitter(mPreferences.getBoolean(Constantes.EVENTO_ENVIA_TWITTER, false));
 
       String[] paramEventos = new String[5];
 
-      paramEventos[0] = (String) chaves.get("evento_param1");
-      paramEventos[1] = (String) chaves.get("evento_param2");
-      paramEventos[2] = (String) chaves.get("evento_param3");
-      paramEventos[3] = (String) chaves.get("evento_param4");
-      paramEventos[4] = (String) chaves.get("evento_param5");
+      paramEventos[0] = mPreferences.getString(Constantes.EVENTO_PARAM1, "");
+      paramEventos[1] = mPreferences.getString(Constantes.EVENTO_PARAM2, "");
+      paramEventos[2] = mPreferences.getString(Constantes.EVENTO_PARAM3, "");
+      paramEventos[3] = mPreferences.getString(Constantes.EVENTO_PARAM4, "");
+      paramEventos[4] = mPreferences.getString(Constantes.EVENTO_PARAM5, "");
 
       Parametros parametros = new Parametros(paramEventos);
 
@@ -839,6 +798,8 @@ public class FotoEventoActivity extends Activity implements Constantes{
     mNumParticipantes++;
 
     Log.v(TAG, "updateListaParticipação() - nº de participantes até o momento: " + mNumParticipantes);
+    
+    Toast.makeText(this, "Obrigado pela participação !", Toast.LENGTH_SHORT).show();
 
   }
 
@@ -851,19 +812,12 @@ public class FotoEventoActivity extends Activity implements Constantes{
    */
   private boolean preparaAmbiente() {
 
-    /*
-    if (ct == null) {
-      Log.w(TAG, "preparaAmbiente() - CameraTools não foi instanciado");
-      return false;
-    }
-*/
-
     if (!CameraTools.isExternalStorageMounted()) {
       Log.i(TAG, "preparaAmbiente() - SDCARD não está montado");
 
       // TODO aqui seria melhor exibir uma caixa de diálogo
       Toast.makeText(this, "SDCARD não está montado !!!", Toast.LENGTH_LONG).show();
-      
+
       return false;
     }
 
@@ -960,6 +914,7 @@ public class FotoEventoActivity extends Activity implements Constantes{
         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
 
           public void onClick(DialogInterface dialog, int id) {
+
             Log.i(TAG, "dialogoDesejaSairDaAplicacao() - Finalizando a aplicação.");
             FotoEventoActivity.this.finish();
           }
@@ -967,6 +922,7 @@ public class FotoEventoActivity extends Activity implements Constantes{
         }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
 
           public void onClick(DialogInterface dialog, int id) {
+
             Log.i(TAG, "dialogoDesejaSairDaAplicacao() - o usuário cancelou o pedido de saída.");
             dialog.cancel();
           }

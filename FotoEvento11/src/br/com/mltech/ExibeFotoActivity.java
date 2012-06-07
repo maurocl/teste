@@ -27,9 +27,11 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
   public static final String TAG = "ExibeFotoActivity";
 
-  Button confirmar;
+  public static int DEBUG = 0;
 
-  Button cancelar;
+  private static Button btnConfirmar;
+
+  private static Button btnCancelar;
 
   /**
    * onCreate(Bundle savedInstanceState)
@@ -43,18 +45,84 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
     setContentView(R.layout.exibefoto);
 
+    /**
+     * Trata o evento de disparar o botão
+     */
+    btnConfirmar = (Button) findViewById(R.id.btnConfirmar);
+    btnConfirmar.setOnClickListener(this);
+
+    btnCancelar = (Button) findViewById(R.id.btnCancelar);
+    btnCancelar.setOnClickListener(this);
+
+    ImageView imageView = (ImageView) findViewById(R.id.imageView1);
+
+    // Obtém a intent que iniciou a activity
     Intent intent = getIntent();
 
     // Retrieve data this intent is operating on. This URI specifies the name of
     // the data; often it uses the content: scheme, specifying data in a content
     // provider. Other schemes may be handled by specific activities, such as
     // http: by the web browser.
-    
+
+    // Obtem o dado que a intent está operando
+    // A Uri especifica o nome do dado
     Uri data = intent.getData();
-    
-    if(data!=null) {
-      Log.d(TAG,"getScheme()="+data.getScheme());
+
+    if (data != null) {
+      Log.d(TAG, "data=" + data);
+      Log.d(TAG, "getScheme()=" + data.getScheme());
     }
+
+    if (DEBUG == 0) {
+      // DEBUG está deligado
+      if (data != null) {
+        imageView.setImageURI(data);
+      }
+      else {
+        Log.d(TAG, "data é nula");
+      }
+
+    }
+    else {
+      // DEBUG está ligado
+      Bitmap bm = getBitmapTest();
+      imageView.setImageBitmap(bm);
+
+    }
+
+  }
+
+  /**
+   * onClick(View view)
+   */
+  public void onClick(View view) {
+
+    Intent i = new Intent();
+
+    if (view == btnConfirmar) {
+      Log.d(TAG, "botão confirmar");
+
+      setResult(RESULT_OK, i);
+
+    } else if (view == btnCancelar) {
+      Log.d(TAG, "botão cancelar");
+
+      setResult(RESULT_CANCELED, i);
+
+    }
+
+    // finaliza a activity
+    finish();
+
+  }
+
+  /**
+   * getBitmapTest()
+   * 
+   * @return um bitmap de teste
+   * 
+   */
+  private Bitmap getBitmapTest() {
 
     Bitmap bm = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
     Canvas c = new Canvas(bm);
@@ -64,46 +132,7 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
     c.drawLine(10, 10, 80, 80, paint);
 
-    ImageView imageView = (ImageView) findViewById(R.id.imageView1);
-
-    if (bm != null) {
-      // imageView.setImageURI(data);
-      imageView.setImageBitmap(bm);
-    }
-    else {
-      Log.d(TAG, "Imagem é nula");
-    }
-
-    /**
-     * Trata o evento de disparar o botão
-     */
-    Button confirmar = (Button) findViewById(R.id.btnConfirmar);
-    confirmar.setOnClickListener(this);
-
-    Button cancelar = (Button) findViewById(R.id.btnCancelar);
-    cancelar.setOnClickListener(this);
-
-  }
-
-  /**
-   * 
-   */
-  public void onClick(View view) {
-
-    if (view == confirmar) {
-      Log.d(TAG, "botão confirmar");
-
-    } else if (view == cancelar) {
-      Log.d(TAG, "botão cancelar");
-
-      Intent i = new Intent();
-
-      setResult(RESULT_CANCELED, i);
-
-      // finaliza a activity
-      finish();
-
-    }
+    return bm;
 
   }
 

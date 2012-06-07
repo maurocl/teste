@@ -42,13 +42,17 @@ public class ManutencaoActivity extends Activity {
   /* Identificadores das Activities */
 
   private static final int ACTIVITY_CONTRATANTE = 100;
+
   private static final int ACTIVITY_EVENTO = 101;
+
   private static final int ACTIVITY_PREFERENCIAS = 1002;
+
   private static final int ACTIVITY_RELATORIOS = 1003;
 
   private SharedPreferences mPreferences;
 
   private Contratante mContratante;
+
   private Evento mEvento;
 
   /**
@@ -196,6 +200,7 @@ public class ManutencaoActivity extends Activity {
             .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
 
               public void onClick(DialogInterface dialog, int id) {
+
                 boolean b = limpaConfiguracoes();
 
                 if (b) {
@@ -214,6 +219,7 @@ public class ManutencaoActivity extends Activity {
             }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
 
               public void onClick(DialogInterface dialog, int id) {
+
                 dialog.cancel();
               }
 
@@ -232,6 +238,7 @@ public class ManutencaoActivity extends Activity {
    */
   @Override
   protected void onPause() {
+
     Log.d(TAG, "*** onPause() ***");
     super.onPause();
   }
@@ -333,6 +340,7 @@ public class ManutencaoActivity extends Activity {
     } else {
       Log.d(TAG, "processActivityEvento() - Erro ...");
     }
+
   }
 
   /**
@@ -432,7 +440,7 @@ public class ManutencaoActivity extends Activity {
   /**
    * gravarPreferencias()
    * 
-   * Garava a configuração do Contratante e do Evento na estrutura de
+   * Grava a configuração do Contratante e do Evento na estrutura de
    * preferências (Preferences)
    * 
    * @return true caso a gravação ocorra com sucesso ou false caso haja algum
@@ -455,37 +463,45 @@ public class ManutencaoActivity extends Activity {
 
       /* Contratante */
       if (mContratante != null) {
-        edit.putString("contratante_nome", mContratante.getNome());
-        edit.putString("contratante_email", mContratante.getEmail());
-        edit.putString("contratante_telefone", mContratante.getTelefone());
+
+        edit.putString(Constantes.CONTRATANTE_NOME, mContratante.getNome());
+        edit.putString(Constantes.CONTRATANTE_EMAIL, mContratante.getEmail());
+        edit.putString(Constantes.CONTRATANTE_TELEFONE, mContratante.getTelefone());
+
       }
 
       /* Evento */
       if (mEvento != null) {
-        edit.putString("evento_nome", mEvento.getNome());
-        edit.putString("evento_email", mEvento.getEmail());
-        edit.putString("evento_endereco", mEvento.getEndereco());
-        edit.putString("evento_cidade", mEvento.getCidade());
-        edit.putString("evento_estado", mEvento.getEstado());
-        edit.putString("evento_cep", mEvento.getCep());
-        edit.putString("evento_data", mEvento.getData());
-        edit.putString("evento_telefone", mEvento.getTelefone());
-        edit.putString("evento_envia_facebook", mEvento.isEnviaFacebook() == true ? "true" : "false");
-        edit.putString("evento_envia_twitter", mEvento.isEnviaTwitter() == true ? "true" : "false");
 
-        edit.putString("evento_borda_polaroid", mEvento.getBordaPolaroid());
-        edit.putString("evento_borda_cabine", mEvento.getBordaCabine());
+        edit.putString(Constantes.EVENTO_NOME, mEvento.getNome());
+        edit.putString(Constantes.EVENTO_EMAIL, mEvento.getEmail());
+        edit.putString(Constantes.EVENTO_ENDERECO, mEvento.getEndereco());
+        edit.putString(Constantes.EVENTO_CIDADE, mEvento.getCidade());
+        edit.putString(Constantes.EVENTO_ESTADO, mEvento.getEstado());
+        edit.putString(Constantes.EVENTO_CEP, mEvento.getCep());
+        edit.putString(Constantes.EVENTO_DATA, mEvento.getData());
+        edit.putString(Constantes.EVENTO_TELEFONE, mEvento.getTelefone());
 
-        edit.putString("evento_param1", mEvento.getParametros().getParametro(0));
-        edit.putString("evento_param2", mEvento.getParametros().getParametro(1));
-        edit.putString("evento_param3", mEvento.getParametros().getParametro(2));
-        edit.putString("evento_param4", mEvento.getParametros().getParametro(3));
-        edit.putString("evento_param5", mEvento.getParametros().getParametro(4));
+        edit.putBoolean(Constantes.EVENTO_ENVIA_FACEBOOK, mEvento.isEnviaFacebook());
+        edit.putBoolean(Constantes.EVENTO_ENVIA_TWITTER, mEvento.isEnviaTwitter());
+
+        edit.putString(Constantes.EVENTO_BORDA_POLAROID, mEvento.getBordaPolaroid());
+        edit.putString(Constantes.EVENTO_BORDA_CABINE, mEvento.getBordaCabine());
+
+        edit.putString(Constantes.EVENTO_PARAM1, mEvento.getParametros().getParametro(0));
+        edit.putString(Constantes.EVENTO_PARAM2, mEvento.getParametros().getParametro(1));
+        edit.putString(Constantes.EVENTO_PARAM3, mEvento.getParametros().getParametro(2));
+        edit.putString(Constantes.EVENTO_PARAM4, mEvento.getParametros().getParametro(3));
+        edit.putString(Constantes.EVENTO_PARAM5, mEvento.getParametros().getParametro(4));
 
       }
 
       // grava as preferências
       commitDone = edit.commit();
+
+      if (commitDone) {
+        Toast.makeText(this, "Preferências foram salvas com sucesso", Toast.LENGTH_LONG).show();
+      }
 
       return commitDone;
 
@@ -519,34 +535,6 @@ public class ManutencaoActivity extends Activity {
       return false;
     }
 
-    // Retrieve all values from the preferences.
-    // Recupera todos os valores do mecanismo de preferências
-    // Returns a map containing a list of pairs key/value representing the
-    // preferences.
-    // Retorna um mapa contendo uma lista de pares chave/valor representando
-    // as preferências
-    Map<?, ?> chaves = mPreferences.getAll();
-
-    if (chaves != null) {
-
-      Set<?> set = chaves.entrySet();
-
-      Log.d(TAG, "Nº de chaves lidas: " + set.size());
-
-      Iterator<?> i = set.iterator();
-
-      // Display elements
-      while (i.hasNext()) {
-
-        Entry<?, ?> me = (Entry<?, ?>) i.next();
-
-        Log.v(TAG, me.getKey() + "=" + me.getValue());
-
-      }
-    } else {
-      Log.v(TAG, "Nenhum par de chave/valor foi encontrado.");
-    }
-
     if (mContratante == null) {
 
       // Contratante não foi inicializado
@@ -555,9 +543,9 @@ public class ManutencaoActivity extends Activity {
 
     }
 
-    mContratante.setNome((String) chaves.get("contratante_nome"));
-    mContratante.setEmail((String) chaves.get("contratante_email"));
-    mContratante.setTelefone((String) chaves.get("contratante_telefone"));
+    mContratante.setNome(mPreferences.getString(Constantes.CONTRATANTE_NOME, ""));
+    mContratante.setEmail(mPreferences.getString(Constantes.CONTRATANTE_EMAIL, ""));
+    mContratante.setTelefone(mPreferences.getString(Constantes.CONTRATANTE_TELEFONE, ""));
 
     if (mEvento == null) {
 
@@ -569,56 +557,33 @@ public class ManutencaoActivity extends Activity {
 
     }
 
-    mEvento.setBordaCabine(null);
-    mEvento.setBordaPolaroid(null);
+    // ------------------------------------
 
-    mEvento.setNome((String) chaves.get("evento_nome"));
+    mEvento.setNome(mPreferences.getString(Constantes.EVENTO_NOME, ""));
+    mEvento.setEmail(mPreferences.getString(Constantes.EVENTO_EMAIL, ""));
+    mEvento.setEndereco(mPreferences.getString(Constantes.EVENTO_ENDERECO, ""));
+    mEvento.setCidade(mPreferences.getString(Constantes.EVENTO_CIDADE, ""));
+    mEvento.setEstado(mPreferences.getString(Constantes.EVENTO_ESTADO, ""));
+    mEvento.setCep(mPreferences.getString(Constantes.EVENTO_CEP, ""));
+    mEvento.setData(mPreferences.getString(Constantes.EVENTO_DATA, ""));
+    mEvento.setTelefone(mPreferences.getString(Constantes.EVENTO_TELEFONE, ""));
+    mEvento.setBordaPolaroid(mPreferences.getString(Constantes.EVENTO_BORDA_POLAROID, ""));
+    mEvento.setBordaCabine(mPreferences.getString(Constantes.EVENTO_BORDA_CABINE, ""));
 
-    mEvento.setEmail((String) chaves.get("evento_email"));
+    mEvento.setEnviaFacebook(mPreferences.getBoolean(Constantes.EVENTO_ENVIA_FACEBOOK,
+        false));
+    mEvento.setEnviaTwitter(mPreferences.getBoolean(Constantes.EVENTO_ENVIA_TWITTER,
+        false));
 
-    mEvento.setEndereco((String) chaves.get("evento_endereco"));
-    mEvento.setCidade((String) chaves.get("evento_cidade"));
-    mEvento.setEstado((String) chaves.get("evento_estado"));
-    mEvento.setCep((String) chaves.get("evento_cep"));
-
-    mEvento.setData((String) chaves.get("evento_data"));
-
-    mEvento.setTelefone((String) chaves.get("evento_telefone"));
-
-    mEvento.setBordaPolaroid((String) chaves.get("evento_borda_polaroid"));
-
-    mEvento.setBordaCabine((String) chaves.get("evento_borda_cabine"));
-
-    String facebookSelecionado = null;
-    String twitterSelecionado = null;
-
-    facebookSelecionado = ((String) chaves.get("evento_envia_facebook"));
-
-    boolean b1 = false, b2 = false;
-
-    if (facebookSelecionado != null) {
-
-      b1 = (facebookSelecionado.equals("true") ? true : false);
-
-    }
-
-    twitterSelecionado = ((String) chaves.get("evento_envia_twitter"));
-
-    if (twitterSelecionado != null) {
-
-      b2 = (twitterSelecionado.equals("true") ? true : false);
-    }
-
-    mEvento.setEnviaFacebook(b1);
-    mEvento.setEnviaTwitter(b2);
+    // --------------------------------------
 
     String[] paramEventos = new String[5];
 
-    paramEventos[0] = (String) chaves.get("evento_param1");
-    paramEventos[1] = (String) chaves.get("evento_param2");
-    paramEventos[2] = (String) chaves.get("evento_param3");
-    paramEventos[3] = (String) chaves.get("evento_param4");
-    paramEventos[4] = (String) chaves.get("evento_param5");
+    paramEventos[0] = mPreferences.getString(Constantes.EVENTO_PARAM1, "");
+    paramEventos[1] = mPreferences.getString(Constantes.EVENTO_PARAM2, "");
+    paramEventos[2] = mPreferences.getString(Constantes.EVENTO_PARAM3, "");
+    paramEventos[3] = mPreferences.getString(Constantes.EVENTO_PARAM4, "");
+    paramEventos[4] = mPreferences.getString(Constantes.EVENTO_PARAM5, "");
 
     Parametros parametros = new Parametros(paramEventos);
 
@@ -635,6 +600,7 @@ public class ManutencaoActivity extends Activity {
    * Contratante e Evento
    * 
    * @return true se sucesso ou false caso haja algum erro.
+   * 
    */
   private boolean limpaConfiguracoes() {
 
