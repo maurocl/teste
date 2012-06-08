@@ -74,9 +74,13 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+
+        <!-- configura esta activity para usar orientacao landscape -->
+
         <activity
             android:name=".CameraActivity"
-            android:label="Câmera" >
+            android:label="Câmera"
+            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -119,6 +123,13 @@
         <activity
             android:name=".ExibeFotoActivity"
             android:label="Exibe uma foto na tela" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TestCameraActivity"
+            android:label="Testa o funcinamento da activity CameraActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
