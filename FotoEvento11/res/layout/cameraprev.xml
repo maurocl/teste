@@ -11,13 +11,42 @@
         android:layout_height="fill_parent"
         android:layout_weight="1" />
 
-    <!-- Botão de Captura -->
-
-    <Button
-        android:id="@+id/button_capture"
+    <LinearLayout
+        android:id="@+id/linear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Capture" />
+        android:orientation="vertical" >
+
+        <!-- Botão de Captura -->
+
+        <Button
+            android:id="@+id/button_capture"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Captura" />
+
+        <Button
+            android:id="@+id/btnNovo"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Novo" />
+
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Ok" />
+
+        <Button
+            android:id="@+id/btnCancelar"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Cancelar" />
+    </LinearLayout>
 
 </LinearLayout>
