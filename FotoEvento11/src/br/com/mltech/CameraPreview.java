@@ -21,8 +21,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
 	private static final String TAG = "CameraPreview";
 
+	// é inicializado no construtor e testado quando da mudança do preview
 	private static SurfaceHolder mHolder;
 
+	//
 	private static Camera mCamera;
 
 	/**
@@ -59,7 +61,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	/**
 	 * surfaceCreated(SurfaceHolder holder)
 	 * 
-	 * Esse método é chamado imediatamente apos a primeira criação da superfície
+	 * Esse método é chamado imediatamente após a primeira criação da superfície
 	 * 
 	 * @param holder
 	 *          o SurfaceHolder cuja superfície (surface) está sendo criada
@@ -71,15 +73,21 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
 		try {
 
+			// estabelece o display para visualização do preview da câmera
+			// containing the Surface on which to place the preview, or null to remove
+			// the preview surface
 			mCamera.setPreviewDisplay(holder);
 
+			// inicia o preview
 			mCamera.startPreview();
 
 		} catch (IOException e) {
-
+			// if the method fails (for example, if the surface is unavailable or
+			// unsuitable).
 			Log.w(TAG, "surfaceCreated() - IOException - Error setting camera preview: " + e.getMessage());
 
 		} catch (Exception e) {
+
 			Log.w(TAG, "surfaceCreated() - Exception - Error setting camera preview: ", e);
 
 		}
@@ -99,6 +107,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	public void surfaceDestroyed(SurfaceHolder holder) {
 
 		// empty. Take care of releasing the camera preview in your activity
+		// método vazio. Tome cuidado em liberar a preview da câmera em sua activity
 
 		Log.d(TAG, "surfaceDestroyed()");
 
@@ -112,14 +121,14 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	 * 
 	 * @param holder
 	 *          superfície de exibição
-	 *          
+	 * 
 	 * @param format
 	 *          o novo PixelFormat da superfície (surface) - veja classe
 	 *          PixelFormat
-	 *          
+	 * 
 	 * @param width
 	 *          a nova largura da surface
-	 *          
+	 * 
 	 * @param height
 	 *          altura a nova altura da surface
 	 * 
@@ -129,14 +138,14 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		if (mHolder.getSurface() == null) {
 
 			// preview surface does not exist
-			Log.d(TAG, "surfaceChanged - getSurface() is null");
+			Log.d(TAG, "surfaceChanged() - getSurface() is null");
 			return;
 
 		} else {
 
 			// PixelFormat 4 = RGB_565
 			Log.d(TAG, "surfaceChanged() - format: " + format + ", w=" + width + ", h=" + height);
-			
+
 		}
 
 	}
