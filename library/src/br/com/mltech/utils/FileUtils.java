@@ -89,7 +89,7 @@ public class FileUtils {
 		// cria o arquivo com o nome da foto
 		File file = new File(
 				CameraTools.getExternalStoragePublicDirectoryPictures()
-						+ APP_NAME + getTimeStamp() + ".png");
+						+ APP_NAME + File.separator+getTimeStamp() + ".png");
 
 		return file;
 
@@ -105,7 +105,7 @@ public class FileUtils {
 		// cria o arquivo com o nome da foto
 		File file = new File(
 				CameraTools.getExternalStoragePublicDirectoryPictures()
-						+ APP_NAME + getTimeStamp() + ".jpg");
+						+ APP_NAME + File.separator+getTimeStamp() + ".jpg");
 
 		return file;
 
