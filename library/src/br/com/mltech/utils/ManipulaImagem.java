@@ -1707,7 +1707,7 @@ public class ManipulaImagem {
 
     // TODO transformar ...
     if (bm == null) {
-      Log.w(TAG, "Bitmap não pode ser nulo");
+      Log.w(TAG, "showBitmapInfo2() - Bitmap não pode ser nulo");
       return;
     }
 
@@ -1720,18 +1720,19 @@ public class ManipulaImagem {
     // boolean isRecycled = bm.isRecycled();
     // String s = bm.toString();
 
-    Log.v(TAG, "getConfig= " + bm.getConfig());
-    Log.v(TAG, "getDensity= " + bm.getDensity());
-    Log.v(TAG, "getHeight= " + bm.getHeight());
-    Log.v(TAG, "getWidth= " + bm.getWidth());
-    Log.v(TAG, "hasAlpha= " + bm.hasAlpha());
-    Log.v(TAG, "isMutable= " + bm.isMutable());
-    Log.v(TAG, "isRecycled= " + bm.isRecycled());
-    Log.v(TAG, "toString= " + bm.toString());
+    Log.d(TAG,"Bitmap: ");
+    Log.v(TAG, "  getConfig()= " + bm.getConfig());
+    Log.v(TAG, "  getDensity()= " + bm.getDensity());
+    Log.v(TAG, "  getHeight()= " + bm.getHeight());
+    Log.v(TAG, "  getWidth()= " + bm.getWidth());
+    Log.v(TAG, "  hasAlpha()= " + bm.hasAlpha());
+    Log.v(TAG, "  isMutable()= " + bm.isMutable());
+    Log.v(TAG, "  isRecycled()= " + bm.isRecycled());
+    Log.v(TAG, "  toString()= " + bm.toString());
 
-    Log.v(TAG, "Size=" + w + "x" + h);
-    Log.v(TAG, "config=" + config);
-    Log.v(TAG, "getRowBytes()=" + bm.getRowBytes());
+    Log.v(TAG, "  Size=" + w + "x" + h);
+    Log.v(TAG, "  config=" + config);
+    Log.v(TAG, "  getRowBytes()=" + bm.getRowBytes());
   }
 
   /**

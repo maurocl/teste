@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
@@ -228,16 +230,26 @@ public class CameraTools {
 	 * 
 	 * @param cameraId
 	 *          Identificador da câmera
+	 * 
 	 * @param cameraInfo
+	 *          Informações sobre a câmera
 	 * 
 	 */
+
 	public static void exibeCameraInfo(int cameraId, CameraInfo cameraInfo) {
+
+		// public static final int CAMERA_FACING_BACK (0) - The facing of the camera
+		// is opposite to that of the screen
+		// public static final int CAMERA_FACING_FRONT (1) - The facing of the
+		// camera is the same as that of the screen
 
 		Camera.getCameraInfo(cameraId, cameraInfo);
 
-		Log.d(TAG, "exibeCameraInfo() - cameraInfo.facing=" + cameraInfo.facing);
+		// The direction that the camera faces
+		Log.i(TAG, "exibeCameraInfo() - cameraInfo.facing=" + cameraInfo.facing);
 
-		Log.d(TAG, "exibeCameraInfo() - cameraInfo.orientation=" + cameraInfo.orientation);
+		// The orientation of the camera image.
+		Log.i(TAG, "exibeCameraInfo() - cameraInfo.orientation=" + cameraInfo.orientation);
 
 	}
 
@@ -569,8 +581,6 @@ public class CameraTools {
 	 */
 	public static File getStorageDir(String name) {
 
-		
-
 		String type = Environment.DIRECTORY_PICTURES;
 
 		/*
@@ -583,7 +593,7 @@ public class CameraTools {
 		File dir = Environment.getExternalStoragePublicDirectory(type);
 
 		File f = null;
-		
+
 		if (dir != null) {
 			f = new File(dir, name);
 		}
@@ -1042,4 +1052,134 @@ public class CameraTools {
 
 	}
 
+	/**
+	 * setCameraDisplayOrientation(Activity activity, int cameraId,
+	 * android.hardware.Camera camera)
+	 * 
+	 * Esse método foi tirado do site developer.android.com (Reference)
+	 * 
+	 * @param activity
+	 * @param cameraId
+	 * @param camera
+	 * 
+	 */
+	public static void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera) {
+
+		android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+
+		android.hardware.Camera.getCameraInfo(cameraId, info);
+
+		int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+
+		int degrees = 0;
+
+		switch (rotation) {
+		case Surface.ROTATION_0:
+			degrees = 0;
+			break;
+		case Surface.ROTATION_90:
+			degrees = 90;
+			break;
+		case Surface.ROTATION_180:
+			degrees = 180;
+			break;
+		case Surface.ROTATION_270:
+			degrees = 270;
+			break;
+		}
+
+		int result;
+
+		if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+			result = (info.orientation + degrees) % 360;
+			result = (360 - result) % 360; // compensate the mirror
+		} else { // back-facing
+			result = (info.orientation - degrees + 360) % 360;
+		}
+
+		camera.setDisplayOrientation(result);
+
+	}
+
+	/**
+	 * getCameraSize(Camera.Size size)
+	 * 
+	 * Image size (width and height dimensions). height of the picture width of
+	 * the picture
+	 * 
+	 * @param size
+	 *          Instância da classe Camera.Size
+	 * 
+	 * @return uma string contendo a largura x altura da câmera
+	 */
+	public static String getCameraSize(Camera.Size size) {
+		if (size != null) {
+			return size.width + "x" + size.height;
+		}
+		return null;
+	}
+
+	
+	//---------------------------------------------------------------------------
+	
+	public List<String> getSupportedAntibanding(Camera.Parameters param) {
+
+		return null;
+
+	}
+
+	public static List<String> getSupportedColorEffects(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<String> getSupportedFlashModes(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<String> getSupportedFocusModes(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<Camera.Size> getSupportedJpegThumbnailSizes(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<Integer> getSupportedPictureFormats(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<Camera.Size> getSupportedPictureSizes(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<Integer> getSupportedPreviewFormats(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<int[]> getSupportedPreviewFpsRange(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<Integer> getSupportedPreviewFrameRates(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<Camera.Size> getSupportedPreviewSizes(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<String> getSupportedSceneModes(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<Camera.Size> getSupportedVideoSizes(Camera.Parameters param) {
+		return null;
+	}
+
+	public List<String> getSupportedWhiteBalance(Camera.Parameters param) {
+		return null;
+	}
+
+	//---------------------------------------------------------------------------
+	
 }
