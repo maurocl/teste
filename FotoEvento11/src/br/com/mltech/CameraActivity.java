@@ -9,8 +9,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
+import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -74,10 +76,19 @@ public class CameraActivity extends Activity {
 		Log.d(TAG, "*** onCreate() ***");
 
 		setContentView(R.layout.cameraprev);
+		
+		int numCamerasDisponiveis=Camera.getNumberOfCameras();
 
 		boolean isCameraAvailable = CameraTools.checkCameraHardware(this);
+		
 		if (isCameraAvailable) {
-			Log.d(TAG, "onCreate() - há câmera " + Camera.getNumberOfCameras() + " disponível.");
+			
+			if(numCamerasDisponiveis==1) {
+			Log.d(TAG, "onCreate() - há uma câmera disponível.");
+			}
+			else {
+				Log.d(TAG, "onCreate() - há  " + numCamerasDisponiveis + " câmeras disponíveeis.");
+			}
 		} else {
 			Log.e(TAG, "onCreate() - não há câmeras disponíveis");
 			return;
@@ -160,6 +171,17 @@ public class CameraActivity extends Activity {
 			public void onClick(View view) {
 
 				Log.d(TAG, "botão Ok");
+				
+				CameraInfo cameraInfo=new CameraInfo();
+				//CameraTools.exibeCameraInfo(0, cameraInfo);
+				
+				Camera.getCameraInfo(0, cameraInfo);
+
+				// The direction that the camera faces
+				Log.i(TAG, "exibeCameraInfo() - cameraInfo.facing=" + cameraInfo.facing);
+
+				// The orientation of the camera image. 
+				Log.i(TAG, "exibeCameraInfo() - cameraInfo.orientation=" + cameraInfo.orientation);
 
 				Intent intent = new Intent();
 
@@ -167,6 +189,8 @@ public class CameraActivity extends Activity {
 					Log.w(TAG, "mImageBitmap é nulo");
 				}
 
+				ManipulaImagem.showBitmapInfo2(mImageBitmap);
+				
 				// data
 				intent.putExtra("data", mUri);
 
@@ -199,6 +223,9 @@ public class CameraActivity extends Activity {
 			}
 		});
 
+		
+		
+		
 	}
 
 	/**
@@ -245,7 +272,8 @@ public class CameraActivity extends Activity {
 	final PictureCallback jpeg = new PictureCallback() {
 
 		/**
-		 * Método chamado quando houver uma foto JPEG disponível
+		 * Método chamado quando houver uma foto JPEG disponível (callback da
+		 * operação de tirar foto)
 		 */
 		public void onPictureTaken(byte[] data, Camera camera) {
 
@@ -262,7 +290,7 @@ public class CameraActivity extends Activity {
 			// TODO aqui deveremos criar o nome dos arquivos
 
 			// String nomeArquivo = System.currentTimeMillis() + ".jpg";
-			//File f = FileUtils.obtemNomeArquivoJPEG();
+			// File f = FileUtils.obtemNomeArquivoJPEG();
 			File f = FileUtils.obtemNomeArquivo(".jpg");
 
 			String nomeArquivo = f.getAbsolutePath();
@@ -317,14 +345,32 @@ public class CameraActivity extends Activity {
 
 		if (mCamera != null) {
 
+			mCamera.setDisplayOrientation(270);
+			
+			// lê os parâmetros
+			Camera.Parameters params = mCamera.getParameters();
+			
+			params.setPictureSize(640, 480);
+			
+			//params.setColorEffect()
+			
+			// Atualiza os parâmetros
+			mCamera.setParameters(params);
+			
+			showCameraParameters(mCamera);
+			
 			mPreview = new CameraPreview(this, mCamera);
 
+			// TODO verificar o layout da câmera
 			layoutPreview.addView(mPreview);
 
 		}
 
 	}
 
+
+	
+	
 	/**
 	 * onResume(3)
 	 * 
@@ -521,7 +567,9 @@ public class CameraActivity extends Activity {
 
 		boolean isDirCreated = false;
 
-		picsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/fotos/");
+		// obtém o local onde as fotos são armazenas na mem´ria externa do
+		// dispositivo (geralmente o SD Card)
+		picsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/fotoevento/");
 
 		Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.absolutePath=" + picsDir.getAbsolutePath());
 		Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.name=" + picsDir.getName());
@@ -532,19 +580,53 @@ public class CameraActivity extends Activity {
 
 		if (isDirCreated) {
 
+			// diretório criado com sucesso
 			showFile(picsDir);
 
 		} else {
 
-			Log.w(TAG, "preparaDiretorioGravarFotos() - Não foi possivel criar o diretório: " + picsDir.getName());
-
 			if (picsDir.exists()) {
-				Log.w(TAG, "preparaDiretorioGravarFotos() - Diretório " + picsDir.getName() + " já existe !");
+				Log.w(TAG, "preparaDiretorioGravarFotos() - Não foi possível criar o diretório: " + picsDir.getName()
+						+ " pois ele já existe !");
+			} else {
+				//
+				Log.w(TAG, "preparaDiretorioGravarFotos() - Erro - não foi possivel criar o diretório: " + picsDir.getName());
 			}
 
 		}
 
 	}
+	
+	/**
+	 * showCameraParameters
+	 * 
+	 * @param c Instância de uma câmera
+	 * 
+	 * Exibe algumas configurações dos parâmetros da câmera
+	 * 
+	 */
+	public static void showCameraParameters(Camera c) {
+		
+		if(c==null) {
+			Log.w(TAG,"A instância da câmera está nula");
+			return;
+		}
+		
+		Camera.Parameters parameters = c.getParameters();
+		
+		if(parameters==null) {
+			Log.w(TAG,"showCameraParameters() - Parâmetros de configuração da câmera está nulo");
+			return;
+		}
+		Size size = parameters.getPictureSize();
+		
+		Log.d(TAG,"  getPictureSize: "+CameraTools.getCameraSize(size));
+		Log.d(TAG,"  getPictureSize: "+parameters.getPictureSize());
+		Log.d(TAG,"  getHorizontalViewAngle: "+parameters.getHorizontalViewAngle());
+		Log.d(TAG,"  getJpegThumbnailQuality: "+parameters.getJpegThumbnailQuality());
+
+	}
+	
 
 	/**
 	 * showFile(File f)
@@ -759,6 +841,17 @@ public class CameraActivity extends Activity {
 
 		}
 
+	}
+
+}
+
+class XXX implements Camera.AutoFocusCallback {
+
+	private static final String TAG = "XXX";
+
+	public void onAutoFocus(boolean success, Camera camera) {
+		// TODO Auto-generated method stub
+		Log.d(TAG, "XXX.onAutoFocurs() - sucess: "+success+", camera: "+camera);
 	}
 
 }

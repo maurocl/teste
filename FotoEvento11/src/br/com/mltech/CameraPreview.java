@@ -63,6 +63,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	 * 
 	 * Esse método é chamado imediatamente após a primeira criação da superfície
 	 * 
+	 *the surface has been created, adquired the camera and tell it where to draw
+	 * 
 	 * @param holder
 	 *          o SurfaceHolder cuja superfície (surface) está sendo criada
 	 * 
@@ -150,4 +152,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
 	}
 
+	
+	
 }

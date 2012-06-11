@@ -74,9 +74,9 @@ public class TestCameraActivity extends Activity {
 	/**
 	 * onActivityResult(int requestCode, int resultCode, Intent data)
 	 * 
-	 * @param
-	 * @param
-	 * @param
+	 * @param requestCode
+	 * @param resultCode
+	 * @param data
 	 * 
 	 */
 	@Override
