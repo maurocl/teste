@@ -512,13 +512,13 @@ public class CameraTools {
 	 * @param dirName
 	 *          Nome do diretório (no sistema de arquivos)
 	 * 
-	 * @return uma instância de File referenciando um diretório
+	 * @return uma instância de File referenciando um diretório ou null em caso de algum erro.
 	 */
 	public static File getDir2(String dirName) {
 
 		File storageDir = null;
 
-		boolean b = false;
+		boolean diretorioCriado = false;
 
 		if (!isExternalStorageMounted()) {
 			Log.w(TAG,
@@ -538,9 +538,9 @@ public class CameraTools {
 			// cria o diretório formado pelo nome completo
 
 			// cria o diretório (e sua arvore de subdiretórios) se necessário
-			b = storageDir.mkdirs();
+			diretorioCriado = storageDir.mkdirs();
 
-			if (b == false) {
+			if (diretorioCriado == false) {
 
 				// diretório não foi criado
 				if (storageDir.exists()) {
@@ -1128,8 +1128,16 @@ public class CameraTools {
 
 	}
 
+	/**
+	 * getSupportedColorEffects(Camera.Parameters param)
+	 * 
+	 * @param param
+	 * @return
+	 */
 	public static List<String> getSupportedColorEffects(Camera.Parameters param) {
-		return null;
+	  
+	  return param.getSupportedColorEffects();
+	  
 	}
 
 	public List<String> getSupportedFlashModes(Camera.Parameters param) {
@@ -1164,8 +1172,13 @@ public class CameraTools {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param param
+	 * @return
+	 */
 	public List<Camera.Size> getSupportedPreviewSizes(Camera.Parameters param) {
-		return null;
+	  return param.getSupportedPreviewSizes();
 	}
 
 	public List<String> getSupportedSceneModes(Camera.Parameters param) {
