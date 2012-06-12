@@ -16,6 +16,8 @@ import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -37,821 +39,1008 @@ import br.com.mltech.utils.camera.CameraTools;
  */
 public class CameraActivity extends Activity {
 
-	private static final String TAG = "CameraActivity";
+  private static final String TAG = "CameraActivity";
 
-	// instância da câmera
-	private static Camera mCamera;
+  // instância da câmera
+  private static Camera mCamera;
 
-	// instância da CameraPreview
-	private static CameraPreview mPreview;
+  // instância da CameraPreview
+  private static CameraPreview mPreview;
 
-	// nome do diretório
-	private static File picsDir;
+  // diretório (onde as fotos serão armazenadas)
+  private static File picsDir;
 
-	// flag usado para controle da aplicação
-	private static int flag = 0;
+  // flag usado para controle da aplicação
+  private static int flag = 0;
 
-	// Variável usada para desenhar a foto na tela
-	private FrameLayout layoutPreview;
+  // Variável usada para desenhar a foto na tela
+  private FrameLayout layoutPreview;
 
-	private static Button btnOk;
-	private static Button btnNovo;
-	private static Button btnCancelar;
+  private static Button btnOk;
 
-	/**
+  private static Button btnNovo;
+
+  private static Button btnCancelar;
+
+  private static Button btnCapture;
+  
+  private Handler handler = new TestHandler();
+
+  // controla o tipo de disparo da câmera
+  private static final int MANUAL = 1;
+  private static final int AUTOMATICO = 2;
+
+  
+  private static int tipoDisparo = AUTOMATICO;
+  
+  
+  /**
 	 * 
 	 */
-	private Bitmap mImageBitmap;
+  private Bitmap mImageBitmap;
 
-	private Uri mUri;
+  /**
+   * Uri onde está localizada a foto
+   */
+  private Uri mUri;
 
-	/**
-	 * onCreate(Bundle savedInstanceState)
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+  /**
+   * onCreate(Bundle savedInstanceState)
+   */
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
 
-		super.onCreate(savedInstanceState);
+    super.onCreate(savedInstanceState);
 
-		Log.d(TAG, "*** onCreate() ***");
+    Log.d(TAG, "*** onCreate() ***");
 
-		setContentView(R.layout.cameraprev);
-		
-		int numCamerasDisponiveis=Camera.getNumberOfCameras();
+    setContentView(R.layout.cameraprev);
 
-		boolean isCameraAvailable = CameraTools.checkCameraHardware(this);
-		
-		if (isCameraAvailable) {
-			
-			if(numCamerasDisponiveis==1) {
-			Log.d(TAG, "onCreate() - há uma câmera disponível.");
-			}
-			else {
-				Log.d(TAG, "onCreate() - há  " + numCamerasDisponiveis + " câmeras disponíveeis.");
-			}
-		} else {
-			Log.e(TAG, "onCreate() - não há câmeras disponíveis");
-			return;
-		}
+    int numCamerasDisponiveis = Camera.getNumberOfCameras();
 
-		for (int i = 0; i < Camera.getNumberOfCameras() - 1; i++) {
+    boolean isCameraAvailable = CameraTools.checkCameraHardware(this);
 
-			Log.e(TAG, "onCreate() - verificando o estado da câmera: " + i);
+    if (isCameraAvailable) {
 
-			boolean isCameraWorking = CameraTools.isCameraWorking(i);
+      if (numCamerasDisponiveis == 1) {
+        Log.d(TAG, "onCreate() - há uma câmera disponível.");
+      }
+      else {
+        Log.d(TAG, "onCreate() - há  " + numCamerasDisponiveis + " câmeras disponíveis.");
+      }
+    } else {
+      Log.e(TAG, "onCreate() - não há câmeras disponíveis");
+      return;
+    }
 
-			if (isCameraWorking) {
-				Log.e(TAG, "onCreate() - câmera está funcionando corretamente");
-			} else {
-				Log.e(TAG, "onCreate() - câmera não está disponível para uso pela aplicação");
-				return;
-			}
+    for (int i = 0; i < Camera.getNumberOfCameras() - 1; i++) {
 
-		}
+      Log.i(TAG, "onCreate() - verificando o estado da câmera: " + i);
 
-		preparaDiretorioGravarFotos();
+      boolean isCameraWorking = CameraTools.isCameraWorking(i);
 
-		layoutPreview = (FrameLayout) findViewById(R.id.camera_preview);
+      if (isCameraWorking) {
+        Log.d(TAG, "onCreate() - câmera " + i + " está funcionando corretamente");
+      } else {
+        Log.e(TAG, "onCreate() - câmera " + i + " não está disponível para uso pela aplicação");
+        return;
+      }
 
-		/**
-		 * Trata o evento de disparar o botão
-		 */
-		Button capture = (Button) findViewById(R.id.button_capture);
+    }
 
-		btnOk = (Button) findViewById(R.id.btnOk);
-		btnNovo = (Button) findViewById(R.id.btnNovo);
-		btnCancelar = (Button) findViewById(R.id.btnCancelar);
+    // prepara o diretório para guardar as fotos
+    preparaDiretorioGravarFotos();
 
-		btnOk.setVisibility(android.view.View.GONE);
-		btnNovo.setVisibility(android.view.View.GONE);
-		btnCancelar.setVisibility(android.view.View.GONE);
+    layoutPreview = (FrameLayout) findViewById(R.id.camera_preview);
 
-		/**
-		 * Botão Capturar
-		 */
-		capture.setOnClickListener(new OnClickListener() {
+    /**
+     * Configura o tratador de eventos dos botões
+     */
 
-			public void onClick(View view) {
+    btnCapture = (Button) findViewById(R.id.button_capture);
+    btnOk = (Button) findViewById(R.id.btnOk);
+    btnNovo = (Button) findViewById(R.id.btnNovo);
+    btnCancelar = (Button) findViewById(R.id.btnCancelar);
 
-				if (mCamera == null) {
-					Log.e(TAG, "botão Capturar - mCamera is null na hora de acionar o dispatador !!!");
-					return;
-				}
+    btnCapture.setVisibility(android.view.View.VISIBLE);
+    btnOk.setVisibility(android.view.View.GONE);
+    btnNovo.setVisibility(android.view.View.GONE);
+    btnCancelar.setVisibility(android.view.View.GONE);
 
-				// botão de captura foi pressionado
-				Log.i(TAG, "botão de captura foi pressionado");
+    /**
+     * Botão Capturar
+     */
+    btnCapture.setOnClickListener(new OnClickListener() {
 
-				mCamera.takePicture(shutter, null, jpeg);
+      public void onClick(View view) {
 
-			}
-		});
+        if (mCamera == null) {
+          Log.e(TAG, "botão Capturar - mCamera is null na hora de acionar o dispatador !!!");
+          return;
+        }
 
-		/**
-		 * Nova foto
-		 */
-		btnNovo.setOnClickListener(new OnClickListener() {
+        // botão de captura foi pressionado
+        Log.i(TAG, "---------------------------------");
+        Log.i(TAG, "botão de captura foi pressionado");
+        Log.i(TAG, "---------------------------------");
 
-			public void onClick(View view) {
-				Log.d(TAG, "botão nova foto");
+        mCamera.takePicture(shutter, null, jpeg);
 
-				btnOk.setVisibility(android.view.View.GONE);
-				btnNovo.setVisibility(android.view.View.GONE);
-				btnCancelar.setVisibility(android.view.View.GONE);
+      }
+    });
 
-				reiniciaCamera();
+    /**
+     * Botão Nova foto
+     */
+    btnNovo.setOnClickListener(new OnClickListener() {
 
-			}
-		});
+      public void onClick(View view) {
 
-		/**
-		 * Botão Ok
-		 */
-		btnOk.setOnClickListener(new OnClickListener() {
+        Log.d(TAG, "botão nova foto");
 
-			public void onClick(View view) {
+        // desabilita os botões não usados
+        btnOk.setVisibility(android.view.View.GONE);
+        btnNovo.setVisibility(android.view.View.GONE);
+        btnCancelar.setVisibility(android.view.View.GONE);
 
-				Log.d(TAG, "botão Ok");
-				
-				CameraInfo cameraInfo=new CameraInfo();
-				//CameraTools.exibeCameraInfo(0, cameraInfo);
-				
-				Camera.getCameraInfo(0, cameraInfo);
-
-				// The direction that the camera faces
-				Log.i(TAG, "exibeCameraInfo() - cameraInfo.facing=" + cameraInfo.facing);
+        // torna visível o botão capturar
+        btnCapture.setVisibility(android.view.View.VISIBLE);
 
-				// The orientation of the camera image. 
-				Log.i(TAG, "exibeCameraInfo() - cameraInfo.orientation=" + cameraInfo.orientation);
+        reiniciaCamera();
 
-				Intent intent = new Intent();
+      }
+    });
 
-				if (mImageBitmap == null) {
-					Log.w(TAG, "mImageBitmap é nulo");
-				}
+    /**
+     * Botão Ok
+     * 
+     * Confirma a foto.
+     */
+    btnOk.setOnClickListener(new OnClickListener() {
 
-				ManipulaImagem.showBitmapInfo2(mImageBitmap);
-				
-				// data
-				intent.putExtra("data", mUri);
+      public void onClick(View view) {
 
-				setResult(RESULT_OK, intent);
+        Log.d(TAG, "botão Ok");
 
-				Log.d(TAG, "btnOk - retorno");
+        CameraInfo cameraInfo = new CameraInfo();
+        //CameraTools.exibeCameraInfo(0, cameraInfo);
 
-				// finaliza a activity
-				finish();
+        Camera.getCameraInfo(0, cameraInfo);
 
-			}
-		});
+        // The direction that the camera faces
+        Log.i(TAG, "exibeCameraInfo() - cameraInfo.facing=" + cameraInfo.facing);
 
-		/**
-		 * Botão cancelar
-		 */
-		btnCancelar.setOnClickListener(new OnClickListener() {
+        // The orientation of the camera image. 
+        Log.i(TAG, "exibeCameraInfo() - cameraInfo.orientation=" + cameraInfo.orientation);
 
-			public void onClick(View view) {
-				// finalizaActivity();
-				Log.d(TAG, "botão cancelar");
+        Intent intent = new Intent();
 
-				Intent intent = new Intent();
+        if (mImageBitmap == null) {
+          Log.w(TAG, "mImageBitmap é nulo");
+        }
 
-				setResult(RESULT_CANCELED, intent);
+        // exibe informações sobre a foto
+        ManipulaImagem.showBitmapInfo2(mImageBitmap);
 
-				// finaliza a activity
-				finish();
+        // seta os dados de retorno (data)
+        // Uri contendo a localização da foto
+        intent.putExtra("data", mUri);
 
-			}
-		});
+        // estabelece o resultado da execução da activity
+        setResult(RESULT_OK, intent);
 
-		
-		
-		
-	}
+        Log.d(TAG, "btnOk - retorno");
 
-	/**
-	 * shutter
-	 * 
-	 * Define um objeto que contém uma instância da classe ShutterCallback
-	 * responsável pelo tratamento do evento do disparo do botão da câmera É
-	 * invocado assim que o obturador da câmera entra em ação e captura a imagem.
-	 * 
-	 */
-	final ShutterCallback shutter = new ShutterCallback() {
+        // finaliza a activity
+        finish();
 
-		public void onShutter() {
+      }
+    });
 
-			Log.d(TAG, "onShutter() callback disparado !!!");
-		}
-	};
+    /**
+     * Botão cancelar
+     */
+    btnCancelar.setOnClickListener(new OnClickListener() {
 
-	/**
-	 * raw
-	 * 
-	 * Define um objeto que contém uma instância da classe PictureCallback
-	 * responsável pelo tratamento do evento do recebimento da imagem "crua" da
-	 * câmera (quando a imagem "crua" tirada pela câmera está disponível.
-	 */
-	final PictureCallback raw = new PictureCallback() {
+      public void onClick(View view) {
 
-		public void onPictureTaken(byte[] data, Camera camera) {
+        // finalizaActivity();
+        Log.d(TAG, "botão cancelar");
 
-			Log.d(TAG, "onPictureTaken - raw");
-		}
+        Intent intent = new Intent();
 
-	};
+        // estabelece o resultado da execução da activity
+        setResult(RESULT_CANCELED, intent);
 
-	/**
-	 * jpeg
-	 * 
-	 * Define um objeto que contém uma instância da classe PictureCallback
-	 * responsável pelo tratamento do evento do recebimento da imagem JPEG da
-	 * câmera Invocado assim que a imagem comprimida, no formato JPEG, está
-	 * disponível.
-	 * 
-	 */
-	final PictureCallback jpeg = new PictureCallback() {
+        // finaliza a activity
+        finish();
 
-		/**
-		 * Método chamado quando houver uma foto JPEG disponível (callback da
-		 * operação de tirar foto)
-		 */
-		public void onPictureTaken(byte[] data, Camera camera) {
+      }
+    });
 
-			Bitmap b = null;
+  }
 
-			Log.d(TAG, "onPictureTaken() - jpeg");
+  /**
+   * shutter
+   * 
+   * Define um objeto que contém uma instância da classe ShutterCallback
+   * responsável pelo tratamento do evento do disparo do botão da câmera É
+   * invocado assim que o obturador da câmera entra em ação e captura a imagem.
+   * 
+   */
+  final ShutterCallback shutter = new ShutterCallback() {
 
-			if (data != null) {
-				Log.d(TAG, "onPictureTaken() - data: " + (data.length / 1024.0) + " KBytes");
-			} else {
-				Log.d(TAG, "onPictureTaken() - data não retornou nenhum dado");
-			}
+    public void onShutter() {
 
-			// TODO aqui deveremos criar o nome dos arquivos
+      Log.d(TAG, "----------------------------------");
+      Log.d(TAG, "onShutter() callback disparado !!!");
+      Log.d(TAG, "----------------------------------");
+    }
 
-			// String nomeArquivo = System.currentTimeMillis() + ".jpg";
-			// File f = FileUtils.obtemNomeArquivoJPEG();
-			File f = FileUtils.obtemNomeArquivo(".jpg");
+  };
 
-			String nomeArquivo = f.getAbsolutePath();
+  /**
+   * raw
+   * 
+   * Define um objeto que contém uma instância da classe PictureCallback
+   * responsável pelo tratamento do evento do recebimento da imagem "crua" da
+   * câmera (quando a imagem "crua" tirada pela câmera está disponível.
+   */
+  final PictureCallback raw = new PictureCallback() {
 
-			if (data != null) {
+    public void onPictureTaken(byte[] data, Camera camera) {
 
-				mImageBitmap = ManipulaImagem.getBitmapFromByteArray(data);
+      Log.d(TAG, "--------------------");
+      Log.d(TAG, "onPictureTaken - raw");
+      Log.d(TAG, "--------------------");
 
-				boolean gravou = gravaArquivo(data, nomeArquivo);
+    }
 
-				if (gravou) {
-					Log.d(TAG, "onPictureTaken() - arquivo " + nomeArquivo + " gravado com sucesso.");
-					Toast.makeText(getBaseContext(), "Arquivo " + nomeArquivo + " gravado com sucesso.", Toast.LENGTH_SHORT).show();
-				} else {
-					Log.d(TAG, "onPictureTaken() - falha na gravação do arquivo " + nomeArquivo);
-				}
+  };
 
-				File file = new File(nomeArquivo);
-				mUri = Uri.fromFile(file);
+  /**
+   * jpeg
+   * 
+   * Define um objeto que contém uma instância da classe PictureCallback
+   * responsável pelo tratamento do evento do recebimento da imagem JPEG da
+   * câmera Invocado assim que a imagem comprimida, no formato JPEG, está
+   * disponível.
+   * 
+   */
+  final PictureCallback jpeg = new PictureCallback() {
 
-			} else {
-				Log.w(TAG, "onPictureTaken() - nenhum data foi retornado");
-			}
+    /**
+     * Método chamado quando houver uma foto JPEG disponível (callback da
+     * operação de tirar foto)
+     */
+    public void onPictureTaken(byte[] data, Camera camera) {
 
-			// foto já foi tirada e gravada.
-			// agora é ...
-			// reiniciaCamera();
+      Log.i(TAG, "-----------------------");
+      Log.i(TAG, "onPictureTaken() - jpeg");
+      Log.i(TAG, "-----------------------");
 
-			btnOk.setVisibility(android.view.View.VISIBLE);
-			btnNovo.setVisibility(android.view.View.VISIBLE);
-			btnCancelar.setVisibility(android.view.View.VISIBLE);
+      java.util.Formatter fmt = new java.util.Formatter();
 
-			// finalizaActivity(intent, sucesso);
+      if (data != null) {
+        Log.d(TAG, "onPictureTaken() - data: " + fmt.format("%.2f", data.length / 1024.0) + " KBytes");
+      } else {
+        Log.d(TAG, "onPictureTaken() - data não retornou nenhum dado");
+      }
 
-		}
+      // TODO aqui deveremos criar o nome dos arquivos
 
-	};
+      // String nomeArquivo = System.currentTimeMillis() + ".jpg";
+      // File f = FileUtils.obtemNomeArquivoJPEG();
+      File f = FileUtils.obtemNomeArquivo(".jpg");
 
-	/**
-	 * onStart(2)
-	 */
-	@Override
-	protected void onStart() {
+      String nomeArquivo = f.getAbsolutePath();
 
-		super.onStart();
+      if (data != null) {
 
-		Log.d(TAG, "*** onStart() ***");
+        mImageBitmap = ManipulaImagem.getBitmapFromByteArray(data);
 
-		if (mCamera == null) {
-			mCamera = getCameraInstance();
-		}
+        boolean gravou = gravaArquivo(data, nomeArquivo);
 
-		if (mCamera != null) {
+        if (gravou) {
+          Log.d(TAG, "onPictureTaken() - arquivo " + nomeArquivo + " gravado com sucesso.");
+          Toast.makeText(getBaseContext(), "Arquivo " + nomeArquivo + " gravado com sucesso.", Toast.LENGTH_SHORT).show();
+        } else {
+          Log.d(TAG, "onPictureTaken() - falha na gravação do arquivo " + nomeArquivo);
+        }
 
-			mCamera.setDisplayOrientation(270);
-			
-			// lê os parâmetros
-			Camera.Parameters params = mCamera.getParameters();
-			
-			params.setPictureSize(640, 480);
-			
-			//params.setColorEffect()
-			
-			// Atualiza os parâmetros
-			mCamera.setParameters(params);
-			
-			showCameraParameters(mCamera);
-			
-			mPreview = new CameraPreview(this, mCamera);
+        File file = new File(nomeArquivo);
+        mUri = Uri.fromFile(file);
 
-			// TODO verificar o layout da câmera
-			layoutPreview.addView(mPreview);
+      } else {
+        Log.w(TAG, "onPictureTaken() - nenhum dado foi retornado pela câmera");
+      }
 
-		}
+      // foto já foi tirada e gravada.
+      // agora é ...
+      // reiniciaCamera();
 
-	}
+      btnOk.setVisibility(android.view.View.VISIBLE);
+      btnNovo.setVisibility(android.view.View.VISIBLE);
+      btnCancelar.setVisibility(android.view.View.VISIBLE);
 
+    }
 
-	
-	
-	/**
-	 * onResume(3)
-	 * 
-	 * Esse callback é chamado a partir da sequencia: onCreate() --> onStart() -->
-	 * onResume() ou após ( a aplicação estar no estado Pause e retorna a
-	 * funcionar) onPause() --> on Resume().
-	 * 
-	 */
-	@Override
-	protected void onResume() {
+  };
 
-		super.onResume();
+  /**
+   * onStart(2)
+   */
+  @Override
+  protected void onStart() {
 
-		Log.d(TAG, "*** onResume() ***");
+    super.onStart();
 
-		if (mCamera == null) {
+    Log.d(TAG, "*** onStart() ***");
 
-			Log.d(TAG, "onResume - mCamera is null");
+    if (mCamera == null) {
 
-		} else {
+      mCamera = getCameraInstance();
 
-			// camera é diferente de null
+    }
 
-			Log.d(TAG, "onResume() - flag=" + flag);
+    if (mCamera != null) {
 
-			if (flag == 0) {
+      configuraCamera();
 
-				flag = 1;
+      mPreview = new CameraPreview(this, mCamera);
 
-			} else {
+      // TODO verificar o layout da câmera
+      layoutPreview.addView(mPreview);
+      
+      
+      // TODO verificar o disparo automático da câmera      
+      if(tipoDisparo==AUTOMATICO) {
+        setDisparoAutomatico(3);
+      }
+      else if(tipoDisparo==MANUAL) {
+        // não faz nada
+      }
 
-				Log.d(TAG, "onResume() - antes da chamada do método mCamera.startPreview()");
+    }
 
-				// Stops capturing and drawing preview frames to the surface, and resets
-				// the camera for a future call to startPreview().
-				mCamera.stopPreview();
+  }
 
-				// Starts capturing and drawing preview frames to the screen
-				mCamera.startPreview();
+  /**
+   * configuraCamera()
+   * 
+   */
+  private void configuraCamera() {
 
-				Log.d(TAG, "onResume() - após chamada do método mCamera.startPreview()");
+    mCamera.setDisplayOrientation(0);
 
-			}
+    // lê os parâmetros
+    Camera.Parameters params = mCamera.getParameters();
 
-		}
+    // altera o tamanho da foto
+    params.setPictureSize(640, 480);
 
-	}
+    /*
+     * EFFECT_AQUA EFFECT_BLACKBOARD EFFECT_MONO EFFECT_NEGATIVE EFFECT_NONE
+     * EFFECT_POSTERIZE EFFECT_SEPIA EFFECT_SOLARIZE EFFECT_WHITEBOARD
+     */
 
-	/**
-	 * onPause(4)
-	 * 
-	 * Activity foi colocada em pausa
-	 * 
-	 */
-	@Override
-	protected void onPause() {
+    //params.setColorEffect(Camera.Parameters.EFFECT_MONO);
+    params.setColorEffect(Camera.Parameters.EFFECT_SEPIA);
 
-		super.onPause();
+    // Atualiza os parâmetros
+    mCamera.setParameters(params);
 
-		Log.d(TAG, "*** onPause() ***");
+    // Exibe alguns parâmetros da câmera
+    showCameraParameters(mCamera);
+  }
 
-		boolean isCameraReleased = releaseCamera();
+  /**
+   * onResume(3)
+   * 
+   * Esse callback é chamado a partir da sequencia: onCreate() --> onStart() -->
+   * onResume() ou após ( a aplicação estar no estado Pause e retorna a
+   * funcionar) onPause() --> on Resume().
+   * 
+   */
+  @Override
+  protected void onResume() {
 
-		if (isCameraReleased) {
-			// a câmera foi liberada com sucesso
-			Log.d(TAG, "onPause() - câmera liberada com sucesso");
-		} else {
-			// a câmera já estava desligada
-			Log.w(TAG, "onPause() - falha na liberação da câmera");
-		}
+    super.onResume();
 
-	}
+    Log.d(TAG, "*** onResume() ***");
 
-	/**
-	 * onStop()
-	 */
-	@Override
-	protected void onStop() {
+    if (mCamera == null) {
 
-		super.onStop();
-		Log.d(TAG, "*** onStop() ***");
+      Log.d(TAG, "onResume - mCamera is null");
 
-	}
+    } else {
 
-	/**
-	 * onRestart()
-	 * 
-	 * Aplicação foi reinicializada.
-	 * 
-	 * É executado após um onStop()
-	 * 
-	 */
-	@Override
-	protected void onRestart() {
+      // camera é diferente de null
 
-		super.onRestart();
+      Log.d(TAG, "onResume() - flag=" + flag);
 
-		Log.d(TAG, "*******************");
-		Log.d(TAG, "*** onRestart() ***");
-		Log.d(TAG, "*******************");
-	}
+      if (flag == 0) {
 
-	/**
-	 * onDestroy();
-	 */
-	@Override
-	protected void onDestroy() {
+        flag = 1;
 
-		super.onDestroy();
+      } else {
 
-		Log.d(TAG, "*** onDestroy() ***");
+        Log.d(TAG, "onResume() - antes da chamada do método mCamera.startPreview()");
 
-		if (mCamera != null) {
+        // Stops capturing and drawing preview frames to the surface, and resets
+        // the camera for a future call to startPreview().
+        mCamera.stopPreview();
 
-			Log.d(TAG, "onDestroy() - before release");
+        // Starts capturing and drawing preview frames to the screen
+        mCamera.startPreview();
 
-			// Disconnects and releases the Camera object resources.
-			mCamera.release();
+        Log.d(TAG, "onResume() - após chamada do método mCamera.startPreview()");
 
-			Log.d(TAG, "onDestroy() - after release");
+      }
 
-		} else {
-			Log.w(TAG, "onDestroy() - câmera está liberada");
-		}
+    }
 
-	}
+  }
 
-	/**
-	 * onSaveInstanceState(Bundle outState)
-	 */
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+  /**
+   * onPause(4)
+   * 
+   * Activity foi colocada em pausa
+   * 
+   */
+  @Override
+  protected void onPause() {
 
-		super.onSaveInstanceState(outState);
+    super.onPause();
 
-		Log.d(TAG, "*** onSaveInstanceState() ***");
+    Log.d(TAG, "*** onPause() ***");
 
-	}
+    boolean isCameraReleased = releaseCamera();
 
-	/**
-	 * onRestoreInstanceState(Bundle savedInstanceState)
-	 */
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    if (isCameraReleased) {
+      // a câmera foi liberada com sucesso
+      Log.d(TAG, "onPause() - câmera liberada com sucesso");
+    } else {
+      // a câmera já estava desligada
+      Log.w(TAG, "onPause() - falha na liberação da câmera");
+    }
 
-		super.onRestoreInstanceState(savedInstanceState);
+  }
 
-		Log.d(TAG, "*** onRestoreInstanceState() ***");
+  /**
+   * onStop()
+   */
+  @Override
+  protected void onStop() {
 
-	}
+    super.onStop();
+    Log.d(TAG, "*** onStop() ***");
 
-	/**
-	 * getCameraInstance()
-	 * 
-	 * Obtem uma instância de uma câmera.
-	 * 
-	 * The Camera class is used to set image capture settings, start/stop preview,
-	 * snap pictures, and retrieve frames for encoding for video.
-	 * 
-	 * This class is a client for the Camera service, which manages the actual
-	 * camera hardware.
-	 * 
-	 * 
-	 * @return Uma instância da câmera ou null caso ela não exista
-	 */
-	public static Camera getCameraInstance() {
+  }
 
-		Camera c = null;
+  /**
+   * onRestart()
+   * 
+   * Aplicação foi reinicializada.
+   * 
+   * É executado após um onStop()
+   * 
+   */
+  @Override
+  protected void onRestart() {
 
-		try {
+    super.onRestart();
 
-			// Tenta obter uma instância da câmera
-			c = Camera.open();
+    Log.d(TAG, "*******************");
+    Log.d(TAG, "*** onRestart() ***");
+    Log.d(TAG, "*******************");
+  }
 
-		} catch (RuntimeException e) {
-			Log.e(TAG,
-					"getCameraInstance() - RuntimeException - Houve uma erro em tempo de execução na obtenção de uma instância da câmera", e);
+  /**
+   * onDestroy();
+   */
+  @Override
+  protected void onDestroy() {
 
-		} catch (Exception e) {
-			// A câmera não existe ou não se encontra disponível
-			Log.e(TAG, "getCameraInstance() - Exception - Houve uma exceção na obtenção de uma instância da câmera", e);
-		}
+    super.onDestroy();
 
-		return c; // retorna null caso a camera não exista
+    Log.d(TAG, "*** onDestroy() ***");
 
-	}
+    if (mCamera != null) {
 
-	/**
-	 * preparaDirerorioFotos()
-	 * 
-	 * Prepara o diretório onde as fotos serão armazenadas
-	 */
-	private void preparaDiretorioGravarFotos() {
+      Log.d(TAG, "onDestroy() - before release");
 
-		boolean isDirCreated = false;
+      // Disconnects and releases the Camera object resources.
+      mCamera.release();
 
-		// obtém o local onde as fotos são armazenas na mem´ria externa do
-		// dispositivo (geralmente o SD Card)
-		picsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/fotoevento/");
+      Log.d(TAG, "onDestroy() - after release");
 
-		Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.absolutePath=" + picsDir.getAbsolutePath());
-		Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.name=" + picsDir.getName());
+    } else {
+      Log.w(TAG, "onDestroy() - câmera está liberada");
+    }
 
-		// Make sure the Pictures directory exists.
-		// Garante a existência do diretório
-		isDirCreated = picsDir.mkdirs();
+  }
 
-		if (isDirCreated) {
+  /**
+   * onSaveInstanceState(Bundle outState)
+   */
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
 
-			// diretório criado com sucesso
-			showFile(picsDir);
+    super.onSaveInstanceState(outState);
 
-		} else {
+    Log.d(TAG, "*** onSaveInstanceState() ***");
 
-			if (picsDir.exists()) {
-				Log.w(TAG, "preparaDiretorioGravarFotos() - Não foi possível criar o diretório: " + picsDir.getName()
-						+ " pois ele já existe !");
-			} else {
-				//
-				Log.w(TAG, "preparaDiretorioGravarFotos() - Erro - não foi possivel criar o diretório: " + picsDir.getName());
-			}
+  }
 
-		}
+  /**
+   * onRestoreInstanceState(Bundle savedInstanceState)
+   */
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
-	}
-	
-	/**
-	 * showCameraParameters
-	 * 
-	 * @param c Instância de uma câmera
-	 * 
-	 * Exibe algumas configurações dos parâmetros da câmera
-	 * 
-	 */
-	public static void showCameraParameters(Camera c) {
-		
-		if(c==null) {
-			Log.w(TAG,"A instância da câmera está nula");
-			return;
-		}
-		
-		Camera.Parameters parameters = c.getParameters();
-		
-		if(parameters==null) {
-			Log.w(TAG,"showCameraParameters() - Parâmetros de configuração da câmera está nulo");
-			return;
-		}
-		Size size = parameters.getPictureSize();
-		
-		Log.d(TAG,"  getPictureSize: "+CameraTools.getCameraSize(size));
-		Log.d(TAG,"  getPictureSize: "+parameters.getPictureSize());
-		Log.d(TAG,"  getHorizontalViewAngle: "+parameters.getHorizontalViewAngle());
-		Log.d(TAG,"  getJpegThumbnailQuality: "+parameters.getJpegThumbnailQuality());
+    super.onRestoreInstanceState(savedInstanceState);
 
-	}
-	
+    Log.d(TAG, "*** onRestoreInstanceState() ***");
 
-	/**
-	 * showFile(File f)
-	 * 
-	 * Exibe informações sobre um arquivo: - informações sobre a permissão de
-	 * leitura (R), escrita (W) e execução (X) do um arquivo f - informações sobre
-	 * a permissão de leitura (R), escrita (W) e execução (X) do diretório picsDir
-	 * 
-	 * @param f
-	 *          instância da classe File
-	 * 
-	 */
-	private void showFile(File f) {
+  }
 
-		Log.d(TAG, "showFile(): ");
+  /**
+   * getCameraInstance()
+   * 
+   * Obtem uma instância de uma câmera.
+   * 
+   * The Camera class is used to set image capture settings, start/stop preview,
+   * snap pictures, and retrieve frames for encoding for video.
+   * 
+   * This class is a client for the Camera service, which manages the actual
+   * camera hardware.
+   * 
+   * 
+   * @return Uma instância da câmera ou null caso ela não exista
+   */
+  public static Camera getCameraInstance() {
 
-		if (f == null) {
-			Log.w(TAG, "arquivo é nulo");
-			return;
-		}
+    Camera c = null;
 
-		Log.d(TAG, "  f.getAbsolutePath=" + f.getAbsolutePath());
-		Log.d(TAG, "  f.getName()=" + f.getName());
+    try {
 
-		String canRead = f.canRead() == true ? "R" : "-";
-		String canWrite = f.canWrite() == true ? "W" : "-";
-		String canExecute = f.canRead() == true ? "X" : "-";
+      // Tenta obter uma instância da câmera
+      c = Camera.open();
 
-		String permission = canRead + canWrite + canExecute;
-		Log.d(TAG, "  Permissão do arquivo: " + permission);
+    } catch (RuntimeException e) {
+      Log.e(TAG,
+          "getCameraInstance() - RuntimeException - Houve uma erro em tempo de execução na obtenção de uma instância da câmera", e);
 
-		Log.d(TAG, "  picsDir.canWrite(): " + picsDir.canWrite());
-		Log.d(TAG, "  picsDir.canRead(): " + picsDir.canRead());
-		Log.d(TAG, "  picsDir.canExecute(): " + picsDir.canExecute());
+    } catch (Exception e) {
+      // A câmera não existe ou não se encontra disponível
+      Log.e(TAG, "getCameraInstance() - Exception - Houve uma exceção na obtenção de uma instância da câmera", e);
+    }
 
-		Log.d(TAG, "  picsDir.getAbsolutePath()=" + picsDir.getAbsolutePath());
+    return c; // retorna null caso a camera não exista ou não pode ser instânciada
 
-	};
+  }
 
-	/**
-	 * reiniciaCamera()
-	 * 
-	 * Reinicia a câmera
-	 * 
-	 */
-	private void reiniciaCamera() {
+  /**
+   * preparaDirerorioFotos()
+   * 
+   * Prepara o diretório onde as fotos serão armazenadas
+   * 
+   */
+  private void preparaDiretorioGravarFotos() {
 
-		SurfaceHolder surfaceHolder = null;
+    boolean isDirCreated = false;
 
-		// aqui é necessário iniciar a câmera novamente
-		Log.d(TAG, "reiniciaCamera()");
+    // obtém o local onde as fotos são armazenas na mem´ria externa do
+    // dispositivo (geralmente o SD Card)
+    picsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/fotoevento/");
 
-		if (mCamera != null) {
+    Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.absolutePath=" + picsDir.getAbsolutePath());
+    Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.name=" + picsDir.getName());
 
-			mPreview = new CameraPreview(this, mCamera);
+    // Make sure the Pictures directory exists.
+    // Garante a existência do diretório
+    isDirCreated = picsDir.mkdirs();
 
-			layoutPreview.addView(mPreview);
+    if (isDirCreated) {
 
-		} else {
-			Log.w(TAG, "reiniciaCamera() - mCamera está nula");
-		}
+      // diretório criado com sucesso
+      showFile(picsDir);
 
-		/*
-		 * if (mPreview != null) { surfaceHolder = mPreview.getHolder(); } else {
-		 * Log.w(TAG, "reiniciaCamera() - mPreview está nulo"); }
-		 */
+    } else {
 
-		try {
-			mCamera.setPreviewDisplay(surfaceHolder);
-			mCamera.startPreview();
-		} catch (IOException e) {
-			Log.w(TAG, "reiniciaCamera() - IOException", e);
-		}
+      if (picsDir.exists()) {
+        Log.w(TAG, "preparaDiretorioGravarFotos() - Não foi possível criar o diretório: " + picsDir.getName()
+            + " pois ele já existe !");
+      } else {
+        //
+        Log.w(TAG, "preparaDiretorioGravarFotos() - Erro - não foi possivel criar o diretório: " + picsDir.getName());
+      }
 
-	}
+    }
 
-	/**
-	 * releaseCamera()
-	 * 
-	 * Libera a câmera para ser usada em outras aplicações (se a câmera estiver em
-	 * uso pela aplicação)
-	 * 
-	 * @return true se a câmera foi liberada com sucesso ou false em caso de erro.
-	 */
-	private boolean releaseCamera() {
+  }
 
-		boolean isCameraReleased = false;
+  /**
+   * showCameraParameters
+   * 
+   * Exibe algumas configurações dos parâmetros da câmera
+   * 
+   * @param c
+   *          Instância de uma câmera
+   * 
+   */
+  public static void showCameraParameters(Camera c) {
 
-		if (mCamera != null) {
+    if (c == null) {
+      Log.w(TAG, "showCameraParameters() - A instância da câmera está nula");
+      return;
+    }
 
-			// libera a câmera
-			mCamera.release();
+    Camera.Parameters parameters = c.getParameters();
 
-			// atribui null para câmera corrente
-			mCamera = null;
+    if (parameters == null) {
+      Log.w(TAG, "showCameraParameters() - Parâmetros de configuração da câmera está nulo");
+      return;
+    }
 
-			Log.d(TAG, "releaseCamera() - câmera liberada com sucesso");
+    // obtém o tamanho da imagem
+    Size size = parameters.getPictureSize();
 
-			isCameraReleased = true;
+    Log.d(TAG, "  getPictureSize: " + CameraTools.getCameraSize(size));
+    Log.d(TAG, "  getPictureSize: " + parameters.getPictureSize());
+    Log.d(TAG, "  getHorizontalViewAngle: " + parameters.getHorizontalViewAngle());
+    Log.d(TAG, "  getJpegThumbnailQuality: " + parameters.getJpegThumbnailQuality());
 
-		} else {
+  }
 
-			// câmera não estava ligada
-			Log.w(TAG, "releaseCamera() - câmera não pode ser liberada pois não há uma instância da Camera em uso.");
+  /**
+   * showFile(File f)
+   * 
+   * Exibe informações sobre um arquivo: - informações sobre a permissão de
+   * leitura (R), escrita (W) e execução (X) do um arquivo f - informações sobre
+   * a permissão de leitura (R), escrita (W) e execução (X) do diretório picsDir
+   * 
+   * @param f
+   *          instância da classe File
+   * 
+   */
+  private void showFile(File f) {
 
-		}
+    Log.d(TAG, "showFile(): ");
 
-		return isCameraReleased;
+    if (f == null) {
+      Log.w(TAG, "arquivo é nulo");
+      return;
+    }
 
-	}
+    Log.d(TAG, "  f.getAbsolutePath=" + f.getAbsolutePath());
+    Log.d(TAG, "  f.getName()=" + f.getName());
 
-	/**
-	 * gravaArquivo(byte[] data, String nomeArquivo)
-	 * 
-	 * Grava um array de bytes (contendo a foto) em um arquivo em disco
-	 * 
-	 * @param data
-	 *          Array de bytes
-	 * 
-	 * @param nomeArquivo
-	 *          Nome do arquivo
-	 * 
-	 * @return true se o arquivo gravado com sucesso ou false caso ocorra algum
-	 *         erro.
-	 * 
-	 */
-	private boolean gravaArquivo(byte[] data, String nomeArquivo) {
+    String canRead = f.canRead() == true ? "R" : "-";
+    String canWrite = f.canWrite() == true ? "W" : "-";
+    String canExecute = f.canRead() == true ? "X" : "-";
 
-		/*********************************************************************************************
-		 * Quando o telefone está conectado e em testes ele não permite montar o
-		 * cartão de memória
-		 ********************************************************************************************/
+    String permission = canRead + canWrite + canExecute;
+    Log.d(TAG, "  Permissão do arquivo: " + permission);
 
-		String externalStorageState = Environment.getExternalStorageState();
+    Log.d(TAG, "  picsDir.canWrite(): " + picsDir.canWrite());
+    Log.d(TAG, "  picsDir.canRead(): " + picsDir.canRead());
+    Log.d(TAG, "  picsDir.canExecute(): " + picsDir.canExecute());
 
-		if (!externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
-			Log.w(TAG, "gravaArquivo() - mídia não está montada");
-			return false;
-		}
+    Log.d(TAG, "  picsDir.getAbsolutePath()=" + picsDir.getAbsolutePath());
 
-		if (externalStorageState.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
-			Log.w(TAG, "gravaArquivo() - mídia montada porém está ReadOnly");
-			return false;
-		}
+  };
 
-		Log.d(TAG, "gravaArquivo() - getExternalStorageState()=" + Environment.getExternalStorageState());
+  /**
+   * reiniciaCamera()
+   * 
+   * Reinicia a câmera
+   * 
+   */
+  private void reiniciaCamera() {
 
-		// cria uma arquivo para armazernar a foto
-		File f = new File(nomeArquivo);
+    SurfaceHolder surfaceHolder = null;
 
-		FileUtils.showFile(f);
+    // aqui é necessário iniciar a câmera novamente
+    Log.d(TAG, "reiniciaCamera()");
 
-		FileOutputStream fos = null;
+    if (mCamera != null) {
 
-		boolean gravou = false;
+      // cria uma nova instância de CameraPreview
+      mPreview = new CameraPreview(this, mCamera);
 
-		try {
+      // adiciona o "tela" de preview ao layout
+      layoutPreview.addView(mPreview);
 
-			try {
+    } else {
+      Log.w(TAG, "reiniciaCamera() - mCamera está nula");
+    }
 
-				fos = new FileOutputStream(f);
-				fos.write(data);
+    /*
+     * if (mPreview != null) { surfaceHolder = mPreview.getHolder(); } else {
+     * Log.w(TAG, "reiniciaCamera() - mPreview está nulo"); }
+     */
 
-				Log.d(TAG, "gravaArquivo() - Arquivo: " + f.getAbsolutePath() + " foi gerado e ocupa " + (f.length() / 1024.0) + " KBytes");
+    try {
+      // Sets the Surface to be used for live preview. 
+      // Either a surface or surface texture is necessary for preview, 
+      // and preview is necessary to take pictures. 
+      // The same surface can be re-set without harm. 
+      // Setting a preview surface will un-set any preview surface texture that was set 
+      // via setPreviewTexture(SurfaceTexture). 
+      mCamera.setPreviewDisplay(surfaceHolder);
 
-				gravou = true;
+      // Starts capturing and drawing preview frames to the screen. 
+      // Preview will not actually start until a surface is supplied with 
+      // setPreviewDisplay(SurfaceHolder) or setPreviewTexture(SurfaceTexture). 
+      mCamera.startPreview();
 
-			} catch (FileNotFoundException e) {
+    } catch (IOException e) {
+      Log.w(TAG, "reiniciaCamera() - IOException", e);
+    }
 
-				Log.d(TAG, "gravaArquivo() - FileNotFoundException: arquivo " + f.getAbsolutePath() + " não foi encontrado.");
+  }
 
-			} catch (IOException e) {
+  /**
+   * releaseCamera()
+   * 
+   * Libera a câmera para ser usada em outras aplicações (se a câmera estiver em
+   * uso pela aplicação)
+   * 
+   * @return true se a câmera foi liberada com sucesso ou false em caso de erro.
+   */
+  private boolean releaseCamera() {
 
-				Log.d(TAG, "gravaArquivo() - IOException: " + f.getAbsolutePath());
+    boolean isCameraReleased = false;
 
-			} catch (Exception e) {
+    if (mCamera != null) {
 
-				Log.d(TAG, "gravaArquivo() - Falha na gravação do arquivo: " + f.getAbsolutePath());
+      // libera a câmera
+      // Disconnects and releases the Camera object resources. 
+      // You must call this as soon as you're done with the Camera object.
+      mCamera.release();
 
-			} finally {
+      // atribui null para câmera corrente
+      mCamera = null;
 
-				if (fos != null) {
-					fos.close();
-				}
+      Log.d(TAG, "releaseCamera() - câmera liberada com sucesso");
 
-			}
+      isCameraReleased = true;
 
-		} catch (IOException e) {
-			Log.d(TAG, "gravaArquivo() - IOException", e);
-		}
+    } else {
 
-		return gravou;
+      // câmera não estava ligada
+      Log.w(TAG, "releaseCamera() - câmera não pode ser liberada pois não há uma instância da Camera em uso.");
 
-	}
+    }
 
-	/**
-	 * finalizaActivity(boolean gravou, byte[] data)
-	 * 
-	 * 
-	 */
-	void finalizaActivity(Intent intent, boolean sucesso) {
+    // retorna o resultado da liberação da câmera
+    return isCameraReleased;
 
-		Log.d(TAG, "finalizaActivity() - sucesso: " + sucesso);
+  }
 
-		if (sucesso) {
+  /**
+   * gravaArquivo(byte[] data, String nomeArquivo)
+   * 
+   * Grava um array de bytes (contendo a foto) em um arquivo em disco
+   * 
+   * @param data
+   *          Array de bytes
+   * 
+   * @param nomeArquivo
+   *          Nome do arquivo
+   * 
+   * @return true se o arquivo gravado com sucesso ou false caso ocorra algum
+   *         erro.
+   * 
+   */
+  private boolean gravaArquivo(byte[] data, String nomeArquivo) {
 
-			setResult(RESULT_OK, intent);
+    /*********************************************************************************************
+     * Quando o telefone está conectado e em testes ele não permite montar o
+     * cartão de memória
+     ********************************************************************************************/
 
-		} else {
+    String externalStorageState = Environment.getExternalStorageState();
 
-			setResult(RESULT_CANCELED, intent);
+    if (!externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
+      // mídia não está montada
+      Log.w(TAG, "gravaArquivo() - mídia não está montada");
+      return false;
+    }
 
-		}
+    if (externalStorageState.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
+      // mídia montada apenas para leitura
+      Log.w(TAG, "gravaArquivo() - mídia montada porém está ReadOnly");
+      return false;
+    }
 
-	}
+    // exibe o estado do dispositivo de externo de armazenamento
+    Log.d(TAG, "gravaArquivo() - getExternalStorageState()=" + Environment.getExternalStorageState());
+
+    // cria uma arquivo para armazernar a foto
+    File f = new File(nomeArquivo);
+
+    // exibe informações sobre o arquivo criado
+    FileUtils.showFile(f);
+
+    FileOutputStream fos = null;
+
+    boolean gravou = false;
+
+    java.util.Formatter fmt = new java.util.Formatter();
+
+    try {
+
+      try {
+
+        fos = new FileOutputStream(f);
+        fos.write(data);
+
+        Log.d(
+            TAG,
+            "gravaArquivo() - Arquivo: " + f.getAbsolutePath() + " foi gerado e ocupa "
+                + fmt.format("%.2f", (f.length() / 1024.0) + " KBytes"));
+
+        gravou = true;
+
+      } catch (FileNotFoundException e) {
+
+        Log.w(TAG, "gravaArquivo() - FileNotFoundException: arquivo " + f.getAbsolutePath() + " não foi encontrado.");
+
+      } catch (IOException e) {
+
+        Log.w(TAG, "gravaArquivo() - IOException: " + f.getAbsolutePath());
+
+      } catch (Exception e) {
+
+        Log.w(TAG, "gravaArquivo() - Falha na gravação do arquivo: " + f.getAbsolutePath());
+
+      } finally {
+
+        if (fos != null) {
+          fos.close();
+        }
+
+      }
+
+    } catch (IOException e) {
+      Log.w(TAG, "gravaArquivo() - IOException", e);
+    }
+
+    return gravou;
+
+  }
+
+  /**
+   * finalizaActivity(Intent intent, boolean sucesso)
+   * 
+   * @param intent
+   *          Intente que
+   * @param sucesso
+   * 
+   */
+  private void finalizaActivity(Intent intent, boolean sucesso) {
+
+    Log.d(TAG, "finalizaActivity() - sucesso: " + sucesso);
+
+    if (sucesso) {
+
+      setResult(RESULT_OK, intent);
+
+    } else {
+
+      setResult(RESULT_CANCELED, intent);
+
+    }
+
+  }
+
+  /**
+   * fmtFloat(String args)
+   * 
+   * Formata um valor float para 2 casas decimais
+   * 
+   * @param args
+   *          valor float para formatar
+   * 
+   * @return uma string contendo um float formatado com duas casas decimais
+   * 
+   */
+  private static String fmtFloat(float args) {
+
+    java.util.Formatter fmt = new java.util.Formatter();
+
+    String formattedString = fmt.format("%.2f", args).toString();
+
+    return formattedString;
+
+  }
+
+  /**
+   * setDisparoAutomatico(int segundos)
+   * 
+   * Dispara automaticamente a câmera após o número de segundos fornecidos
+   * 
+   * @param segundos
+   *          nº de segundos antes do disparo da foto
+   * 
+   */
+  private void setDisparoAutomatico(int segundos) {
+
+    if (segundos < 0) {
+      // TODO
+      // lança uma exceção ???
+    }
+
+    if (mCamera == null) {
+      Log.e(TAG, "camera não está nula");
+      return;
+    }
+
+    
+    Toast.makeText(getBaseContext(), "disparo automático em "+(segundos*1000)+" segundos.", Toast.LENGTH_SHORT).show();
+    
+    Message msg = new Message();
+    msg.what=1;
+    // envia a mensagem
+    handler.sendMessageDelayed(msg, segundos*1000);
+    
+    
+    
+    
+    Log.i(TAG, "-------------------------------------");
+    Log.i(TAG, "captura foi disparada automaticamente");
+    Log.i(TAG, "-------------------------------------");
+
+    // tira uma foto
+   // mCamera.takePicture(shutter, null, jpeg);
+
+  }
+
+  /**
+   * 
+   * @author maurocl
+   *
+   */
+  private class TestHandler extends Handler {
+
+    @Override
+    public void handleMessage(Message msg) {
+
+      // TODO Auto-generated method stub
+      super.handleMessage(msg);
+      // o atributo msg.what permite identificar a mensagem
+      if(msg.what==1) {
+     
+        Toast.makeText(getBaseContext(), "mensagem", Toast.LENGTH_SHORT).show();
+        
+        // tira uma foto
+        mCamera.takePicture(shutter, null, jpeg);
+
+        
+        
+      }
+    }
+
+  }
 
 }
 
+/**
+ * 
+ * @author maurocl
+ * 
+ */
 class XXX implements Camera.AutoFocusCallback {
 
-	private static final String TAG = "XXX";
+  private static final String TAG = "XXX";
 
-	public void onAutoFocus(boolean success, Camera camera) {
-		// TODO Auto-generated method stub
-		Log.d(TAG, "XXX.onAutoFocurs() - sucess: "+success+", camera: "+camera);
-	}
+  public void onAutoFocus(boolean success, Camera camera) {
+
+    // TODO Auto-generated method stub
+    Log.d(TAG, "XXX.onAutoFocurs() - sucess: " + success + ", camera: " + camera);
+  }
 
 }

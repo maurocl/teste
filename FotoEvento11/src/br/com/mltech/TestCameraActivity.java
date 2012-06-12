@@ -30,7 +30,7 @@ public class TestCameraActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+
 		super.onCreate(savedInstanceState);
 
 		Log.d(TAG, "*** onCreate() ***");
@@ -38,7 +38,11 @@ public class TestCameraActivity extends Activity {
 		setContentView(R.layout.testcameraprev);
 
 		Button btnOk = (Button) findViewById(R.id.btnOk);
+		btnOk.setText("Capturar");
+		
+		
 		Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
+		btnCancelar.setText("Voltar");
 		
 		mImageView = (ImageView) findViewById(R.id.imageView); 
 
@@ -66,6 +70,7 @@ public class TestCameraActivity extends Activity {
 			
 				Log.d(TAG, "btnCancelar - botão cancelar");
 				finish();
+				
 			}
 		});
 

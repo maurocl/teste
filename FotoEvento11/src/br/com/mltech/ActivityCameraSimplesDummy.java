@@ -13,7 +13,7 @@ import br.com.mltech.utils.ManipulaImagem;
 /**
  * ActivityCameraSimplesDummy
  * 
- * Essa activity devera "simular" o funcionamento de uma câmera, isto é, uma vez
+ * Essa activity "simula" o funcionamento de uma câmera, isto é, uma vez
  * chamada ela deverá retornar na Uri fornecida um bitmap.
  * 
  * @author maurocl
@@ -23,6 +23,8 @@ public class ActivityCameraSimplesDummy extends Activity {
 
   public static final String TAG = "ActivityCameraSimplesDummy";
 
+  public static String ARQUIVO = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
+  
   /**
    * onCreate(Bundle savedInstanceState)
    */
@@ -76,11 +78,9 @@ public class ActivityCameraSimplesDummy extends Activity {
 
     // define o nome do arquivo padrão que será retornando quando uma foto for
     // solicitada
-    String meuArquivo = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
+    String meuArquivo = ARQUIVO;
 
     if (validaArquivo(meuArquivo, uri)) {
-
-      // respostaIntent.putExtra("outputFileUri", uri.getPath());
 
       respostaIntent.putExtra("outputFileUri", uri);
 
@@ -147,10 +147,14 @@ public class ActivityCameraSimplesDummy extends Activity {
   /**
    * gravaBitmapUri(String meuArquivo, Uri uri)
    * 
-   * @param meuArquivo
-   * @param uri
+   * Lê o arquivo contendo um bitmap
+   * Decodifica o arquivo lido e gera um bitmap (se possível)
+   * Grava o bitmap na URI
    * 
-   * @return
+   * @param meuArquivo nome do arquivo que contém o bitmap
+   * @param uri URI onde o bitmap deve ser disponibilizado 
+   * 
+   * @return true em caso de sucesso ou false caso contrário.
    */
   private boolean gravaBitmapUri(String meuArquivo, Uri uri) {
 
@@ -161,12 +165,12 @@ public class ActivityCameraSimplesDummy extends Activity {
 
     if (bitmap == null) {
       // bitmap não foi gerado
-      Log.d(TAG, "validaArquivo() - bitmap não pode ser decodificado a partir do arquivo " + meuArquivo);
+      Log.d(TAG, "gravaBitmapUri() - bitmap não pode ser decodificado a partir do arquivo " + meuArquivo);
       return false;
     }
     else {
       // bitmap decodificado com sucesso
-      Log.v(TAG, "validaArquivo() - bitmap decodificado com sucesso");
+      Log.v(TAG, "gravaBitmapUri() - bitmap decodificado com sucesso");
     }
 
     // grava o bitmap usando a URI recebida
@@ -174,10 +178,10 @@ public class ActivityCameraSimplesDummy extends Activity {
 
     if (gravou) {
       // Grava o bitmap no "novo arquivo" dado pela Uri
-      Log.v(TAG, "validaArquivo() - Imagem gravada com sucesso em: " + uri.getPath());
+      Log.v(TAG, "gravaBitmapUri() - Imagem gravada com sucesso em: " + uri.getPath());
       return true;
     } else {
-      Log.e(TAG, "validaArquivo() - Falha na gravação da imagem em " + uri.getPath());
+      Log.e(TAG, "gravaBitmapUri() - Falha na gravação da imagem em " + uri.getPath());
       return false;
     }
 
@@ -190,7 +194,7 @@ public class ActivityCameraSimplesDummy extends Activity {
    * @param bundle
    * @return
    */
-  Intent xxx(int resultado, Bundle bundle) {
+  private Intent xxx(int resultado, Bundle bundle) {
 
     // Cria um intent de resposta
     Intent respostaIntent = new Intent();
@@ -209,13 +213,18 @@ public class ActivityCameraSimplesDummy extends Activity {
   /**
    * showIntent(Intent intent)
    * 
-   * Exibe informações sobre uma Intent
+   * Exibe informações sobre uma Intent (se for diferente de null)
    * 
-   * @param intent
+   * @param intent Instância de uma intent
    * 
    */
   private void showIntent(Intent intent) {
 
+    if(intent==null) {
+      Log.w(TAG,"showIntent() - intent está nula.");
+      return;
+    }
+    
     Log.d(TAG, "showIntent() - data(): " + intent.getData());
     Log.d(TAG, "showIntent() - dataString(): " + intent.getDataString());
 

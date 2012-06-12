@@ -60,6 +60,12 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
   private static final int ACTIVITY_CAMERA = 105;
 
+  // Estabelece a activity responsável por tirar as fotos
+  private static int ACTIVITY_FOTOS = ACTIVITY_DUMMY3;
+
+  //Estabelece a classe responsável por tirar as fotos
+  private static Class CLASS_FOTOS = DummyActivity3.class;
+
   //
   private SharedPreferences mPreferences;
 
@@ -182,9 +188,9 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
       public void onClick(View v) {
 
-        boolean b = isCondicoesIniciaisSatisfeitas();
+        boolean condicoesSatisfeitas = isCondicoesIniciaisSatisfeitas();
 
-        if (b) {
+        if (condicoesSatisfeitas) {
 
           Bundle bundle = new Bundle();
 
@@ -193,8 +199,10 @@ public class FotoEventoActivity extends Activity implements Constantes {
           bundle.putSerializable(PARTICIPANTE, mParticipante);
           bundle.putSerializable(PARTICIPACAO, mParticipacao);
 
-          //launchActivity(FotoEventoActivity.this, DummyActivity3.class, bundle, ACTIVITY_DUMMY3);
-          launchActivity(getBaseContext(), DummyActivity3.class, bundle, ACTIVITY_DUMMY3);
+          //launchActivity(FotoEventoActivity.this, DummyActivity3.class, bundle, ACTIVITY_DUMMY3);          
+          //launchActivity(getBaseContext(), DummyActivity3.class, bundle, ACTIVITY_FOTOS);
+
+          launchActivity(getBaseContext(), CLASS_FOTOS, bundle, ACTIVITY_FOTOS);
 
         } else {
           Toast.makeText(FotoEventoActivity.this, "Falta configuração !!!", Toast.LENGTH_LONG).show();
@@ -213,8 +221,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
       public void onClick(View v) {
 
         dialogoDesejaSairDaAplicacao();
-
-        // finish();
 
       }
 
@@ -293,12 +299,15 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * 
    * @param ctx
    *          Contexto
+   * 
    * @param cls
    *          Classe que será executada
+   * 
    * @param params
    *          Parâmetros enviados
+   * 
    * @param requestCode
-   *          Código da solicitação
+   *          Código da solicitação (da identificação da Activity)
    * 
    * 
    */
@@ -579,7 +588,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * 
    * @param resultCode
    *          Resultado da execução da activity
-   *          
+   * 
    * @param data
    *          Intent recebida (se houver)
    * 
@@ -593,7 +602,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
     Log.d(TAG, "==> resultActivityDummy3() - resultCode=" + resultCode);
 
     if (data == null) {
-      
+
       // Activity não retornou dados
       Log.w(TAG, "resultActivityDummy3() - Activity Dummy3 não retornou dados");
 
@@ -603,7 +612,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
       // Obtem o resultado da execução da activity
       result = data.getStringExtra("br.com.mltech.result");
-      
+
       mParticipante = (Participante) data.getSerializableExtra(Constantes.PARTICIPANTE);
       mParticipacao = (Participacao) data.getSerializableExtra(Constantes.PARTICIPACAO);
 
@@ -622,7 +631,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
       Log.d(TAG, "resultActivityDummy3() - bundle ss possui as seguintes informações:");
       FileUtils.showBundle(ss);
 
-    } 
+    }
 
     if (resultCode == RESULT_OK) {
 
@@ -657,12 +666,20 @@ public class FotoEventoActivity extends Activity implements Constantes {
     mPreferences = getSharedPreferences(name, MODE_PRIVATE);
 
     if (mPreferences == null) {
-
+      Log.w(TAG, "lerConfiguracoes() - mPreferences é nulo");
+      return;
     }
 
+    // nº de itens de configuração lidos
+    int numItensDeConfiguracao = 0;
+    
+    if (mPreferences.getAll()!=null) {
+      numItensDeConfiguracao = mPreferences.getAll().size();
+    }   
+    
     // Exibe o nº de entradas no arquivo de preferências
-    Log.d(TAG, "lerConfiguracoes() - nº de entradas do arquivo de preferências");
-
+    Log.d(TAG, "lerConfiguracoes() - nº de entradas do arquivo de preferências: "+numItensDeConfiguracao);
+    
     // Contratante
     if ((mContratante == null)) {
       // inicializa o contrante
@@ -798,7 +815,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
     mNumParticipantes++;
 
     Log.v(TAG, "updateListaParticipação() - nº de participantes até o momento: " + mNumParticipantes);
-    
+
     Toast.makeText(this, "Obrigado pela participação !", Toast.LENGTH_SHORT).show();
 
   }
@@ -819,6 +836,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
       Toast.makeText(this, "SDCARD não está montado !!!", Toast.LENGTH_LONG).show();
 
       return false;
+
     }
 
     Log.i(TAG, "preparaAmbiente() - SDCARD está montado");
@@ -848,9 +866,11 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * obtemImagemTelaInicial()
    * 
-   * Obtem um bitmap que será exibido na tela inicial da aplicação. Caso nenhuma
+   * Obtem um bitmap que será exibido na tela inicial da aplicação. Caso nenhum
    * bitmap seja configurado será usado um bitmap padrão.
    * 
+   * @return uma instância do objeto Bitmap contendo a imagem da tela inicial se
+   *         configurada ou null caso haja algum erro.
    */
   private Bitmap obtemImagemTelaInicial() {
 
@@ -866,6 +886,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
     String urlImagem = preferences.getString("preferencias_url_imagem", "");
 
     if ((urlImagem == null) || (urlImagem.equals(""))) {
+      Log.w(TAG, "obtemImagemTelaInicial() - Não foi possível encontrar a tela inicial. Usando a tela padrão");
       return null;
     }
 
@@ -876,10 +897,12 @@ public class FotoEventoActivity extends Activity implements Constantes {
       if (f.exists()) {
 
         // arquivo existe
-        // carrega o arquivo e exibe a foto
+        // carrega (decodifica o arquivo e cria um objeto bitmap)
         bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
 
       } else {
+
+        // arquivo não existe (ou não foi configurado)
 
         // carrega a foto default (padrão)
         // TODO definir o tamanho da imagem inicial
@@ -892,6 +915,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     preferences = null;
 
+    // retorna o bitmap
     return bitmap;
 
   }

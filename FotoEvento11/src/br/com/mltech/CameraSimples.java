@@ -78,7 +78,7 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
 
   // Molduras
   private static Moldura molduraPolaroid;
-  private static Moldura molduraCabine;
+  //private static Moldura molduraCabine;
 
   // Contador geral (iniciado em onCreate())
   public static int contador = 0;
