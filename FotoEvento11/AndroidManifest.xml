@@ -134,6 +134,15 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".SplashScreenActivity"
+            android:label="Splash Screen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        
     </application>
 
 </manifest>
