@@ -93,4 +93,18 @@ public interface Constantes {
 
   public static final String EVENTO_PARAM5 = "evento_param5";
 
+  // Preferências
+  
+  public static final String PREFERENCIAS_ASSUNTO = "preferencias_assunto";
+
+  public static final String PREFERENCIAS_DESCRICAO = "preferencias_descricao";
+
+  public static final String PREFERENCIAS_TEXTO_FACEBOOK = "preferencias_texto_facebook";
+
+  public static final String PREFERENCIAS_TEXTO_TWITTER = "preferencias_texto_twitter";
+
+  public static final String PREFERENCIAS_URL_IMAGEM = "preferencias_url_imagem";
+
+  public static final String PREFERENCIAS_NUM_CAMERA_FRONTAL = "preferencias_num_camera_frontal";
+
 }

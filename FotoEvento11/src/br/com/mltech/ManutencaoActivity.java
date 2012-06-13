@@ -1,10 +1,15 @@
 package br.com.mltech;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import android.app.Activity;
@@ -30,12 +35,13 @@ import br.com.mltech.modelo.Participacao;
  * Esta activity é responsável pela Manutenção do Sistema.
  * 
  * É a partir dela que podemos fazer a manutenção do Contratante, Evento,
- * Configurações e Relatórios
+ * Configurações, Relatórios, Backup e Restore de configuração do sistema a
+ * partir de um arquivo de configuração.
  * 
  * @author maurocl
  * 
  */
-public class ManutencaoActivity extends Activity {
+public class ManutencaoActivity extends Activity implements Constantes {
 
   private static final String TAG = "ManutecaoActivity";
 
@@ -49,11 +55,13 @@ public class ManutencaoActivity extends Activity {
 
   private static final int ACTIVITY_RELATORIOS = 1003;
 
-  private SharedPreferences mPreferences;
+  private static SharedPreferences mPreferences;
 
-  private Contratante mContratante;
+  private static SharedPreferences mPreferencesEmail;
 
-  private Evento mEvento;
+  private static Contratante mContratante;
+
+  private static Evento mEvento;
 
   /**
    * onCreate(Bundle savedInstanceState)
@@ -79,6 +87,8 @@ public class ManutencaoActivity extends Activity {
     Button btnEvento = (Button) findViewById(R.id.btnEvento);
     Button btnPreferencias = (Button) findViewById(R.id.btnPrefencias);
     Button btnRelatorios = (Button) findViewById(R.id.btnRelatorios);
+    Button btnBackup = (Button) findViewById(R.id.btnBackup);
+    Button btnRestauracao = (Button) findViewById(R.id.btnRestauracao);
     Button btnConfiguracaoInicial = (Button) findViewById(R.id.btnConfiguracaoInicial);
 
     // Desabilita botão
@@ -92,9 +102,9 @@ public class ManutencaoActivity extends Activity {
 
         Intent intent = new Intent(ManutencaoActivity.this, ContratanteActivity.class);
 
-        intent.putExtra("br.com.mltech.contratante", mContratante);
+        intent.putExtra(Constantes.CONTRATANTE, mContratante);
 
-        mContratante = (Contratante) intent.getSerializableExtra("br.com.mltech.contratante");
+        mContratante = (Contratante) intent.getSerializableExtra(Constantes.CONTRATANTE);
 
         Log.d(TAG, "Chamando ACTIVITY_CONTRATANTE");
 
@@ -122,8 +132,8 @@ public class ManutencaoActivity extends Activity {
 
         Intent intent = new Intent(ManutencaoActivity.this, EventoActivity.class);
 
-        intent.putExtra("br.com.mltech.evento", mEvento);
-        intent.putExtra("br.com.mltech.contratante", mContratante);
+        intent.putExtra(Constantes.EVENTO, mEvento);
+        intent.putExtra(Constantes.CONTRATANTE, mContratante);
 
         // mEvento = (Evento)
         // intent.getSerializableExtra("br.com.mltech.evento");
@@ -159,13 +169,13 @@ public class ManutencaoActivity extends Activity {
     btnRelatorios.setOnClickListener(new OnClickListener() {
 
       /**
-       * 
+       * Botão relatórios
        */
       public void onClick(View v) {
 
         Intent i = getIntent();
 
-        List<Participacao> lista = (ArrayList<Participacao>) i.getSerializableExtra("br.com.mltech.lista");
+        List<Participacao> lista = (ArrayList<Participacao>) i.getSerializableExtra(Constantes.LISTA);
 
         Intent intent = new Intent(ManutencaoActivity.this, RelatorioActivity.class);
 
@@ -175,13 +185,92 @@ public class ManutencaoActivity extends Activity {
 
         params.putString("numParticipantes", String.valueOf(num));
 
-        intent.putExtra("br.com.mltech.lista", (ArrayList<Participacao>) lista);
+        intent.putExtra(Constantes.LISTA, (ArrayList<Participacao>) lista);
 
-        intent.putExtra("br.com.mltech.evento", mEvento);
+        intent.putExtra(Constantes.EVENTO, mEvento);
 
         intent.putExtras(params);
 
         startActivity(intent);
+
+      }
+    });
+
+    /* Tratamento do click no Botão Backup */
+    btnBackup.setOnClickListener(new OnClickListener() {
+
+      /**
+       * 
+       */
+      public void onClick(View v) {
+
+        Log.d(TAG, "O botão de backup foi pressionado");
+
+        Toast.makeText(getBaseContext(), "Cria backup da configuração em arquivo", Toast.LENGTH_SHORT).show();
+
+        String arquivo = "/mnt/sdcard/config_backup.txt";
+
+        boolean gravou = gravaArquivoConfiguracao(arquivo);
+
+        if (gravou) {
+          Toast.makeText(getBaseContext(), "Arquivo de backup: " + arquivo + " gravado com sucesso", Toast.LENGTH_SHORT).show();
+        }
+        else {
+          Toast.makeText(getBaseContext(), "Falha na gravação do arquivo: " + arquivo, Toast.LENGTH_SHORT).show();
+        }
+
+      }
+    });
+
+    /* Tratamento do click no Botão Restauração (Restore) */
+    btnRestauracao.setOnClickListener(new OnClickListener() {
+
+      /**
+       * onClick(View v)
+       */
+      public void onClick(View v) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ManutencaoActivity.this);
+
+        builder.setMessage("Você tem certeza que apagar todos os dados e restaurar do arquivo ?").setCancelable(false)
+            .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+
+              public void onClick(DialogInterface dialog, int id) {
+
+                String arquivo = "/mnt/sdcard/config.txt";
+
+                HashMap<String, String> hash = null;
+
+                // Lê o arquivo de configuração 
+                hash = leArquivoConfiguracao(arquivo);
+
+                // Atualiza as variáveis de preferência
+                if (hash != null) {
+                  if (saveMapPreferences(hash)) {
+                    Toast.makeText(getBaseContext(), "Restauração feita com sucesso do arquivo: " + arquivo, Toast.LENGTH_SHORT)
+                        .show();
+                  }
+                  else {
+                    Toast.makeText(getBaseContext(), "Falha na restauração da configuração", Toast.LENGTH_SHORT).show();
+                  }
+                }
+                else {
+                  Log.w(TAG, "Erro na restauração do arquivo: " + arquivo);
+                }
+
+              }
+
+            }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
+
+              public void onClick(DialogInterface dialog, int id) {
+
+                dialog.cancel();
+              }
+
+            });
+
+        AlertDialog alert = builder.create();
+        alert.show();
 
       }
     });
@@ -288,7 +377,7 @@ public class ManutencaoActivity extends Activity {
 
       if (data != null) {
         // Atualiza os dados do contratante
-        mContratante = (Contratante) data.getSerializableExtra("br.com.mltech.contratante");
+        mContratante = (Contratante) data.getSerializableExtra(Constantes.CONTRATANTE);
         Log.d(TAG, "processando contratante=" + mContratante);
       }
 
@@ -314,6 +403,7 @@ public class ManutencaoActivity extends Activity {
    * 
    * @param resultCode
    * @param data
+   * 
    */
   private void processActivityEvento(int resultCode, Intent data) {
 
@@ -324,7 +414,7 @@ public class ManutencaoActivity extends Activity {
       Log.d(TAG, "processActivityEvento() - processando RESULT_OK");
 
       if (data != null) {
-        mEvento = (Evento) data.getSerializableExtra("br.com.mltech.evento");
+        mEvento = (Evento) data.getSerializableExtra(Constantes.EVENTO);
         Log.d(TAG, "processActivityEvento() - processando evento=" + mEvento);
       }
 
@@ -407,33 +497,37 @@ public class ManutencaoActivity extends Activity {
    * 
    * verifica se a aplicação está configurada para uso
    * 
+   * Testa se o contrante está preenchido Testa se o evento está preenchido
+   * Testa se as bordas estão configuradas para o evento
+   * 
+   * Retorna true em caso de sucesso e false no caso de haver algum problema
    */
   private boolean isConfiguracaoCompleta() {
 
-    boolean b = true;
+    boolean configuracaoCompleta = true;
 
     // verifica se existe um contratante configurado
     if (mContratante == null) {
-      b = false;
-      Log.d(TAG, "isConfiguracaoCompleta() - Contratante não foi configurado");
+      configuracaoCompleta = false;
+      Log.w(TAG, "isConfiguracaoCompleta() - Contratante não foi configurado");
     }
 
     // verifica se existe um evento cadastrado
     if (mEvento == null) {
-      b = false;
-      Log.d(TAG, "isConfiguracaoCompleta() - Evento não foi configurado");
+      configuracaoCompleta = false;
+      Log.w(TAG, "isConfiguracaoCompleta() - Evento não foi configurado");
     }
 
     // verifica se as bordas das fotos já foram disponibilizadas ao
     // evento
     if (mEvento != null && ((mEvento.getBordaCabine() == null) || (mEvento.getBordaPolaroid() == null))) {
-      Log.d(TAG, "isConfiguracaoCompleta() - Bordas não foram configuradas");
+      Log.w(TAG, "isConfiguracaoCompleta() - Bordas não foram configuradas");
 
-      b = false;
+      configuracaoCompleta = false;
 
     }
 
-    return b;
+    return configuracaoCompleta;
 
   }
 
@@ -451,7 +545,7 @@ public class ManutencaoActivity extends Activity {
     boolean commitDone;
 
     if (mPreferences == null) {
-      Log.w(TAG, "gravarPreferencias() - mPreferences is null");
+      Log.w(TAG, "gravarPreferencias() - mPreferences é nula");
       return false;
     }
 
@@ -482,8 +576,8 @@ public class ManutencaoActivity extends Activity {
         edit.putString(Constantes.EVENTO_DATA, mEvento.getData());
         edit.putString(Constantes.EVENTO_TELEFONE, mEvento.getTelefone());
 
-        edit.putBoolean(Constantes.EVENTO_ENVIA_FACEBOOK, mEvento.isEnviaFacebook());
-        edit.putBoolean(Constantes.EVENTO_ENVIA_TWITTER, mEvento.isEnviaTwitter());
+        edit.putString(Constantes.EVENTO_ENVIA_FACEBOOK, mEvento.isEnviaFacebook() == true ? "true" : "false");
+        edit.putString(Constantes.EVENTO_ENVIA_TWITTER, mEvento.isEnviaTwitter() == true ? "true" : "false");
 
         edit.putString(Constantes.EVENTO_BORDA_POLAROID, mEvento.getBordaPolaroid());
         edit.putString(Constantes.EVENTO_BORDA_CABINE, mEvento.getBordaCabine());
@@ -494,6 +588,53 @@ public class ManutencaoActivity extends Activity {
         edit.putString(Constantes.EVENTO_PARAM4, mEvento.getParametros().getParametro(3));
         edit.putString(Constantes.EVENTO_PARAM5, mEvento.getParametros().getParametro(4));
 
+      }
+
+      // grava as preferências
+      commitDone = edit.commit();
+
+      if (commitDone) {
+        Toast.makeText(this, "Preferências foram salvas com sucesso", Toast.LENGTH_LONG).show();
+      }
+
+      return commitDone;
+
+    } else {
+      Log.w(TAG, "gravarPreferencias() - Erro na gravação das preferências compartilhadas");
+      return false;
+    }
+
+  }
+
+  /**
+   * gravarPreferencias(HashMap<String, String> hash)
+   * 
+   * @param hash
+   * 
+   * @return
+   */
+  private boolean gravarPreferencias(HashMap<String, String> hash) {
+
+    boolean commitDone;
+
+    if (mPreferences == null) {
+      Log.w(TAG, "gravarPreferencias() - mPreferences is null");
+      return false;
+    }
+
+    if (hash == null) {
+      Log.w(TAG, "gravarPreferencias() - hash é null");
+      return false;
+    }
+
+    Editor edit = mPreferences.edit();
+
+    if (edit != null) {
+
+      Log.d(TAG, "gravarPreferencias() - Gravando as preferências de contratante e evento");
+
+      for (String chave : hash.keySet()) {
+        edit.putString(chave, hash.get(chave));
       }
 
       // grava as preferências
@@ -570,10 +711,12 @@ public class ManutencaoActivity extends Activity {
     mEvento.setBordaPolaroid(mPreferences.getString(Constantes.EVENTO_BORDA_POLAROID, ""));
     mEvento.setBordaCabine(mPreferences.getString(Constantes.EVENTO_BORDA_CABINE, ""));
 
-    mEvento.setEnviaFacebook(mPreferences.getBoolean(Constantes.EVENTO_ENVIA_FACEBOOK,
-        false));
-    mEvento.setEnviaTwitter(mPreferences.getBoolean(Constantes.EVENTO_ENVIA_TWITTER,
-        false));
+    mEvento.setEnviaFacebook(mPreferences.getString(Constantes.EVENTO_ENVIA_FACEBOOK,
+        "false").equalsIgnoreCase("true"));
+
+    mEvento.setEnviaTwitter(mPreferences.getString(Constantes.EVENTO_ENVIA_TWITTER,
+        "false").equalsIgnoreCase("true")
+        );
 
     // --------------------------------------
 
@@ -626,6 +769,313 @@ public class ManutencaoActivity extends Activity {
     }
 
     return commitDone;
+
+  }
+
+  /**
+   * leArquivoConfiguracao(String filename)
+   * 
+   * Lê um arquivo com as configurações. O nome das chaves deve ser colocado em
+   * letras maiúsculas
+   * 
+   * @param filename
+   *          nome do arquivo de configuração
+   * 
+   * @return um HashMap<String,String> com as associações entre chave e valor
+   * 
+   */
+  private HashMap<String, String> leArquivoConfiguracao(String filename) {
+
+    BufferedReader buf = null;
+
+    HashMap<String, String> hash = new HashMap<String, String>();
+
+    // número da linha do arquivo
+    int linha = 0;
+
+    try {
+
+      buf = new BufferedReader(new FileReader(filename));
+
+      String line = null;
+
+      while ((line = buf.readLine()) != null) {
+
+        linha++;
+
+        if (line.startsWith("#")) {
+          // ignora linhas começas por '#'
+          continue;
+        }
+
+        Log.d(TAG, linha + ": " + line);
+
+        String[] atribuicao = line.split("=");
+
+        // Log.v(TAG, "Tamanho=" + atribuicao.length);
+
+        String chave = null;
+        String valor = null;
+
+        if (atribuicao.length > 1) {
+
+          chave = atribuicao[0];
+          valor = atribuicao[1];
+
+          Log.v(TAG, "Tamanho=" + atribuicao.length + ", Chave=" + chave + ", Valor=" + valor);
+
+        }
+        else if (atribuicao.length == 1) {
+          chave = atribuicao[0];
+
+          Log.v(TAG, "Chave=" + chave + ", Valor=" + valor);
+        }
+        else {
+          Log.w(TAG, "Erro de atribuição na linha: " + linha);
+        }
+
+        hash.put(chave.toLowerCase(), valor);
+
+      }
+
+    } catch (FileNotFoundException e) {
+      //
+      Log.w(TAG, "Arquivo não foi encontrado", e);
+
+    } catch (IOException e) {
+      //
+      Log.w(TAG, "IOException", e);
+
+    } finally {
+      if (buf != null) {
+        try {
+          buf.close();
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+
+    return hash;
+
+  }
+
+  /**
+   * saveMapPreferences(HashMap<String, String> hash)
+   * 
+   * Grava nos arquivos de SharedPreferences os valores mapeados em um HashMap
+   * 
+   * @param hash
+   *          HashMap contendo a relação de chaves e valores.
+   * 
+   */
+  private boolean saveMapPreferences(HashMap<String, String> hash) {
+
+    if (mPreferences != null) {
+      mPreferences = null;
+    }
+
+    if (mPreferencesEmail != null) {
+      mPreferencesEmail = null;
+    }
+
+    SharedPreferences mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
+
+    if (mPreferences == null) {
+      Log.w(TAG, "saveMapPreferences() - mPreferences é nulo");
+      return false;
+    }
+
+    SharedPreferences mPreferencesEmail = getSharedPreferences("pref_email", MODE_PRIVATE);
+
+    if (mPreferencesEmail == null) {
+      Log.w(TAG, "saveMapPreferences() - mPreferencesEmail é nulo");
+      return false;
+    }
+
+    Editor edit1 = mPreferences.edit();
+    Editor edit2 = mPreferencesEmail.edit();
+
+    for (String chave : hash.keySet()) {
+      if (chave.toUpperCase().startsWith("PREFERENCIA")) {
+        edit2.putString(chave, hash.get(chave));
+      }
+      else {
+        edit1.putString(chave, hash.get(chave));
+      }
+    }
+
+    // grava as preferências
+    boolean commitDone1 = edit1.commit();
+    boolean commitDone2 = edit2.commit();
+
+    if (commitDone1 && commitDone2) {
+      Log.i(TAG, "saveMapPreferences() - Gravação realizada com sucesso");
+    }
+    else {
+
+      if (commitDone1 == true) {
+        Log.i(TAG, "saveMapPreferences() - gravação 1 realizada com sucesso");
+      }
+      else {
+        Log.w(TAG, "saveMapPreferences() - Gravação 1 realizada com fracasso");
+      }
+
+      if (commitDone2 == true) {
+        Log.i(TAG, "saveMapPreferences() - Gravação 2 realizada com sucesso");
+      }
+      else {
+        Log.w(TAG, "saveMapPreferences() - Gravação 2 realizada com fracasso");
+      }
+
+    }
+
+    //------------------------------------------------------------------------
+    //
+    //------------------------------------------------------------------------
+    Map<String, ?> mapa = mPreferences.getAll();
+
+    Log.d(TAG, "saveMapPreferences() - mapa possui: " + mapa.size());
+
+    for (String chave : mapa.keySet()) {
+      Log.v(TAG, "saveMapPreferences() - mapa: " + chave + ", valor: " + mapa.get(chave));
+    }
+
+    //------------------------------------------------------------------------
+    //
+    //------------------------------------------------------------------------
+    Map<String, ?> mapa2 = mPreferencesEmail.getAll();
+
+    Log.d(TAG, "saveMapPreferences() - mapa possui: " + mapa2.size());
+
+    for (String chave : mapa2.keySet()) {
+      Log.v(TAG, "saveMapPreferences() - mapa: " + chave + ", valor: " + mapa2.get(chave));
+    }
+
+    //------------------------------------------------------------------------
+    //
+    //------------------------------------------------------------------------    
+
+    mPreferencesEmail = null;
+    mPreferences = null;
+
+    boolean b = lerPreferencias();
+
+    Log.i(TAG, "saveMapPreferences() - b=" + b + ", ler preferencias");
+
+    return (commitDone1 && commitDone2);
+
+  }
+
+  /**
+   * readPreferencesMap()
+   * 
+   * Lê os valores armazenados no arquivo de preferência e cria um HashMap com
+   * os mapeamentos de chaves e valores
+   * 
+   * @return um HashMap com o mapeamento entra chave e valores ou null caso haja
+   *         algum problema
+   */
+  private HashMap<String, String> readPreferencesMap() {
+
+    HashMap<String, String> hash = new HashMap<String, String>();
+
+    if (mPreferences == null) {
+      mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
+      Log.w(TAG, "obtemValores() - mPreferences é nulo");
+    }
+
+    if (mPreferencesEmail == null) {
+      mPreferencesEmail = getSharedPreferences("pref_email", MODE_PRIVATE);
+      Log.w(TAG, "obtemValores() - mPreferences é nulo");
+    }
+
+    // obtém o conjunto de chaves da estrutura SharedPreference
+    Set<String> set = mPreferences.getAll().keySet();
+
+    for (String chave : set) {
+
+      // cria um novo elemento para cada chave do conjunto
+      hash.put(chave.toUpperCase(), mPreferences.getString(chave, ""));
+      Log.v(TAG, chave.toUpperCase() + "=" + mPreferences.getString(chave, ""));
+
+    }
+
+    // obtém o conjunto de chaves da estrutura SharedPreference
+    Set<String> set2 = mPreferencesEmail.getAll().keySet();
+
+    for (String chave : set2) {
+
+      // cria um novo elemento para cada chave do conjunto
+      hash.put(chave.toUpperCase(), mPreferencesEmail.getString(chave, ""));
+
+      Log.v(TAG, chave.toUpperCase() + "=" + mPreferencesEmail.getString(chave, ""));
+
+    }
+
+    // o HashMap de elementos
+    return hash;
+
+  }
+
+  /**
+   * gravaArquivoConfiguracao(String filename)
+   * 
+   * @param filename
+   *          nome do arquivo
+   * 
+   * @return true em caso de sucesso ou false caso contrário
+   */
+  private boolean gravaArquivoConfiguracao(String filename) {
+
+    BufferedWriter buf = null;
+
+    //HashMap<String, String> hash = new HashMap<String, String>();
+
+    boolean gravou = false;
+
+    HashMap<String, String> hash = readPreferencesMap();
+
+    if (hash == null) {
+      Log.w(TAG, "gravaArquivoConfiguracao() - conjunto de elementos está vazio");
+      return false;
+    }
+
+    try {
+
+      buf = new BufferedWriter(new FileWriter(filename));
+
+      for (String chave : hash.keySet()) {
+        buf.write(chave.toUpperCase() + "=" + hash.get(chave));
+        buf.newLine();
+      }
+
+      buf.flush();
+
+    } catch (FileNotFoundException e) {
+      //
+      Log.w(TAG, "gravaArquivoConfiguracao() - arquivo: " + filename + " não foi encontrado", e);
+
+    } catch (IOException e) {
+      //
+      Log.w(TAG, "gravaArquivoConfiguracao() - IOException", e);
+
+    } finally {
+      if (buf != null) {
+        try {
+          buf.close();
+          gravou = true;
+        } catch (IOException e) {
+          Log.w(TAG, "gravaArquivoConfiguracao() - erro ao fechar o arquivo", e);
+        }
+      }
+      else {
+        gravou = false;
+      }
+    }
+
+    return gravou;
 
   }
 

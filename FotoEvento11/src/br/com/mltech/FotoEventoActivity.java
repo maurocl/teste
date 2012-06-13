@@ -2,11 +2,7 @@ package br.com.mltech;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,7 +28,6 @@ import br.com.mltech.modelo.Parametros;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.FileUtils;
-import br.com.mltech.utils.ManipulaImagem;
 import br.com.mltech.utils.camera.CameraTools;
 
 /**
@@ -672,14 +667,14 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     // nº de itens de configuração lidos
     int numItensDeConfiguracao = 0;
-    
-    if (mPreferences.getAll()!=null) {
+
+    if (mPreferences.getAll() != null) {
       numItensDeConfiguracao = mPreferences.getAll().size();
-    }   
-    
+    }
+
     // Exibe o nº de entradas no arquivo de preferências
-    Log.d(TAG, "lerConfiguracoes() - nº de entradas do arquivo de preferências: "+numItensDeConfiguracao);
-    
+    Log.d(TAG, "lerConfiguracoes() - nº de entradas do arquivo de preferências: " + numItensDeConfiguracao);
+
     // Contratante
     if ((mContratante == null)) {
       // inicializa o contrante
@@ -711,8 +706,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
       mEvento.setBordaPolaroid(mPreferences.getString(Constantes.EVENTO_BORDA_POLAROID, ""));
       mEvento.setBordaCabine(mPreferences.getString(Constantes.EVENTO_BORDA_CABINE, ""));
 
-      mEvento.setEnviaFacebook(mPreferences.getBoolean(Constantes.EVENTO_ENVIA_FACEBOOK, false));
-      mEvento.setEnviaTwitter(mPreferences.getBoolean(Constantes.EVENTO_ENVIA_TWITTER, false));
+      mEvento.setEnviaFacebook(mPreferences.getString(Constantes.EVENTO_ENVIA_FACEBOOK, "false"));
+      mEvento.setEnviaTwitter(mPreferences.getString(Constantes.EVENTO_ENVIA_TWITTER, "false"));
 
       String[] paramEventos = new String[5];
 

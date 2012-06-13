@@ -33,9 +33,7 @@ import br.com.mltech.utils.camera.CameraTools;
  * CameraActivity
  * 
  * @author maurocl
- * 
- *         !!! Essa versão funciona no telefone porém ela trava no simulador !!!
- * 
+ *  
  */
 public class CameraActivity extends Activity {
 
@@ -385,6 +383,7 @@ public class CameraActivity extends Activity {
 
     if (mCamera != null) {
 
+      // configura a câmera
       configuraCamera();
 
       mPreview = new CameraPreview(this, mCamera);

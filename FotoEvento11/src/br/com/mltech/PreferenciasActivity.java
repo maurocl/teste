@@ -27,13 +27,13 @@ import android.widget.EditText;
  * @author maurocl
  * 
  */
-public class PreferenciasActivity extends Activity {
+public class PreferenciasActivity extends Activity implements Constantes {
 
   public static final String TAG = "Preferencias";
 
   public static final String PREF_EMAIL = "pref_email";
 
-  private SharedPreferences preferences;
+  private static SharedPreferences preferences;
 
   /**
    * onCreate(android.os.Bundle savedInstanceState)
@@ -62,14 +62,14 @@ public class PreferenciasActivity extends Activity {
     //---------------------------------------------------------------------------------
     // Atualiza a interface gráfico com os valores recuperados do arquivo de prefências
     //---------------------------------------------------------------------------------
-    assunto.setText(preferences.getString("preferencias_assunto", ""));
-    descricao.setText(preferences.getString("preferencias_descricao", ""));
+    assunto.setText(preferences.getString(Constantes.PREFERENCIAS_ASSUNTO, ""));
+    descricao.setText(preferences.getString(Constantes.PREFERENCIAS_DESCRICAO, ""));
 
-    txtFacebook.setText(preferences.getString("preferencias_texto_facebook", ""));
-    txtTwitter.setText(preferences.getString("preferencias_texto_twitter", ""));
+    txtFacebook.setText(preferences.getString(Constantes.PREFERENCIAS_TEXTO_FACEBOOK, ""));
+    txtTwitter.setText(preferences.getString(Constantes.PREFERENCIAS_TEXTO_TWITTER, ""));
 
-    urlImagem.setText(preferences.getString("preferencias_url_imagem", ""));
-    numCameraFrontal.setText(preferences.getString("preferencias_num_camera_frontal", ""));
+    urlImagem.setText(preferences.getString(Constantes.PREFERENCIAS_URL_IMAGEM, ""));
+    numCameraFrontal.setText(preferences.getString(Constantes.PREFERENCIAS_NUM_CAMERA_FRONTAL, ""));
 
     //---------------------------
     // processa o botão de Gravar
@@ -83,14 +83,14 @@ public class PreferenciasActivity extends Activity {
         //------------------------------------------------------------------------------
         // Atualiza o arquivo de prefência com as alterações feitas na interface gráfica
         //------------------------------------------------------------------------------
-        edit.putString("preferencias_assunto", assunto.getText().toString());
-        edit.putString("preferencias_descricao", descricao.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_ASSUNTO, assunto.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_DESCRICAO, descricao.getText().toString());
 
-        edit.putString("preferencias_texto_facebook", txtFacebook.getText().toString());
-        edit.putString("preferencias_texto_twitter", txtTwitter.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_TEXTO_FACEBOOK, txtFacebook.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_TEXTO_TWITTER, txtTwitter.getText().toString());
 
-        edit.putString("preferencias_url_imagem", urlImagem.getText().toString());
-        edit.putString("preferencias_num_camera_frontal", numCameraFrontal.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_URL_IMAGEM, urlImagem.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_NUM_CAMERA_FRONTAL, numCameraFrontal.getText().toString());
 
         // grava as preferências
         boolean b = edit.commit();
@@ -108,6 +108,7 @@ public class PreferenciasActivity extends Activity {
     btnCancelar.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
+
         // Finaliza a execução da activity
         finish();
 
