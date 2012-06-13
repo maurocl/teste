@@ -25,6 +25,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+import br.com.mltech.modelo.Participacao;
 import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
 import br.com.mltech.utils.camera.CameraTools;
@@ -38,7 +39,7 @@ import br.com.mltech.utils.camera.CameraTools;
  * @author maurocl
  * 
  */
-public class CameraActivity extends Activity {
+public class CameraActivity extends Activity implements Constantes {
 
   private static final String TAG = "CameraActivity";
 
@@ -87,6 +88,8 @@ public class CameraActivity extends Activity {
    */
   private static Uri mUri;
 
+  private static Participacao mParticipacao;
+
   /**
    * onCreate(Bundle savedInstanceState)
    */
@@ -98,6 +101,14 @@ public class CameraActivity extends Activity {
     Log.d(TAG, "*** onCreate() ***");
 
     setContentView(R.layout.cameraprev);
+
+    Intent intent = getIntent();
+
+    if (intent.getSerializableExtra(Constantes.PARTICIPACAO) != null) {
+
+      mParticipacao = (Participacao) intent.getSerializableExtra(Constantes.PARTICIPACAO);
+
+    }
 
     int numCamerasDisponiveis = Camera.getNumberOfCameras();
 
@@ -111,12 +122,15 @@ public class CameraActivity extends Activity {
       else {
         Log.d(TAG, "onCreate() - há  " + numCamerasDisponiveis + " câmeras disponíveis.");
       }
+      
     } else {
+      
       Log.e(TAG, "onCreate() - não há câmeras disponíveis");
       return;
+      
     }
 
-    for (int i = 0; i < Camera.getNumberOfCameras() - 1; i++) {
+    for (int i = 0; i <= (Camera.getNumberOfCameras() - 1); i++) {
 
       Log.i(TAG, "onCreate() - verificando o estado da câmera: " + i);
 
@@ -221,7 +235,6 @@ public class CameraActivity extends Activity {
         // The orientation of the camera image. 
         Log.i(TAG, "onClick(btnOk) - cameraInfo.orientation=" + cameraInfo.orientation);
 
-
         if (mImageBitmap == null) {
           Log.w(TAG, "onClick(btnOk) - mImageBitmap é nulo");
         }
@@ -232,17 +245,16 @@ public class CameraActivity extends Activity {
         // seta os dados de retorno (data)
         // Uri contendo a localização da foto
         //intent.putExtra("data", mUri);
-        
-        Log.i(TAG, "onClick(btnOk) - mUri: ["+mUri+"]");
-        
+
+        Log.i(TAG, "onClick(btnOk) - mUri: [" + mUri + "]");
 
         // cria uma intent de resposta
         Intent intent = new Intent();
-        
+
         // Set the data this intent is operating on. 
         // This method automatically clears any type that was previously set by setType(String). 
         intent.setData(mUri);
-        
+
         // estabelece o resultado da execução da activity
         setResult(RESULT_OK, intent);
 
@@ -398,34 +410,8 @@ public class CameraActivity extends Activity {
 
     Log.d(TAG, "*** onStart() ***");
 
-    if (mCamera == null) {
-
-      // obtém uma instância da câmera
-      mCamera = getCameraInstance();
-
-    }
-
-    if (mCamera != null) {
-
-      // cria uma instância da "tela" de preview
-      mPreview = new CameraPreview(this, mCamera);
-
-      // TODO verificar o layout da câmera
-      layoutPreview.addView(mPreview);
-
-      // TODO verificar o disparo automático da câmera      
-      if (tipoDisparo == AUTOMATICO) {
-        setDisparoAutomatico(3);
-      }
-      else if (tipoDisparo == MANUAL) {
-        // não faz nada
-      }
-
-    }
-
   }
 
- 
   /**
    * onResume(3)
    * 
@@ -440,6 +426,65 @@ public class CameraActivity extends Activity {
     super.onResume();
 
     Log.d(TAG, "*** onResume() ***");
+
+    if (mCamera == null) {
+
+      // obtém uma instância da câmera
+      mCamera = CameraTools.getCameraInstance();
+
+    }
+
+    //---------------------------------
+
+    mCamera.setDisplayOrientation(0);
+
+    // 
+    Camera.Parameters params = mCamera.getParameters();
+
+    // altera o tamanho da foto
+    params.setPictureSize(640, 480);
+
+    /*
+     * EFFECT_AQUA EFFECT_BLACKBOARD EFFECT_MONO EFFECT_NEGATIVE EFFECT_NONE
+     * EFFECT_POSTERIZE EFFECT_SEPIA EFFECT_SOLARIZE EFFECT_WHITEBOARD
+     */
+
+    int efeitoFoto = mParticipacao.getEfeitoFoto();
+    
+    if(efeitoFoto==CORES) {
+      params.setColorEffect(Camera.Parameters.EFFECT_NONE);
+    }
+    else if(efeitoFoto==PB) {
+      params.setColorEffect(Camera.Parameters.EFFECT_MONO);
+    }
+    else {
+      // o valor default é nenhum efeito
+      params.setColorEffect(Camera.Parameters.EFFECT_NONE);
+    }
+    
+    //params.setColorEffect(Camera.Parameters.EFFECT_SEPIA);
+
+    // Atualiza os parametros
+    mCamera.setParameters(params);
+
+    // Exibe alguns parametros da camera
+    showCameraParameters(mCamera);
+
+    //---------------------------------
+
+    // cria uma instância da "tela" de preview
+    mPreview = new CameraPreview(this, mCamera);
+
+    // TODO verificar o layout da câmera
+    layoutPreview.addView(mPreview);
+
+    // TODO verificar o disparo automático da câmera      
+    if (tipoDisparo == AUTOMATICO) {
+      setDisparoAutomatico(3);
+    }
+    else if (tipoDisparo == MANUAL) {
+      // não faz nada
+    }
 
     if (mCamera == null) {
 
@@ -583,42 +628,6 @@ public class CameraActivity extends Activity {
     super.onRestoreInstanceState(savedInstanceState);
 
     Log.d(TAG, "*** onRestoreInstanceState() ***");
-
-  }
-
-  /**
-   * getCameraInstance()
-   * 
-   * Obtem uma instância de uma câmera.
-   * 
-   * The Camera class is used to set image capture settings, start/stop preview,
-   * snap pictures, and retrieve frames for encoding for video.
-   * 
-   * This class is a client for the Camera service, which manages the actual
-   * camera hardware.
-   * 
-   * 
-   * @return Uma instância da câmera ou null caso ela não exista
-   */
-  public static Camera getCameraInstance() {
-
-    Camera c = null;
-
-    try {
-
-      // Tenta obter uma instância da câmera
-      c = Camera.open();
-
-    } catch (RuntimeException e) {
-      Log.e(TAG,
-          "getCameraInstance() - RuntimeException - Houve uma erro em tempo de execução na obtenção de uma instância da câmera", e);
-
-    } catch (Exception e) {
-      // A câmera não existe ou não se encontra disponível
-      Log.e(TAG, "getCameraInstance() - Exception - Houve uma exceção na obtenção de uma instância da câmera", e);
-    }
-
-    return c; // retorna null caso a camera não exista ou não pode ser instânciada
 
   }
 
@@ -976,7 +985,7 @@ public class CameraActivity extends Activity {
     public void handleMessage(Message msg) {
 
       super.handleMessage(msg);
-      
+
       // o atributo msg.what permite identificar a mensagem
       if (msg.what == 1) {
 
