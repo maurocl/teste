@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, FotoEventoActivity!</string>
+    <string name="app_name">FotoEvento</string>
+    <string name="nome">Nome</string>
+    <string name="email">Email</string>
+    <string name="telefone">Telefone</string>
+    <string name="tipofoto">Tipo da Foto</string>
+
+</resources>
