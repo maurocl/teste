@@ -49,13 +49,11 @@ import br.com.mltech.utils.camera.CameraTools;
  */
 public class DummyActivity3 extends Activity implements Constantes {
 
-  private static final String TAG = "DummyActivity3";
+  // ------------------
+  // constantes
+  // ------------------
 
-  // indica qual Activity será executada:
-  // 0 = tira foto dummy;
-  // 1 = Tira foto normal (usando a aplicação Android);
-  // 2 = tira foto usando uma aplicação de câmera customizada;
-  private static int FLAG = 2;
+  private static final String TAG = "DummyActivity3";
 
   private static final int TIRA_FOTO = 200;
 
@@ -63,9 +61,15 @@ public class DummyActivity3 extends Activity implements Constantes {
 
   private static final int TIRA_FOTO_CABINE = 202;
 
-  // ------------------
+  // -------------------
   // variáveis da classe
-  // ------------------
+  // -------------------
+
+  // indica qual Activity será executada:
+  // 0 = tira foto dummy;
+  // 1 = Tira foto normal (usando a aplicação Android);
+  // 2 = tira foto usando uma aplicação de câmera customizada;
+  private static int FLAG = 2;
 
   //
   private static File file;
@@ -125,8 +129,6 @@ public class DummyActivity3 extends Activity implements Constantes {
   public static int contador = 0;
 
   public static int i = 0;
-
-  // public int j = 0;
 
   // nº de vezes que o método onCreate() é chamado
   public static int numCreate = 0;
@@ -219,7 +221,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     if (mPreferences == null) {
 
-      Log.w(TAG, "carregaMolduras() - mPreferences is null. Falha na execução do comandos getSharedPreferences()");
+      Log.w(TAG, "carregaMolduras() - mPreferences é nula. Falha na execução do comandos getSharedPreferences()");
       return;
 
     }
@@ -231,10 +233,10 @@ public class DummyActivity3 extends Activity implements Constantes {
     // molduras
 
     // Obtém o arquivo contendo o bitmap da moldura formato polaroid
-    arquivoMolduraPolaroid = mPreferences.getString("evento_borda_polaroid", "");
+    arquivoMolduraPolaroid = mPreferences.getString(Constantes.EVENTO_BORDA_POLAROID, "");
 
     // Obtém o arquivo contendo o bitmap da moldura formato cabine
-    arquivoMolduraCabine = mPreferences.getString("evento_borda_cabine", "");
+    arquivoMolduraCabine = mPreferences.getString(Constantes.EVENTO_BORDA_CABINE, "");
 
     if ((arquivoMolduraPolaroid != null) && (arquivoMolduraPolaroid.equals(""))) {
       Log.d(TAG, "carregaMolduras() - moldura formato Polaroid não foi configurada.");
@@ -257,9 +259,11 @@ public class DummyActivity3 extends Activity implements Constantes {
     mBitmapMolduraCabine = leArquivoMoldura(arquivoMolduraCabine);
     Log.d(TAG, "carregaMolduras() - mBitmapMolduraCabine = " + mBitmapMolduraCabine);
 
+    // cria uma instância da classe Moldura - Polaroid
     molduraPolaroid = new Moldura(arquivoMolduraPolaroid, "Moldura Polaroid 1");
     molduraPolaroid.setImagem(mBitmapMolduraPolaroid);
 
+    // cria uma instância da classe Moldura - Cabine
     molduraCabine = new Moldura(arquivoMolduraCabine, "Moldura Cabine 1");
     molduraCabine.setImagem(mBitmapMolduraCabine);
 
@@ -268,13 +272,14 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * obtemIdentificadorCamera()
    * 
-   * Verifica se existe uma configuração explicita para usar um determinado nº
-   * de câmera (se o sistema possuir mais de uma câmera). Esse recurso é usado
-   * quando existe uma câmera frontal que se deseja usar ao invés da câmera
-   * traseira.
+   * Verifica se existe uma configuração explicita para usar um determinado
+   * identificador de câmera (se o sistema possuir mais de uma câmera). Esse
+   * recurso é usado quando existe mais de uma câmera suportada pelo
+   * dispositivo, como, por exemplo, uma câmera frontal que se deseja usar ao
+   * invés da câmera traseira.
    * 
-   * @return o nº da câmera frontal ou 0 caso esse parâmetro não esteja
-   *         cadastrado
+   * @return o identificador da câmera frontal ou 0 caso esse parâmetro não
+   *         esteja cadastrado
    * 
    */
   private int obtemIdentificadorCamera() {
@@ -282,26 +287,26 @@ public class DummyActivity3 extends Activity implements Constantes {
     // -----------------------------------------------
     // obtem o nº da câmera usada para tirar as fotos
     // -----------------------------------------------
-    String s = getSharedPreference("pref_email", "preferencias_num_camera_frontal");
+    String sCameraId = getSharedPreference("pref_email", "preferencias_num_camera_frontal");
 
-    Log.i(TAG, "obtemIdentificadorCamera() - Nº da câmera frontal=" + s);
+    Log.i(TAG, "obtemIdentificadorCamera() - Id da câmera frontal=" + sCameraId);
 
-    // número de câmera
-    int num = 0;
+    // identificador (Id) da câmera
+    int id = 0;
 
-    if ((s != null) && (!s.equals(""))) {
+    if ((sCameraId != null) && (!sCameraId.equals(""))) {
 
-      num = Integer.valueOf(s);
+      id = Integer.valueOf(sCameraId);
 
     } else {
 
-      num = 0;
-      Log.w(TAG, "obtemIdentificadorCamera() - Nº da câmera frontal não foi definido. Assumindo o valor 0");
+      id = 0;
+      Log.w(TAG, "obtemIdentificadorCamera() - Identificador da câmera frontal não foi definido. Assumindo o valor 0");
 
     }
 
-    // o nº da câmera
-    return num;
+    // o identificador da câmera
+    return id;
 
   }
 
@@ -440,8 +445,6 @@ public class DummyActivity3 extends Activity implements Constantes {
       String meuArquivoPadrao = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
       fff = new File(meuArquivoPadrao);
     }
-
-    //showAlert("Envia email");
 
     // Há uma foto com moldura que será enviada por email
     setEstado(2);
@@ -680,6 +683,10 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     int tipoEfeito = mParticipacao.getEfeitoFoto();
 
+    // Configura a câmera
+    // TODO o ideal é configurar a câmera uma única vez (e somente se necessário) entre uma foto e outra
+    configuraCamera(tipoEfeito);
+
     // obtém o tipo da foto (se o formato da foto é Polaroid ou Cabine)
     int tipoFoto = mParticipacao.getTipoFoto();
 
@@ -718,8 +725,8 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * Cria uma intent para solicitar uma foto a uma activity
    * 
-   * Observe que a variável FLAG é usada para "escolher" a activity que irá
-   * retornar a foto
+   * Observe que a variável FLAG é usada para "escolher" a activity que será
+   * executada e que irá retornar a foto
    * 
    * @return uma Intent (mensagem) para execução da activity desejada
    * 
@@ -748,6 +755,8 @@ public class DummyActivity3 extends Activity implements Constantes {
       // tira uma foto verdadeira usando a activity CameraActivity
       intent = new Intent(this, CameraActivity.class);
 
+      intent.putExtra(Constantes.PARTICIPACAO, mParticipacao);
+      
       intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
 
     }
@@ -790,6 +799,7 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * @param resultCode
    *          resultado da execução da activity
+   * 
    * @param data
    *          intent contendo os dados retornados (se houver)
    * 
@@ -798,6 +808,9 @@ public class DummyActivity3 extends Activity implements Constantes {
    */
   private String processaActivityResultPolaroid(int resultCode, Intent data) {
 
+    
+    Toast.makeText(this, "Processando foto Polaroid ...", Toast.LENGTH_LONG).show();
+    
     String meuArquivo2 = null;
 
     /**
@@ -823,9 +836,11 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       Log.d(TAG, "processaActivityResultPolaroid() - data.getData()= " + data.getData());
 
-      // Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " +
-      // data.getStringExtra("outputFileUri"));
-      Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + data.getParcelableExtra("outputFileUri"));
+      outputFileUri = data.getData();
+
+      Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
+      //Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + data.getStringExtra("outputFileUri"));
+      //Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + data.getParcelableExtra("outputFileUri"));
 
       // nome do arquivo onde o bitmap está armazenado
       // file = new File(data.getStringExtra("outputFileUri"));
@@ -834,14 +849,12 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       // não houve retorno de dados
       Log.w(TAG, "processaActivityResultPolaroid - data (Intent) é vazia");
-      // file = null;
+
+      outputFileUri = null;
 
     }
 
-    // cria uma URI para referenciar o arquivo
-    // outputFileUri = Uri.fromFile(file);
-
-    Log.w(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
+    Log.i(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
 
     // grava o bitmap (foto original)
     boolean gravouFotoOriginal = ManipulaImagem.gravaBitmapArquivo3(outputFileUri);
@@ -1027,6 +1040,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     // Após tirar as três fotos é necessário:
     // - converter as foto para o formato 3x4
     // - montar a foto formato cabine juntando as fotos 3x4 e a moldura
+    //
     // fotoCabine.getFoto[0] --> Foto
     // fotoCabine.getFoto[1] --> Foto
     // fotoCabine.getFoto[2] --> Foto
@@ -1115,19 +1129,27 @@ public class DummyActivity3 extends Activity implements Constantes {
     //
     // gera um arquivo com as três foto molduradas
     //
-    Bitmap b = processaFotoFormatoCabine3(fotos3x4[0], fotos3x4[1], fotos3x4[2],
+    Bitmap bitmap = processaFotoFormatoCabine3(fotos3x4[0], fotos3x4[1], fotos3x4[2],
         mBitmapMolduraCabine);
 
-    return b;
+    return bitmap;
 
   }
 
   /**
    * alteraTamanhoFoto(int largura, int altura, Camera localCamera)
    * 
+   * Altera a configuração da câmera para tirar fotos na largura e altura
+   * forncecida.
+   * 
    * @param largura
+   *          largura da foto
+   * 
    * @param altura
+   *          altura da foto
+   * 
    * @param localCamera
+   *          instância da câmera que terá sua configuração alterada
    * 
    */
   private void alteraTamanhoFoto(int largura, int altura, Camera localCamera) {
@@ -1146,8 +1168,8 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * processoEfeitoFiltroFoto(int efeitoFoto)
    * 
-   * Altera os parâmetros da máquina responsável pela alteração do efeito da
-   * foto.
+   * Altera os parâmetros da câmera responsável pela alteração do efeito dw cor
+   * da foto (color effect)
    * 
    * @param efeitoFoto
    *          "efeito" para aplicar a foto
@@ -1162,9 +1184,6 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     // lê os parâmetros
     Camera.Parameters params = localCamera.getParameters();
-
-    // altera o tamanho da foto
-    params.setPictureSize(640, 480);
 
     // EFFECT_AQUA 
     // EFFECT_BLACKBOARD 
@@ -1505,50 +1524,6 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
-   * sendEmailByChooser(Intent emailIntent)
-   * 
-   * Permite escolher qual aplicação será usada para o envio de email
-   * 
-   * @param emailIntent
-   *          Intent
-   * 
-   */
-  private void sendEmailByChooser(Intent emailIntent) {
-
-    //
-    // TODO aqui pode acontecer de ser necessário forçar a aplicação de
-    // email
-    //
-
-    // Cria uma intent do tipo chooser a partir da intent recebida
-    Intent chooser = Intent.createChooser(emailIntent, "Selecione sua aplicação de email !");
-
-    if (chooser != null) {
-
-      Log.w(TAG, "sendEmailByChooser() - chooser.getAction()=" + chooser.getAction());
-
-      ComponentName compName = chooser.getComponent();
-
-      if (compName != null) {
-        Log.w(TAG, "==> CHOOSER ==> compName=" + compName.getClassName() + ", compName=" + compName.getPackageName());
-      } else {
-        Log.v(TAG, "compName IS NULL");
-      }
-
-    }
-
-    // Inicia a Activity para envio do email
-    // TODO aqui é necessário fixa o uso do email como mecanismo de envio
-    // TODO talvez seja necessário permitir o envio via Facebook e Twitter
-    // também
-
-    sendEmailRedesSociais();
-
-    startActivityForResult(chooser, ACTIVITY_CHOOSER);
-
-  }
-
-  /**
    * sendEmailRedesSociais()
    * 
    * Verifica se as mensagens devem ser postadas nas redes sociais
@@ -1692,7 +1667,7 @@ public class DummyActivity3 extends Activity implements Constantes {
       // estado final atingido com sucesso
       Log.i(TAG, "estadoFinal() - final do processamento");
 
-      // retorna as informações sobre o participante a sobre sua
+      // retorna as informações sobre o participante e sobre sua
       // participação
       intent.putExtra(PARTICIPANTE, mParticipante);
       intent.putExtra(PARTICIPACAO, mParticipacao);
@@ -1716,6 +1691,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     }
 
+    // atualiza o modo da tela 
     atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
 
     // Termina a execução da Activity responsável por tirar e enviar uma
@@ -1779,7 +1755,6 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * onStart()
    */
-
   @Override
   protected void onStart() {
 
@@ -1792,7 +1767,6 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * onResume()
    */
-
   @Override
   protected void onResume() {
 
@@ -1832,7 +1806,6 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * onSaveInstanceState(Bundle outState)
    */
-
   @Override
   protected void onSaveInstanceState(Bundle outState) {
 
@@ -1944,42 +1917,6 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
-   * getCameraInstance(int cameraID)
-   * 
-   * Tenta obter uma instância da câmera identificada por seu número (cameraID).
-   * A primeira câmera, se existir terá o identificador 0.
-   * 
-   * @param cameraID
-   *          Identificador da câmera do dispositivo
-   * 
-   * @return Uma instância da classe Camera ou null em caso de erro
-   * 
-   */
-  public static Camera getCameraInstance(int cameraID) {
-
-    Camera c = null;
-
-    try {
-
-      /*
-       * Cria um novo objeto Camera para acesso a câmera cameraID. Se a câmera
-       * já estiver em uso ou não existir retorma nulo
-       */
-
-      c = Camera.open(cameraID); // attempt to get a Camera instance
-
-    } catch (Exception e) {
-
-      // Camera is not available (in use or does not exist)
-      Log.w(TAG, ">>> getCameraInstance(" + cameraID + ") - Câmera está indisponível (está em uso ou não existe)", e);
-
-    }
-
-    return c; // returns null se a câmera estiver indisponível
-
-  }
-
-  /**
    * leArquivoMoldura(String arquivoMoldura)
    * 
    * Carrega arquivo de moldura
@@ -2055,66 +1992,6 @@ public class DummyActivity3 extends Activity implements Constantes {
     Log.v(TAG, "    showClassVariables() - outputFileUri: " + outputFileUri);
     Log.v(TAG, "    showClassVariables() - Contador: " + contador + ", i=" + i);
     Log.v(TAG, "    showClassVariables() - numCreate: " + numCreate + ", numRestart: " + numRestart);
-
-  }
-
-  /**
-   * processaBotaoConfirma()
-   * 
-   * Processa a ação disparada pelo pressionamento do botão Confirma
-   * 
-   */
-  private void processaBotaoConfirma() {
-
-    Log.d(TAG, "");
-    Log.d(TAG, "============================");
-    Log.d(TAG, "===> processaBotaoConfirma()");
-    Log.d(TAG, "============================");
-
-    int opcao = 3;
-
-    // nome do arquivo onde a foto será armazenada
-    String arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
-    ;
-
-    switch (opcao) {
-      case 0:
-        // tira uma foto
-        executaActivityTiraFoto(arquivo);
-        break;
-      case 1:
-        // simula uma foto
-        executaActivityTiraFotoDummy(arquivo);
-        break;
-      case 3:
-        executaActivityTiraFotoPolaroid(arquivo);
-        break;
-    }
-
-  }
-
-  /**
-   * processaBotaoLista
-   */
-  private void processaBotaoLista() {
-
-    Log.i(TAG, "");
-    Log.i(TAG, "----------------------");
-    Log.i(TAG, "- processaBotaoLista()");
-    Log.i(TAG, "----------------------");
-
-    if (listaFotos == null) {
-      Log.w(TAG, "processaBotaoLista() - lista está vazia !");
-      return;
-    }
-
-    Log.d(TAG, "processaBotaoLista() - nº de fotos: " + listaFotos.size());
-
-    for (Foto foto : listaFotos) {
-      if (foto != null) {
-        Log.d(TAG, foto.toString());
-      }
-    }
 
   }
 
@@ -2443,10 +2320,13 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * @param bmFoto1
    *          primeira foto
+   * 
    * @param bmFoto2
    *          segunda foto
+   * 
    * @param bmFoto3
    *          terceira foto
+   * 
    * @param bmMoldura
    *          bitmap contendo a moldura
    * 
@@ -2459,6 +2339,7 @@ public class DummyActivity3 extends Activity implements Constantes {
       return null;
     }
 
+    // executa o merge das três fotos
     Bitmap bmImgJoin = mergeFotosCabine(bmFoto1, bmFoto2, bmFoto3);
 
     if (bmImgJoin == null) {
@@ -2551,6 +2432,179 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     return bmImgJoin;
+
+  }
+
+  // ---------------------------------------------------------------------------
+  // Métodos não usados
+  // TODO avaliar a remoção dos mesmos
+  // ---------------------------------------------------------------------------
+
+  /**
+   * processaBotaoConfirma()
+   * 
+   * Processa a ação disparada pelo pressionamento do botão Confirma
+   * 
+   */
+  private void processaBotaoConfirma() {
+
+    Log.d(TAG, "");
+    Log.d(TAG, "============================");
+    Log.d(TAG, "===> processaBotaoConfirma()");
+    Log.d(TAG, "============================");
+
+    int opcao = 3;
+
+    // nome do arquivo onde a foto será armazenada
+    String arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
+    ;
+
+    switch (opcao) {
+      case 0:
+        // tira uma foto
+        executaActivityTiraFoto(arquivo);
+        break;
+      case 1:
+        // simula uma foto
+        executaActivityTiraFotoDummy(arquivo);
+        break;
+      case 3:
+        executaActivityTiraFotoPolaroid(arquivo);
+        break;
+    }
+
+  }
+
+  /**
+   * processaBotaoLista
+   */
+  private void processaBotaoLista() {
+
+    Log.i(TAG, "");
+    Log.i(TAG, "----------------------");
+    Log.i(TAG, "- processaBotaoLista()");
+    Log.i(TAG, "----------------------");
+
+    if (listaFotos == null) {
+      Log.w(TAG, "processaBotaoLista() - lista está vazia !");
+      return;
+    }
+
+    Log.d(TAG, "processaBotaoLista() - nº de fotos: " + listaFotos.size());
+
+    for (Foto foto : listaFotos) {
+      if (foto != null) {
+        Log.d(TAG, foto.toString());
+      }
+    }
+
+  }
+
+  /**
+   * sendEmailByChooser(Intent emailIntent)
+   * 
+   * Permite escolher qual aplicação será usada para o envio de email
+   * 
+   * @param emailIntent
+   *          Intent
+   * 
+   */
+  private void sendEmailByChooser(Intent emailIntent) {
+
+    //
+    // TODO aqui pode acontecer de ser necessário forçar a aplicação de
+    // email
+    //
+
+    // Cria uma intent do tipo chooser a partir da intent recebida
+    Intent chooser = Intent.createChooser(emailIntent, "Selecione sua aplicação de email !");
+
+    if (chooser != null) {
+
+      Log.w(TAG, "sendEmailByChooser() - chooser.getAction()=" + chooser.getAction());
+
+      ComponentName compName = chooser.getComponent();
+
+      if (compName != null) {
+        Log.w(TAG, "==> CHOOSER ==> compName=" + compName.getClassName() + ", compName=" + compName.getPackageName());
+      } else {
+        Log.v(TAG, "compName IS NULL");
+      }
+
+    }
+
+    // Inicia a Activity para envio do email
+    // TODO aqui é necessário fixa o uso do email como mecanismo de envio
+    // TODO talvez seja necessário permitir o envio via Facebook e Twitter
+    // também
+
+    sendEmailRedesSociais();
+
+    startActivityForResult(chooser, ACTIVITY_CHOOSER);
+
+  }
+
+  /**
+   * configuraCamera(int tipoEfeito)
+   * 
+   * Configura os vários parâmetros da câmera
+   * 
+   * @param tipoEfeito
+   * 
+   */
+  private void configuraCamera(int tipoEfeito) {
+
+    Log.w(TAG, "------------------------------------------------------------------------");
+    Log.i(TAG, "*** configuraCamera() - id: " + currentCamera+", tipoEfeito: "+tipoEfeito);    
+    Log.w(TAG, "------------------------------------------------------------------------");
+    
+    Camera localCamera = CameraTools.getCameraInstance(currentCamera);
+
+    if (localCamera == null) {
+      Log.w(TAG, "configuraCamera() - não foi possível alocar a câmera id: " + currentCamera);
+      return;
+    }
+
+    // lê os parâmetros atuais da configuração da câmera
+    Camera.Parameters params = localCamera.getParameters();
+
+    // configura a orientação do display
+    localCamera.setDisplayOrientation(0);
+
+    // altera o tamanho da foto
+    params.setPictureSize(640, 480);
+
+    // EFFECT_AQUA 
+    // EFFECT_BLACKBOARD 
+    // EFFECT_MONO 
+    // EFFECT_NEGATIVE 
+    // EFFECT_NONE
+    // EFFECT_POSTERIZE 
+    // EFFECT_SEPIA 
+    // EFFECT_SOLARIZE 
+    // EFFECT_WHITEBOARD
+
+    if (tipoEfeito == CORES) {
+
+      params.setColorEffect(Camera.Parameters.EFFECT_NONE);
+
+
+    } else if (tipoEfeito == PB) {
+
+      params.setColorEffect(Camera.Parameters.EFFECT_MONO);
+
+    } else {
+
+      Log.w(TAG, "Efeito: " + tipoEfeito + " não é suportado pela aplicação");
+
+    }
+
+    Log.i(TAG, "configuraCamera() - params.getColorEffect(): "+params.getColorEffect());
+    
+    // Atualiza os parâmetros de configuração da câmera
+    localCamera.setParameters(params);
+
+    localCamera.release();
 
   }
 

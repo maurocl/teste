@@ -18,31 +18,32 @@ import br.com.mltech.modelo.Participante;
 /**
  * Participante.java
  * 
+ * Criação da tela para obter os dados do participante do evento.
+ * 
+ * Essa activity recebe como parâmetros:
+ * - Evento;
+ * - Participante;
+ * - Participação;
+ * 
+ * O usuário poderá Confirmar ou Cancelar a participação.
+ * 
  * @author maurocl
  * 
- *         Criação da tela para obter os dados do participante do evento
- * 
  */
-public class ParticipanteActivity extends Activity {
+public class ParticipanteActivity extends Activity implements Constantes {
 
-  private static int DEBUG = 0;
+  private static int DEBUG = 1;
 
   private static final String TAG = "ParticipanteActivity";
-
-  // Definição de constantes para o tipo de foto
-  private static final int POLAROID = 1;
-  private static final int CABINE = 2;
-
-  // Definição de constantes para o efeito de cores
-  private static final int CORES = 11;
-  private static final int PB = 12;
 
   private int tipoFoto = -1;
 
   private int efeitoFoto = -1;
 
   private Evento mEvento;
+
   private Participante mParticipante;
+
   private Participacao mParticipacao;
 
   // TODO aqui é necessário uma instância da mEvento
@@ -64,29 +65,28 @@ public class ParticipanteActivity extends Activity {
      */
     Log.d(TAG, "*** onCreate() ***");
 
+    // obtém informações sobre a intent usada para iniciar a activity
     Intent intent = getIntent();
-
-    //Log.i(TAG, "onCreate() - intent.getActtion()=" + intent.getAction());
 
     if (intent != null) {
 
-      if (intent.getSerializableExtra("br.com.mltech.evento") != null) {
+      if (intent.getSerializableExtra(Constantes.EVENTO) != null) {
 
-        mEvento = (Evento) intent.getSerializableExtra("br.com.mltech.evento");
+        mEvento = (Evento) intent.getSerializableExtra(Constantes.EVENTO);
 
         Log.w(TAG, "onCreate() - mEvento=" + mEvento);
 
       }
 
-      if (intent.getSerializableExtra("br.com.mltech.participante") != null) {
+      if (intent.getSerializableExtra(Constantes.PARTICIPANTE) != null) {
 
-        mParticipante = (Participante) intent.getSerializableExtra("br.com.mltech.participante");
+        mParticipante = (Participante) intent.getSerializableExtra(Constantes.PARTICIPANTE);
 
       }
 
-      if (intent.getSerializableExtra("br.com.mltech.participacao") != null) {
+      if (intent.getSerializableExtra(Constantes.PARTICIPACAO) != null) {
 
-        mParticipacao = (Participacao) intent.getSerializableExtra("br.com.mltech.participacao");
+        mParticipacao = (Participacao) intent.getSerializableExtra(Constantes.PARTICIPACAO);
 
       }
 
@@ -103,6 +103,7 @@ public class ParticipanteActivity extends Activity {
       if (mParticipacao == null) {
 
         mParticipacao = new Participacao();
+
         Log.d(TAG, "onCreate() - Criando uma nova Participacao");
 
       } else {
@@ -115,11 +116,23 @@ public class ParticipanteActivity extends Activity {
 
     // --------------------------------
 
+    // EditText
     final EditText editNome = (EditText) findViewById(R.id.editNome);
     final EditText editEmail = (EditText) findViewById(R.id.editEmail);
     final EditText editTelefone = (EditText) findViewById(R.id.editTelefone);
+    
+    // Radio Groups
+    final RadioGroup groupFormatoFoto = (RadioGroup) findViewById(R.id.group1);
+    final RadioGroup groupEfeitoFoto = (RadioGroup) findViewById(R.id.group2);
 
-    /* Parâmetros opcionais */
+    // Botões
+    final Button btnEnviar = (Button) findViewById(R.id.button1);
+    final Button btnCancelar = (Button) findViewById(R.id.button2);
+
+    //------------------------
+    // Parâmetros opcionais
+    //------------------------
+    
     // int[] params = new int[] { INVISIVEL, INVISIVEL, INVISIVEL, INVISIVEL, INVISIVEL };
     int[] params = new int[] { android.view.View.GONE, android.view.View.GONE, android.view.View.GONE, android.view.View.GONE,
         android.view.View.GONE };
@@ -128,40 +141,7 @@ public class ParticipanteActivity extends Activity {
 
       if (mEvento.getParametros() != null) {
 
-        // Parâmetro 1
-        if (mEvento.getParametros().getParametro(0) != null) {
-          params[0] = android.view.View.VISIBLE;
-        } else {
-          params[0] = android.view.View.GONE;
-        }
-
-        // Parâmetro 2
-        if (mEvento.getParametros().getParametro(1) != null) {
-          params[1] = android.view.View.VISIBLE;
-        } else {
-          params[1] = android.view.View.GONE;
-        }
-
-        // Parâmetro 3
-        if (mEvento.getParametros().getParametro(2) != null) {
-          params[2] = android.view.View.VISIBLE;
-        } else {
-          params[2] = android.view.View.GONE;
-        }
-
-        // Parâmetro 4
-        if (mEvento.getParametros().getParametro(3) != null) {
-          params[3] = android.view.View.VISIBLE;
-        } else {
-          params[3] = android.view.View.GONE;
-        }
-
-        // Parâmetro 5
-        if (mEvento.getParametros().getParametro(4) != null) {
-          params[4] = android.view.View.VISIBLE;
-        } else {
-          params[4] = android.view.View.GONE;
-        }
+        exibeBotoesOpcionais(params);
 
       }
 
@@ -170,11 +150,7 @@ public class ParticipanteActivity extends Activity {
     // Atualiza os parâmetros opcionais
     updateOptionalParamFields(params);
 
-    final RadioGroup groupFormatoFoto = (RadioGroup) findViewById(R.id.group1);
-    final RadioGroup groupEfeitoFoto = (RadioGroup) findViewById(R.id.group2);
-
-    final Button btnEnviar = (Button) findViewById(R.id.button1);
-    final Button btnCancelar = (Button) findViewById(R.id.button2);
+ 
 
     // =========================================
 
@@ -198,39 +174,49 @@ public class ParticipanteActivity extends Activity {
 
       public void onClick(View v) {
 
-        Log.d(TAG, "onCreate() - *** Botão Enviar do Participante foi selecionado ***");
+        Log.d(TAG, "onCreate(btnEnviar) - *** Botão Enviar do Participante foi selecionado ***");
 
-        Log.v(TAG, "onCreate() - groupFormatoFoto.isSelected()=" + groupFormatoFoto.isSelected());
+        Log.v(TAG, "onCreate(btnEnviar) - groupFormatoFoto.isSelected()=" + groupFormatoFoto.isSelected());
 
-        Log.v(TAG, "onCreate() - groupEfeitoFoto.isSelected()=" + groupEfeitoFoto.isSelected());
+        Log.v(TAG, "onCreate(btnEnviar) - groupEfeitoFoto.isSelected()=" + groupEfeitoFoto.isSelected());
 
+        // Escolhe o formato da foto
         boolean radio1isChecked = ((RadioButton) findViewById(R.id.radioOp1)).isChecked();
         boolean radio2isChecked = ((RadioButton) findViewById(R.id.radioOp2)).isChecked();
 
+        // Escolhe o efeito de cores
         boolean radioCorIsChecked = ((RadioButton) findViewById(R.id.radioCor)).isChecked();
         boolean radioPbIsChecked = ((RadioButton) findViewById(R.id.radioPB)).isChecked();
 
-        
-        Log.v(TAG, "onCreate() - radio1isChecked=" + radio1isChecked);
-        Log.v(TAG, "onCreate() - radio2isChecked=" + radio2isChecked);
-        
-        Log.v(TAG, "onCreate() - radioCorIsChecked=" + radioCorIsChecked);
-        Log.v(TAG, "onCreate() - radioPbIsChecked=" + radioPbIsChecked);
-        
-        
+        Log.v(TAG, "onCreate(btnEnviar) - radio1isChecked=" + radio1isChecked);
+        Log.v(TAG, "onCreate(btnEnviar) - radio2isChecked=" + radio2isChecked);
+
+        Log.v(TAG, "onCreate(btnEnviar) - radioCorIsChecked=" + radioCorIsChecked);
+        Log.v(TAG, "onCreate(btnEnviar) - radioPbIsChecked=" + radioPbIsChecked);
+
+        // define o tipo da foto
+        tipoFoto = (radio1isChecked ? Constantes.TIPO_FOTO_POLAROID : Constantes.TIPO_FOTO_CABINE);
+
+        // define o efeito da foto
+        efeitoFoto = (radioCorIsChecked ? Constantes.CORES : Constantes.PB);
+
+        // cria uma nova instância da classe Participante
         Participante novoParticipante = new Participante(editNome.getText().toString(), editEmail.getText().toString(),
             editTelefone.getText().toString());
 
+        // cria uma nova instância da classe Participação
         mParticipacao = new Participacao(novoParticipante, tipoFoto, efeitoFoto, null);
 
-        Log.d(TAG, "onCreate() - Participante: " + novoParticipante);
-        Log.d(TAG, "onCreate() - Participacao: " + mParticipacao);
+        Log.d(TAG, "onCreate(btnEnviar) - Participante: " + novoParticipante);
+        Log.d(TAG, "onCreate(btnEnviar) - Participacao: " + mParticipacao);
 
+        //---------------------------------------------------------
         // Criação da Intent com resultado da execução da Activity
+        //---------------------------------------------------------
         Intent it = new Intent();
 
-        it.putExtra("br.com.mltech.participante", novoParticipante);
-        it.putExtra("br.com.mltech.participacao", mParticipacao);
+        it.putExtra(Constantes.PARTICIPANTE, novoParticipante);
+        it.putExtra(Constantes.PARTICIPACAO, mParticipacao);
 
         setResult(RESULT_OK, it);
 
@@ -246,7 +232,7 @@ public class ParticipanteActivity extends Activity {
 
       public void onClick(View v) {
 
-        Log.d(TAG, "onCreate() - Botão Cancelar selecionado");
+        Log.d(TAG, "onCreate(btnCancelar) - Botão Cancelar selecionado");
 
         // retorna todos os campos para seus valores iniciais.
 
@@ -263,6 +249,10 @@ public class ParticipanteActivity extends Activity {
         // TODO falta limpar os checkboxes
 
         Log.d(TAG, "onCreate() - Botão cancelar selecionado");
+        
+        //---------------------------------------------------------
+        // Criação da Intent com resultado da execução da Activity
+        //---------------------------------------------------------
         Intent it = new Intent();
 
         setResult(RESULT_CANCELED, it);
@@ -272,106 +262,120 @@ public class ParticipanteActivity extends Activity {
       }
     });
 
-    /**
-     * Obtem a opção do formato da foto: Polaroid ou Cabine
-     */
-    groupFormatoFoto.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-      /**
-       * 
-       */
-      public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-        boolean opcaoPolaroid = R.id.radioOp1 == checkedId;
-        boolean opcaoCabine = R.id.radioOp2 == checkedId;
-
-        if (opcaoPolaroid) {
-
-          Log.d(TAG, "onCreate() - Opção Polaroid escolhida");
-          tipoFoto = POLAROID;
-
-        } else if (opcaoCabine) {
-
-          Log.d(TAG, "onCreate() - Opção Cabine escolhida");
-          tipoFoto = CABINE;
-
-        }
-                
-        //int buttonId = group.getCheckedRadioButtonId();
-        //Log.w(TAG,"onCreate() - Polaroid ou Cabine = buttonId="+buttonId);
-        
-      }
-    });
-
-    /**
-     * Obtém o efeito de cores desejado: Core ou PB (Preto e Branco)
-     * 
-     */
-    groupEfeitoFoto.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-      /**
-       * 
-       */
-      public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-        boolean cor = R.id.radioCor == checkedId;
-        boolean pb = R.id.radioPB == checkedId;
-
-        if (cor) {
-
-          Log.d(TAG, "onCreate() - Foto a cores selecionada");
-          efeitoFoto = CORES;
-
-        } else if (pb) {
-
-          Log.d(TAG, "onCreate() - Foto em Preto e Branco selecionada");
-          efeitoFoto = PB;
-
-        }
-        
-        //int buttonId = group.getCheckedRadioButtonId();
-        //Log.w(TAG,"onCreate() - cor ou PB = buttonId="+buttonId);
-        
-        
-        
-      }
-
-    });
-
   }
 
+  /**
+   * exibeBotoesOpcionais(int[] params)
+   * 
+   * @param params
+   * 
+   */
+  private void exibeBotoesOpcionais(int[] params) {
+
+/*    
+    for(int i =0; i<5;i++) {
+      
+      if (mEvento.getParametros().getParametro(i) != null) {
+        params[i] = android.view.View.VISIBLE;
+      } else {
+        params[i] = android.view.View.GONE;
+      }
+      
+    }
+*/  
+    
+    // Parâmetro 1
+    if (mEvento.getParametros().getParametro(0) != null) {
+      params[0] = android.view.View.VISIBLE;
+    } else {
+      params[0] = android.view.View.GONE;
+    }
+
+    // Parâmetro 2
+    if (mEvento.getParametros().getParametro(1) != null) {
+      params[1] = android.view.View.VISIBLE;
+    } else {
+      params[1] = android.view.View.GONE;
+    }
+
+    // Parâmetro 3
+    if (mEvento.getParametros().getParametro(2) != null) {
+      params[2] = android.view.View.VISIBLE;
+    } else {
+      params[2] = android.view.View.GONE;
+    }
+
+    // Parâmetro 4
+    if (mEvento.getParametros().getParametro(3) != null) {
+      params[3] = android.view.View.VISIBLE;
+    } else {
+      params[3] = android.view.View.GONE;
+    }
+
+    // Parâmetro 5
+    if (mEvento.getParametros().getParametro(4) != null) {
+      params[4] = android.view.View.VISIBLE;
+    } else {
+      params[4] = android.view.View.GONE;
+    }
+  }
+
+  /**
+   * 
+   */
   @Override
   protected void onStart() {
+
     super.onStart();
     Log.d(TAG, "*** onStart() ***");
   }
 
+  /**
+   * 
+   */
   @Override
   protected void onResume() {
+
     super.onResume();
     Log.d(TAG, "*** onResume() ***");
   }
 
+  /**
+   * 
+   */
   @Override
   protected void onPause() {
+
     super.onPause();
     Log.d(TAG, "*** onPause() ***");
   }
 
+  /**
+   * 
+   */
   @Override
   protected void onStop() {
+
     super.onStop();
     Log.d(TAG, "*** onStop() ***");
   }
 
+  /**
+   * 
+   */
   @Override
   protected void onRestart() {
+
     super.onRestart();
     Log.d(TAG, "*** onRestart() ***");
   }
 
+  /**
+   * 
+   */
   @Override
   protected void onDestroy() {
+
     super.onDestroy();
     Log.d(TAG, "*** onDestroy() ***");
   }
@@ -379,15 +383,18 @@ public class ParticipanteActivity extends Activity {
   /**
    * updateOptionalParamFields(int[] params)
    * 
-   * Recebe um vetor onde cada elemento indica se o parâmetro será visível ou não
+   * Recebe um vetor onde cada elemento indica se o parâmetro será visível ou
+   * não
    * 
-   * @param params vetor de inteiros contendo a visibilidade de cada parâmetro adicional
+   * @param params
+   *          vetor de inteiros contendo a visibilidade de cada parâmetro
+   *          adicional
    */
   private void updateOptionalParamFields(int[] params) {
 
     // vetor de EditText (nome dos parâmetros)
     EditText[] editText = new EditText[5];
-    
+
     // vetor TestView (valor dos parâmetros)
     TextView[] textView = new TextView[5];
 

@@ -40,8 +40,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
   private static final String TAG = "FotoEventoActivity";
 
-  public static final String PREF_EMAIL = "pref_email";
-
   // indica o uso do DEBUG
   private static int DEBUG = 0;
 
@@ -58,8 +56,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
   // Estabelece a activity responsável por tirar as fotos
   private static int ACTIVITY_FOTOS = ACTIVITY_DUMMY3;
 
-  //Estabelece a classe responsável por tirar as fotos
-  private static Class CLASS_FOTOS = DummyActivity3.class;
+  // Estabelece a classe responsável por tirar as fotos
+  private static Class<DummyActivity3> CLASS_FOTOS = DummyActivity3.class;
 
   //
   private SharedPreferences mPreferences;
@@ -186,6 +184,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
         boolean condicoesSatisfeitas = isCondicoesIniciaisSatisfeitas();
 
         if (condicoesSatisfeitas) {
+          // condições iniciais foram satisfeitas
 
           Bundle bundle = new Bundle();
 
@@ -197,9 +196,12 @@ public class FotoEventoActivity extends Activity implements Constantes {
           //launchActivity(FotoEventoActivity.this, DummyActivity3.class, bundle, ACTIVITY_DUMMY3);          
           //launchActivity(getBaseContext(), DummyActivity3.class, bundle, ACTIVITY_FOTOS);
 
+          // lança uma activity implementada na classe CLASS_FOTOS, com código de retorno ACTIVITY_FOTOS, 
+          // passando como parâmetros as informações sobre o contratante, evento e participante. 
           launchActivity(getBaseContext(), CLASS_FOTOS, bundle, ACTIVITY_FOTOS);
 
         } else {
+          // TODO mensagem abaixo não está muito clara
           Toast.makeText(FotoEventoActivity.this, "Falta configuração !!!", Toast.LENGTH_LONG).show();
           Log.w(TAG, "mParticipante ou mParticipacao ou mContratante ou mEvento é null");
         }
@@ -252,11 +254,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
 
-    // criaMenuParticipante(menu);
-
+    // cria o item de menu Manutenção
     criaMenuManutencao(menu);
-
-    // criaMenuCamera(menu);
 
     return super.onCreateOptionsMenu(menu);
   }
@@ -265,6 +264,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * criaMenuManutencao(Menu menu)
    * 
    * @param menu
+   *          Instância da classe Menu
    */
   private void criaMenuManutencao(Menu menu) {
 
@@ -278,8 +278,9 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
       public boolean onMenuItemClick(MenuItem item) {
 
-        launchActivityocessaClickItemMenuManutencao();
+        processaClickItemMenuManutencao();
         return false;
+
       }
     });
 
@@ -323,9 +324,12 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * launchActivityocessaClickItemMenuManutencao()
+   * processaClickItemMenuManutencao()
+   * 
+   * Executa a ação do click no menu item Manutenção
+   * 
    */
-  private void launchActivityocessaClickItemMenuManutencao() {
+  private void processaClickItemMenuManutencao() {
 
     if (mAdminAccount) {
 
@@ -334,6 +338,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
       if (mLogged) {
         // usuário está logado no sistema com senha de administrador
 
+        // lança a activity ("tela") de Manutenção
         launchActivityManutencao();
 
       } else {
@@ -341,6 +346,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
         // usuário deverá se loggar para conseguir fazer as
         // manutenções no sistema
 
+        // lança a activity ("tela") de Login
         launchActivityLogin();
 
         //
@@ -352,9 +358,13 @@ public class FotoEventoActivity extends Activity implements Constantes {
       }
 
     } else {
+
       // não verifica o login do usuário antes de entrar no menu de manutenção
       mLogged = true;
+
+      // lança a activity ("tela") de Manutenção
       launchActivityManutencao();
+
     }
 
   }
@@ -367,26 +377,26 @@ public class FotoEventoActivity extends Activity implements Constantes {
    */
   private void launchActivityManutencao() {
 
+    // cria uma "mensagem" (intent)
     Intent intent = new Intent(FotoEventoActivity.this, ManutencaoActivity.class);
 
+    // passa os parâmetros para tela de manutenção
     intent.putExtra(CONTRATANTE, mContratante);
     intent.putExtra(EVENTO, mEvento);
     intent.putExtra(LISTA, (ArrayList<Participacao>) mListaParticipacao);
 
+    // inicia a activity
     startActivityForResult(intent, ACTIVITY_MANUTENCAO);
 
   }
 
   /**
    * launchActivityLogin()
+   * 
+   * Lança a tela de login
+   * 
    */
   private void launchActivityLogin() {
-
-    /*
-     * Intent intent = new Intent(FotoEventoActivity.this, LoginActivity.class);
-     * 
-     * startActivityForResult(intent, ACTIVITY_LOGIN);
-     */
 
     launchActivity(FotoEventoActivity.this, LoginActivity.class, null, ACTIVITY_LOGIN);
 
@@ -398,8 +408,11 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * Called when an activity you launched exits
    * 
    * @param requestCode
+   *          código da requisição
    * @param resultCode
+   *          código do resultado da execução da activity
    * @param data
+   *          intent de retorno
    * 
    */
   @Override
@@ -415,28 +428,39 @@ public class FotoEventoActivity extends Activity implements Constantes {
      */
 
     if (requestCode == ACTIVITY_LOGIN) {
+      //
       resultActivityLogin(resultCode, data);
+
     } else if (requestCode == ACTIVITY_MANUTENCAO) {
+      //
       resultActivityManutencao(resultCode, data);
+
     } else if (requestCode == ACTIVITY_CAMERA) {
+      // TODO verificar se esse item pode ser retirado
       resultActivityCamera(resultCode, data);
+
     } else if (requestCode == ACTIVITY_DUMMY3) {
+      //
       resultActivityDummy3(resultCode, data);
+
     } else {
+
       Toast.makeText(this, "Resultado inexperado", Toast.LENGTH_SHORT).show();
 
       Log.w(TAG, "onActivityResult() - Erro ... requestCode: " + requestCode + " não pode ser processado");
+
     }
 
   }
 
   /**
-   * activityManutencaoResult(int resultCode, Intent data)
+   * resultActivityManutencao(int resultCode, Intent data)
    * 
    * Resultado da execução da Activity de Manutenção
    * 
    * @param resultCode
    *          Resultado da execução da activity
+   * 
    * @param data
    *          Intent contendo o resultado (se houver algum)
    * 
@@ -459,7 +483,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * activityLoginResult(int resultCode, Intent data)
+   * resultActivityLogin(int resultCode, Intent data)
    * 
    * @param resultCode
    *          Resultado da execução da Activity
@@ -524,7 +548,80 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * activityCameraResult(int resultCode, Intent data)
+   * resultActivityDummy3(int resultCode, Intent data)
+   * 
+   * Processa o resultado da execução da activity responsável por obter uma foto
+   * 
+   * @param resultCode
+   *          Resultado da execução da activity
+   * 
+   * @param data
+   *          Intent recebida (se houver)
+   * 
+   */
+  private void resultActivityDummy3(int resultCode, Intent data) {
+
+    String resultado = null;
+
+    Log.d(TAG, "==> resultActivityDummy3() - Processando o resultado da tela ACTIVITY DUMMY3");
+
+    Log.d(TAG, "==> resultActivityDummy3() - resultCode=" + resultCode);
+
+    if (data == null) {
+
+      // Activity não retornou dados
+      Log.w(TAG, "resultActivityDummy3() - Activity Dummy3 não retornou dados");
+
+    } else {
+
+      // exibe os dados retornados pela activity
+      Log.i(TAG, "resultActivityDummy3 - data=" + data);
+
+      // Obtem o resultado da execução da activity
+      resultado = data.getStringExtra("br.com.mltech.result");
+
+      mParticipante = (Participante) data.getSerializableExtra(Constantes.PARTICIPANTE);
+      mParticipacao = (Participacao) data.getSerializableExtra(Constantes.PARTICIPACAO);
+
+      // exibe o resultado da execução da activity
+      Log.i(TAG, "resultActivityDummy3() - resultado=" + resultado);
+
+    }
+
+    // TODO verificar se o código abaixo pode ser retirado
+    // Obtém informações sobre a intent que chamou a activity
+    /*
+     * Intent i = getIntent();
+     * 
+     * Bundle ss = i.getExtras();
+     * 
+     * if (ss != null) {
+     * 
+     * Log.d(TAG,
+     * "resultActivityDummy3() - bundle ss possui as seguintes informações:");
+     * FileUtils.showBundle(ss);
+     * 
+     * }
+     */
+
+    if (resultCode == RESULT_OK) {
+
+      Log.i(TAG, "resultActivityDummy3() - executada com sucesso");
+
+      // atualiza a lista de participantes
+      updateListaParticipacao();
+
+    } else {
+
+      // operação cancelada
+      Log.w(TAG, "resultActivityDummy3() - Operação ocorreu com erros");
+
+    }
+
+  }
+
+  /**
+   * resultActivityCamera(int resultCode, Intent data)
    * 
    * @param resultCode
    *          Resultado da execução da Activity
@@ -577,70 +674,100 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * resultActivityDummy3(int resultCode, Intent data)
+   * isCondicoesIniciaisSatisfeitas()
    * 
-   * Processo o resultado da execução da activity
+   * Verifica se as configurações iniciais estão satisfeitas para execução de
+   * uma participação no evento.
    * 
-   * @param resultCode
-   *          Resultado da execução da activity
+   * contratante - ter um contratante configurado evento - ter um evento
+   * configurado
    * 
-   * @param data
-   *          Intent recebida (se houver)
+   * @return true se as condições forem satisfeitas e false, caso contrário
+   */
+  private boolean isCondicoesIniciaisSatisfeitas() {
+
+    /*
+     * as condições necessárias para execução da activity é ter: - contratante -
+     * evento - participante - participação
+     */
+
+    boolean b = true;
+
+    // verifica se existe um contratante
+    if (mContratante == null) {
+      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Contratante não foi configurado");
+      Toast.makeText(this, "Contratante não foi configurado", Toast.LENGTH_LONG).show();
+      b = false;
+    }
+
+    // verifica se existe um evento cadastrado
+    if (mEvento == null) {
+      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Evento não foi configurado");
+      Toast.makeText(this, "Evento não foi configurado", Toast.LENGTH_LONG).show();
+      b = false;
+    }
+
+    // verifica se as bordas das fotos já foram disponibilizadas ao
+    // evento
+
+    if (mEvento != null) {
+      Log.i(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaCabine: " + mEvento.getBordaCabine());
+      Log.i(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaPolaroid: " + mEvento.getBordaPolaroid());
+    } else {
+      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Evento é nulo");
+    }
+
+    if ((mEvento != null) && ((mEvento.getBordaCabine() == null) || (mEvento.getBordaPolaroid() == null))) {
+      // TODO alterar essa condição
+      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Bordas não foram configuradas");
+      Toast.makeText(this, "Bordas não foram configuradas", Toast.LENGTH_LONG).show();
+      b = false;
+    }
+
+    return b;
+
+  }
+
+  /**
+   * preparaAmbiente()
+   * 
+   * Prepara o sistema de arquivos ambiente para conter as molduras, a tela
+   * inicial e para gravação das fotos.
    * 
    */
-  private void resultActivityDummy3(int resultCode, Intent data) {
+  private boolean preparaAmbiente() {
 
-    String result = null;
+    if (!CameraTools.isExternalStorageMounted()) {
+      Log.i(TAG, "preparaAmbiente() - SDCARD não está montado");
 
-    Log.d(TAG, "==> resultActivityDummy3() - Executando o resultado do processamento da ACTIVITY DUMMY3");
+      // TODO aqui seria melhor exibir uma caixa de diálogo
+      Toast.makeText(this, "SDCARD não está montado !!!", Toast.LENGTH_LONG).show();
 
-    Log.d(TAG, "==> resultActivityDummy3() - resultCode=" + resultCode);
-
-    if (data == null) {
-
-      // Activity não retornou dados
-      Log.w(TAG, "resultActivityDummy3() - Activity Dummy3 não retornou dados");
-
-    } else {
-
-      Log.i(TAG, "resultActivityDummy3 - data=" + data);
-
-      // Obtem o resultado da execução da activity
-      result = data.getStringExtra("br.com.mltech.result");
-
-      mParticipante = (Participante) data.getSerializableExtra(Constantes.PARTICIPANTE);
-      mParticipacao = (Participacao) data.getSerializableExtra(Constantes.PARTICIPACAO);
-
-      // exibe o resultado da execução da activity
-      Log.i(TAG, "resultActivityDummy3() - result=" + result);
+      return false;
 
     }
 
-    // Obtém informações sobre a intent que chamou a activity
-    Intent i = getIntent();
+    Log.i(TAG, "preparaAmbiente() - SDCARD está montado");
 
-    Bundle ss = i.getExtras();
+    File f = null;
 
-    if (ss != null) {
+    f = CameraTools.getDir2("fotoevento/fotos");
 
-      Log.d(TAG, "resultActivityDummy3() - bundle ss possui as seguintes informações:");
-      FileUtils.showBundle(ss);
-
+    if (DEBUG == 1) {
+      FileUtils.showFileDetails(f, "fotoevento/fotos");
     }
 
-    if (resultCode == RESULT_OK) {
-
-      Log.i(TAG, "resultActivityDummy3() - executada com sucesso");
-
-      // atualiza a lista de participantes
-      updateListaParticipacao();
-
-    } else {
-
-      // operação cancelada
-      Log.w(TAG, "resultActivityDummy3() - Operação ocorreu com erros");
-
+    f = CameraTools.getDir2("fotoevento/molduras");
+    if (DEBUG == 1) {
+      FileUtils.showFileDetails(f, "fotoevento/molduras");
     }
+
+    f = CameraTools.getDir2("fotoevento/telainicial");
+    if (DEBUG == 1) {
+      FileUtils.showFileDetails(f, "fotoevento/telainicial");
+    }
+
+    return true;
 
   }
 
@@ -726,61 +853,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * isCondicoesIniciaisSatisfeitas()
-   * 
-   * Verifica se as configurações iniciais estão satisfeitas para execução de
-   * uma participação no evento.
-   * 
-   * contratante - ter um contratante configurado evento - ter um evento
-   * configurado
-   * 
-   * @return true se as condições forem satisfeitas e false, caso contrário
-   */
-  private boolean isCondicoesIniciaisSatisfeitas() {
-
-    /*
-     * as condições necessárias para execução da activity é ter: - contratante -
-     * evento - participante - participação
-     */
-
-    boolean b = true;
-
-    // verifica se existe um contratante
-    if (mContratante == null) {
-      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Contratante não foi configurado");
-      Toast.makeText(this, "Contratante não foi configurado", Toast.LENGTH_LONG).show();
-      b = false;
-    }
-
-    // verifica se existe um evento cadastrado
-    if (mEvento == null) {
-      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Evento não foi configurado");
-      Toast.makeText(this, "Evento não foi configurado", Toast.LENGTH_LONG).show();
-      b = false;
-    }
-
-    // verifica se as bordas das fotos já foram disponibilizadas ao
-    // evento
-
-    if (mEvento != null) {
-      Log.i(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaCabine: " + mEvento.getBordaCabine());
-      Log.i(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaPolaroid: " + mEvento.getBordaPolaroid());
-    } else {
-      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Evento é nulo");
-    }
-
-    if ((mEvento != null) && ((mEvento.getBordaCabine() == null) || (mEvento.getBordaPolaroid() == null))) {
-      // TODO alterar essa condição
-      Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Bordas não foram configuradas");
-      Toast.makeText(this, "Bordas não foram configuradas", Toast.LENGTH_LONG).show();
-      b = false;
-    }
-
-    return b;
-
-  }
-
-  /**
    * updateListaParticipacao()
    * 
    * Insere um novo participante na lista de participação do evento
@@ -812,49 +884,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
     Log.v(TAG, "updateListaParticipação() - nº de participantes até o momento: " + mNumParticipantes);
 
     Toast.makeText(this, "Obrigado pela participação !", Toast.LENGTH_SHORT).show();
-
-  }
-
-  /**
-   * preparaAmbiente()
-   * 
-   * Prepara o sistema de arquivos ambiente para conter as molduras, a tela
-   * inicial e para gravação das fotos.
-   * 
-   */
-  private boolean preparaAmbiente() {
-
-    if (!CameraTools.isExternalStorageMounted()) {
-      Log.i(TAG, "preparaAmbiente() - SDCARD não está montado");
-
-      // TODO aqui seria melhor exibir uma caixa de diálogo
-      Toast.makeText(this, "SDCARD não está montado !!!", Toast.LENGTH_LONG).show();
-
-      return false;
-
-    }
-
-    Log.i(TAG, "preparaAmbiente() - SDCARD está montado");
-
-    File f = null;
-
-    f = CameraTools.getDir2("fotoevento/fotos");
-
-    if (DEBUG == 1) {
-      FileUtils.showFileDetails(f, "fotoevento/fotos");
-    }
-
-    f = CameraTools.getDir2("fotoevento/molduras");
-    if (DEBUG == 1) {
-      FileUtils.showFileDetails(f, "fotoevento/molduras");
-    }
-
-    f = CameraTools.getDir2("fotoevento/telainicial");
-    if (DEBUG == 1) {
-      FileUtils.showFileDetails(f, "fotoevento/telainicial");
-    }
-
-    return true;
 
   }
 

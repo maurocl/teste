@@ -27,7 +27,10 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
   public static final String TAG = "ExibeFotoActivity";
 
+  // 0 - desligado; 1 - ligado
   public static int DEBUG = 0;
+  
+  public static int IMAGEM_DUMMY = 0;
 
   private static Button btnConfirmar;
 
@@ -73,8 +76,8 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
       Log.d(TAG, "getScheme()=" + data.getScheme());
     }
 
-    if (DEBUG == 0) {
-      // DEBUG está deligado
+    if (IMAGEM_DUMMY == 0) {
+
       if (data != null) {
         imageView.setImageURI(data);
       }
@@ -84,7 +87,7 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
     }
     else {
-      // DEBUG está ligado
+     
       Bitmap bm = getBitmapTest();
       imageView.setImageBitmap(bm);
 
@@ -144,7 +147,9 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
     super.onStart();
 
-    Log.d(TAG, "*** onStart() ***");
+    if (DEBUG == 1) {
+      Log.d(TAG, "*** onStart() ***");
+    }
 
   }
 
@@ -160,8 +165,9 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
   protected void onResume() {
 
     super.onResume();
-
-    Log.d(TAG, "*** onResume() ***");
+    if (DEBUG == 1) {
+      Log.d(TAG, "*** onResume() ***");
+    }
 
   }
 
@@ -175,8 +181,9 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
   protected void onPause() {
 
     super.onPause();
-
-    Log.d(TAG, "*** onPause() ***");
+    if (DEBUG == 1) {
+      Log.d(TAG, "*** onPause() ***");
+    }
 
   }
 
@@ -187,7 +194,9 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
   protected void onStop() {
 
     super.onStop();
-    Log.d(TAG, "*** onStop() ***");
+    if (DEBUG == 1) {
+      Log.d(TAG, "*** onStop() ***");
+    }
   }
 
   /**
@@ -199,7 +208,9 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
   protected void onRestart() {
 
     super.onRestart();
-    Log.d(TAG, "*** onRestart() ***");
+    if (DEBUG == 1) {
+      Log.d(TAG, "*** onRestart() ***");
+    }
   }
 
   /**
@@ -210,7 +221,9 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
     super.onDestroy();
 
-    Log.d(TAG, "*** onDestroy() ***");
+    if (DEBUG == 1) {
+      Log.d(TAG, "*** onDestroy() ***");
+    }
 
   }
 

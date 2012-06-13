@@ -19,6 +19,9 @@ public interface Constantes {
   // Definição de constantes para o efeito P&B
   public static final int PB = 12;
 
+  //Definição de nomes de SharedPreferences
+  public static final String PREF_EMAIL = "pref_email";
+
   //
 
   public static final String CONTRATANTE = "br.com.mltech.contratante";
@@ -49,6 +52,8 @@ public interface Constantes {
 
   public static final int ACTIVITY_PARTICIPANTE = 102;
 
+  //-----------------------------------------------------------------
+  // Definição de constantes
   // -----------------------------------------------------------------
 
   // Contratante
@@ -94,7 +99,7 @@ public interface Constantes {
   public static final String EVENTO_PARAM5 = "evento_param5";
 
   // Preferências
-  
+
   public static final String PREFERENCIAS_ASSUNTO = "preferencias_assunto";
 
   public static final String PREFERENCIAS_DESCRICAO = "preferencias_descricao";

@@ -22,6 +22,7 @@ public class Participacao implements Serializable {
 	private int tipoFoto;
 
 	// filtro (efeito) usado na foto
+	// color effect ou efeito de cores
 	private int efeitoFoto;
 
 	// nome do arquivo que contém a foto
