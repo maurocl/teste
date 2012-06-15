@@ -420,12 +420,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     super.onActivityResult(requestCode, resultCode, data);
 
-    Log.i(TAG, "onActivityResult(request " + requestCode + ", result=" + resultCode + ", data " + data + ") ...");
-
-    /*
-     * if (requestCode == ACTIVITY_PARTICIPANTE) {
-     * resultActivityParticipante(resultCode, data); } else
-     */
+    Log.i(TAG, "onActivityResult(request (" + requestCode + ") " + getActivityName(requestCode) + ", result=" + resultCode
+        + ", data " + data + ") ...");
 
     if (requestCode == ACTIVITY_LOGIN) {
       //
@@ -711,8 +707,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
     // evento
 
     if (mEvento != null) {
-      Log.i(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaCabine: " + mEvento.getBordaCabine());
-      Log.i(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaPolaroid: " + mEvento.getBordaPolaroid());
+      Log.v(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaCabine: " + mEvento.getBordaCabine());
+      Log.v(TAG, "isCondicoesIniciaisSatisfeitas() - getBordaPolaroid: " + mEvento.getBordaPolaroid());
     } else {
       Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Evento é nulo");
     }
@@ -979,6 +975,43 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     AlertDialog alert = builder.create();
     alert.show();
+
+  }
+
+  /**
+   * getActivityName(int i)
+   * 
+   * @param requestCode
+   * 
+   * @return
+   */
+  private String getActivityName(int requestCode) {
+
+    String nome = null;
+
+    switch (requestCode) {
+      case ACTIVITY_LOGIN:
+        nome = "ACTIVITY_LOGIN";
+        break;
+
+      case ACTIVITY_MANUTENCAO:
+        nome = "ACTIVITY_MANUTENCAO";
+        break;
+
+      case ACTIVITY_DUMMY3:
+        nome = "ACTIVITY_DUMMY3";
+        break;
+
+      case ACTIVITY_CAMERA:
+        nome = "ACTIVITY_CAMERA";
+        break;
+
+      default:
+        nome = "Activity não encontrada.";
+        break;
+    }
+
+    return nome;
 
   }
 
