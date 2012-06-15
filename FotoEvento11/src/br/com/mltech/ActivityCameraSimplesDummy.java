@@ -13,18 +13,24 @@ import br.com.mltech.utils.ManipulaImagem;
 /**
  * ActivityCameraSimplesDummy
  * 
- * Essa activity "simula" o funcionamento de uma câmera, isto é, uma vez
- * chamada ela deverá retornar na Uri fornecida um bitmap.
+ * Essa activity "simula" o funcionamento de uma câmera, isto é, uma vez chamada
+ * ela deverá retornar na Uri fornecida um bitmap.
  * 
  * @author maurocl
+ * 
+ * 
  * 
  */
 public class ActivityCameraSimplesDummy extends Activity {
 
+  // TODO falta implementar um método que leia a imagem a partir dos recursos da aplicação.
+  
+  
   public static final String TAG = "ActivityCameraSimplesDummy";
 
+  // TODO remover o código hardcoded
   public static String ARQUIVO = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
-  
+
   /**
    * onCreate(Bundle savedInstanceState)
    */
@@ -39,7 +45,7 @@ public class ActivityCameraSimplesDummy extends Activity {
 
     Uri uri = null;
 
-    // Obtem a intent usada para chamar essa Activity
+    // Obtem a intent usada para chamar essa Activity.
     Intent intent = getIntent();
 
     Uri data = intent.getData();
@@ -84,6 +90,8 @@ public class ActivityCameraSimplesDummy extends Activity {
 
       respostaIntent.putExtra("outputFileUri", uri);
 
+      respostaIntent.setData(uri);
+
       // estabelece o resultado da execução da activity
       setResult(RESULT_OK, respostaIntent);
 
@@ -91,6 +99,7 @@ public class ActivityCameraSimplesDummy extends Activity {
     else {
 
       respostaIntent.putExtra("outputFileUri", (Uri) null);
+      respostaIntent.setData(null);
 
       // estabelece o resultado da execução da activity
       setResult(RESULT_CANCELED, respostaIntent);
@@ -109,8 +118,11 @@ public class ActivityCameraSimplesDummy extends Activity {
    * 
    * Verifica se a URI fornecida é diferente de null
    * 
+   * Grava o bitmap 
+   * 
    * @param meuArquivo
    * @param uri
+   *          URI onde o arquivo será gravado
    * 
    * @return
    */
@@ -119,7 +131,7 @@ public class ActivityCameraSimplesDummy extends Activity {
     boolean ret = false;
 
     if (meuArquivo == null) {
-      Log.w(TAG, "validaArquivo() - arquivo é nulo");
+      Log.w(TAG, "validaArquivo() - nome do arquivo é nulo");
       ret = false;
     }
     else {
@@ -147,12 +159,24 @@ public class ActivityCameraSimplesDummy extends Activity {
   /**
    * gravaBitmapUri(String meuArquivo, Uri uri)
    * 
-   * Lê o arquivo contendo um bitmap
+   * <p>
+   * Esse método é usado para ler um arquivo contendo um bitmap armazenado no sistema de arquivos
+   * e gravá-lo no endereço dado pela URI fornecida.
+   * 
+   * É usado para gerar uma bitmap padrão que "substitui" o bitmap padrão gerado pela câmera fotográfica.
+   * 
+   * <p>
+   * Lê o arquivo contendo o bitmap
+   * <p>
    * Decodifica o arquivo lido e gera um bitmap (se possível)
+   * <p>
    * Grava o bitmap na URI
    * 
-   * @param meuArquivo nome do arquivo que contém o bitmap
-   * @param uri URI onde o bitmap deve ser disponibilizado 
+   * @param meuArquivo
+   *          nome do arquivo que contém o bitmap
+   * 
+   * @param uri
+   *          URI onde o bitmap deve ser disponibilizado
    * 
    * @return true em caso de sucesso ou false caso contrário.
    */
@@ -161,10 +185,15 @@ public class ActivityCameraSimplesDummy extends Activity {
     //
     // cria um bitmap a partir do arquivo
     //
+    // Decode a file path into a bitmap. 
+    // If the specified file name is null, or cannot be decoded into a bitmap, 
+    // the function returns null.
+    //
     Bitmap bitmap = BitmapFactory.decodeFile(meuArquivo);
 
     if (bitmap == null) {
       // bitmap não foi gerado
+      // as possíveis causas são: nome do arquivo é nulo ou não pode ser decodificado em um bitmap
       Log.d(TAG, "gravaBitmapUri() - bitmap não pode ser decodificado a partir do arquivo " + meuArquivo);
       return false;
     }
@@ -188,43 +217,21 @@ public class ActivityCameraSimplesDummy extends Activity {
   }
 
   /**
-   * xxx(int resultado, Bundle bundle)
-   * 
-   * @param resultado
-   * @param bundle
-   * @return
-   */
-  private Intent xxx(int resultado, Bundle bundle) {
-
-    // Cria um intent de resposta
-    Intent respostaIntent = new Intent();
-
-    if (bundle != null) {
-      respostaIntent.putExtras(bundle);
-    }
-
-    // estabelece o resultado da execução da activity
-    setResult(resultado, respostaIntent);
-
-    return respostaIntent;
-
-  }
-
-  /**
    * showIntent(Intent intent)
    * 
    * Exibe informações sobre uma Intent (se for diferente de null)
    * 
-   * @param intent Instância de uma intent
+   * @param intent
+   *          Instância de uma intent
    * 
    */
   private void showIntent(Intent intent) {
 
-    if(intent==null) {
-      Log.w(TAG,"showIntent() - intent está nula.");
+    if (intent == null) {
+      Log.w(TAG, "showIntent() - intent está nula.");
       return;
     }
-    
+
     Log.d(TAG, "showIntent() - data(): " + intent.getData());
     Log.d(TAG, "showIntent() - dataString(): " + intent.getDataString());
 
