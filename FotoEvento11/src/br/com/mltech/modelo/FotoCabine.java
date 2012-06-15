@@ -19,27 +19,30 @@ import android.util.Log;
 public class FotoCabine {
 
   public static final String TAG = "FotoCabine";
-  
+
   // moldura
-  private Moldura moldura;
+  static private Moldura moldura;
 
   // array de fotos
-  private Foto[] fotos = new Foto[3];
-
+  static private Foto[] fotos = new Foto[3];
+  
   /**
-   * FotoCabine()
+   * construtor default
    */
   public FotoCabine() {
-
+    
   }
-
+  
   /**
    * FotoCabine(String arquivo, Bitmap file1, Bitmap file2, Bitmap file3)
+   * 
+   * Construtor vazio
    * 
    * @param arquivo
    * @param file1
    * @param file2
    * @param file3
+   * 
    */
   public FotoCabine(String arquivo, Bitmap file1, Bitmap file2, Bitmap file3) {
 
@@ -48,6 +51,8 @@ public class FotoCabine {
   /**
    * FotoCabine(Bitmap moldura, Bitmap file1, Bitmap file2, Bitmap file3)
    * 
+   * Construtor vazio
+   * 
    * @param moldura
    * @param file1
    * @param file2
@@ -55,12 +60,18 @@ public class FotoCabine {
    * 
    */
   public FotoCabine(Bitmap moldura, Bitmap file1, Bitmap file2, Bitmap file3) {
+
     // fotos[0] = new Foto(file1, file2, file3);
     //this.moldura = moldura;
+    
   }
 
+ 
+  
   /**
    * FotoCabine(Moldura moldura, Bitmap file1, Bitmap file2, Bitmap file3)
+   * 
+   * Construtor vazio
    * 
    * @param moldura
    * @param file1
@@ -69,9 +80,11 @@ public class FotoCabine {
    * 
    */
   public FotoCabine(Moldura moldura, Bitmap file1, Bitmap file2, Bitmap file3) {
+
     this.moldura = moldura;
+    
   }
-  
+
   /**
    * getBitmap(int i)
    * 
@@ -80,17 +93,40 @@ public class FotoCabine {
    * @return
    */
   Bitmap getBitmap(int i) {
+
     return fotos[i].getImagem();
   }
 
   /**
    * getFotos()
    * 
-   * @return um array contendo três fotos 3x4
+   * @return um array de Foto(s)
    * 
    */
   public Foto[] getFotos() {
+
     return fotos;
+  }
+
+  /**
+   * getFoto(int i)
+   * 
+   * Retorna a foto na posição i do array
+   * 
+   * @param i
+   *          índice da foto no array
+   * 
+   * @return A foto na posição i do array ou null.
+   * 
+   */
+  public Foto getFoto(int i) {
+
+    if (i < getFotos().length) {
+      return fotos[i];
+    } else {
+      return null;
+    }
+
   }
 
   /**
@@ -100,6 +136,7 @@ public class FotoCabine {
    * 
    */
   public void setFotos(Foto[] fotos) {
+
     this.fotos = fotos;
   }
 
@@ -110,6 +147,7 @@ public class FotoCabine {
    * 
    */
   public Moldura getMoldura() {
+
     return moldura;
   }
 
@@ -120,17 +158,21 @@ public class FotoCabine {
    * 
    */
   public void setMoldura(Moldura moldura) {
+
     this.moldura = moldura;
   }
 
   /**
    * setFoto(int i, Foto f)
    * 
-   * @param i atualiza a foto dada pelo indice i (0 a 2)
-   * @param f foto
+   * @param i
+   *          atualiza a foto dada pelo indice i (0 a 2)
+   * @param f
+   *          foto
    * 
    */
   public void setFoto(int i, Foto f) {
+
     fotos[i] = f;
   }
 
@@ -226,30 +268,33 @@ public class FotoCabine {
    * 
    */
   public boolean hasFotos() {
+// TODO esse método precisa ser pensado melhor
     return this.getFotos() != null;
   }
 
   /**
    * hasMoldura()
    * 
-   * @return
+   * @return true se houver uma moldura associada a foto ou false caso contrário.
    * 
    */
   public boolean hasMoldura() {
+
     return this.getMoldura() != null;
   }
 
-  
   /**
    * formataFoto3x4(Bitmap foto, String nome)
    * 
-   * Redimensiona uma foto para o tamanho 3x4 
+   * Redimensiona uma foto para o tamanho 3x4
+   * 
+   * A foto será armazenada no diretório indicado pela constante PATH_FOTOS
    * 
    * @param foto
    *          bitmap com a foto
    * 
    * @param nome
-   *          nome do arquivo onde a foto será gravada
+   *          nome do arquivo onde a foto será gravada (não incluir o diretório)
    * 
    * @return o bitmap com a foto ou null em caso de erro
    * 
@@ -257,24 +302,24 @@ public class FotoCabine {
   Bitmap formataFoto3x4(Bitmap foto, String nome) {
 
     // redimensiona a foto foto para 3x4
-    Bitmap foto3x4 = ManipulaImagem.getScaledBitmap2(foto, 113, 151);
+    Bitmap fotoRedimensionada = ManipulaImagem.getScaledBitmap2(foto, 113, 151);
 
-    if (foto3x4 == null) {
+    if (fotoRedimensionada == null) {
       Log.w(TAG, "formataFoto3x4() - erro no redimensionamento da foto");
       return null;
     }
 
-    String PATH_FOTOS="";
-    
+    String PATH_FOTOS = "";
+
     // Define o nome da foto redimensionada
     String nomeArquivo = PATH_FOTOS + nome;
 
     // grava a foto redimensionada em um arquivo
-    boolean gravou = ManipulaImagem.gravaBitmapArquivo(foto3x4, nomeArquivo);
+    boolean gravou = ManipulaImagem.gravaBitmapArquivo(fotoRedimensionada, nomeArquivo);
 
     if (gravou) {
       // foto armazenada com sucesso
-      return foto3x4;
+      return fotoRedimensionada;
 
     } else {
       // falha na gravação da foto
@@ -285,17 +330,14 @@ public class FotoCabine {
 
   }
 
- 
-  
   /**
    * toString()
    * 
    */
   @Override
   public String toString() {
+
     return "FotoCabine [moldura=" + moldura + ", fotos=" + Arrays.toString(fotos) + "]";
   }
 
-  
-  
 }
