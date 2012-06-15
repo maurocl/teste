@@ -49,9 +49,6 @@ public class CameraActivity extends Activity implements Constantes {
   // instância da CameraPreview
   private static CameraPreview mPreview;
 
-  // diretório (onde as fotos serão armazenadas)
-  private static File picsDir;
-
   // flag usado para controle da aplicação
   private static int flag = 0;
 
@@ -91,6 +88,11 @@ public class CameraActivity extends Activity implements Constantes {
   private static Participacao mParticipacao;
 
   /**
+   * identificador da câmera do dispositivo
+   */
+  private static int cameraId = 0;
+
+  /**
    * onCreate(Bundle savedInstanceState)
    */
   @Override
@@ -102,6 +104,7 @@ public class CameraActivity extends Activity implements Constantes {
 
     setContentView(R.layout.cameraprev);
 
+    // obtem informações da intent chamadora
     Intent intent = getIntent();
 
     if (intent.getSerializableExtra(Constantes.PARTICIPACAO) != null) {
@@ -110,7 +113,13 @@ public class CameraActivity extends Activity implements Constantes {
 
     }
 
+    // obtém o identificador da câmera
+    cameraId = (intent.getIntExtra("br.com.mltech.cameraId", 0));
+    Log.d(TAG, "onCreate() - atualizando o dientificador da câmera - cameraId = " + cameraId);
+
     int numCamerasDisponiveis = Camera.getNumberOfCameras();
+
+    Log.d(TAG, "onCreate() - Nº de câmeras do dispositivo:  " + Camera.getNumberOfCameras());
 
     boolean isCameraAvailable = CameraTools.checkCameraHardware(this);
 
@@ -120,33 +129,20 @@ public class CameraActivity extends Activity implements Constantes {
         Log.d(TAG, "onCreate() - há uma câmera disponível.");
       }
       else {
-        Log.d(TAG, "onCreate() - há  " + numCamerasDisponiveis + " câmeras disponíveis.");
+        Log.d(TAG, "onCreate() - há  " + Camera.getNumberOfCameras() + " câmeras disponíveis.");
       }
-      
+
     } else {
-      
+
       Log.e(TAG, "onCreate() - não há câmeras disponíveis");
       return;
-      
-    }
-
-    for (int i = 0; i <= (Camera.getNumberOfCameras() - 1); i++) {
-
-      Log.i(TAG, "onCreate() - verificando o estado da câmera: " + i);
-
-      boolean isCameraWorking = CameraTools.isCameraWorking(i);
-
-      if (isCameraWorking) {
-        Log.d(TAG, "onCreate() - câmera " + i + " está funcionando corretamente");
-      } else {
-        Log.e(TAG, "onCreate() - câmera " + i + " não está disponível para uso pela aplicação");
-        return;
-      }
 
     }
 
-    // prepara o diretório para guardar as fotos
-    preparaDiretorioGravarFotos();
+    if (!CameraTools.isCameraWorking(cameraId)) {
+      Log.e(TAG, "onCreate() - câmera: " + cameraId + " não está funcionando");
+      return;
+    }
 
     layoutPreview = (FrameLayout) findViewById(R.id.camera_preview);
 
@@ -159,10 +155,18 @@ public class CameraActivity extends Activity implements Constantes {
     btnNovo = (Button) findViewById(R.id.btnNovo);
     btnCancelar = (Button) findViewById(R.id.btnCancelar);
 
-    btnCapture.setVisibility(android.view.View.VISIBLE);
-    btnOk.setVisibility(android.view.View.GONE);
-    btnNovo.setVisibility(android.view.View.GONE);
-    btnCancelar.setVisibility(android.view.View.GONE);
+    if (tipoDisparo == MANUAL) {
+      btnCapture.setVisibility(android.view.View.VISIBLE);
+      btnOk.setVisibility(android.view.View.GONE);
+      btnNovo.setVisibility(android.view.View.GONE);
+      btnCancelar.setVisibility(android.view.View.GONE);
+    }
+    else if (tipoDisparo == AUTOMATICO) {
+      btnCapture.setVisibility(android.view.View.GONE);
+      btnOk.setVisibility(android.view.View.GONE);
+      btnNovo.setVisibility(android.view.View.GONE);
+      btnCancelar.setVisibility(android.view.View.GONE);
+    }
 
     /**
      * Botão Capturar
@@ -226,8 +230,8 @@ public class CameraActivity extends Activity implements Constantes {
 
         CameraInfo cameraInfo = new CameraInfo();
 
-        // TODO alterar o nº da câmera (hardcoded)
-        Camera.getCameraInfo(0, cameraInfo);
+        // obtém informações sobre a câmera
+        Camera.getCameraInfo(cameraId, cameraInfo);
 
         // The direction that the camera faces
         Log.i(TAG, "onClick(btnOk) - cameraInfo.facing=" + cameraInfo.facing);
@@ -392,9 +396,26 @@ public class CameraActivity extends Activity implements Constantes {
       // agora é ...
       // reiniciaCamera();
 
-      btnOk.setVisibility(android.view.View.VISIBLE);
-      btnNovo.setVisibility(android.view.View.VISIBLE);
-      btnCancelar.setVisibility(android.view.View.VISIBLE);
+      if (tipoDisparo == MANUAL) {
+        btnOk.setVisibility(android.view.View.VISIBLE);
+        btnNovo.setVisibility(android.view.View.VISIBLE);
+        btnCancelar.setVisibility(android.view.View.VISIBLE);
+        // torna invisível o botão capturar
+        btnCapture.setVisibility(android.view.View.GONE);
+      }
+      else if (tipoDisparo == AUTOMATICO) {
+        // desabilita botões
+        btnOk.setVisibility(android.view.View.GONE);
+        btnNovo.setVisibility(android.view.View.GONE);
+        btnCancelar.setVisibility(android.view.View.GONE);
+        btnCapture.setVisibility(android.view.View.GONE);
+
+        // confirma a foto
+        confirmaFoto();
+
+        // dispara novamente a foto (se necessário)
+        
+      }
 
     }
 
@@ -430,47 +451,14 @@ public class CameraActivity extends Activity implements Constantes {
     if (mCamera == null) {
 
       // obtém uma instância da câmera
-      mCamera = CameraTools.getCameraInstance();
+      mCamera = CameraTools.getCameraInstance(cameraId);
 
     }
 
-    //---------------------------------
-
-    mCamera.setDisplayOrientation(0);
-
-    // 
-    Camera.Parameters params = mCamera.getParameters();
-
-    // altera o tamanho da foto
-    params.setPictureSize(640, 480);
-
-    /*
-     * EFFECT_AQUA EFFECT_BLACKBOARD EFFECT_MONO EFFECT_NEGATIVE EFFECT_NONE
-     * EFFECT_POSTERIZE EFFECT_SEPIA EFFECT_SOLARIZE EFFECT_WHITEBOARD
-     */
-
-    int efeitoFoto = mParticipacao.getEfeitoFoto();
-    
-    if(efeitoFoto==CORES) {
-      params.setColorEffect(Camera.Parameters.EFFECT_NONE);
-    }
-    else if(efeitoFoto==PB) {
-      params.setColorEffect(Camera.Parameters.EFFECT_MONO);
-    }
-    else {
-      // o valor default é nenhum efeito
-      params.setColorEffect(Camera.Parameters.EFFECT_NONE);
-    }
-    
-    //params.setColorEffect(Camera.Parameters.EFFECT_SEPIA);
-
-    // Atualiza os parametros
-    mCamera.setParameters(params);
-
-    // Exibe alguns parametros da camera
-    showCameraParameters(mCamera);
-
-    //---------------------------------
+    //--------------------------------------------------------
+    // configura os parâmetros usados para configurar a câmera
+    //--------------------------------------------------------
+    configuraParamCamera();
 
     // cria uma instância da "tela" de preview
     mPreview = new CameraPreview(this, mCamera);
@@ -632,46 +620,6 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
-   * preparaDirerorioFotos()
-   * 
-   * Prepara o diretório onde as fotos serão armazenadas
-   * 
-   */
-  private void preparaDiretorioGravarFotos() {
-
-    boolean isDirCreated = false;
-
-    // obtém o local onde as fotos são armazenas na mem´ria externa do
-    // dispositivo (geralmente o SD Card)
-    picsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/fotoevento/");
-
-    Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.absolutePath=" + picsDir.getAbsolutePath());
-    Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.name=" + picsDir.getName());
-
-    // Make sure the Pictures directory exists.
-    // Garante a existência do diretório
-    isDirCreated = picsDir.mkdirs();
-
-    if (isDirCreated) {
-
-      // diretório criado com sucesso
-      showFile(picsDir);
-
-    } else {
-
-      if (picsDir.exists()) {
-        Log.w(TAG, "preparaDiretorioGravarFotos() - Não foi possível criar o diretório: " + picsDir.getName()
-            + " pois ele já existe !");
-      } else {
-        //
-        Log.w(TAG, "preparaDiretorioGravarFotos() - Erro - não foi possivel criar o diretório: " + picsDir.getName());
-      }
-
-    }
-
-  }
-
-  /**
    * showCameraParameters
    * 
    * Exibe algumas configurações dos parâmetros da câmera
@@ -698,50 +646,11 @@ public class CameraActivity extends Activity implements Constantes {
     // obtém o tamanho da imagem
     Size size = parameters.getPictureSize();
 
-    Log.d(TAG, "  getPictureSize: " + CameraTools.getCameraSize(size));
-    Log.d(TAG, "  getPictureSize: " + parameters.getPictureSize());
-    Log.d(TAG, "  getHorizontalViewAngle: " + parameters.getHorizontalViewAngle());
-    Log.d(TAG, "  getJpegThumbnailQuality: " + parameters.getJpegThumbnailQuality());
+    Log.v(TAG, "showCameraParameters() - getPictureSize: " + CameraTools.getCameraSize(size));
+    Log.v(TAG, "showCameraParameters() - getHorizontalViewAngle: " + parameters.getHorizontalViewAngle());
+    Log.v(TAG, "showCameraParameters() - getJpegThumbnailQuality: " + parameters.getJpegThumbnailQuality());
 
   }
-
-  /**
-   * showFile(File f)
-   * 
-   * Exibe informações sobre um arquivo: - informações sobre a permissão de
-   * leitura (R), escrita (W) e execução (X) do um arquivo f - informações sobre
-   * a permissão de leitura (R), escrita (W) e execução (X) do diretório picsDir
-   * 
-   * @param f
-   *          instância da classe File
-   * 
-   */
-  private void showFile(File f) {
-
-    Log.d(TAG, "showFile(): ");
-
-    if (f == null) {
-      Log.w(TAG, "arquivo é nulo");
-      return;
-    }
-
-    Log.d(TAG, "  f.getAbsolutePath=" + f.getAbsolutePath());
-    Log.d(TAG, "  f.getName()=" + f.getName());
-
-    String canRead = f.canRead() == true ? "R" : "-";
-    String canWrite = f.canWrite() == true ? "W" : "-";
-    String canExecute = f.canRead() == true ? "X" : "-";
-
-    String permission = canRead + canWrite + canExecute;
-    Log.d(TAG, "  Permissão do arquivo: " + permission);
-
-    Log.d(TAG, "  picsDir.canWrite(): " + picsDir.canWrite());
-    Log.d(TAG, "  picsDir.canRead(): " + picsDir.canRead());
-    Log.d(TAG, "  picsDir.canExecute(): " + picsDir.canExecute());
-
-    Log.d(TAG, "  picsDir.getAbsolutePath()=" + picsDir.getAbsolutePath());
-
-  };
 
   /**
    * reiniciaCamera()
@@ -999,6 +908,113 @@ public class CameraActivity extends Activity implements Constantes {
 
   }
 
+  /**
+   * 
+   * O botão captura somente estará disponível no modo manual.
+   * 
+   * 
+   */
+  private void configurarBotoes() {
+
+    //btnOk --> confirma e grava a foto
+
+    //btnNovo --> tira uma nova foto
+
+    //btnCancelar; --> retorna sem uma foto
+
+    //btnCapture; --> captura a foto de forma manual
+
+  }
+
+  /**
+   * configuraParamCamera()
+   */
+  private void configuraParamCamera() {
+
+    mCamera.setDisplayOrientation(0);
+
+    // 
+    Camera.Parameters params = mCamera.getParameters();
+
+    // altera o tamanho da foto
+    params.setPictureSize(640, 480);
+
+    /*
+     * EFFECT_AQUA EFFECT_BLACKBOARD EFFECT_MONO EFFECT_NEGATIVE EFFECT_NONE
+     * EFFECT_POSTERIZE EFFECT_SEPIA EFFECT_SOLARIZE EFFECT_WHITEBOARD
+     */
+
+    int efeitoFoto = mParticipacao.getEfeitoFoto();
+
+    if (efeitoFoto == CORES) {
+      params.setColorEffect(Camera.Parameters.EFFECT_NONE);
+    }
+    else if (efeitoFoto == PB) {
+      params.setColorEffect(Camera.Parameters.EFFECT_MONO);
+    }
+    else {
+      // o valor default é nenhum efeito
+      params.setColorEffect(Camera.Parameters.EFFECT_NONE);
+    }
+
+    //params.setColorEffect(Camera.Parameters.EFFECT_SEPIA);
+
+    // Atualiza os parametros
+    mCamera.setParameters(params);
+
+    // Exibe alguns parametros da camera
+    showCameraParameters(mCamera);
+  }
+
+  /**
+   * confirmaFoto()
+   */
+  private void confirmaFoto() {
+    Log.i(TAG,"---------------------------------------------------------");
+    Log.i(TAG," => confirmaFoto()");
+    Log.i(TAG,"---------------------------------------------------------");
+    
+    CameraInfo cameraInfo = new CameraInfo();
+
+    // obtém informações sobre a câmera
+    Camera.getCameraInfo(cameraId, cameraInfo);
+
+    // The direction that the camera faces
+    Log.i(TAG, "confirmaFoto() - cameraInfo.facing=" + cameraInfo.facing);
+
+    // The orientation of the camera image. 
+    Log.i(TAG, "confirmaFoto() - cameraInfo.orientation=" + cameraInfo.orientation);
+
+    if (mImageBitmap == null) {
+      Log.w(TAG, "confirmaFoto() - mImageBitmap é nulo");
+    }
+
+    // exibe informações sobre a foto
+    ManipulaImagem.showBitmapInfo2(mImageBitmap);
+
+    // seta os dados de retorno (data)
+    // Uri contendo a localização da foto
+    //intent.putExtra("data", mUri);
+
+    Log.i(TAG, "confirmaFoto() - mUri: [" + mUri + "]");
+
+    // cria uma intent de resposta
+    Intent intent = new Intent();
+
+    // Set the data this intent is operating on. 
+    // This method automatically clears any type that was previously set by setType(String). 
+    intent.setData(mUri);
+
+    // estabelece o resultado da execução da activity
+    setResult(RESULT_OK, intent);
+
+    Log.d(TAG, "confirmaFoto() -  - retorno");
+
+    // finaliza a activity
+    finish();
+    
+  }
+  
 }
 
 /**
