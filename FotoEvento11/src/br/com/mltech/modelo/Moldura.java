@@ -27,7 +27,7 @@ public class Moldura extends Foto {
   /**
    * Moldura(String arquivo)
    * 
-   * @param arquivo
+   * @param arquivo nome do arquivo onde onde está o bitmap da moldura
    */
   public Moldura(String arquivo) {
     super(arquivo);
@@ -39,8 +39,8 @@ public class Moldura extends Foto {
    * 
    * Cria uma moldura com uma descrição
    * 
-   * @param arquivo
-   * @param descricao
+   * @param arquivo nome do arquivo onde onde está o bitmap da moldura
+   * @param descricao texto com a descrição da moldura
    * 
    */
   public Moldura(String arquivo, String descricao) {
@@ -52,8 +52,8 @@ public class Moldura extends Foto {
   /**
    * Moldura(String arquivo, Bitmap imagem) 
    * 
-   * @param arquivo
-   * @param imagem
+   * @param arquivo nome do arquivo onde onde está o bitmap da moldura
+   * @param imagem bitmap da moldura
    * 
    */
   public Moldura(String arquivo, Bitmap imagem) {
