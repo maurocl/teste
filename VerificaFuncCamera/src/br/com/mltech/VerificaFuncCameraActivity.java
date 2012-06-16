@@ -213,8 +213,10 @@ public class VerificaFuncCameraActivity extends Activity {
 
       // exibe o nº de caracteres gravados
       Log.d(TAG, s.getBytes().length + " caracteres gravados");
+      
+      Log.d(TAG, "Arquivo: " + f.getAbsolutePath() + " gravado com sucesso");
 
-      Toast.makeText(this, "Arquivo: " + f.getAbsolutePath() + " gravado com sucesso", Toast.LENGTH_SHORT);
+      Toast.makeText(this, "Arquivo: " + f.getAbsolutePath() + " gravado com sucesso", Toast.LENGTH_SHORT).show();
 
     } catch (FileNotFoundException e) {
       Log.w(TAG, "Arquivo: " + f.getAbsolutePath() + " não foi encontrado", e);
