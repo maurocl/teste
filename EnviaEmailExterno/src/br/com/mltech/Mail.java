@@ -22,324 +22,508 @@ import javax.mail.internet.MimeMultipart;
  * Mail
  * 
  * @author maurocl
- *
+ * 
  */
 public class Mail extends javax.mail.Authenticator {
 
-	private String _user;
-	private String _pass;
+  /**
+   * 
+   */
+  private String _user;
 
-	private String[] _to;
-	private String _from;
+  /**
+   * 
+   */
+  private String _pass;
 
-	private String _port;
-	private String _sport;
+  /**
+   * 
+   */
+  private String[] _to;
 
-	private String _host;
+  /**
+   * 
+   */
+  private String _from;
 
-	private String _subject;
-	private String _body;
+  /**
+   * 
+   */
+  private String _port;
 
-	private boolean _auth;
+  /**
+   * 
+   */
+  private String _sport;
 
-	private boolean _debuggable;
+  /**
+   * 
+   */
+  private String _host;
 
-	private Multipart _multipart;
+  /**
+   * 
+   */
+  private String _subject;
 
-	/**
+  /**
+   * 
+   */
+  private String _body;
+
+  /**
+   * 
+   */
+  private boolean _auth;
+
+  /**
+   * 
+   */
+  private boolean _debuggable;
+
+  /**
+   * 
+   */
+  private Multipart _multipart;
+
+  /**
 	 * 
 	 */
-	public Mail() {
-/*
-		_host = "smtp.gmail.com"; // default smtp server
-		_port = "465"; // default smtp port
-		_sport = "465"; // default socketfactory port
+  public Mail() {
 
-		_user = ""; // username
-		_pass = ""; // password
-		_from = ""; // email sent from
-		_subject = ""; // email subject
-		_body = ""; // email body
-*/
-		
-		_host = "smtp.terra.com.br"; // default smtp server
-		_port = "587"; // default smtp port
-		_sport = "587"; // default socketfactory port
+    /*
+     * _host = "smtp.gmail.com"; // default smtp server _port = "465"; //
+     * default smtp port _sport = "465"; // default socketfactory port
+     * 
+     * _user = ""; // username _pass = ""; // password _from = ""; // email sent
+     * from _subject = ""; // email subject _body = ""; // email body
+     */
 
-		_user = "maurocl"; // username
-		_pass = "Mcl16dcjl"; // password
-		_from = "maurocl@terra.com.br"; // email sent from
-		_subject = "Teste"; // email subject
-		_body = "Corpo do email"; // email body
-		
-		
-		_debuggable = true; // debug mode on or off - default off
-		_auth = true; // smtp authentication - default on
+    _host = "smtp.terra.com.br"; // default smtp server
+    _port = "587"; // default smtp port
+    _sport = "587"; // default socketfactory port
 
-		_multipart = new MimeMultipart();
+    _user = "maurocl"; // username
+    _pass = "Mcl16dcjl"; // password
+    _from = "maurocl@terra.com.br"; // email sent from
+    _subject = "Teste"; // email subject
+    _body = "Corpo do email"; // email body
 
-		// There is something wrong with MailCap, javamail can not find a
-		// handler for the
-		// multipart/mixed part, so this bit needs to be added.
+    _debuggable = true; // debug mode on or off - default off
+    _auth = true; // smtp authentication - default on
 
-		MailcapCommandMap mc = (MailcapCommandMap) CommandMap
-				.getDefaultCommandMap();
+    _multipart = new MimeMultipart();
 
-		mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-		mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-		mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-		mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-		mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+    // There is something wrong with MailCap, javamail can not find a
+    // handler for the
+    // multipart/mixed part, so this bit needs to be added.
 
-		CommandMap.setDefaultCommandMap(mc);
+    MailcapCommandMap mc = (MailcapCommandMap) CommandMap
+        .getDefaultCommandMap();
 
-	}
+    mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+    mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+    mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+    mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+    mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
 
-	/**
-	 * Mail(String user, String pass) 
-	 * 
-	 * @param user Username
-	 * @param pass Password
-	 * 
-	 */
-	public Mail(String user, String pass) {
+    CommandMap.setDefaultCommandMap(mc);
 
-		this();
+  }
 
-		_user = user;
-		_pass = pass;
+  /**
+   * Mail(String user, String pass)
+   * 
+   * @param user
+   *          Username
+   * @param pass
+   *          Password
+   * 
+   */
+  public Mail(String user, String pass) {
 
-	}
+    this();
 
-	/**
-	 * send()
-	 * 
-	 * @return true email enviado com sucesso ou false caso contrário
-	 * 
-	 * @throws Exception
-	 */
-	public boolean send() throws Exception {
+    _user = user;
+    _pass = pass;
 
-		Properties props = _setProperties();
+  }
 
-		if (!_user.equals("") && !_pass.equals("") && _to.length > 0
-				&& !_from.equals("") && !_subject.equals("")
-				&& !_body.equals("")) {
+  /**
+   * send()
+   * 
+   * @return true email enviado com sucesso ou false caso contrário
+   * 
+   * @throws Exception
+   */
+  public boolean send() throws Exception {
 
-			Session session = Session.getInstance(props, this);
+    Properties props = _setProperties();
 
-			MimeMessage msg = new MimeMessage(session);
+    if (!_user.equals("") && !_pass.equals("") && _to.length > 0
+        && !_from.equals("") && !_subject.equals("")
+        && !_body.equals("")) {
 
-			msg.setFrom(new InternetAddress(_from));
+      Session session = Session.getInstance(props, this);
 
-			InternetAddress[] addressTo = new InternetAddress[_to.length];
+      MimeMessage msg = new MimeMessage(session);
 
-			for (int i = 0; i < _to.length; i++) {
-				addressTo[i] = new InternetAddress(_to[i]);
-			}
+      msg.setFrom(new InternetAddress(_from));
 
-			msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
+      InternetAddress[] addressTo = new InternetAddress[_to.length];
 
-			msg.setSubject(_subject);
-			msg.setSentDate(new Date());
+      for (int i = 0; i < _to.length; i++) {
+        addressTo[i] = new InternetAddress(_to[i]);
+      }
 
-			// setup message body
-			BodyPart messageBodyPart = new MimeBodyPart();
+      msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
 
-			messageBodyPart.setText(_body);
+      msg.setSubject(_subject);
+      msg.setSentDate(new Date());
 
-			_multipart.addBodyPart(messageBodyPart);
+      // setup message body
+      BodyPart messageBodyPart = new MimeBodyPart();
 
-			// Put parts in message
-			msg.setContent(_multipart);
+      messageBodyPart.setText(_body);
 
-			// send email
-			Transport.send(msg);
+      _multipart.addBodyPart(messageBodyPart);
 
-			return true;
+      // Put parts in message
+      msg.setContent(_multipart);
 
-		} else {
-			return false;
-		}
+      // send email
+      Transport.send(msg);
 
-	}
+      return true;
 
-	/**
-	 * addAttachment(String filename)
-	 * 
-	 * @param filename Nome do arquivo anexado
-	 * 
-	 * @throws Exception
-	 */
-	public void addAttachment(String filename) throws Exception {
+    } else {
+      return false;
+    }
 
-		BodyPart messageBodyPart = new MimeBodyPart();
+  }
 
-		DataSource source = new FileDataSource(filename);
+  /**
+   * addAttachment(String filename)
+   * 
+   * @param filename
+   *          Nome do arquivo anexado
+   * 
+   * @throws Exception
+   */
+  public void addAttachment(String filename) throws Exception {
 
-		messageBodyPart.setDataHandler(new DataHandler(source));
-		messageBodyPart.setFileName(filename);
+    BodyPart messageBodyPart = new MimeBodyPart();
 
-		_multipart.addBodyPart(messageBodyPart);
+    DataSource source = new FileDataSource(filename);
 
-	}
+    messageBodyPart.setDataHandler(new DataHandler(source));
+    messageBodyPart.setFileName(filename);
 
-	/**
-	 * getPasswordAuthentication() 
-	 */
-	@Override
-	public PasswordAuthentication getPasswordAuthentication() {
+    _multipart.addBodyPart(messageBodyPart);
 
-		return new PasswordAuthentication(_user, _pass);
+  }
 
-	}
+  /**
+   * getPasswordAuthentication()
+   */
+  @Override
+  public PasswordAuthentication getPasswordAuthentication() {
 
-	/**
-	 * 
-	 * @return
-	 */
-	private Properties _setProperties() {
+    return new PasswordAuthentication(_user, _pass);
 
-		Properties props = new Properties();
+  }
 
-		props.put("mail.smtp.host", _host);
+  /**
+   * _setProperties()
+   * 
+   * @return
+   */
+  private Properties _setProperties() {
 
-		if (_debuggable) {
-			props.put("mail.debug", "true");
-		}
+    Properties props = new Properties();
 
-		if (_auth) {
-			props.put("mail.smtp.auth", "true");
-		}
+    props.put("mail.smtp.host", _host);
 
-		props.put("mail.smtp.port", _port);
-		props.put("mail.smtp.socketFactory.port", _sport);
-		props.put("mail.smtp.socketFactory.class",
-				"javax.net.ssl.SSLSocketFactory");
-		props.put("mail.smtp.socketFactory.fallback", "false");
+    if (_debuggable) {
+      props.put("mail.debug", "true");
+    }
 
-		return props;
+    if (_auth) {
+      props.put("mail.smtp.auth", "true");
+    }
 
-	}
+    props.put("mail.smtp.port", _port);
+    props.put("mail.smtp.socketFactory.port", _sport);
+    props.put("mail.smtp.socketFactory.class",
+        "javax.net.ssl.SSLSocketFactory");
+    props.put("mail.smtp.socketFactory.fallback", "false");
 
-	// the getters and setters
-	
-	public String getBody() {
-		return _body;
-	}
+    return props;
 
-	public void setBody(String _body) {
-		this._body = _body;
-	}
+  }
 
-	// more of the getters and setters …..
+  // the getters and setters
 
-	public void setTo(String[] toArr) {
-		this._to = toArr;
-	}
+  /**
+   * 
+   * @return
+   */
+  public String getBody() {
 
-	public void setFrom(String string) {
-		this._from = string;
-	}
+    return _body;
+  }
 
-	public void setSubject(String string) {
-		this._subject = string;
-	}
+  /**
+   * 
+   * @param _body
+   */
+  public void setBody(String _body) {
 
-	public String get_user() {
-		return _user;
-	}
+    this._body = _body;
+  }
 
-	public void set_user(String _user) {
-		this._user = _user;
-	}
+  // more of the getters and setters …..
 
-	public String get_pass() {
-		return _pass;
-	}
+  /**
+   * 
+   * @param toArr
+   */
+  public void setTo(String[] toArr) {
 
-	public void set_pass(String _pass) {
-		this._pass = _pass;
-	}
+    this._to = toArr;
+  }
 
-	public String[] get_to() {
-		return _to;
-	}
+  /**
+   * 
+   * @param string
+   */
+  public void setFrom(String string) {
 
-	public void set_to(String[] _to) {
-		this._to = _to;
-	}
+    this._from = string;
+  }
 
-	public String get_from() {
-		return _from;
-	}
+  /**
+   * 
+   * @param string
+   */
+  public void setSubject(String string) {
 
-	public void set_from(String _from) {
-		this._from = _from;
-	}
+    this._subject = string;
+  }
 
-	public String get_port() {
-		return _port;
-	}
+  /**
+   * 
+   * @return
+   */
+  public String get_user() {
 
-	public void set_port(String _port) {
-		this._port = _port;
-	}
+    return _user;
+  }
 
-	public String get_sport() {
-		return _sport;
-	}
+  /**
+   * 
+   */
+  public void set_user(String _user) {
 
-	public void set_sport(String _sport) {
-		this._sport = _sport;
-	}
+    this._user = _user;
+  }
 
-	public String get_host() {
-		return _host;
-	}
+  /**
+   * 
+   * @return
+   */
+  public String get_pass() {
 
-	public void set_host(String _host) {
-		this._host = _host;
-	}
+    return _pass;
+  }
 
-	public String get_subject() {
-		return _subject;
-	}
+  /**
+   * 
+   * @param _pass
+   */
+  public void set_pass(String _pass) {
+
+    this._pass = _pass;
+  }
 
-	public void set_subject(String _subject) {
-		this._subject = _subject;
-	}
-
-	public String get_body() {
-		return _body;
-	}
-
-	public void set_body(String _body) {
-		this._body = _body;
-	}
-
-	public boolean is_auth() {
-		return _auth;
-	}
-
-	public void set_auth(boolean _auth) {
-		this._auth = _auth;
-	}
-
-	public boolean is_debuggable() {
-		return _debuggable;
-	}
-
-	public void set_debuggable(boolean _debuggable) {
-		this._debuggable = _debuggable;
-	}
-
-	public Multipart get_multipart() {
-		return _multipart;
-	}
-
-	public void set_multipart(Multipart _multipart) {
-		this._multipart = _multipart;
-	}
+  /**
+   * 
+   * @return
+   */
+  public String[] get_to() {
+
+    return _to;
+  }
+
+  /**
+   * 
+   * @param _to
+   */
+  public void set_to(String[] _to) {
+
+    this._to = _to;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String get_from() {
+
+    return _from;
+  }
+
+  /**
+   * 
+   * @param _from
+   */
+  public void set_from(String _from) {
+
+    this._from = _from;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String get_port() {
+
+    return _port;
+  }
+
+  /**
+   * 
+   * @param _port
+   */
+  public void set_port(String _port) {
+
+    this._port = _port;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String get_sport() {
+
+    return _sport;
+  }
+
+  /**
+   * 
+   * @param _sport
+   */
+  public void set_sport(String _sport) {
+
+    this._sport = _sport;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String get_host() {
+
+    return _host;
+  }
+
+  /**
+   * 
+   * @param _host
+   */
+  public void set_host(String _host) {
+
+    this._host = _host;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String get_subject() {
+
+    return _subject;
+  }
+
+  /**
+   * 
+   * @param _subject
+   */
+  public void set_subject(String _subject) {
+
+    this._subject = _subject;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String get_body() {
+
+    return _body;
+  }
+
+  /**
+   * 
+   * @param _body
+   */
+  public void set_body(String _body) {
+
+    this._body = _body;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean is_auth() {
+
+    return _auth;
+  }
+
+  /**
+   * 
+   * @param _auth
+   */
+  public void set_auth(boolean _auth) {
+
+    this._auth = _auth;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean is_debuggable() {
+
+    return _debuggable;
+  }
+
+  /**
+   * 
+   * @param _debuggable
+   */
+  public void set_debuggable(boolean _debuggable) {
+
+    this._debuggable = _debuggable;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public Multipart get_multipart() {
+
+    return _multipart;
+  }
+
+  /**
+   * 
+   * @param _multipart
+   */
+  public void set_multipart(Multipart _multipart) {
+
+    this._multipart = _multipart;
+  }
 
 }
