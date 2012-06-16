@@ -374,13 +374,18 @@ public class CameraActivity extends Activity implements Constantes {
 
       if (data != null) {
 
+        // cria o bitmap a partir do array de bytes capturados
         mImageBitmap = ManipulaImagem.getBitmapFromByteArray(data);
+        
+        if(mImageBitmap==null) {
+          Log.w(TAG,"mImageBitmap é nulo");
+        }
 
         boolean gravou = gravaArquivo(data, nomeArquivo);
 
         if (gravou) {
           Log.d(TAG, "onPictureTaken() - arquivo " + nomeArquivo + " gravado com sucesso.");
-          Toast.makeText(getBaseContext(), "Arquivo " + nomeArquivo + " gravado com sucesso.", Toast.LENGTH_SHORT).show();
+          //Toast.makeText(getBaseContext(), "Arquivo " + nomeArquivo + " gravado com sucesso.", Toast.LENGTH_SHORT).show();
         } else {
           Log.d(TAG, "onPictureTaken() - falha na gravação do arquivo " + nomeArquivo);
         }
@@ -412,8 +417,6 @@ public class CameraActivity extends Activity implements Constantes {
 
         // confirma a foto
         confirmaFoto();
-
-        // dispara novamente a foto (se necessário)
         
       }
 
@@ -932,6 +935,9 @@ public class CameraActivity extends Activity implements Constantes {
   private void configuraParamCamera() {
 
     mCamera.setDisplayOrientation(0);
+    
+    CameraTools.setCameraDisplayOrientation(this, cameraId, mCamera);
+    
 
     // 
     Camera.Parameters params = mCamera.getParameters();

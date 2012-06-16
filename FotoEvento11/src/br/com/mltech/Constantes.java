@@ -8,6 +8,13 @@ package br.com.mltech;
  */
 public interface Constantes {
 
+  /*
+  public static String[] nomes = {
+    "1","2"
+    
+  };
+  */
+  
   // Definições de tipos de fotos
   public static final int TIPO_FOTO_POLAROID = 1;
 
@@ -51,6 +58,14 @@ public interface Constantes {
   public static final int ACTIVITY_CHOOSER = 150;
 
   public static final int ACTIVITY_PARTICIPANTE = 102;
+  
+  
+  public static final int TIRA_FOTO = 200;
+
+  public static final int TIRA_FOTO_POLAROID = 201;
+
+  public static final int TIRA_FOTO_CABINE = 202;
+  
 
   //-----------------------------------------------------------------
   // Definição de constantes
