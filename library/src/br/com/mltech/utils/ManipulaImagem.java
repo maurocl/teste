@@ -48,14 +48,15 @@ public class ManipulaImagem {
   /**
    * processaFotoFormatoPolaroid(File f, File moldura)
    * 
-   * Cria uma foto no formato Poladoid (inclui moldura 12x9 e redimensiona a foto para 8x8cm)
+   * Cria uma foto no formato Poladoid (inclui moldura 12x9 e redimensiona a
+   * foto para 8x8cm)
    * 
-   * Lê o bitmap contendo a foto do sistema de arquivos
-   * Lê o bitmap contendo a moldura do sistema de arquivos
+   * Lê o bitmap contendo a foto do sistema de arquivos Lê o bitmap contendo a
+   * moldura do sistema de arquivos
    * 
    * @param foto
    *          Arquivo que possui a foto
-   *          
+   * 
    * @param moldura
    *          Arquivo que possui a moldura
    * 
@@ -82,7 +83,7 @@ public class ManipulaImagem {
    * 
    * @param sFilename
    *          Caminho completo do arquivo
-   *          
+   * 
    * @param sMoldura
    *          Caminho completo da moldura
    * 
@@ -568,7 +569,7 @@ public class ManipulaImagem {
   }
 
   /**
-   * criaBitmap(Uri uri)
+   * criaBitmap(String arquivo)
    * 
    * Tenta criar um bitmap a partir do nome de arquivo fornecido
    * 
@@ -609,7 +610,7 @@ public class ManipulaImagem {
   public static Bitmap criaBitmap(File file) {
 
     if (file == null) {
-      Log.d(TAG, "criaBitmap() - não foi possível cria o bitmap pois arquivo possui referencia nula");
+      Log.d(TAG, "criaBitmap() - não foi possível criar o bitmap pois arquivo possui referencia nula");
       return null;
     }
 
@@ -1211,6 +1212,9 @@ public class ManipulaImagem {
   /**
    * gravaBitmapArquivo3(Uri uri)
    * 
+   * Grava um bitmap localizado na URI uri tendo a localização do dados que
+   * serão decodificados em um bitmap e salvos em um arquivo
+   * 
    * @param uri
    *          URI contendo a localização do dados que serão decodificados em um
    *          bitmap e salvos em um arquivo
@@ -1229,7 +1233,7 @@ public class ManipulaImagem {
 
     Log.v(TAG, "gravaBitmapArquivo3() - uri=" + uri);
 
-    // cria-se um arquivo
+    // cria-se um arquivo a partir da Uri
     File file = new File(uri.getPath());
 
     // cria um bitmap a partir do arquivo
@@ -1246,7 +1250,9 @@ public class ManipulaImagem {
 
       out = new FileOutputStream(file);
 
+      // grava o arquivo sem compressão usando o formato .PNG
       salvou = foto.compress(Bitmap.CompressFormat.PNG, 100, out);
+      
       Log.i(TAG, "gravaBitmapArquivo3() - sucess code from bitmap.compress: " + salvou);
       out.close();
 
@@ -1720,7 +1726,7 @@ public class ManipulaImagem {
     // boolean isRecycled = bm.isRecycled();
     // String s = bm.toString();
 
-    Log.d(TAG,"Bitmap: ");
+    Log.d(TAG, "Bitmap: ");
     Log.v(TAG, "  getConfig()= " + bm.getConfig());
     Log.v(TAG, "  getDensity()= " + bm.getDensity());
     Log.v(TAG, "  getHeight()= " + bm.getHeight());
@@ -1986,15 +1992,14 @@ public class ManipulaImagem {
    */
   public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
 
-  	 final float densityMultiplier = context.getResources().getDisplayMetrics().density;        
+    final float densityMultiplier = context.getResources().getDisplayMetrics().density;
 
-  	 int h= (int) (newHeight*densityMultiplier);
-  	 int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
+    int h = (int) (newHeight * densityMultiplier);
+    int w = (int) (h * photo.getWidth() / ((double) photo.getHeight()));
 
-  	 photo=Bitmap.createScaledBitmap(photo, w, h, true);
+    photo = Bitmap.createScaledBitmap(photo, w, h, true);
 
-  	 return photo;
-  	 }
+    return photo;
+  }
 
-  
 }

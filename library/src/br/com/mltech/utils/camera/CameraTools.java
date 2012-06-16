@@ -57,7 +57,8 @@ public class CameraTools {
   // --------------------
   private static Camera mCamera;
 
-  private static SurfaceView mPreview;
+  // diretório (onde as fotos serão armazenadas)
+  private static File picsDir;
 
   // --------------------
 
@@ -752,11 +753,11 @@ public class CameraTools {
       return false;
 
     }
-    
+
     // câmera ID foi instanciada com sucesso.    
     // Então, desconecta e libera os recursos usados pela câmera.
     c.release();
-    
+
     c = null;
 
     Log.i(TAG, "isCameraWorking() - câmera: " + cameraID + " está funcionando corretamente");
@@ -1212,5 +1213,131 @@ public class CameraTools {
   }
 
   //---------------------------------------------------------------------------
+
+  /**
+   * preparaDirerorioFotos()
+   * 
+   * Prepara o diretório onde as fotos serão armazenadas
+   * 
+   */
+  private void preparaDiretorioGravarFotos() {
+
+    boolean isDirCreated = false;
+
+    // obtém o local onde as fotos são armazenas na mem´ria externa do
+    // dispositivo (geralmente o SD Card)
+    picsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/fotoevento/");
+
+    Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.absolutePath=" + picsDir.getAbsolutePath());
+    Log.d(TAG, "preparaDiretorioGravarFotos() - picDir.name=" + picsDir.getName());
+
+    // Make sure the Pictures directory exists.
+    // Garante a existência do diretório
+    isDirCreated = picsDir.mkdirs();
+
+    if (isDirCreated) {
+
+      // diretório criado com sucesso
+      showFile(picsDir);
+
+    } else {
+
+      if (picsDir.exists()) {
+        Log.w(TAG, "preparaDiretorioGravarFotos() - Não foi possível criar o diretório: " + picsDir.getName()
+            + " pois ele já existe !");
+      } else {
+        //
+        Log.w(TAG, "preparaDiretorioGravarFotos() - Erro - não foi possivel criar o diretório: " + picsDir.getName());
+      }
+
+    }
+
+  }
+
+  /**
+   * showFile(File f)
+   * 
+   * <p>
+   * Exibe informações sobre um arquivo:
+   * <ul>
+   * <li>informações sobre a permissão de leitura (R), escrita (W) e execução
+   * (X) do um arquivo f
+   * <li>informações sobre a permissão de leitura (R), escrita (W) e execução
+   * (X) do diretório picsDir
+   * 
+   * @param f
+   *          instância da classe File
+   * 
+   */
+  private void showFile(File f) {
+
+    Log.d(TAG, "showFile(): ");
+
+    if (f == null) {
+      Log.w(TAG, "arquivo é nulo");
+      return;
+    }
+
+    Log.d(TAG, "  f.getAbsolutePath=" + f.getAbsolutePath());
+    Log.d(TAG, "  f.getName()=" + f.getName());
+
+    String canRead = f.canRead() == true ? "R" : "-";
+    String canWrite = f.canWrite() == true ? "W" : "-";
+    String canExecute = f.canRead() == true ? "X" : "-";
+
+    String permission = canRead + canWrite + canExecute;
+    Log.d(TAG, "  Permissão do arquivo: " + permission);
+
+    Log.d(TAG, "  picsDir.canWrite(): " + picsDir.canWrite());
+    Log.d(TAG, "  picsDir.canRead(): " + picsDir.canRead());
+    Log.d(TAG, "  picsDir.canExecute(): " + picsDir.canExecute());
+
+    Log.d(TAG, "  picsDir.getAbsolutePath()=" + picsDir.getAbsolutePath());
+
+  };
+
+  /**
+   * 
+   * @param ctx
+   */
+  private static void xxx(Context ctx) {
+
+    int numCamerasDisponiveis = Camera.getNumberOfCameras();
+
+    //boolean isCameraAvailable = CameraTools.checkCameraHardware(this);
+    boolean isCameraAvailable = CameraTools.checkCameraHardware(ctx);
+
+    if (isCameraAvailable) {
+
+      if (numCamerasDisponiveis == 1) {
+        Log.d(TAG, "onCreate() - há uma câmera disponível.");
+      }
+      else {
+        Log.d(TAG, "onCreate() - há  " + numCamerasDisponiveis + " câmeras disponíveis.");
+      }
+
+    } else {
+
+      Log.e(TAG, "onCreate() - não há câmeras disponíveis");
+      return;
+
+    }
+
+    for (int i = 0; i <= (Camera.getNumberOfCameras() - 1); i++) {
+
+      Log.i(TAG, "onCreate() - verificando o estado da câmera: " + i);
+
+      boolean isCameraWorking = CameraTools.isCameraWorking(i);
+
+      if (isCameraWorking) {
+        Log.d(TAG, "onCreate() - câmera " + i + " está funcionando corretamente");
+      } else {
+        Log.e(TAG, "onCreate() - câmera " + i + " não está disponível para uso pela aplicação");
+        return;
+      }
+
+    }
+
+  }
 
 }
