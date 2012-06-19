@@ -1,5 +1,12 @@
 package br.com.mltech;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.Security;
+import java.util.Properties;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Message;
@@ -8,25 +15,21 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.Security;
-import java.util.Properties;
+
+
 
 /**
- * GMailSender
+ * MLTechlSender
  * 
  * É uma classe Authenticator.
  * 
  * @author maurocl
  * 
  */
-public class GMailSender extends javax.mail.Authenticator {
+public class MLTechSender extends javax.mail.Authenticator {
 
   // host responsável pelo envio do email
-  private String mailhost = "smtp.gmail.com";
+  private String mailhost = "smtp.dialhost.com.br";
 
   // usário
   private String user; // usuário
@@ -44,17 +47,18 @@ public class GMailSender extends javax.mail.Authenticator {
   }
 
   /**
-   * GMailSender(String user, String password)
+   * MLTechlSender(String user, String password)
    * 
-   * Envia um email usando GMail
+   * Envia um email usando MLTech
    * 
    * @param user
    *          Usuário
+   *          
    * @param password
    *          Senha
    * 
    */
-  public GMailSender(String user, String password) {
+  public MLTechSender(String user, String password) {
 
     this.user = user;
     this.password = password;
@@ -83,6 +87,7 @@ public class GMailSender extends javax.mail.Authenticator {
   protected PasswordAuthentication getPasswordAuthentication() {
 
     return new PasswordAuthentication(user, password);
+    
   }
 
   /**

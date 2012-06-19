@@ -7,6 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+/**
+ * EnviaEmailExternoActivity
+ * 
+ * @author maurocl
+ *
+ */
 public class EnviaEmailExternoActivity extends Activity {
 
   private static final String TAG = "EnviaEmailExternoActivity";
@@ -40,21 +46,28 @@ public class EnviaEmailExternoActivity extends Activity {
           // m.addAttachment("/sdcard/filelocation");
 
           if (m.send()) {
+            
             Toast.makeText(EnviaEmailExternoActivity.this,
                 "Email was sent successfully.",
                 Toast.LENGTH_LONG).show();
             Log.v(TAG, "Email was sent successfully.");
+            
           } else {
+            
             Toast.makeText(EnviaEmailExternoActivity.this,
                 "Email was not sent.", Toast.LENGTH_LONG)
                 .show();
             Log.v(TAG, "Email was not sent.");
+            
           }
         } catch (Exception e) {
+          
           Toast.makeText(EnviaEmailExternoActivity.this,
               "There was a problem sending the email.",
               Toast.LENGTH_LONG).show();
+          
           Log.e("MailApp", "Could not send email", e);
+          
         }
 
       }

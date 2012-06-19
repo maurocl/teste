@@ -28,6 +28,10 @@ import java.security.Provider;
 /**
  * JSSEProvider
  * 
+ * JavaTM Secure Socket Extension (JSSE)
+ * 
+ * http://docs.oracle.com/javase/1.5.0/docs/guide/security/jsse/JSSERefGuide.html
+ * 
  * @author maurocl
  *
  */
@@ -45,7 +49,9 @@ public final class JSSEProvider extends Provider {
 	 * 
 	 */
 	public JSSEProvider() {
+	  
 		super("HarmonyJSSE", 1.0, "Harmony JSSE Provider");
+		
 		AccessController
 				.doPrivileged(new java.security.PrivilegedAction<Void>() {
 					public Void run() {
@@ -59,5 +65,7 @@ public final class JSSEProvider extends Provider {
 						return null;
 					}
 				});
+		
 	}
+	
 }

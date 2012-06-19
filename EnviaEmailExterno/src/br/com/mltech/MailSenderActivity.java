@@ -7,11 +7,11 @@ import android.view.View;
 import android.widget.Button;
 
 /**
- * @class  MailSenderActivity
+ * @class MailSenderActivity
  * @extends Activity
  * 
  * @author maurocl
- *
+ * 
  */
 public class MailSenderActivity extends Activity {
 
@@ -28,20 +28,39 @@ public class MailSenderActivity extends Activity {
     setContentView(R.layout.main);
 
     final Button send = (Button) this.findViewById(R.id.send_email);
-    
+
     send.setOnClickListener(new View.OnClickListener() {
 
       public void onClick(View v) {
 
         Log.v(TAG, "*** onClick() ***");
 
-        try {
-          GMailSender sender = new GMailSender(
-              "maurocl.lopes@gmail.com", "Mcl16dcjl");
-          sender.sendMail("This is Subject", "This is Body",
-              "maurocl.lopes@gmail.com", "maurocl@terra.com.br");
-        } catch (Exception e) {
-          Log.e("SendMail", e.getMessage(), e);
+        int i = 1;
+
+        if (i == 0) {
+
+          try {
+            GMailSender sender = new GMailSender(
+                "maurocl.lopes@gmail.com", "Mcl16dcjl");
+            sender.sendMail("This is Subject", "This is Body",
+                "maurocl.lopes@gmail.com", "maurocl@terra.com.br");
+          } catch (Exception e) {
+            Log.e("SendMail", e.getMessage(), e);
+          }
+        }
+        else {
+          try {
+            MLTechSender sender = new MLTechSender(
+                "maurocl@mltech.com.br", "mcl16d");
+            
+
+            
+            sender.sendMail("Assunto", "Corpo do email",
+                "maurocl.lopes@gmail.com", "maurocl@terra.com.br");
+          } catch (Exception e) {
+            Log.e("SendMail", e.getMessage(), e);
+          }
+
         }
 
       }
