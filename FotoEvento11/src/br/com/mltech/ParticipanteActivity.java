@@ -8,10 +8,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import br.com.mltech.modelo.Evento;
-import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 
 /**
@@ -187,7 +185,7 @@ public class ParticipanteActivity extends Activity implements Constantes {
 		}
 
 		// evento
-		if (intent.getSerializableExtra(Constantes.EVENTO) != null) {
+		if (intent.hasExtra(Constantes.EVENTO)) {
 
 			mEvento = (Evento) intent.getSerializableExtra(Constantes.EVENTO);
 
@@ -196,7 +194,7 @@ public class ParticipanteActivity extends Activity implements Constantes {
 		}
 
 		// participante
-		if (intent.getSerializableExtra(Constantes.PARTICIPANTE) != null) {
+		if (intent.hasExtra(Constantes.PARTICIPANTE)) {
 
 			mParticipante = (Participante) intent.getSerializableExtra(Constantes.PARTICIPANTE);
 
@@ -363,12 +361,16 @@ public class ParticipanteActivity extends Activity implements Constantes {
 			if (mEvento.getParametros() != null) {
 
 				if ((mEvento.getParametros().getParametro(i) != null) && (!mEvento.getParametros().getParametro(i).equals(""))) {
+				  
 					textView[i].setText(mEvento.getParametros().getParametro(i));
 					textView[i].setVisibility(android.view.View.VISIBLE);
 					editText[i].setVisibility(android.view.View.VISIBLE);
+					
 				} else {
+				  
 					textView[i].setVisibility(android.view.View.GONE);
 					editText[i].setVisibility(android.view.View.GONE);
+					
 				}
 
 			}

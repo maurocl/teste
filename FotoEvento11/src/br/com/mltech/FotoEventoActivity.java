@@ -282,6 +282,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
         return false;
 
       }
+      
     });
 
   }
@@ -290,17 +291,17 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * launchActivity(Context ctx, Class<?> cls, Bundle params, int requestCode)
    * 
    * Lança uma Activity passando o contexto de execução, o nome da classe que
-   * será executada, parâmetros e o requestCode, isto é, o código de requisição
-   * de execução da Activity.
+   * será executada, parâmetros extras (se houverem) e o requestCode, isto é, o
+   * código de requisição que é usado para identificar o retorno da activity.
    * 
    * @param ctx
-   *          Contexto
+   *          Contexto da aplicação
    * 
    * @param cls
    *          Classe que será executada
    * 
    * @param params
-   *          Parâmetros enviados
+   *          Parâmetros extras (se for necessário)
    * 
    * @param requestCode
    *          Código da solicitação (da identificação da Activity)
@@ -309,16 +310,15 @@ public class FotoEventoActivity extends Activity implements Constantes {
    */
   private void launchActivity(Context ctx, Class<?> cls, Bundle params, int requestCode) {
 
-    // Intent intent = new Intent(FotoEventoActivity.this,CameraActivity.class);
     Intent intent = new Intent(ctx, cls);
 
     if (params != null) {
       intent.putExtras(params);
     }
 
-    Log.i(TAG, "launchActivity() - Lançando a Activity code: " + requestCode);
+    Log.i(TAG, "launchActivity() - Lançando a Activity code: " + getActivityName(requestCode) + "(" + requestCode + ")");
 
-    // Inicia a Activity
+    // Inicia a activity e precisa saber o valor de retorno 
     startActivityForResult(intent, requestCode);
 
   }
@@ -409,8 +409,10 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * 
    * @param requestCode
    *          código da requisição
+   * 
    * @param resultCode
    *          código do resultado da execução da activity
+   * 
    * @param data
    *          intent de retorno
    * 
@@ -552,7 +554,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
    *          Resultado da execução da activity
    * 
    * @param data
-   *          Intent recebida (se houver)
+   *          Uma intent que pode conter dados extras como resultado
    * 
    */
   private void resultActivityDummy3(int resultCode, Intent data) {
@@ -561,7 +563,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     Log.d(TAG, "==> resultActivityDummy3() - Processando o resultado da tela ACTIVITY DUMMY3");
 
-    Log.d(TAG, "==> resultActivityDummy3() - resultCode=" + resultCode);
+    Log.d(TAG, "==> resultActivityDummy3() - resultCode=" + resultCode + ", " + getActivityName(resultCode));
 
     if (data == null) {
 
@@ -583,22 +585,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
       Log.i(TAG, "resultActivityDummy3() - resultado=" + resultado);
 
     }
-
-    // TODO verificar se o código abaixo pode ser retirado
-    // Obtém informações sobre a intent que chamou a activity
-    /*
-     * Intent i = getIntent();
-     * 
-     * Bundle ss = i.getExtras();
-     * 
-     * if (ss != null) {
-     * 
-     * Log.d(TAG,
-     * "resultActivityDummy3() - bundle ss possui as seguintes informações:");
-     * FileUtils.showBundle(ss);
-     * 
-     * }
-     */
 
     if (resultCode == RESULT_OK) {
 
@@ -728,7 +714,11 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * preparaAmbiente()
    * 
    * Prepara o sistema de arquivos ambiente para conter as molduras, a tela
-   * inicial e para gravação das fotos.
+   * inicial e para gravação das fotos. O métod retorna false caso o SDCard não
+   * esteja montado.
+   * 
+   * @return true caso o ambiente esteja criado com sucesso ou false caso haja
+   *         algum erro.
    * 
    */
   private boolean preparaAmbiente() {
@@ -743,7 +733,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     }
 
-    Log.i(TAG, "preparaAmbiente() - SDCARD está montado");
+    Log.d(TAG, "preparaAmbiente() - SDCARD está montado");
 
     File f = null;
 
@@ -982,8 +972,11 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * getActivityName(int i)
    * 
    * @param requestCode
+   *          inteiro originalmente fornecido na chamada ao método
+   *          startActivityForResult() permitindo quye seja identificado quem
+   *          recebeu o resultado.
    * 
-   * @return
+   * @return o nome associado ao código usado na execução da Activity.
    */
   private String getActivityName(int requestCode) {
 

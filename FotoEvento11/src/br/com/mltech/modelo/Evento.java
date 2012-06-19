@@ -28,15 +28,15 @@ public class Evento implements Serializable {
 
   private String email; // email principal do evento
 
-  private String endereco;
+  private String endereco; // endereço
 
-  private String cidade;
+  private String cidade; // cidade
 
-  private String estado;
+  private String estado; // estado
 
-  private String cep;
+  private String cep; // cep
 
-  private String telefone;
+  private String telefone; // telefone
 
   private String contaFacebook;
 
@@ -78,121 +78,218 @@ public class Evento implements Serializable {
     this.parametros = new Parametros();
   }
 
+  /**
+   * Retorno uma instância do contratante do evento
+   * 
+   * @return a instância do contratante do evento
+   */
   public Contratante getContratante() {
 
     return contratante;
   }
 
+  /**
+   * 
+   * @param contratante
+   */
   public void setContratante(Contratante contratante) {
 
     this.contratante = contratante;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getNome() {
 
     return nome;
   }
 
+  /**
+   * 
+   * @param nome
+   */
   public void setNome(String nome) {
 
     this.nome = nome;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getData() {
 
     return data;
   }
 
+  /**
+   * 
+   * @param data
+   */
   public void setData(String data) {
 
     this.data = data;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getEmail() {
 
     return email;
   }
 
+  /**
+   * 
+   * @param email
+   */
   public void setEmail(String email) {
 
     this.email = email;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getEndereco() {
 
     return endereco;
   }
 
+  /**
+   * 
+   * @param endereco
+   */
   public void setEndereco(String endereco) {
 
     this.endereco = endereco;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getCidade() {
 
     return cidade;
   }
 
+  /**
+   * 
+   * @param cidade
+   */
   public void setCidade(String cidade) {
 
     this.cidade = cidade;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getEstado() {
 
     return estado;
   }
 
+  /**
+   * 
+   * @param estado
+   */
   public void setEstado(String estado) {
 
     this.estado = estado;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getCep() {
 
     return cep;
   }
 
+  /**
+   * 
+   * @param cep
+   */
   public void setCep(String cep) {
 
     this.cep = cep;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getTelefone() {
 
     return telefone;
   }
 
+  /**
+   * 
+   * @param telefone
+   */
   public void setTelefone(String telefone) {
 
     this.telefone = telefone;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getContaFacebook() {
 
     return contaFacebook;
   }
 
+  /**
+   * 
+   * @param contaFacebook
+   */
   public void setContaFacebook(String contaFacebook) {
 
     this.contaFacebook = contaFacebook;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getContaTwitter() {
 
     return contaTwitter;
   }
 
+  /**
+   * 
+   * @param contaTwitter
+   */
   public void setContaTwitter(String contaTwitter) {
 
     this.contaTwitter = contaTwitter;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isEnviaFacebook() {
 
     return enviaFacebook;
   }
 
+  /**
+   * 
+   * @param enviaFacebook
+   */
   public void setEnviaFacebook(boolean enviaFacebook) {
 
     this.enviaFacebook = enviaFacebook;
@@ -214,6 +311,10 @@ public class Evento implements Serializable {
 
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isEnviaTwitter() {
 
     return enviaTwitter;
@@ -239,31 +340,59 @@ public class Evento implements Serializable {
     }
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getBordaPolaroid() {
 
     return bordaPolaroid;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getBordaCabine() {
 
     return bordaCabine;
   }
 
+  /**
+   * Obtem os parâmetros opcionais
+   * 
+   * @return uma instância da classe Parâmetros
+   * 
+   */
   public Parametros getParametros() {
 
     return parametros;
   }
 
+  /**
+   * 
+   * @param parametros
+   */
   public void setParametros(Parametros parametros) {
 
     this.parametros = parametros;
   }
 
+  /**
+   * Altera o nome do arquivo que possui a borda formato polaroid
+   * 
+   * @param bordaPolaroid
+   */
   public void setBordaPolaroid(String bordaPolaroid) {
 
     this.bordaPolaroid = bordaPolaroid;
   }
 
+  /**
+   * Altera o nome do arquivo que possui a borda formato cabine
+   * 
+   * @param bordaCabine
+   */
   public void setBordaCabine(String bordaCabine) {
 
     this.bordaCabine = bordaCabine;
@@ -307,4 +436,14 @@ public class Evento implements Serializable {
         + ", bordaPolaroid=" + bordaPolaroid + ", bordaCabine=" + bordaCabine + ", parametros=" + parametros + "]";
   }
 
+  
+  /**
+   * 
+   * @return true se o email for "sintaticamente válido" ou false caso não possa ser validado
+   * 
+   */
+  public boolean emailIsValid() {
+    return true;
+  }
+  
 }

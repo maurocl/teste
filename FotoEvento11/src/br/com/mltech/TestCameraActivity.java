@@ -39,8 +39,7 @@ public class TestCameraActivity extends Activity {
 
 		Button btnOk = (Button) findViewById(R.id.btnOk);
 		btnOk.setText("Capturar");
-		
-		
+				
 		Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
 		btnCancelar.setText("Voltar");
 		
@@ -72,6 +71,7 @@ public class TestCameraActivity extends Activity {
 				finish();
 				
 			}
+			
 		});
 
 	}
@@ -143,6 +143,7 @@ public class TestCameraActivity extends Activity {
 		default:
 			Log.w(TAG, "onActivityResult() - requestCode: "+requestCode+" é desconhecido.");
 			break;
+		
 		}
 
 	}
