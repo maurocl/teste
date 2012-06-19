@@ -143,6 +143,14 @@
             </intent-filter>
         </activity>
         
+         <activity
+            android:name=".ParticipacaoActivity"
+            android:label="Tela de Participacao do Usuario" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        
     </application>
 
 </manifest>
