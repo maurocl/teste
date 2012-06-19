@@ -52,67 +52,7 @@
             android:layout_height="wrap_content"
             android:hint="Telefone"
             android:inputType="phone" />
-
-        <!-- Tipo de Foto -->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tipo de Foto:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <RadioGroup
-            android:id="@+id/group1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <RadioButton
-                android:id="@+id/radioOp1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:hint="Formato Polaroid (9 por 11 cm)"
-                android:text="Polaroid (9x11)" />
-
-            <RadioButton
-                android:id="@+id/radioOp2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:hint="Formato Cabine (4 por 15 cm)"
-                android:text="Cabine (4x15)" />
-        </RadioGroup>
-
-        <!-- Agrupa efeitos da foto -->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tipo de Efeito:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <RadioGroup
-            android:id="@+id/group2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <RadioButton
-                android:id="@+id/radioCor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:hint="Foto tirada a cores"
-                android:text="Cores" />
-
-            <RadioButton
-                android:id="@+id/radioPB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:hint="Foto tirada em preto e branco"
-                android:text="Preto e Branco" />
-        </RadioGroup>
-
+     
         <!-- Parâmetro Opcional 1 -->
 
         <TextView
