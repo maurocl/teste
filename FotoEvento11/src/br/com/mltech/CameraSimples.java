@@ -27,6 +27,8 @@ import br.com.mltech.modelo.Moldura;
 import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
 
+
+
 /**
  * CameraSimples
  * 
@@ -1047,8 +1049,7 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
    * 
    */
   @Override
-  protected void onDestroy() {
-    // TODO Auto-generated method stub
+  protected void onDestroy() {  
     super.onDestroy();
     Log.d(TAG, "*** onDestroy() ***");
     showXXX();

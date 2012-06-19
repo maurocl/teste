@@ -23,6 +23,8 @@ import br.com.mltech.modelo.Parametros;
 /**
  * EventoActivity.java
  * 
+ * Obtém informações sobre um evento.
+ * 
  * @author maurocl
  * 
  *         Activity para criação de um evento
@@ -517,8 +519,14 @@ public class EventoActivity extends Activity implements Constantes {
   void processaBtnCancelar() {
 
     Log.d(TAG, "processaBtnCancelar() - Botão cancelar selecionado");
+    
+    // cria uma intent de resposta
     Intent intent = new Intent();
+    
+    // seta o resultado
     setResult(RESULT_CANCELED, intent);
+    
+    // finaliza a activity
     finish();
   }
 
