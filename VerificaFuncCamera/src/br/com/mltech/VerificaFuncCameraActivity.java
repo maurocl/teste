@@ -15,6 +15,9 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
+import br.com.mltech.utils.camera.CameraTools;
+
+
 
 /**
  * VerificaFuncCameraActivity
