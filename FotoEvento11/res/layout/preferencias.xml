@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:paddingBottom="40dp"
+            android:paddingBottom="20dp"
             android:text="Preferências"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="20dp"
-            android:text="Preferências de email"
+            android:text="Preferências de email:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <!-- Assunto tratado pelo email -->
@@ -35,14 +35,14 @@
             android:id="@+id/tvAssunto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Assunto" />
+            android:text="Assunto:" />
 
         <EditText
             android:id="@+id/editAssunto"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="Assunto (subject) no envio de email"
-            android:paddingBottom="20dp" />
+             />
 
         <!-- Descrição do corpo do email -->
 
@@ -50,25 +50,99 @@
             android:id="@+id/tvDescricao"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Descrição" />
+            android:text="Descrição:" />
 
         <EditText
             android:id="@+id/editDescricao"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="Descrição do evento (corpo do email)"
+            android:hint="Descrição do evento"
             android:text="editDescricao" />
 
-        <!--  -->
+        <!-- Usuário da conta do email -->
 
+        <TextView
+            android:id="@+id/tvUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usuário da conta de email:" />
 
-        <!-- Preferências de email -->
+        <EditText
+            android:id="@+id/editUsuario"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome do usuário da conta de email"
+            android:text="editUsuario" />
+
+        <!-- Senha da conta do email -->
+
+        <TextView
+            android:id="@+id/tvSenha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Senha da conta de email:" />
+
+        <EditText
+            android:id="@+id/editSenha"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Senha do usuário da conta de email"
+            android:text="editSenha" />
+
+        <!-- Servidor SMTP -->
+
+        <TextView
+            android:id="@+id/tvServidorSMTP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Servidor SMTP:" />
+
+        <EditText
+            android:id="@+id/editServidorSMTP"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Endereço do servidor SMTP"
+            android:text="editServidorSMTP" />
+
+        <!-- porta do Servidor SMTP -->
+
+        <TextView
+            android:id="@+id/tvServidorSMTPPorta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Porta Servidor SMTP:" />
+
+        <EditText
+            android:id="@+id/editServidorSMTPPorta"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nº da porta do servidor SMTP"
+            android:text="editServidorSMTPPorta" />
+
+        <!-- Email do Remetente -->
+
+        <TextView
+            android:id="@+id/tvRemetente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email do Remetente:" />
+
+        <EditText
+            android:id="@+id/editRemetente"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email do Remetente"            
+            android:paddingBottom="5dp"
+            android:text="editRemetente" />
+
+        <!-- Configuração de redes sociais -->
 
         <TextView
             android:id="@+id/textRedesSociais"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="5dp"
             android:text="Redes Sociais"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -103,6 +177,17 @@
 
         <!--  -->
 
+        <!-- Outras configurações importantes -->
+        
+        <TextView
+            android:id="@+id/textOutros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingBottom="5dp"
+            android:text="Outros:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
 
         <!-- URL da imagem da tela inicial da aplicação -->
 
@@ -110,7 +195,7 @@
             android:id="@+id/tvImagemTelaInicial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="40dp"
+            android:paddingTop="5dp"
             android:text="Imagem da tela inicial" />
 
         <EditText
@@ -119,6 +204,7 @@
             android:layout_height="wrap_content"
             android:hint="URL da Imagem da tela inicial"
             android:text="URL da Imagem" />
+
 
         <!-- Nº da Câmera Frontal -->
 

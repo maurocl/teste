@@ -53,6 +53,13 @@ public class PreferenciasActivity extends Activity implements Constantes {
     final EditText urlImagem = (EditText) findViewById(R.id.editUrlImagem);
     final EditText numCameraFrontal = (EditText) findViewById(R.id.editNumCameraFrontal);
 
+    final EditText editUsuario = (EditText) findViewById(R.id.editUsuario);
+
+    final EditText editSenha = (EditText) findViewById(R.id.editSenha);
+    final EditText editServidorSMTP = (EditText) findViewById(R.id.editServidorSMTP);
+    final EditText editServidorSMTPPorta = (EditText) findViewById(R.id.editServidorSMTPPorta);
+    final EditText editRemetente = (EditText) findViewById(R.id.editRemetente);
+
     final Button btnGravarPreferencias = (Button) findViewById(R.id.btnGravarPreferencias);
     final Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
 
@@ -70,6 +77,12 @@ public class PreferenciasActivity extends Activity implements Constantes {
 
     urlImagem.setText(preferences.getString(Constantes.PREFERENCIAS_URL_IMAGEM, ""));
     numCameraFrontal.setText(preferences.getString(Constantes.PREFERENCIAS_NUM_CAMERA_FRONTAL, ""));
+
+    editUsuario.setText(preferences.getString(Constantes.PREFERENCIAS_USUARIO_EMAIL, ""));
+    editSenha.setText(preferences.getString(Constantes.PREFERENCIAS_SENHA_EMAIL, ""));
+    editServidorSMTP.setText(preferences.getString(Constantes.PREFERENCIAS_SERVIDOR_SMTP, ""));
+    editServidorSMTPPorta.setText(preferences.getString(Constantes.PREFERENCIAS_SERVIDOR_SMTP_PORTA, ""));
+    editRemetente.setText(preferences.getString(Constantes.PREFERENCIAS_REMETENTE_EMAIL, ""));
 
     //---------------------------
     // processa o botão de Gravar
@@ -91,6 +104,12 @@ public class PreferenciasActivity extends Activity implements Constantes {
 
         edit.putString(Constantes.PREFERENCIAS_URL_IMAGEM, urlImagem.getText().toString());
         edit.putString(Constantes.PREFERENCIAS_NUM_CAMERA_FRONTAL, numCameraFrontal.getText().toString());
+
+        edit.putString(Constantes.PREFERENCIAS_USUARIO_EMAIL, editUsuario.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_SENHA_EMAIL, editSenha.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_SERVIDOR_SMTP, editServidorSMTP.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_SERVIDOR_SMTP_PORTA, editServidorSMTPPorta.getText().toString());
+        edit.putString(Constantes.PREFERENCIAS_REMETENTE_EMAIL, editRemetente.getText().toString());
 
         // grava as preferências
         boolean b = edit.commit();
