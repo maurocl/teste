@@ -12,9 +12,10 @@ public class AndroidUtils {
   /**
    * isNetworkingAvailable(Context context)
    * 
-   * @param context
+   * @param context Contexto da aplicação
    * 
-   * @return
+   * @return true se houver algum tipo de conexão de rede ou false caso contrário.
+   * 
    */
   public static boolean isNetworkingAvailable(Context context) {
 
@@ -27,14 +28,23 @@ public class AndroidUtils {
       //
 
     } else {
+      
       NetworkInfo[] info = connectivityManager.getAllNetworkInfo();
+      
       if (info != null) {
+      
         for (int i = 0; i < info.length; i++) {
+        
           if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+            
             conectividade = true;
+            
           }
+          
         }
+        
       }
+      
     }
 
     return conectividade;
@@ -44,8 +54,8 @@ public class AndroidUtils {
   /**
    * alertDialog(Context context, int message)
    * 
-   * @param context
-   * @param message
+   * @param context Contexto da aplicação
+   * @param message Mensagem que será exibida
    * 
    */
   public static void alertDialog(Context context, int message) {
@@ -55,11 +65,12 @@ public class AndroidUtils {
 
       //@Override
       public void onClick(DialogInterface dialog, int which) {
-        // TODO Auto-generated method stub
+        // simplesmente retorna sem executar nenhuma ação.
         return;
       }
     });
 
+    // exibe a caixa de diálogo
     dialog.show();
 
   }

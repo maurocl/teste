@@ -438,15 +438,18 @@ public class ManipulaImagem {
   /**
    * aplicaMolduraFoto(String foto, String moldura)
    * 
+   * <p>
    * Cria uma imagem (bitmap) que é uma sobreposição de uma moldura em cima de
    * uma foto.
    * 
    * @param foto
    *          String contendo o caminho (path) da foto
+   * 
    * @param moldura
    *          String contendo o caminho (path) da moldura
    * 
    * @return o bitmap resultante ou null em caso de erro
+   * 
    */
   public static Bitmap aplicaMolduraFoto(String foto, String moldura) {
 
@@ -526,6 +529,7 @@ public class ManipulaImagem {
    */
   private static Bitmap carregaFoto(String foto) {
 
+    // lê um arquivo e tenta converter em um bitmap
     Bitmap bmFoto = getBitmapFromFile(foto);
 
     if (bmFoto != null) {
@@ -534,6 +538,7 @@ public class ManipulaImagem {
       Log.w(TAG, "Não foi possível ler o arquivo: " + foto);
     }
 
+    // o bitmap lido ou null em caso de erro
     return bmFoto;
 
   }
@@ -701,7 +706,9 @@ public class ManipulaImagem {
    * Exibe um bitmap em um imageView.
    * 
    * @param imageView
+   *          Componente onde o bitmap será exibido
    * @param bitmap
+   *          Bitmap contendo a imagem
    */
   public static void exibeBitmap(ImageView imageView, Bitmap bitmap) {
 
@@ -715,11 +722,20 @@ public class ManipulaImagem {
   /**
    * extractAlpha(Bitmap bm)
    * 
-   * 
+   * <p>
+   * Extrai o compoente alpha de um bitmap. <br>
+   * Returns a new bitmap that captures the alpha values of the original. <br>
+   * Retorna um bitmap que captura os valores alpha do bitmap original. Esse
+   * bitmap pode ser desenhado com Canvas.drawBitmap, onde as cores serão pegas
+   * pela paint e passadas a chamada draw <br>
+   * This may be drawn with Canvas.drawBitmap(), where the color(s) will be
+   * taken from the paint that is passed to the draw call.
    * 
    * @param bm
+   *          Bitmap original
    * 
-   * @return
+   * @return u um novo bitmap contendo o canal alpha do bitmap original ma copia
+   *         do bitmap sem o componente alpha
    */
   public static Bitmap extractAlpha(Bitmap bm) {
 
@@ -742,12 +758,14 @@ public class ManipulaImagem {
   /**
    * getBitmapFromFile(String filename)
    * 
-   * Lê um bitmap armazenado em um arquivo do sistema de arquivos
+   * <p>
+   * Lê um bitmap armazenado em um arquivo do sistema de arquivos.
    * 
    * @param filename
    *          Nome do arquivo (fullname)
    * 
-   * @return the resulting decoded bitmap, or null if it could not be decoded.
+   * @return o bitmap decodificado ou null caso o bitmap não possa ser
+   *         decodificado.
    */
   public static Bitmap getBitmapFromFile(String filename) {
 
@@ -821,9 +839,13 @@ public class ManipulaImagem {
   /**
    * getBitmapFromByteArray(byte[] data)
    * 
-   * Parameters: data byte array of compressed image data offset offset into
-   * imageData for where the decoder should begin parsing. length the number of
-   * bytes, beginning at offset, to parse
+   * <p>
+   * Parameters: <br>
+   * <br>
+   * 
+   * data byte array of compressed image data <br>
+   * offset into imageData for where the decoder should begin parsing. <br>
+   * length the number of bytes, beginning at offset, to parse
    * 
    * @param um
    *          array de bytes contendo a imagem
@@ -836,12 +858,19 @@ public class ManipulaImagem {
 
     if (data != null) {
 
+      // byte onde iniciará a conversão
       int offset = 0;
+
+      // o nº de bytes que será convertido
       int length = data.length;
+
+      // Decode an immutable bitmap from the specified byte array.
+      // decodifica um bitmap imutável a partir de um array de bytes
       bm = BitmapFactory.decodeByteArray(data, offset, length);
 
     }
 
+    // retorna o bitmap ou null em caso de erro
     return bm;
 
   }
@@ -849,17 +878,17 @@ public class ManipulaImagem {
   /**
    * getBitmapFromResource(Resources res, int id)
    * 
-   * Obtém um bitmap armazenado em um recurso.
+   * <p>Obtém um bitmap armazenado em um recurso.<br>
    * 
    * Exemplo de uso: getBitmapFromResource(getResources(), R.drawable.foto1)
    * 
    * @param res
-   *          Resource
+   *          Resource The resources object containing the image data
    * 
    * @param id
-   *          Resource ID
+   *          Resource ID The resource id of the image data
    * 
-   * @return
+   * @return The decoded bitmap, or null if the image could not be decode.
    */
   public static Bitmap getBitmapFromResource(Resources res, int id) {
 
@@ -885,7 +914,10 @@ public class ManipulaImagem {
    */
   public static Bitmap getScaledBitmap(Bitmap bm, int factor) {
 
+    // largura final
     int dstWidth = bm.getWidth() * factor / 100;
+    
+    // altura final
     int dstHeight = bm.getHeight() * factor / 100;
 
     boolean filter = true;
@@ -893,7 +925,7 @@ public class ManipulaImagem {
     // Creates a new bitmap, scaled from an existing bitmap
     Bitmap bitmap = Bitmap.createScaledBitmap(bm, dstWidth, dstHeight, filter);
 
-    showBitmapInfo(bitmap);
+    //showBitmapInfo(bitmap);
 
     return bitmap;
 
@@ -912,10 +944,10 @@ public class ManipulaImagem {
    *          Bitmap original
    * 
    * @param newWidth
-   *          largura solicitada
+   *          nova largura (solicitada)
    * 
    * @param newHeight
-   *          altura solicitada
+   *          nova altura (solicitada)
    * 
    * @return um bitmap com seu tamanho alterado segundo as informações
    *         fornecidas
@@ -946,9 +978,9 @@ public class ManipulaImagem {
   /**
    * getBitmapRegion(String filename, Rect rect, Options options)
    * 
-   * @param filename
-   * @param rect
-   * @param options
+   * @param filename nome do arquivo
+   * @param rect The rectangle that specified the region to be decode. 
+   * @param options null-ok; Options that control downsampling. inPurgeable is not supported.
    * 
    * @return The decoded bitmap, or null if the image data could not be decoded.
    * 
@@ -961,6 +993,8 @@ public class ManipulaImagem {
 
     try {
 
+      // Create a BitmapRegionDecoder from a file path. 
+      // Currently only the JPEG and PNG formats are supported.
       brd = BitmapRegionDecoder.newInstance(filename, true);
 
     } catch (IOException e) {
@@ -974,12 +1008,15 @@ public class ManipulaImagem {
       return null;
     }
 
+    // Decodes a rectangle region in the image specified by rect.    
     bitmap = brd.decodeRegion(rect, options);
 
     if (bitmap == null) {
       Log.w(TAG, "getBitmapRegion() - bitmap é nulo");
     }
 
+    //The decoded bitmap, or null if the image data could not be decoded.
+    // o bitmap decodificado ou null se is dados da imagem não puderem ser decodificados
     return bitmap;
 
   }
@@ -987,9 +1024,9 @@ public class ManipulaImagem {
   /**
    * getRotatedBitmap(Resources res, int id, int angle)
    * 
-   * @param res
-   * @param id
-   * @param angle
+   * @param res Resource
+   * @param id identificador do recurso
+   * @param angle ângulo de rotação
    * 
    * @return Um bitmap rotacionado
    */
@@ -999,6 +1036,7 @@ public class ManipulaImagem {
 
     Matrix matrix = new Matrix();
 
+    // Postconcats the matrix with the specified rotation. M' = R(degrees) * M 
     matrix.postRotate(angle);
 
     // Cria um novo bitmap
@@ -1011,9 +1049,9 @@ public class ManipulaImagem {
   /**
    * getRoundedCornerBitmap(Bitmap bitmap)
    * 
-   * @param bitmap
+   * @param bitmap Bitmap de origem
    * 
-   * @return um bitmap
+   * @return um bitmap 
    */
   public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
 
@@ -1090,9 +1128,9 @@ public class ManipulaImagem {
   /**
    * gravaBitmapArquivo(Bitmap bm, String filename)
    * 
-   * Grava um bitmap em um arquivo.
+   * <p>Grava o bitmap (bm) em um arquivo (filename).<br>
    * 
-   * O bitmap será gravado no formato .png e sem compressão.
+   * Por padrão, o bitmap será gravado no formato .png e sem compressão.
    * 
    * @param bm
    *          Bitmap contendo a imagem
@@ -1163,8 +1201,8 @@ public class ManipulaImagem {
   /**
    * gravaBitmapArquivo3(Bitmap bm, String filename)
    * 
-   * @param bm
-   * @param filename
+   * @param bm bitmap
+   * @param filename arquivo onde o bitmap será gravado
    * 
    * @return
    */
@@ -1252,7 +1290,7 @@ public class ManipulaImagem {
 
       // grava o arquivo sem compressão usando o formato .PNG
       salvou = foto.compress(Bitmap.CompressFormat.PNG, 100, out);
-      
+
       Log.i(TAG, "gravaBitmapArquivo3() - sucess code from bitmap.compress: " + salvou);
       out.close();
 
@@ -1380,7 +1418,7 @@ public class ManipulaImagem {
   /**
    * getStringBitmapSize(Bitmap bm)
    * 
-   * Retorna ums string contendo o tamanho (largura x altura) do bitmap.
+   * Retorna uma string contendo o tamanho (largura x altura) do bitmap.
    * 
    * @param bm
    *          Bitmap
@@ -1418,10 +1456,13 @@ public class ManipulaImagem {
   public static boolean isLandscape(Bitmap bm) {
 
     boolean ret = false;
+    
     if (bm != null) {
       ret = bm.getWidth() > bm.getHeight();
     }
+    
     return ret;
+    
   }
 
   /**
@@ -1438,10 +1479,13 @@ public class ManipulaImagem {
   public static boolean isPortrait(Bitmap bm) {
 
     boolean ret = false;
+    
     if (bm != null) {
       ret = bm.getHeight() > bm.getWidth();
     }
+    
     return ret;
+    
   }
 
   /**
@@ -1614,6 +1658,7 @@ public class ManipulaImagem {
    *          moldura
    * 
    * @return Bitmap
+   * 
    */
   public static Bitmap overlay4(Bitmap bmp1, Bitmap bmp2) {
 
@@ -1675,9 +1720,9 @@ public class ManipulaImagem {
   /**
    * showImageViewInfo(final ImageView image)
    * 
-   * Exibe informações sobre o objeto ImageView
+   * <p>Exibe informações no log  sobre o objeto ImageView.
    * 
-   * @param imageView
+   * @param imageView Componente ImageView.
    * 
    */
   public static void showImageViewInfo(final ImageView imageView) {
@@ -1772,7 +1817,9 @@ public class ManipulaImagem {
   /**
    * showBitmapOptions(Options options)
    * 
-   * @param options
+   * <p>Exibe as informações de Options
+   * 
+   * @param options Instância de Options
    * 
    */
   void showBitmapOptions(Options options) {
@@ -1821,15 +1868,18 @@ public class ManipulaImagem {
   /**
    * verticlJoin(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3)
    * 
-   * Faz a concatenação entre três arquivos bitmap na vertical, isto é, as fotos
-   * são colocadas uma abaixo da outra. As imagem ficam maiores na vertical
+   * <p>Faz a concatenação entre três arquivos bitmap na vertical, isto é, as fotos
+   * são colocadas uma abaixo da outra. As imagem ficam maiores na vertical.
    * 
    * @param bmp1
    *          Foto 1
+   *          
    * @param bmp2
    *          Foto 2
+   *          
    * @param bmp3
    *          Foto 3
+   *          
    * 
    * @return Um bitmap contendo as "junção" entre os três bitmaps (na vertica,
    *         isto é), um bitmap será posicionado abaixo do outro na vertical (a
@@ -1913,9 +1963,10 @@ public class ManipulaImagem {
    * Atualiza um ImageView com um bitmap
    * 
    * @param bm
-   *          Bitmap
+   *          Bitmap Bitmap que será exibido no componente ImageView.
+   *          
    * @param image
-   *          imageView
+   *          imageView Instância do componente ImageView.
    * 
    */
   public static void updateBitmap(Bitmap bm, ImageView image) {
@@ -1984,14 +2035,16 @@ public class ManipulaImagem {
   /**
    * scaleDownBitmap(Bitmap photo, int newHeight, Context context)
    * 
-   * @param photo
-   * @param newHeight
-   * @param context
+   * @param photo Bitmap contendo a foto
+   * @param newHeight Nova altura selecionada
+   * @param context Contexto da aplicação
    * 
-   * @return
+   * @return um novo bitmap redimensionado de acordo com as características da tela do dispositivo.
    */
   public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
 
+    // Return the current display metrics that are in effect for this resource object.
+    // The returned object should be treated as read-only.
     final float densityMultiplier = context.getResources().getDisplayMetrics().density;
 
     int h = (int) (newHeight * densityMultiplier);
@@ -2000,6 +2053,7 @@ public class ManipulaImagem {
     photo = Bitmap.createScaledBitmap(photo, w, h, true);
 
     return photo;
+    
   }
 
 }

@@ -13,21 +13,44 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 
-
-
+/**
+ * 
+ */
 public class FileDownload {
 
+  /**
+   * 
+   */
   private static final String TAG = "FileDownload";
 
+  /**
+   * 
+   */
   private String mUrl;
+
+  /**
+   * 
+   */
   private Context context;
+
+  /**
+   * 
+   */
   private ImageView imageView;
 
-
+  /**
+   * 
+   */
   private ProgressDialog dialog;
 
+  /**
+   * 
+   */
   private Handler handler = new Handler();
 
+  /**
+   * 
+   */
   private Bitmap bitmap;
 
   /**
@@ -36,8 +59,11 @@ public class FileDownload {
    * Método construtor
    * 
    * @param url
+   *          URL do arquivo
+   * 
    */
   public FileDownload(String url) {
+
     this(url, null, null);
   }
 
@@ -45,6 +71,13 @@ public class FileDownload {
    * FileDownload(String url, Context ctx, ImageView imageView)
    * 
    * Método construtor
+   * 
+   * @param url
+   *          URL
+   * @param ctx
+   *          Contexto
+   * @param imageView
+   *          Componente onde o bitmap será visualizado
    * 
    */
   public FileDownload(String url, Context ctx, ImageView imageView) {
@@ -55,8 +88,8 @@ public class FileDownload {
 
     Log.d(TAG, "construtor - FileDownload: " + url);
 
-    if(context!=null) {
-    dialog = ProgressDialog.show(context, "Exemplo", "Buscando imagem, aguarde ...", false, true);
+    if (context != null) {
+      dialog = ProgressDialog.show(context, "Exemplo", "Buscando imagem, aguarde ...", false, true);
     }
 
     if (dialog == null) {
@@ -69,6 +102,8 @@ public class FileDownload {
 
   /**
    * downloadImage()
+   * 
+   * Executa o download de um arquivo de imagem
    */
   public void downloadImage() {
 
@@ -126,7 +161,8 @@ public class FileDownload {
   /**
    * atualizaTela(final Bitmap imagem)
    * 
-   * @param imagem
+   * @param imagem Bitmap usado para atualizar a tela
+   * 
    */
   private void atualizaTela(final Bitmap imagem) {
 
@@ -164,43 +200,106 @@ public class FileDownload {
 
   }
 
+  /**
+   * @return a URL de origem
+   */
   public String getUrl() {
+
     return mUrl;
   }
 
+  /**
+   * Atualiza a URL de onde será feito o download
+   * 
+   * @param mUrl URL de onde será feito o download
+   */
   public void setUrl(String mUrl) {
+
     this.mUrl = mUrl;
   }
 
+  /**
+   * Obtém um diálogo de progresso da atividade
+   * 
+   * @return
+   */
   public ProgressDialog getDialog() {
+
     return dialog;
   }
 
+  /**
+   * Estabelece um diálogo de progresso da atividade
+   * 
+   * @param dialog
+   */
   public void setDialog(ProgressDialog dialog) {
+
     this.dialog = dialog;
   }
 
+  /**
+   * Obtem o contexto da aplicação
+   * 
+   * @return O contexto da aplicação
+   * 
+   */
   public Context getContext() {
+
     return context;
   }
 
+  /**
+   * Estabelece o contexto da aplicação
+   * 
+   * @param context Contexto da aplicação
+   * 
+   */
   public void setContext(Context context) {
+
     this.context = context;
   }
 
+  /**
+   * Obtém o componente de visualização da imagem.
+   * 
+   * @return o componente de visualização
+   */
   public ImageView getImageView() {
+
     return imageView;
   }
 
+  /**
+   * Estabelece o componente de visualização da imagem
+   * 
+   * @param imageView o componente de visualização
+   * 
+   */
   public void setImageView(ImageView imageView) {
+
     this.imageView = imageView;
   }
 
+  /**
+   * Obtém a imagem
+   * 
+   * @return o bitmap com a imagem
+   * 
+   */
   public Bitmap getBitmap() {
+
     return bitmap;
   }
 
+  /**
+   * Seta a imagem
+   * 
+   * @param image bitmap contendo a imagem
+   * 
+   */
   public void setBitmap(Bitmap image) {
+
     this.bitmap = image;
   }
 

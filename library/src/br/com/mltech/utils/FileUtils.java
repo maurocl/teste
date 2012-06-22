@@ -194,7 +194,7 @@ public class FileUtils {
 	 * 
 	 * Obtém o nome do arquivo (sem a extensão) 
 	 * 
-	 * @param f
+	 * @param f Arquivo
 	 *          
 	 * @return o nome do arquivo ou null caso haja algum problema
 	 */
@@ -239,7 +239,7 @@ public class FileUtils {
 	 * 
 	 * Verifica se um arquivo existe e é um arquivo
 	 * 
-	 * @param f
+	 * @param f Arquivo
 	 * 
 	 * @return true se o arquivo existir e for um arquivo
 	 * 
@@ -376,7 +376,7 @@ public class FileUtils {
 	/**
 	 * showUri(Uri uri)
 	 * 
-	 * Exibe informações sobre uma Uri
+	 * Exibe detalhadas sobre informações sobre uma Uri
 	 * 
 	 * @param uri
 	 */
