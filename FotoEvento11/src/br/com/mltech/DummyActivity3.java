@@ -894,8 +894,9 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * processaActivityResultPolaroid(int resultCode, Intent data)
    * 
+   * <p>
    * Processa o resultado da execução da activity responsável por fornecer uma
-   * foto
+   * foto.<br>
    * 
    * Pega a foto retornada e formata-a no formato Polaroid
    * 
@@ -974,7 +975,8 @@ public class DummyActivity3 extends Activity implements Constantes {
     meuArquivo = FileUtils.getFilename(outputFileUri);
 
     // cria um novo arquivo para armazenar a foto com a moldura
-    meuArquivo2 = PATH_FOTOS + "/" + meuArquivo + ".jpg";
+    meuArquivo2 = FileUtils.getBasePhotoDirectory() + File.separator + meuArquivo + ".jpg";
+    //meuArquivo2 = FileUtils.obtemNomeArquivo("");
 
     Log.w(TAG, "meuArquivo=" + meuArquivo);
     Log.w(TAG, "meuArquivo2=" + meuArquivo2);
@@ -986,7 +988,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     numFotosCarregadas++;
 
     //
-    // Aadiciona a nova foto a lista de fotos
+    // Adiciona a nova foto a lista de fotos
     //
     listaFotos.add(foto);
 
@@ -1012,6 +1014,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     Log.w(TAG, "processaActivityResultPolaroid - FIM");
 
+    // o nome do arquivo onde a foto Polaroid foi gravada.
     return meuArquivo2;
 
   }
@@ -1369,8 +1372,17 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
     else if (EMAIL_TIPO == 1) {
       // envia email usando JavaMail ao invés de uma intent
-      boolean b = sendEmailExternal(to, cc, subject, body, lastUri);
-
+      boolean enviadoComSucesso = sendEmailExternal(to, cc, subject, body, lastUri);
+      
+      if (enviadoComSucesso) {
+        // processa o resultado do envio do email com sucesso
+        aposEnviarEmail();
+      }
+      else {
+        // vai para o estado final
+        estadoFinal();
+      }
+      
     }
 
   }
@@ -1641,14 +1653,8 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       Log.d(TAG, "ACTIVITY_CHOOSER - email enviado com sucesso");
 
-      // mensagem exibida após envio de email
-      Toast.makeText(this, "Email enviado com sucesso", Toast.LENGTH_LONG).show();
-
-      // Atualiza o estado da máquina de estado
-      setEstado(3);
-
-      // Processa o próximo estado
-      estadoFinal();
+      // processa
+      aposEnviarEmail();
 
     } else if (resultCode == RESULT_CANCELED) {
       // envio do email foi cancelado pelo usuário
@@ -1661,6 +1667,26 @@ public class DummyActivity3 extends Activity implements Constantes {
       estadoFinal();
 
     }
+
+  }
+
+  /**
+   * Após o envio de email com sucesso
+   * 
+   * 
+   */
+  private void aposEnviarEmail() {
+
+    Log.d(TAG, "aposEnviarEmail() - email enviado com sucesso");
+
+    // mensagem exibida após envio de email
+    Toast.makeText(this, "Email enviado com sucesso", Toast.LENGTH_LONG).show();
+
+    // Atualiza o estado da máquina de estado
+    setEstado(3);
+
+    // Processa o próximo estado
+    estadoFinal();
 
   }
 
@@ -2039,11 +2065,15 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * @return um bitmap contendo a foto com a moldura
    * 
-   *         TODO Esse método gera dois arquivos contendo fotos intermediários
-   *         que poderiam ser descartadas
    * 
    */
   private Bitmap formatarPolaroid(Uri uriFotoOriginal) {
+
+    /**
+     * TODO Esse método gera dois arquivos contendo fotos intermediários que
+     * poderiam ser descartadas
+     * 
+     */
 
     Log.d(TAG, "formatarPolaroid() - uriFotoOriginal: " + uriFotoOriginal);
 
@@ -2051,7 +2081,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     Bitmap bmFotoOriginal = ManipulaImagem.criaBitmap(uriFotoOriginal);
 
     if (bmFotoOriginal == null) {
-      Log.d(TAG, "formatarPolaroid() - bmFotoOriginal: " + bmFotoOriginal);
+      Log.w(TAG, "formatarPolaroid() - bmFotoOriginal: " + bmFotoOriginal);
       return null;
     }
 
@@ -2064,17 +2094,23 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     // Define o nome da foto redimensionada
-    String nomeArquivo = PATH_FOTOS + FileUtils.getFilename(uriFotoOriginal) + "_9x12.png";
+    String nomeArquivo = FileUtils.getBasePhotoDirectory() + File.separator + FileUtils.getFilename(uriFotoOriginal) + "_9x12.png";
 
+    // Grava a foto redimensionada em um arquivo "intermediário"
     boolean gravou = ManipulaImagem.gravaBitmapArquivo(bmFoto9x12, nomeArquivo);
 
     if (!gravou) {
+      // foto não pode ser gravada. Retorna.
       Log.d(TAG, "formatarPolaroid() - foto não pode ser gravada");
       return null;
     }
 
-    // redimensiona a foto 9x12 para 8x8, isto é, copia uma "janela" 8x8 da
-    // foto
+    //
+    // redimensiona a foto 9x12 para 8x8, isto é, copia uma "janela" 8x8 da foto
+    //
+    // Create a default Options object, which if left unchanged will give the same result
+    // from the decoder as if null were passed. 
+    //
     Options options = new Options();
 
     // TODO verificar qual será a "janela" da foto
@@ -2083,7 +2119,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     // Obtem um bitmap com a foto redimensionada para 8x8
     Bitmap bmFoto8x8 = ManipulaImagem.getBitmapRegion(nomeArquivo, rect, options);
 
-    nomeArquivo = PATH_FOTOS + FileUtils.getFilename(uriFotoOriginal) + "_8x8.png";
+    nomeArquivo = FileUtils.getBasePhotoDirectory() + FileUtils.getFilename(uriFotoOriginal) + "_8x8.png";
 
     // Aplica a moldura a foto
     Bitmap bmFotoComMoldura = ManipulaImagem.overlay4(bmFoto8x8, mBitmapMolduraPolaroid);

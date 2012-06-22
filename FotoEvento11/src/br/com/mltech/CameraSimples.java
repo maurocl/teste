@@ -573,9 +573,11 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
 
       try {
 
-        molduraPolaroid = new Moldura(PATH_MOLDURAS + "polaroid_340_416_red.png");
+        
+        
+        molduraPolaroid = new Moldura(FileUtils.getBaseMolduraDirectory() + "polaroid_340_416_red.png");
 
-        molduraPolaroid.leArquivoMoldura(PATH_MOLDURAS + "polaroid_340_416_red.png");
+        molduraPolaroid.leArquivoMoldura(FileUtils.getBaseMolduraDirectory() + "polaroid_340_416_red.png");
 
         fotoPolaroid = new FotoPolaroid(foto, molduraPolaroid);
 
@@ -897,7 +899,7 @@ public class CameraSimples extends Activity implements OnClickListener, Constant
 
     // onde armazenar essas fotos ???
 
-    String arquivoMoldura = PATH_MOLDURAS + "cabine_132_568_red.png";
+    String arquivoMoldura = FileUtils.getBaseMolduraDirectory() + "cabine_132_568_red.png";
 
     Log.i(TAG, "arquivoMoldura = " + arquivoMoldura);
 

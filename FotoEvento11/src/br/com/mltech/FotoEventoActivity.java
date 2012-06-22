@@ -713,11 +713,19 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * preparaAmbiente()
    * 
-   * Prepara o sistema de arquivos ambiente para conter as molduras, a tela
-   * inicial e para gravação das fotos. O métod retorna false caso o SDCard não
-   * esteja montado.
+   * <p>Prepara o sistema de arquivos para execução da aplicação.
+   * ambiente para conter as molduras, a tela
+   * inicial e para gravação das fotos. <br>
+   * <pre>
+   *   +--+ /fotoevento
+   *      |--- /fotos
+   *      |--- /molduras
+   *      |--- /telainicial
+   *     
+   * </pre>
+   * O método retorna false caso o SDCard não esteja montado.<br>
    * 
-   * @return true caso o ambiente esteja criado com sucesso ou false caso haja
+   * @return true caso o ambiente seja criado com sucesso ou false caso haja
    *         algum erro.
    * 
    */
@@ -737,18 +745,21 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     File f = null;
 
-    f = CameraTools.getDir2("fotoevento/fotos");
+    //f = CameraTools.getDir2("fotoevento/fotos");
+    f = CameraTools.getDir2(FileUtils.BASE_DIR+File.separator+FileUtils.PHOTO_DIR);
 
     if (DEBUG == 1) {
       FileUtils.showFileDetails(f, "fotoevento/fotos");
     }
 
-    f = CameraTools.getDir2("fotoevento/molduras");
+    //f = CameraTools.getDir2("fotoevento/molduras");
+    f = CameraTools.getDir2(FileUtils.BASE_DIR+File.separator+FileUtils.MOLDURA_DIR);
     if (DEBUG == 1) {
       FileUtils.showFileDetails(f, "fotoevento/molduras");
     }
 
-    f = CameraTools.getDir2("fotoevento/telainicial");
+    //f = CameraTools.getDir2("fotoevento/telainicial");
+    f = CameraTools.getDir2(FileUtils.BASE_DIR+File.separator+FileUtils.TELAINICIAL_DIR);
     if (DEBUG == 1) {
       FileUtils.showFileDetails(f, "fotoevento/telainicial");
     }
@@ -841,7 +852,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * updateListaParticipacao()
    * 
-   * Insere um novo participante na lista de participação do evento
+   * <p>Insere um novo participante na lista de participação do evento
    * 
    */
   private void updateListaParticipacao() {

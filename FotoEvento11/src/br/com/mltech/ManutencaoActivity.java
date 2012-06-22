@@ -2,6 +2,7 @@ package br.com.mltech;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -28,6 +29,7 @@ import br.com.mltech.modelo.Contratante;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Parametros;
 import br.com.mltech.modelo.Participacao;
+import br.com.mltech.utils.FileUtils;
 
 /**
  * ManutencaoActivity
@@ -208,7 +210,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
         Toast.makeText(getBaseContext(), "Cria backup da configuração em arquivo", Toast.LENGTH_SHORT).show();
 
-        String arquivo = "/mnt/sdcard/config_backup.txt";
+        String arquivo = FileUtils.getBaseDirectory()+File.separator + "config_backup.txt";
 
         boolean gravou = gravaArquivoConfiguracao(arquivo);
 
@@ -237,7 +239,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
               public void onClick(DialogInterface dialog, int id) {
 
-                String arquivo = "/mnt/sdcard/config.txt";
+                String arquivo = FileUtils.getBaseDirectory()+File.separator + "config.txt";
 
                 HashMap<String, String> hash = null;
 

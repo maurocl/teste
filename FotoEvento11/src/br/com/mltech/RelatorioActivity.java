@@ -39,6 +39,7 @@ public class RelatorioActivity extends Activity {
 
   private List<Participacao> lista = null;
 
+  // nome do arquivo onde será gerado o arquivo .csv
   private static final String CSVFILE = "lista.csv";
 
   /**

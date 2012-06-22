@@ -12,17 +12,17 @@ import android.widget.EditText;
 /**
  * PreferenciasActivity
  * 
- * Activity responsável pela manutenção das preferências de uso do sistema
+ * <p>Activity responsável pela manutenção das preferências de uso do sistema<br>
  * 
- * Aqui são configuradas as preferências de:
+ * Aqui são configuradas as preferências de:<br>
  * 
- * - subjet do email - corpo da mensagem do email
+ * - subjet do email - corpo da mensagem do email<br>
  * 
- * - texto padrão da mensagem do Facebook - texto padrão da mensagem do Twitter
+ * - texto padrão da mensagem do Facebook - texto padrão da mensagem do Twitter<br>
  * 
- * - localização da foto da página inicial da aplicação
+ * - localização da foto da página inicial da aplicação<br>
  * 
- * - nº da câmera frontal do equipamento
+ * - nº da câmera frontal do equipamento<br>
  * 
  * @author maurocl
  * 

@@ -15,12 +15,16 @@ import br.com.mltech.modelo.Participante;
 /**
  * Participante.java
  * 
- * Criação da tela para obter os dados do participante do evento.
+ * <p>Criação da tela para obter os dados do participante do evento.<br>
  * 
- * Essa activity recebe como parâmetros: - Evento; - Participante; -
- * Participação;
+ * Essa activity recebe como parâmetros:
+ * <ul>
+ * <li>Evento;
+ * <li>Participante;
+ * <li>Participação;
+ * </ul>
  * 
- * O usuário poderá Confirmar ou Cancelar a participação.
+ * O usuário poderá Confirmar ou Cancelar a participação.<br>
  * 
  * @author maurocl
  * 

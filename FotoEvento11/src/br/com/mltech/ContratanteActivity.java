@@ -19,7 +19,7 @@ import br.com.mltech.modelo.Contratante;
  * @author maurocl
  * 
  */
-public class ContratanteActivity extends Activity {
+public class ContratanteActivity extends Activity implements Constantes{
 
   private static final String TAG = "ContratanteActivity";
 
@@ -41,13 +41,13 @@ public class ContratanteActivity extends Activity {
 
     if (intent != null) {
 
-      mContratante = (Contratante) intent.getSerializableExtra("br.com.mltech.contratante");
+      mContratante = (Contratante) intent.getSerializableExtra(Constantes.CONTRATANTE);
 
       if (mContratante == null) {
         mContratante = new Contratante(null, null, null);
-        Log.d(TAG, "Criando contratante null");
+        Log.d(TAG, "onCreate() - Criando contratante null");
       } else {
-        Log.d(TAG, "Contratante carregado com sucesso: " + mContratante);
+        Log.d(TAG, "onCreate() - Contratante carregado com sucesso: " + mContratante);
       }
 
     }
@@ -61,9 +61,11 @@ public class ContratanteActivity extends Activity {
     if (mContratante.getNome() != null) {
       nome.setText(mContratante.getNome());
     }
+    
     if (mContratante.getEmail() != null) {
       email.setText(mContratante.getEmail());
     }
+    
     if (mContratante.getTelefone() != null) {
       telefone.setText(mContratante.getTelefone());
     }
