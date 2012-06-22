@@ -9,12 +9,11 @@ package br.com.mltech;
 public interface Constantes {
 
   /*
-  public static String[] nomes = {
-    "1","2"
-    
-  };
-  */
-  
+   * public static String[] nomes = { "1","2"
+   * 
+   * };
+   */
+
   // Definições de tipos de fotos
   public static final int TIPO_FOTO_POLAROID = 1;
 
@@ -58,16 +57,14 @@ public interface Constantes {
   public static final int ACTIVITY_CHOOSER = 150;
 
   public static final int ACTIVITY_PARTICIPANTE = 102;
-  
+
   public static final int ACTIVITY_PARTICIPACAO = 107;
-  
-  
+
   public static final int TIRA_FOTO = 200;
 
   public static final int TIRA_FOTO_POLAROID = 201;
 
   public static final int TIRA_FOTO_CABINE = 202;
-  
 
   //-----------------------------------------------------------------
   // Definição de constantes
@@ -128,5 +125,15 @@ public interface Constantes {
   public static final String PREFERENCIAS_URL_IMAGEM = "preferencias_url_imagem";
 
   public static final String PREFERENCIAS_NUM_CAMERA_FRONTAL = "preferencias_num_camera_frontal";
+
+  public static final String PREFERENCIAS_USUARIO_EMAIL = "preferencias_usuario_email";
+
+  public static final String PREFERENCIAS_SENHA_EMAIL = "preferencias_senha_email";
+
+  public static final String PREFERENCIAS_SERVIDOR_SMTP = "preferencias_servidor_smtp";
+
+  public static final String PREFERENCIAS_SERVIDOR_SMTP_PORTA = "preferencias_servidor_smtp_porta";
+
+  public static final String PREFERENCIAS_REMETENTE_EMAIL = "preferencias_remetente_email";
 
 }

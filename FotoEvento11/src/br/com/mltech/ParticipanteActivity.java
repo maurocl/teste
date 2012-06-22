@@ -27,7 +27,7 @@ import br.com.mltech.modelo.Participante;
  */
 public class ParticipanteActivity extends Activity implements Constantes {
 
-	private static int DEBUG = 0;
+	private static int DEBUG = 1;
 
 	private static final String TAG = "ParticipanteActivity";
 

@@ -474,8 +474,8 @@ public class DummyActivity3 extends Activity implements Constantes {
     Log.i(TAG, "Enviando email com foto em: " + Uri.fromFile(fff));
     try {
       enviaEmail(Uri.fromFile(fff));
-    } catch (Exception e) {      
-      Log.w(TAG,"Erro no envio do email",e);
+    } catch (Exception e) {
+      Log.w(TAG, "Erro no envio do email", e);
     }
 
     Log.w(TAG, "meuMetodo() - fim");
@@ -1322,7 +1322,7 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * @param lastUri
    *          Uri onde a foto está armazenada
-   * @throws Exception 
+   * @throws Exception
    * 
    */
   private void enviaEmail(Uri lastUri) throws Exception {
@@ -1370,7 +1370,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     else if (EMAIL_TIPO == 1) {
       // envia email usando JavaMail ao invés de uma intent
       boolean b = sendEmailExternal(to, cc, subject, body, lastUri);
-      
+
     }
 
   }
@@ -1497,7 +1497,11 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
+   * 
+   * Envia email usando a biblioteca externa de envio de email
+   * 
    * @throws Exception
+   *           erro no envio do email
    * 
    */
   private boolean sendEmailExternal(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri)
@@ -1516,24 +1520,20 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     }
 
-    
     m.setDebuggable(true);
-    
+
     m.setAuth(true);
 
-    m.setFrom("maurocl@mltech.com.br");    
+    m.setFrom("maurocl@mltech.com.br");
     m.setHost("smtp.mltech.com.br");
     m.setPort("587");
-
 
     m.setTo(new String[] { emailParticipante });
     m.setBcc(new String[] { emailContratante });
     m.setSubject(subject);
     m.setBody(text);
 
-
-  
-
+    Log.d(TAG, "sendEmailExternal() - " + m);
 
     boolean enviou = m.send();
 
