@@ -12,10 +12,15 @@
     <!-- Permissão para gravar arquivos no dispositivo de armazenamento externo -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <!-- Permissão do uso da Rede (Internet) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- Declaração de features requeridas pela aplicação -->
     <uses-feature android:name="android.hardware.camera" />
 
-    <application android:icon="@drawable/ic_launcher" android:debuggable="true">
+    <application
+        android:debuggable="true"
+        android:icon="@drawable/ic_launcher" >
         <activity
             android:name=".FotoEventoActivity"
             android:label="@string/app_name" >
@@ -134,7 +139,6 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        
         <activity
             android:name=".SplashScreenActivity"
             android:label="Splash Screen" >
@@ -142,15 +146,13 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        
-         <activity
+        <activity
             android:name=".ParticipacaoActivity"
             android:label="Tela de Participacao do Usuario" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        
     </application>
 
 </manifest>
