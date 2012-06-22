@@ -65,7 +65,7 @@ public class DummyActivity3 extends Activity implements Constantes {
   // indica qual a forma será usada para envio do email ao participante
   // 0 = através do uso de activities
   // 1 = atraves do uso de sistema de email externo (JavaMail)
-  private static int EMAIL_TIPO = 0;
+  private static int EMAIL_TIPO = 1;
 
   // instância de um arquivo
   private static File file;
@@ -472,7 +472,11 @@ public class DummyActivity3 extends Activity implements Constantes {
     // chama enviaEmail passando a Uri onde se encontra a foto
 
     Log.i(TAG, "Enviando email com foto em: " + Uri.fromFile(fff));
-    enviaEmail(Uri.fromFile(fff));
+    try {
+      enviaEmail(Uri.fromFile(fff));
+    } catch (Exception e) {      
+      Log.w(TAG,"Erro no envio do email",e);
+    }
 
     Log.w(TAG, "meuMetodo() - fim");
 
@@ -1318,9 +1322,10 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * @param lastUri
    *          Uri onde a foto está armazenada
+   * @throws Exception 
    * 
    */
-  private void enviaEmail(Uri lastUri) {
+  private void enviaEmail(Uri lastUri) throws Exception {
 
     // valida as informações para envio do email
     validaDadosEmail(lastUri);
@@ -1364,8 +1369,8 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
     else if (EMAIL_TIPO == 1) {
       // envia email usando JavaMail ao invés de uma intent
+      boolean b = sendEmailExternal(to, cc, subject, body, lastUri);
       
-      // TODO inserir a chamado ao email
     }
 
   }
@@ -1488,6 +1493,51 @@ public class DummyActivity3 extends Activity implements Constantes {
     sendEmailRedesSociais();
 
     // sendEmailByChooser(emailIntent);
+
+  }
+
+  /**
+   * @throws Exception
+   * 
+   */
+  private boolean sendEmailExternal(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri)
+      throws Exception {
+
+    Mail m = new Mail("maurocl@mltech.com.br", "mcl16d");
+
+    File f = new File(imageUri.getPath());
+    try {
+
+      m.addAttachment(f.getAbsolutePath());
+
+    } catch (Exception e) {
+      Log.w(TAG, "não foi encontrado o anexo contendo a foto", e);
+      return false;
+
+    }
+
+    
+    m.setDebuggable(true);
+    
+    m.setAuth(true);
+
+    m.setFrom("maurocl@mltech.com.br");    
+    m.setHost("smtp.mltech.com.br");
+    m.setPort("587");
+
+
+    m.setTo(new String[] { emailParticipante });
+    m.setBcc(new String[] { emailContratante });
+    m.setSubject(subject);
+    m.setBody(text);
+
+
+  
+
+
+    boolean enviou = m.send();
+
+    return enviou;
 
   }
 
