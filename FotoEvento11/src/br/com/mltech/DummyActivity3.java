@@ -1325,6 +1325,7 @@ public class DummyActivity3 extends Activity implements Constantes {
    * 
    * @param lastUri
    *          Uri onde a foto está armazenada
+   *          
    * @throws Exception
    * 
    */
@@ -1521,30 +1522,44 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     Mail m = new Mail("maurocl@mltech.com.br", "mcl16d");
 
-    File f = new File(imageUri.getPath());
-    try {
+    m.setHost("smtp.mltech.com.br");
 
-      m.addAttachment(f.getAbsolutePath());
-
-    } catch (Exception e) {
-      Log.w(TAG, "não foi encontrado o anexo contendo a foto", e);
-      return false;
-
-    }
+    m.setPort("587");
 
     m.setDebuggable(true);
 
     m.setAuth(true);
 
-    m.setFrom("maurocl@mltech.com.br");
-    m.setHost("smtp.mltech.com.br");
-    m.setPort("587");
+    
+    File f = new File(imageUri.getPath());
+    try {
 
+      // anexa o arquivo ao email
+      m.addAttachment(f.getAbsolutePath());
+
+    } catch (Exception e) {
+      Log.w(TAG, "sendEmailExternal() - não foi encontrado o anexo contendo a foto", e);
+      return false;
+
+    }
+
+    
+    // Reply to:
+    m.setFrom(emailContratante);
+    
+
+    // To:
     m.setTo(new String[] { emailParticipante });
+    
+    // Bcc:
     m.setBcc(new String[] { emailContratante });
+    
+    // Subject
     m.setSubject(subject);
+    
+    // Body
     m.setBody(text);
-
+    
     Log.d(TAG, "sendEmailExternal() - " + m);
 
     boolean enviou = m.send();
@@ -2419,71 +2434,5 @@ public class DummyActivity3 extends Activity implements Constantes {
 
   }
 
-  /**
-   * sendExternalEmail(String emailParticipante, String emailContratante, String
-   * subject, String text, Uri imageUri)
-   * 
-   * @param emailParticipante
-   * @param emailContratante
-   * @param subject
-   * @param text
-   * @param imageUri
-   * 
-   */
-  private void sendExternalEmail(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri) {
-
-    //Mail m = new Mail("maurocl.lopes@gmail.com", "Mcl16dcjl");
-    Mail m = new Mail("maurocl@mltech.com.br", "mcl16d");
-
-    String[] toArr = { "maurocl@terra.com.br",
-        "maurocl.lopes@gmail.com" };
-
-    m.setFrom("maurocl@mltech.com.br");
-
-    // email do participante do evento
-    m.setTo(toArr);
-
-    // envia email em cópia oculta ao contratante
-    m.setBcc(new String[] { emailContratante });
-
-    // assunto do email
-    m.setSubject(subject);
-
-    // corpo do email
-    m.setBody(text);
-
-    try {
-
-      // m.addAttachment("/sdcard/filelocation");
-
-      if (m.send()) {
-
-        // email enviado com sucesso
-        Toast.makeText(getBaseContext(),
-            "Email enviado com sucesso.",
-            Toast.LENGTH_LONG).show();
-
-        Log.v(TAG, "Email enviado com sucesso.");
-
-      } else {
-
-        // falha no envio do email
-        Toast.makeText(getBaseContext(),
-            "Email não foi enviado.", Toast.LENGTH_LONG)
-            .show();
-        Log.v(TAG, "Email não foi enviado.");
-
-      }
-    } catch (Exception e) {
-
-      Toast.makeText(getBaseContext(),
-          "Houve um problema no envio do email.",
-          Toast.LENGTH_LONG).show();
-
-      Log.e("MailApp", "Email não pode ser enviado", e);
-
-    }
-
-  }
 
 }
