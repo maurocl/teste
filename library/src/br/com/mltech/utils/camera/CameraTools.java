@@ -43,10 +43,6 @@ public class CameraTools {
 
   private static final String JPEG_FILE_SUFFIX = ".jpg";
 
-  private static final String PNG_FILE_PREFIX = "IMG_";
-
-  private static final String PNG_FILE_SUFFIX = ".PNG";
-
   private String mCurrentPhotoPath;
 
   private ImageView mImageView;
@@ -100,6 +96,7 @@ public class CameraTools {
    * chooseFileDir()
    * 
    * @return a Uri de um arquivo
+   * 
    */
   private static Uri chooseFileDir(String nomeArquivo) {
 
@@ -230,6 +227,8 @@ public class CameraTools {
   /**
    * exibeCameraInfo(int cameraId, CameraInfo cameraInfo)
    * 
+   * Exibe informações (a direção e a orientação) sobre a câmera selecionada.
+   * 
    * @param cameraId
    *          Identificador da câmera
    * 
@@ -237,7 +236,6 @@ public class CameraTools {
    *          Informações sobre a câmera
    * 
    */
-
   public static void exibeCameraInfo(int cameraId, CameraInfo cameraInfo) {
 
     // public static final int CAMERA_FACING_BACK (0) - The facing of the camera
@@ -258,9 +256,10 @@ public class CameraTools {
   /**
    * getNumCameras()
    * 
-   * Retorna o nº de câmeras de um dispositivo
+   * <p>Retorna o nº de câmeras de um dispositivo.
    * 
-   * @return Retorna o nº de câmeras físicas disponíveis em um dispositivo
+   * @return Retorna o nº de câmeras físicas disponíveis em um dispositivo.
+   * 
    */
   public static int getNumCameras() {
 
@@ -270,7 +269,7 @@ public class CameraTools {
   /**
    * getCameraInstance()
    * 
-   * Obtém a instância da câmera padrão (Id=0).
+   * <p>Obtém a instância da câmera padrão (Id=0).
    * 
    * @return a instância da câmera padrão (se houver) do dispositivo ou null
    *         caso haja algum problema.
@@ -285,7 +284,7 @@ public class CameraTools {
   /**
    * getCameraInstance(int num)
    * 
-   * Obtém a instância da câmera dado seu Id. A câmera traseira possui Id igual
+   * <p>Obtém a instância da câmera dado seu Id. A câmera traseira possui Id igual
    * a 0.
    * 
    * @param cameraId
@@ -326,13 +325,13 @@ public class CameraTools {
   /**
    * getParametersFlatten(Camera c)
    * 
-   * Obtém os detalhes da configuração de uma câmera em uma única string.
+   * <p>Obtém os detalhes da configuração de uma câmera em uma única string.
    * 
    * @param c
-   *          Instância de uma câmera
+   *          Instância de uma câmera<br>
    * 
    * @return Uma String com os detalhes da configuração da câmera ou null caso a
-   *         camera esteja vazia
+   *         camera esteja vazia<br>
    * 
    */
   public static String getParametersFlatten(Camera c) {
@@ -509,8 +508,8 @@ public class CameraTools {
   /**
    * getDir2(String dirName)
    * 
-   * Retorna o diretório solicitado dentro de
-   * getExternalStoragePublicDirectoryPictures. Cria-o caso ele não exista
+   * <p>Retorna o diretório solicitado dentro de
+   * getExternalStoragePublicDirectoryPictures. Cria-o caso ele não exista.
    * 
    * @param dirName
    *          Nome do diretório (no sistema de arquivos)
@@ -680,7 +679,7 @@ public class CameraTools {
   /**
    * isExternalStorageMounted()
    * 
-   * Verifica se há algum disco externo disponível e montado no dispositivo.
+   * <p>Verifica se há algum disco externo disponível e montado no dispositivo.
    * 
    * @return true, caso haja ou false, caso contrário
    */
@@ -728,7 +727,7 @@ public class CameraTools {
   /**
    * isCameraWorking(int cameraID)
    * 
-   * Verifica se a câmera identificada por cameraID está em funcionamento. Para
+   * <p>Verifica se a câmera identificada por cameraID está em funcionamento. Para
    * fazer essa verificação tentamos abrir a câmera. Caso ela consiga ser aberta
    * indica que a câmera está disponível e nesse caso simplesmente liberamos a
    * câmera para uso. Se houver erro indica que a câmera não está disponível
@@ -830,6 +829,9 @@ public class CameraTools {
 
   }
 
+  /**
+   * 
+   */
   public void releaseAndPreview() {
 
     // mPreview.setCamera(null);
@@ -1061,7 +1063,7 @@ public class CameraTools {
    * setCameraDisplayOrientation(Activity activity, int cameraId,
    * android.hardware.Camera camera)
    * 
-   * Esse método foi tirado do site developer.android.com (Reference)
+   * <p>Esse método foi tirado do site developer.android.com (Reference)<br>
    * 
    * @param activity
    * @param cameraId
@@ -1109,7 +1111,7 @@ public class CameraTools {
   /**
    * getCameraSize(Camera.Size size)
    * 
-   * Image size (width and height dimensions). height of the picture width of
+   * <p>Image size (width and height dimensions). height of the picture width of
    * the picture
    * 
    * @param size
@@ -1122,7 +1124,9 @@ public class CameraTools {
     if (size != null) {
       return size.width + "x" + size.height;
     }
+    
     return null;
+    
   }
 
   //---------------------------------------------------------------------------
@@ -1146,41 +1150,81 @@ public class CameraTools {
 
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<String> getSupportedFlashModes(Camera.Parameters param) {
 
     return null;
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<String> getSupportedFocusModes(Camera.Parameters param) {
 
     return null;
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<Camera.Size> getSupportedJpegThumbnailSizes(Camera.Parameters param) {
 
     return null;
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<Integer> getSupportedPictureFormats(Camera.Parameters param) {
 
     return null;
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<Camera.Size> getSupportedPictureSizes(Camera.Parameters param) {
 
     return null;
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<Integer> getSupportedPreviewFormats(Camera.Parameters param) {
 
     return null;
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<int[]> getSupportedPreviewFpsRange(Camera.Parameters param) {
 
     return null;
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<Integer> getSupportedPreviewFrameRates(Camera.Parameters param) {
 
     return null;
@@ -1196,16 +1240,31 @@ public class CameraTools {
     return param.getSupportedPreviewSizes();
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<String> getSupportedSceneModes(Camera.Parameters param) {
 
     return null;
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<Camera.Size> getSupportedVideoSizes(Camera.Parameters param) {
 
     return null;
   }
 
+  /**
+   * 
+   * @param param
+   * @return
+   */
   public List<String> getSupportedWhiteBalance(Camera.Parameters param) {
 
     return null;
@@ -1263,35 +1322,36 @@ public class CameraTools {
    * (X) do um arquivo f
    * <li>informações sobre a permissão de leitura (R), escrita (W) e execução
    * (X) do diretório picsDir
+   * </ul>
    * 
-   * @param f
-   *          instância da classe File
+   * @param foto
+   *          instância de um objeto da classe File
    * 
    */
-  private void showFile(File f) {
+  private void showFile(File foto) {
 
     Log.d(TAG, "showFile(): ");
 
-    if (f == null) {
+    if (foto == null) {
       Log.w(TAG, "arquivo é nulo");
       return;
     }
 
-    Log.d(TAG, "  f.getAbsolutePath=" + f.getAbsolutePath());
-    Log.d(TAG, "  f.getName()=" + f.getName());
+    Log.d(TAG, "  f.getAbsolutePath=" + foto.getAbsolutePath());
+    Log.d(TAG, "  f.getName()=" + foto.getName());
 
-    String canRead = f.canRead() == true ? "R" : "-";
-    String canWrite = f.canWrite() == true ? "W" : "-";
-    String canExecute = f.canRead() == true ? "X" : "-";
+    String canRead = foto.canRead() == true ? "R" : "-";
+    String canWrite = foto.canWrite() == true ? "W" : "-";
+    String canExecute = foto.canRead() == true ? "X" : "-";
 
     String permission = canRead + canWrite + canExecute;
     Log.d(TAG, "  Permissão do arquivo: " + permission);
 
-    Log.d(TAG, "  picsDir.canWrite(): " + picsDir.canWrite());
-    Log.d(TAG, "  picsDir.canRead(): " + picsDir.canRead());
-    Log.d(TAG, "  picsDir.canExecute(): " + picsDir.canExecute());
+    Log.d(TAG, "  canWrite(): " + picsDir.canWrite());
+    Log.d(TAG, "  canRead(): " + picsDir.canRead());
+    Log.d(TAG, "  canExecute(): " + picsDir.canExecute());
 
-    Log.d(TAG, "  picsDir.getAbsolutePath()=" + picsDir.getAbsolutePath());
+    Log.d(TAG, "  getAbsolutePath()=" + picsDir.getAbsolutePath());
 
   };
 
