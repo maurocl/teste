@@ -547,10 +547,10 @@ public class ManipulaImagem {
    * criaBitmap(Uri uri)
    * 
    * Tenta criar um bitmap a partir do um arquivo identificado pela Uri
-   * fornecida
+   * fornecida.
    * 
    * @param uri
-   *          Uri do arquivo contendo uma imagem
+   *          Uri do arquivo contendo uma imagem.
    * 
    * @return um Bitmap ou null caso não seja possível criar o bitmap
    * 
@@ -604,12 +604,12 @@ public class ManipulaImagem {
   /**
    * criaBitmap(File file)
    * 
-   * Tenta criar um bitmap a partir de uma referência a arquivo (File)
+   * Tenta criar um bitmap a partir de uma referência a arquivo (File).
    * 
    * @param arquivo
-   *          Objeto da classe File apontando para o nome do arquivo
+   *          Objeto da classe File apontando para o nome do arquivo.
    * 
-   * @return um Bitmap ou null caso não seja possível criar o bitmap
+   * @return um Bitmap ou null caso não seja possível criar o bitmap.
    * 
    */
   public static Bitmap criaBitmap(File file) {
@@ -1822,7 +1822,7 @@ public class ManipulaImagem {
    * @param options Instância de Options
    * 
    */
-  void showBitmapOptions(Options options) {
+  public void showBitmapOptions(Options options) {
 
     Log.v(TAG, "showBitmapOptions()=options=" + options);
     Log.v(TAG, "showBitmapOptions() - inDensity: " + options.inDensity);
