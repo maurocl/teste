@@ -36,6 +36,8 @@ import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
+import br.com.mltech.utils.Transaction;
+import br.com.mltech.utils.TransactionTask;
 import br.com.mltech.utils.camera.CameraTools;
 
 /**
@@ -47,7 +49,7 @@ import br.com.mltech.utils.camera.CameraTools;
  * @author maurocl
  * 
  */
-public class DummyActivity3 extends Activity implements Constantes {
+public class DummyActivity3 extends Activity implements Constantes, Transaction {
 
 	// ------------------
 	// constantes
@@ -486,6 +488,13 @@ public class DummyActivity3 extends Activity implements Constantes {
 		Log.i(TAG, "Enviando email com foto em: " + Uri.fromFile(fff));
 
 		try {
+			
+			//Transaction transacao = null;
+			
+			//TransactionTask task = new TransactionTask(this, transacao, 0);
+			
+			//task.execute();
+			
 			enviaEmail(Uri.fromFile(fff));
 		} catch (Exception e) {
 			Log.w(TAG, "meuMetodo() - Erro no envio do email", e);
@@ -2543,8 +2552,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
 		if ((mRemetente != null) && (mRemetente.equals(""))) {
 			throw new IllegalArgumentException("Endereço do remetente do email não foi fornecido");
-		}
-		else if(	!	isValidInternetAddress(mRemetente, "Remetente") ) {
+		} else if (!isValidInternetAddress(mRemetente, "Remetente")) {
 			throw new IllegalArgumentException("Endereço do remetente do email não é válido");
 		}
 
@@ -2553,8 +2561,10 @@ public class DummyActivity3 extends Activity implements Constantes {
 	/**
 	 * verifica se o endereço de email fornecido é sintaticamente válido
 	 * 
-	 * @param emailAddress Endereço do email do remetente
-	 * @param mMsg nome do campo
+	 * @param emailAddress
+	 *          Endereço do email do remetente
+	 * @param mMsg
+	 *          nome do campo
 	 * 
 	 * @return true se o endereço for válido ou false caso contrário
 	 * 
@@ -2565,14 +2575,26 @@ public class DummyActivity3 extends Activity implements Constantes {
 			InternetAddress address = new InternetAddress(emailAddress);
 		} catch (AddressException e) {
 
-			String x = mMsg + " não é válido (posição: " + e.getPos() + ", ref: " + e.getRef() + ")"; 
+			String x = mMsg + " não é válido (posição: " + e.getPos() + ", ref: " + e.getRef() + ")";
 
 			Log.w(TAG, x, e);
-			
+
 			return false;
 
 		}
 		return true;
 	}
 
+	public void execute() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateView() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	
 }
