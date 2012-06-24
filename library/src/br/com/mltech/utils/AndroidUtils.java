@@ -75,4 +75,29 @@ public class AndroidUtils {
 
   }
 
+  /**
+   * alertDialog(Context context, String title, String message)
+   * 
+   * @param context Contexto da Aplicação
+   * @param title Título da janela
+   * @param message Mensagem que será exibida
+   * 
+   */
+  public static void alertDialog(Context context, String title, String message) {
+
+    AlertDialog dialog = new AlertDialog.Builder(context).setTitle(title).setMessage(message).create();
+    dialog.setButton("OK", new OnClickListener() {
+
+      //@Override
+      public void onClick(DialogInterface dialog, int which) {
+        // simplesmente retorna sem executar nenhuma ação.
+        return;
+      }
+    });
+
+    // exibe a caixa de diálogo
+    dialog.show();
+
+  }
+  
 }
