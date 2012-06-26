@@ -85,12 +85,16 @@ public class Logger {
    * @param str
    *          Mensagem
    * 
-   * @throws IOException
    */
-  public void print(String str) throws IOException {
+  public void print(String str) {
 
     if (enabled) {
-      bw.append(str);
+      try {
+        bw.append(str);
+      } catch (IOException e) {
+        Log.w(TAG, "print() - falha no log", e);
+
+      }
     }
 
   }
@@ -101,17 +105,55 @@ public class Logger {
    * @param str
    *          Mensagem
    * 
-   * @throws IOException
    */
-  public void println(String str) throws IOException {
+  public void println(String str) {
 
     if (enabled) {
       StringBuilder sb = new StringBuilder();
 
-      sb.append(getDataHora()).append(" ").append(str);
+      sb.append(getDataHora()).append(" ").append(str).append("\n");
 
       print(sb.toString());
-      bw.append("\n");
+
+    }
+
+  }
+
+  /**
+   * Loga uma linha em branco (se o log estiver habilitado)
+   * 
+   * 
+   */
+  public void println() {
+
+    if (enabled) {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append(getDataHora()).append(" ").append("\n");
+
+      print(sb.toString());
+
+    }
+
+  }
+  
+  /**
+   * Loga a mensagem e pula uma linha (se o log estiver habilitado)
+   * 
+   * @param str
+   *          Mensagem
+   * @param tr
+   * 
+   */
+  public void println(String str, Throwable tr) {
+
+    if (enabled) {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append(getDataHora()).append(" ").append(str).append(tr.getMessage()).append("\n");
+
+      print(sb.toString());
+
     }
 
   }
