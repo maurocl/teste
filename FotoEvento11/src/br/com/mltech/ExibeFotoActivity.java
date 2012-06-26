@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 /**
- * ExibeFotoActivity
  * 
  * O objetivo dessa activity é a exibição de uma foto.
  * 
@@ -29,11 +28,13 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
   // 0 - desligado; 1 - ligado
   public static int DEBUG = 0;
-  
+
   public static int IMAGEM_DUMMY = 0;
 
+  // botão confirma
   private static Button btnConfirmar;
 
+  // botão cancela
   private static Button btnCancelar;
 
   /**
@@ -87,7 +88,7 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
     }
     else {
-     
+
       Bitmap bm = getBitmapTest();
       imageView.setImageBitmap(bm);
 

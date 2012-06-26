@@ -332,12 +332,10 @@ public class EventoActivity extends Activity implements Constantes {
 
   }
 
-  /**
-   * atualizaValorComponentes()]
-   * 
-   * Preenche os componentes visuais com os dados do objeto Evento Usa os
+  /** 
+   * Preenche os componentes visuais com os dados do objeto Evento. Usa os
    * objetos mContratante e mEvento para preencher os dados nos elementos
-   * gráficos visuais
+   * de UI.
    * 
    */
   private void atualizaValorComponentes() {
@@ -345,11 +343,11 @@ public class EventoActivity extends Activity implements Constantes {
     if (mEvento == null) {
 
       Log.d(TAG,
-          "atualizaValorComponentes() - atualizaValorComponentes() - mEvento is null");
+          "atualizaValorComponentes() - mEvento é nulo");
 
     } else {
 
-      Log.d(TAG, "atualizaValorComponentes() - mEvento is not null");
+      Log.d(TAG, "atualizaValorComponentes() - mEvento não é nulo");
 
       // Atualiza os valores dos componentes
 
@@ -407,10 +405,8 @@ public class EventoActivity extends Activity implements Constantes {
 
   }
 
-  /**
-   * processaBtnGravar()
-   * 
-   * Pega os valores dos componentes gráficos e preenche o objeto mEvento
+  /** 
+   * Executa o processo de gravação dos elementos de UI no objeto Evento.
    * 
    */
   void processaBtnGravar() {
@@ -514,13 +510,14 @@ public class EventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * processaBtnCancelar()
+   * 
+   * Executa o processo de cancelamento de modificações e retorno da activity.
    */
   void processaBtnCancelar() {
 
     Log.d(TAG, "processaBtnCancelar() - Botão cancelar selecionado");
     
-    // cria uma intent de resposta
+    // cria uma intent de resposta indicando o resultado de execução da activity.
     Intent intent = new Intent();
     
     // seta o resultado

@@ -5,6 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -37,7 +41,6 @@ import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
 import br.com.mltech.utils.Transaction;
-import br.com.mltech.utils.TransactionTask;
 import br.com.mltech.utils.camera.CameraTools;
 
 /**
@@ -51,2550 +54,2730 @@ import br.com.mltech.utils.camera.CameraTools;
  */
 public class DummyActivity3 extends Activity implements Constantes, Transaction {
 
-	// ------------------
-	// constantes
-	// ------------------
+  // ------------------
+  // constantes
+  // ------------------
 
-	private static final String TAG = "DummyActivity3";
+  private static final String TAG = "DummyActivity3";
 
-	// -------------------
-	// variáveis da classe
-	// -------------------
+  // -------------------
+  // variáveis da classe
+  // -------------------
 
-	// indica qual Activity será executada:
-	// 0 = tira foto dummy;
-	// 1 = Tira foto normal (usando a aplicação Android);
-	// 2 = tira foto usando uma aplicação de câmera customizada;
-	private static int FLAG = 2;
+  // indica qual Activity será executada:
+  // 0 = tira foto dummy;
+  // 1 = Tira foto normal (usando a aplicação Android);
+  // 2 = tira foto usando uma aplicação de câmera customizada;
+  private static int FLAG = 2;
 
-	// indica qual a forma será usada para envio do email ao participante
-	// 0 = através do uso de activities
-	// 1 = atraves do uso de sistema de email externo (JavaMail)
-	private static int EMAIL_TIPO = 1;
+  // indica qual a forma será usada para envio do email ao participante
+  // 0 = através do uso de activities
+  // 1 = atraves do uso de sistema de email externo (JavaMail)
+  private static int EMAIL_TIPO = 1;
 
-	// instância de um arquivo
-	private static File file;
+  // instância de um arquivo
+  private static File file;
 
-	// URI onde o será colocada a foto
-	private static Uri outputFileUri;
+  // URI onde o será colocada a foto
+  private static Uri outputFileUri;
 
-	// Lista de todas as fotos tiradas
-	private static List<Foto> listaFotos;
+  // Lista de todas as fotos tiradas
+  private static List<Foto> listaFotos;
 
-	// Foto
-	private static Foto foto;
+  // Foto
+  private static Foto foto;
 
-	// FotoCabine
-	private static FotoCabine fotoCabine;
+  // FotoCabine
+  private static FotoCabine fotoCabine;
 
-	// Definição dos atributos da aplicação
-	private static Contratante mContratante;
+  // Definição dos atributos da aplicação
+  private static Contratante mContratante;
 
-	private static Evento mEvento;
+  private static Evento mEvento;
 
-	private static Participante mParticipante;
+  private static Participante mParticipante;
 
-	private static Participacao mParticipacao;
+  private static Participacao mParticipacao;
 
-	private static SharedPreferences mPreferences;
+  private static SharedPreferences mPreferences;
 
-	// Uri da última foto
-	private static Uri xUri;
+  // Uri da última foto
+  private static Uri xUri;
 
-	// Estado atual da máquina de estado da aplicação
-	private static int mEstado = -1;
+  // Estado atual da máquina de estado da aplicação
+  private static int mEstado = -1;
 
-	// Nº de vezes que a activity é criada
-	private static int mContador = 0;
+  // Nº de vezes que a activity é criada
+  private static int mContador = 0;
 
-	// Nº de câmeras do dispositivo
-	private static int numCameras = -1;
+  // Nº de câmeras do dispositivo
+  private static int numCameras = -1;
 
-	// Nº da câmera corrente em uso (se houver)
-	private static int currentCamera = -1;
+  // Nº da câmera corrente em uso (se houver)
+  private static int currentCamera = -1;
 
-	// Bitmaps contendo as molduras
-	private static Bitmap mBitmapMolduraPolaroid;
+  // Bitmaps contendo as molduras
+  private static Bitmap mBitmapMolduraPolaroid;
 
-	private static Bitmap mBitmapMolduraCabine;
+  private static Bitmap mBitmapMolduraCabine;
 
-	// Molduras
-	private static Moldura molduraPolaroid;
+  // Molduras
+  private static Moldura molduraPolaroid;
 
-	private static Moldura molduraCabine;
+  private static Moldura molduraCabine;
 
-	// Contador do nº de fotos cabine
-	// private static int mNumFotosCabine = 0;
+  // Contador do nº de fotos cabine
+  // private static int mNumFotosCabine = 0;
 
-	// Contador geral (iniciado em onCreate())
-	public static int contador = 0;
+  // Contador geral (iniciado em onCreate())
+  public static int contador = 0;
 
-	public static int i = 0;
+  public static int i = 0;
 
-	// nº de vezes que o método onCreate() é chamado
-	public static int numCreate = 0;
+  // nº de vezes que o método onCreate() é chamado
+  public static int numCreate = 0;
 
-	// nº de vezes que o método onRestart() é chamado
-	public static int numRestart = 0;
+  // nº de vezes que o método onRestart() é chamado
+  public static int numRestart = 0;
 
-	// número de fotos carregas
-	public static int numFotosCarregadas = 0;
+  // número de fotos carregas
+  public static int numFotosCarregadas = 0;
 
-	// nº de fotos efetivamente tiradas
-	public static int numFotosTiradas = 0;
+  // nº de fotos efetivamente tiradas
+  public static int numFotosTiradas = 0;
 
-	// nº de fotos tiradas
-	private static int indiceFoto = 0;
+  // nº de fotos tiradas
+  private static int indiceFoto = 0;
 
-	// nº de fotos tiradas no formato Polaroid
-	private static int numFotosPolaroid = 0;
+  // nº de fotos tiradas no formato Polaroid
+  private static int numFotosPolaroid = 0;
 
-	// nº de fotos tiradas no formato Cabine
-	private static int numFotosCabine = 0;
+  // nº de fotos tiradas no formato Cabine
+  private static int numFotosCabine = 0;
 
-	// servidor de email
-	private static Mail mailServer = null;
+  // servidor de email
+  private static Mail mailServer = null;
 
-	// ---------------------------------------------
-	// área de inicialização de variáveis estáticas
-	// ---------------------------------------------
-	static {
-		// cria uma lista de fotos
-		listaFotos = new ArrayList<Foto>();
-		fotoCabine = new FotoCabine();
-	}
+  // modo da tela (portrait / landscape)
+  private static int modoTela;
 
-	/**
-	 * onCreate(Bundle savedInstanceState)
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+  // instância do Logger
+  private static br.com.mltech.utils.Logger logger;
 
-		super.onCreate(savedInstanceState);
+  // instância do Logger 2
+  private static Logger logger2 = Logger.getLogger("br.com.mletch");
 
-		Log.d(TAG, "*** onCreate() ***");
+  // ---------------------------------------------
+  // área de inicialização de variáveis estáticas
+  // ---------------------------------------------
+  static {
+    // cria uma lista de fotos
+    listaFotos = new ArrayList<Foto>();
+    fotoCabine = new FotoCabine();
 
-		setContentView(R.layout.dummy);
+  }
 
-		if (savedInstanceState != null) {
-			// FileUtils.showBundle(savedInstanceState);
-		}
+  /**
+   * onCreate(Bundle savedInstanceState)
+   */
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
 
-		// Lê as configurações a respeito da conta de email
-		initEmailConfig();
+    super.onCreate(savedInstanceState);
 
-		// Carrega as molduras para fotos Polaroid e Cabine
-		carregaMolduras();
+    Log.d(TAG, "*** onCreate() ***");
+    logger2.finest("*** onCreate() ***");
 
-		// Obtem o identificado da câmera que será usada para tirar as fotos
-		currentCamera = obtemIdentificadorCamera();
+    setContentView(R.layout.dummy);
 
-		// ---------------------------------------------------------------------
+    if (savedInstanceState != null) {
+      // FileUtils.showBundle(savedInstanceState);
+    }
 
-		// incrementa o nº de vezes que a activity foi reiniciada
-		mContador++;
+    FileHandler fh = null;
+    try {
+      fh = new FileHandler("/mnt/sdcard/Pictures/logger2.log", true);
+    } catch (IOException e1) {
+      Log.w(TAG, "onCreate() - não foi possível criar o arquivo de log", e1);
+    }
 
-		contador++;
-		numCreate++;
-		i++;
+    if (fh != null) {
+      fh.setFormatter(new SimpleFormatter());
+    }
 
-		Button btn0 = (Button) findViewById(R.id.btn0);
+    // associa um FileHandler ao logger.
+    logger2.addHandler(fh);
 
-		btn0.setOnClickListener(new OnClickListener() {
+    // Estabelece o nível do log
+    logger2.setLevel(Level.FINEST);
 
-			public void onClick(View v) {
+    logger2.info("*** onCreate() ***");
 
-				iniciaMaquinaDeEstados();
+    // guarda a orientação inicial da tela
+    modoTela = this.getResources().getConfiguration().orientation;
+    Log.d(TAG, "onCreate() - Orientação inicial da tela: " + modoTela);
+    logger2.info("onCreate() - Orientação inicial da tela: " + modoTela);
 
-			}
+    // Lê as configurações a respeito da conta de email
+    try {
 
-		});
+      initEmailConfig();
 
-	}
+    } catch (IllegalArgumentException e) {
 
-	/**
-	 * carregaMolduras()
-	 * 
-	 * Inicializa as variáveis que vão conter o bitmap das molduras:
-	 * 
-	 * mBitmapMolduraPolaroid. mBitmapMolduraCabine.
-	 * 
-	 * mBitmapMolduraPolaroid. mBitmapMolduraCabine.
-	 * 
-	 */
-	private void carregaMolduras() {
+      Log.w(TAG, "onCreate() - email não está configurado adequadamente");
+      logger2.info("onCreate() - email não está configurado adequadamente");
 
-		mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
+    }
 
-		if (mPreferences == null) {
+    // Carrega as molduras para fotos Polaroid e Cabine
+    carregaMolduras();
 
-			Log.w(TAG, "carregaMolduras() - mPreferences é nula. Falha na execução do comandos getSharedPreferences()");
-			return;
+    // Obtem o identificado da câmera que será usada para tirar as fotos
+    currentCamera = obtemIdentificadorCamera();
 
-		}
+    // ---------------------------------------------------------------------
 
-		String arquivoMolduraPolaroid = null;
-		String arquivoMolduraCabine = null;
+    // incrementa o nº de vezes que a activity foi reiniciada
+    mContador++;
 
-		// o arquivo de configuração possui a informação da localização das
-		// molduras
+    contador++;
+    numCreate++;
+    i++;
 
-		// Obtém o arquivo contendo o bitmap da moldura formato polaroid
-		arquivoMolduraPolaroid = mPreferences.getString(Constantes.EVENTO_BORDA_POLAROID, "");
+    Button btnIniciar = (Button) findViewById(R.id.btn0);
 
-		// Obtém o arquivo contendo o bitmap da moldura formato cabine
-		arquivoMolduraCabine = mPreferences.getString(Constantes.EVENTO_BORDA_CABINE, "");
+    btnIniciar.setOnClickListener(new OnClickListener() {
 
-		if ((arquivoMolduraPolaroid != null) && (arquivoMolduraPolaroid.equals(""))) {
-			Log.d(TAG, "carregaMolduras() - moldura formato Polaroid não foi configurada.");
-			estadoFinal();
-		}
+      public void onClick(View v) {
 
-		if ((arquivoMolduraCabine != null) && (arquivoMolduraCabine.equals(""))) {
-			Log.d(TAG, "carregaMolduras() - moldura formato Cabine não foi configurada.");
-			estadoFinal();
-		}
+        iniciaMaquinaDeEstados();
 
-		// ----------------------------------------------------------
-		// o arquivo contendo a moldura é lido no inicio da activity
-		// ----------------------------------------------------------
-		Log.d(TAG, "carregaMolduras() - lendo arquivo contendo moldura formato Polaroid");
-		mBitmapMolduraPolaroid = leArquivoMoldura(arquivoMolduraPolaroid);
-		Log.d(TAG, "carregaMolduras() - mBitmapMolduraPolaroid =" + mBitmapMolduraPolaroid);
+      }
 
-		Log.d(TAG, "carregaMolduras() - Lendo arquivo contendo moldura formato Cabine");
-		mBitmapMolduraCabine = leArquivoMoldura(arquivoMolduraCabine);
-		Log.d(TAG, "carregaMolduras() - mBitmapMolduraCabine = " + mBitmapMolduraCabine);
+    });
 
-		// cria uma instância da classe Moldura - Polaroid
-		molduraPolaroid = new Moldura(arquivoMolduraPolaroid, "Moldura Polaroid 1");
-		molduraPolaroid.setImagem(mBitmapMolduraPolaroid);
+  }
+  /**
+   * carregaMolduras()
+   * 
+   * Inicializa as variáveis que vão conter o bitmap das molduras:
+   * 
+   * mBitmapMolduraPolaroid. mBitmapMolduraCabine.
+   * 
+   * mBitmapMolduraPolaroid. mBitmapMolduraCabine.
+   * 
+   */
+  private void carregaMolduras() {
 
-		// cria uma instância da classe Moldura - Cabine
-		molduraCabine = new Moldura(arquivoMolduraCabine, "Moldura Cabine 1");
-		molduraCabine.setImagem(mBitmapMolduraCabine);
+    mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
 
-	}
+    if (mPreferences == null) {
 
-	/**
-	 * obtemIdentificadorCamera()
-	 * 
-	 * Verifica se existe uma configuração explicita para usar um determinado
-	 * identificador de câmera (se o sistema possuir mais de uma câmera). Esse
-	 * recurso é usado quando existe mais de uma câmera suportada pelo
-	 * dispositivo, como, por exemplo, uma câmera frontal que se deseja usar ao
-	 * invés da câmera traseira.
-	 * 
-	 * @return o identificador da câmera frontal ou 0 caso esse parâmetro não
-	 *         esteja cadastrado
-	 * 
-	 */
-	private int obtemIdentificadorCamera() {
+      Log.w(TAG, "carregaMolduras() - mPreferences é nula. Falha na execução do comandos getSharedPreferences()");
+      return;
 
-		// -----------------------------------------------
-		// obtem o identificador da câmera usada para tirar as fotos
-		// -----------------------------------------------
-		String sCameraId = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_NUM_CAMERA_FRONTAL);
+    }
 
-		Log.i(TAG, "obtemIdentificadorCamera() - Id da câmera frontal=" + sCameraId);
+    String arquivoMolduraPolaroid = null;
+    String arquivoMolduraCabine = null;
 
-		// identificador (Id) da câmera
-		int id = 0;
+    // o arquivo de configuração possui a informação da localização das
+    // molduras
 
-		if ((sCameraId != null) && (!sCameraId.equals(""))) {
+    // Obtém o arquivo contendo o bitmap da moldura formato polaroid
+    arquivoMolduraPolaroid = mPreferences.getString(Constantes.EVENTO_BORDA_POLAROID, "");
 
-			id = Integer.valueOf(sCameraId);
+    // Obtém o arquivo contendo o bitmap da moldura formato cabine
+    arquivoMolduraCabine = mPreferences.getString(Constantes.EVENTO_BORDA_CABINE, "");
 
-		} else {
+    if ((arquivoMolduraPolaroid != null) && (arquivoMolduraPolaroid.equals(""))) {
+      Log.d(TAG, "carregaMolduras() - moldura formato Polaroid não foi configurada.");
+      estadoFinal();
+    }
 
-			id = 0;
-			Log.w(TAG, "obtemIdentificadorCamera() - Identificador da câmera frontal não foi definido. Assumindo o valor 0");
+    if ((arquivoMolduraCabine != null) && (arquivoMolduraCabine.equals(""))) {
+      Log.d(TAG, "carregaMolduras() - moldura formato Cabine não foi configurada.");
+      estadoFinal();
+    }
 
-		}
+    // ----------------------------------------------------------
+    // o arquivo contendo a moldura é lido no inicio da activity
+    // ----------------------------------------------------------
+    Log.d(TAG, "carregaMolduras() - lendo arquivo contendo moldura formato Polaroid");
+    mBitmapMolduraPolaroid = leArquivoMoldura(arquivoMolduraPolaroid);
+    Log.d(TAG, "carregaMolduras() - mBitmapMolduraPolaroid =" + mBitmapMolduraPolaroid);
 
-		// o identificador da câmera
-		return id;
+    Log.d(TAG, "carregaMolduras() - Lendo arquivo contendo moldura formato Cabine");
+    mBitmapMolduraCabine = leArquivoMoldura(arquivoMolduraCabine);
+    Log.d(TAG, "carregaMolduras() - mBitmapMolduraCabine = " + mBitmapMolduraCabine);
 
-	}
+    // cria uma instância da classe Moldura - Polaroid
+    molduraPolaroid = new Moldura(arquivoMolduraPolaroid, "Moldura Polaroid 1");
+    molduraPolaroid.setImagem(mBitmapMolduraPolaroid);
 
-	/**
-	 * onActivityResult(int requestCode, int resultCode, Intent data)
-	 * 
-	 * Trata o resultado da execução das Activities
-	 * 
-	 * Processa o resultado da execução das Activities
-	 * 
-	 * É chamado quando a activity lançada retorna, dando a você o requestCode com
-	 * o qual você iniciou, o resultCode retornado e qualquer dado adicional
-	 * resultado do processamento da activity. O resultCode será RESULT_CANCELED
-	 * se a activity retornar explicitamente esse valor, não retornar nenhum valor
-	 * ou haver algum crash dureante a operação.
-	 * 
-	 * Esse método será chamado imediatamente antes da execução do onResume()
-	 * quando sua activity é reinicializada.
-	 * 
-	 * Called when an activity you launched exits, giving you the requestCode you
-	 * started it with, the resultCode it returned, and any additional data from
-	 * it. The resultCode will be RESULT_CANCELED if the activity explicitly
-	 * returned that, didn't return any result, or crashed during its operation.
-	 * 
-	 * You will receive this call immediately before onResume() when your activity
-	 * is re-starting.
-	 * 
-	 */
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    // cria uma instância da classe Moldura - Cabine
+    molduraCabine = new Moldura(arquivoMolduraCabine, "Moldura Cabine 1");
+    molduraCabine.setImagem(mBitmapMolduraCabine);
 
-		super.onActivityResult(requestCode, resultCode, data);
+  }
 
-		Log.i(TAG, "------------------------------------------------------------------------------------------------------------");
-		Log.i(TAG, "onActivityResult(request (" + requestCode + ") " + getActivityName(requestCode) + ", result=" + resultCode
-				+ ", data " + data + ") ...");
-		Log.i(TAG, "------------------------------------------------------------------------------------------------------------");
+  /**
+   * obtemIdentificadorCamera()
+   * 
+   * Verifica se existe uma configuração explicita para usar um determinado
+   * identificador de câmera (se o sistema possuir mais de uma câmera). Esse
+   * recurso é usado quando existe mais de uma câmera suportada pelo
+   * dispositivo, como, por exemplo, uma câmera frontal que se deseja usar ao
+   * invés da câmera traseira.
+   * 
+   * @return o identificador da câmera frontal ou 0 caso esse parâmetro não
+   *         esteja cadastrado
+   * 
+   */
+  private int obtemIdentificadorCamera() {
 
-		String sNomeArquivo = null;
+    // -----------------------------------------------
+    // obtem o identificador da câmera usada para tirar as fotos
+    // -----------------------------------------------
+    String sCameraId = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_NUM_CAMERA_FRONTAL);
 
-		switch (requestCode) {
+    Log.i(TAG, "obtemIdentificadorCamera() - Id da câmera frontal=" + sCameraId);
 
-		case ACTIVITY_PARTICIPANTE:
+    // identificador (Id) da câmera
+    int id = 0;
 
-			resultActivityParticipante(resultCode, data);
-			break;
+    if ((sCameraId != null) && (!sCameraId.equals(""))) {
 
-		case ACTIVITY_PARTICIPACAO:
+      id = Integer.valueOf(sCameraId);
 
-			resultActivityParticipacao(resultCode, data);
-			break;
+    } else {
 
-		case ACTIVITY_CHOOSER:
+      id = 0;
+      Log.w(TAG, "obtemIdentificadorCamera() - Identificador da câmera frontal não foi definido. Assumindo o valor 0");
 
-			resultActivityChooser(resultCode, data);
-			break;
+    }
 
-		case TIRA_FOTO_POLAROID:
+    // o identificador da câmera
+    return id;
 
-			numFotosTiradas++;
-			sNomeArquivo = processaActivityResultPolaroid(resultCode, data);
-			mParticipacao.setNomeArqFoto(sNomeArquivo);
-			numFotosPolaroid++;
-			meuMetodo(requestCode, sNomeArquivo);
-			break;
+  }
 
-		case TIRA_FOTO_CABINE:
+  /**
+   * onActivityResult(int requestCode, int resultCode, Intent data)
+   * 
+   * Trata o resultado da execução das Activities
+   * 
+   * Processa o resultado da execução das Activities
+   * 
+   * É chamado quando a activity lançada retorna, dando a você o requestCode com
+   * o qual você iniciou, o resultCode retornado e qualquer dado adicional
+   * resultado do processamento da activity. O resultCode será RESULT_CANCELED
+   * se a activity retornar explicitamente esse valor, não retornar nenhum valor
+   * ou haver algum crash dureante a operação.
+   * 
+   * Esse método será chamado imediatamente antes da execução do onResume()
+   * quando sua activity é reinicializada.
+   * 
+   * Called when an activity you launched exits, giving you the requestCode you
+   * started it with, the resultCode it returned, and any additional data from
+   * it. The resultCode will be RESULT_CANCELED if the activity explicitly
+   * returned that, didn't return any result, or crashed during its operation.
+   * 
+   * You will receive this call immediately before onResume() when your activity
+   * is re-starting.
+   * 
+   */
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-			numFotosTiradas++;
-			sNomeArquivo = processaActivityResultCabine(resultCode, data);
-			if (sNomeArquivo != null) {
-				mParticipacao.setNomeArqFoto(sNomeArquivo);
-				numFotosCabine++;
-				meuMetodo(requestCode, sNomeArquivo);
-			} else {
-				Log.w(TAG, "onActivityResult() - foto cabine retornou nula");
-			}
-			break;
+    super.onActivityResult(requestCode, resultCode, data);
 
-		default:
-			Log.w(TAG, "onActivityResult() - Erro ... requestCode: " + requestCode + " não pode ser processado");
-			break;
+    Log.i(TAG, "------------------------------------------------------------------------------------------------------------");
+    Log.i(TAG, "onActivityResult(request (" + requestCode + ") " + getActivityName(requestCode) + ", result=" + resultCode
+        + ", data " + data + ") ...");
+    Log.i(TAG, "------------------------------------------------------------------------------------------------------------");
 
-		}
+    String sNomeArquivo = null;
 
-		// TODO aqui talvez não seja o melhor lugar para atualização da orientação
-		// da tela pois
-		// força necessariamente um reinício da aplicação
-		if (requestCode != TIRA_FOTO_CABINE) {
-			Log.d(TAG, "onActivityResult() - >>> alterando a orientação da tela (se necessário)");
-			atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
-		}
+    switch (requestCode) {
 
-	}
+      case ACTIVITY_PARTICIPANTE:
 
-	/**
-	 * meuMetodo(int requestCode, String meuArquivo)
-	 * 
-	 * Recebe o nome do arquivo da foto já processado.
-	 * 
-	 * @param requestCode
-	 *          códido da requisição
-	 * 
-	 * @param meuArquivo
-	 *          nome do arquivo contendo a foto processada
-	 * 
-	 */
-	private void meuMetodo(int requestCode, String meuArquivo) {
+        resultActivityParticipante(resultCode, data);
+        break;
 
-		// TODO alterar o nome do método
+      case ACTIVITY_PARTICIPACAO:
 
-		Log.d(TAG, "meuMetodo() - requestCode=" + requestCode);
+        resultActivityParticipacao(resultCode, data);
+        break;
 
-		if (meuArquivo != null) {
-			Log.d(TAG, "meuMetodo() - meuArquivo=" + meuArquivo);
-		} else {
-			Log.d(TAG, "meuMetodo() - meuArquivo retornou nulo");
-		}
+      case ACTIVITY_CHOOSER:
 
-		// --------------------------------------------------------------
-		// executa a activity que exibe a foto
-		// --------------------------------------------------------------
-		if (meuArquivo != null) {
-			executaActivityExibeFoto(meuArquivo);
-		}
+        resultActivityChooser(resultCode, data);
+        break;
 
-		// --------------------------------------------------------------
+      case TIRA_FOTO_POLAROID:
 
-		String msg = null;
+        numFotosTiradas++;
 
-		// executa ação baseada no rquestCode
-		switch (requestCode) {
+        sNomeArquivo = processaActivityResultPolaroid(resultCode, data);
+        mParticipacao.setNomeArqFoto(sNomeArquivo);
+        numFotosPolaroid++;
 
-		case TIRA_FOTO_POLAROID:
-			msg = "TIRA_FOTO_POLAROID";
-			Log.w(TAG, "meuMetodo() - requestCode: " + requestCode);
-			break;
+        meuMetodo(requestCode, sNomeArquivo);
+        break;
 
-		case TIRA_FOTO_CABINE:
-			msg = "TIRA_FOTO_CABINE";
-			Log.w(TAG, "meuMetodo() - requestCode: " + requestCode);
-			break;
+      case TIRA_FOTO_CABINE:
 
-		default:
-			Log.w(TAG, "meuMetodo() - Erro ... requestCode: " + requestCode + " não pode ser processado");
-			break;
+        numFotosTiradas++;
 
-		}
+        sNomeArquivo = processaActivityResultCabine(resultCode, data);
 
-		// TODO aqui é necessário a criação de uma thread pois a proxima operação é
-		// muito demorada !!!
-		// showAlert(msg);
-		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        if (sNomeArquivo != null) {
+          mParticipacao.setNomeArqFoto(sNomeArquivo);
+          numFotosCabine++;
+          meuMetodo(requestCode, sNomeArquivo);
+        } else {
+          Log.w(TAG, "onActivityResult() - foto cabine retornou nula");
+        }
 
-		File fff = null;
+        break;
 
-		if (meuArquivo != null) {
+      default:
+        Log.w(TAG, "onActivityResult() - Erro ... requestCode: " + requestCode + " não pode ser processado");
+        break;
 
-			fff = new File(meuArquivo);
+    }
 
-		} else {
-			// TODO: remover
-			String meuArquivoPadrao = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
-			fff = new File(meuArquivoPadrao);
+ 
+    if (requestCode == TIRA_FOTO_POLAROID) {
+      Log.d(TAG, "onActivityResult() - >>> alterando a orientação da tela (se necessário) - requestCode="+requestCode);
+      logger2.info("onActivityResult() - requestCode="+requestCode);
+      atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
+    }
 
-		}
+  }
 
-		// Há uma foto com moldura que será enviada por email
-		setEstado(2);
+  /** 
+   * Recebe o nome do arquivo da foto já processado.
+   * 
+   * @param requestCode
+   *          códido da requisição
+   * 
+   * @param meuArquivo
+   *          nome do arquivo contendo a foto processada
+   *  
+   */
+  private void meuMetodo(int requestCode, String meuArquivo) {
 
-		// chama enviaEmail passando a Uri onde se encontra a foto
+    // TODO alterar o nome do método
 
-		Log.i(TAG, "Enviando email com foto em: " + Uri.fromFile(fff));
+    Log.d(TAG, "meuMetodo() - requestCode=" + requestCode);
+    
+    logger2.info("meuMetodo() - requestCode=" + requestCode);
 
-		try {
-			
-			//Transaction transacao = null;
-			
-			//TransactionTask task = new TransactionTask(this, transacao, 0);
-			
-			//task.execute();
-			
-			enviaEmail(Uri.fromFile(fff));
-		} catch (Exception e) {
-			Log.w(TAG, "meuMetodo() - Erro no envio do email", e);
-		}
+    if (meuArquivo != null) {
+      Log.d(TAG, "meuMetodo() - meuArquivo=" + meuArquivo);
+      logger.println("meuMetodo() - meuArquivo=" + meuArquivo);
+      logger2.info("meuMetodo() - meuArquivo=" + meuArquivo);
+    } else {
+      Log.d(TAG, "meuMetodo() - meuArquivo retornou nulo");
+    }
 
-		Log.w(TAG, "meuMetodo() - fim");
+    // --------------------------------------------------------------
+    // executa a activity que exibe a foto
+    // --------------------------------------------------------------
+    if (meuArquivo != null) {
+      executaActivityExibeFoto(meuArquivo);
+    }
 
-	}
+    // --------------------------------------------------------------
 
-	/**
-	 * executaActivityExibeFoto(String meuArquivo)
-	 * 
-	 * Envia uma intent com a URI da foto que será exibida.
-	 * 
-	 * @param meuArquivo
-	 *          nome completo do arquivo onde a foto está localizada
-	 * 
-	 */
-	private void executaActivityExibeFoto(String meuArquivo) {
+    String msg = null;
 
-		File f = new File(meuArquivo);
-		Uri uri = Uri.fromFile(f);
+    // executa ação baseada no rquestCode
+    switch (requestCode) {
 
-		Intent intent = new Intent(this, ExibeFotoActivity.class);
-		intent.setData(uri);
-		startActivity(intent);
+      case TIRA_FOTO_POLAROID:
+        msg = "TIRA_FOTO_POLAROID";
+        Log.w(TAG, "meuMetodo() - requestCode: " + requestCode);
+        break;
 
-	}
+      case TIRA_FOTO_CABINE:
+        msg = "TIRA_FOTO_CABINE";
+        Log.w(TAG, "meuMetodo() - requestCode: " + requestCode);
+        break;
 
-	/**
-	 * iniciaProcesso()
-	 */
-	private void iniciaMaquinaDeEstados() {
+      default:
+        Log.w(TAG, "meuMetodo() - Erro ... requestCode: " + requestCode + " não pode ser processado");
+        break;
 
-		boolean sucesso = iniciaVariaveis();
+    }
 
-		if (!sucesso) {
-			Log.w(TAG, "iniciaProcesso() - Não foi possível inicializar as variáveis");
-			estadoFinal();
-		}
+    // TODO aqui é necessário a criação de uma thread pois a proxima operação é
+    // muito demorada !!!
+    // showAlert(msg);
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
-	}
+    File fff = null;
 
-	/**
-	 * iniciaVariaveis()
-	 * 
-	 * Inicia a execução da máquina de estados da activity
-	 * 
-	 * @return true se as operações iniciais foram executas com sucesso ou false
-	 *         em caso de erro
-	 * 
-	 */
-	private boolean iniciaVariaveis() {
+    if (meuArquivo != null) {
 
-		// obtem o nº de câmeras disponíveis pelo dispositivo onde a aplicação
-		// está em execução
-		numCameras = android.hardware.Camera.getNumberOfCameras();
+      fff = new File(meuArquivo);
 
-		Log.d(TAG, "iniciaVariaveis() - Número de Câmeras disponíveis no hardware: " + numCameras);
+    } else {
+      // TODO: remover
+      String meuArquivoPadrao = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
+      fff = new File(meuArquivoPadrao);
 
-		// verifica se a câmera fotogrática está em operação
-		if (CameraTools.isCameraWorking(currentCamera)) {
+    }
 
-			Log.i(TAG, "iniciaVariaveis() - Camera: [" + currentCamera + "] está em funcionamento...");
+    logger2.info("meuMetodo() - antes do envio do email");
+    
+    // Há uma foto com moldura que será enviada por email
+    setEstado(2);
 
-		} else {
+    // chama enviaEmail passando a Uri onde se encontra a foto
 
-			Log.w(TAG, "iniciaVariaveis() - Camera: [" + currentCamera + "] não está em funcionamento");
+    Log.i(TAG, "Enviando email com foto em: " + Uri.fromFile(fff));
+    logger.println("Enviando email com foto em: " + Uri.fromFile(fff));
+    logger2.info("Enviando email com foto em: " + Uri.fromFile(fff));
 
-			Toast.makeText(this, "Camera não está disponível", Toast.LENGTH_SHORT);
+    try {
 
-			return false;
+      //Transaction transacao = null;
 
-		}
+      //TransactionTask task = new TransactionTask(this, transacao, 0);
 
-		// Obtem a Intent que iniciou esta Activity
-		Intent i = this.getIntent();
+      //task.execute();
 
-		// indicador de erro de configuração
-		int erro = 0;
+      enviaEmail(Uri.fromFile(fff));
 
-		// Obtém informações sobre o Contratante
-		if (i.hasExtra(CONTRATANTE)) {
-			mContratante = (Contratante) i.getSerializableExtra(CONTRATANTE);
-		} else {
-			Log.w(TAG, "iniciaVariaveis() - Contratante não pode ser nulo.");
-			Toast.makeText(this, "Contratante não pode ser nulo", Toast.LENGTH_SHORT).show();
-			erro = 1;
-		}
+    } catch (Exception e) {
 
-		// Obtem informações sobre o Evento
-		if (i.hasExtra(EVENTO)) {
-			mEvento = (Evento) i.getSerializableExtra(EVENTO);
-		} else {
-			Log.w(TAG, "iniciaVariaveis() - Evento não pode ser nulo.");
-			Toast.makeText(this, "Evento não pode ser nulo", Toast.LENGTH_SHORT).show();
-			erro += 2;
-		}
+      Log.w(TAG, "meuMetodo() - Erro no envio do email", e);
+      logger.println("meuMetodo() - Erro no envio do email");
+      logger2.info("meuMetodo() - Erro no envio do email");
 
-		if (erro > 0) {
+    }
 
-			Log.w(TAG, "iniciaVariaveis() - Informações insuficientes para execução (erro=" + erro + ")");
+    Log.w(TAG, "meuMetodo() - fim");
 
-			showAlert("Verifique a configuração da aplicação");
+  }
 
-			return false;
+  /**
+   * Exibe a foto tirada.<br>
+   * 
+   * Envia uma intent com a URI da foto que será exibida.
+   * 
+   * @param meuArquivo
+   *          nome completo do arquivo onde a foto está localizada
+   * 
+   */
+  private void executaActivityExibeFoto(String meuArquivo) {
 
-		}
+    File f = new File(meuArquivo);
+    Uri uri = Uri.fromFile(f);
 
-		Log.v(TAG, "iniciaVariaveis() - mContratante=" + mContratante);
-		Log.v(TAG, "iniciaVariaveis() - mEvento=" + mEvento);
+    Intent intent = new Intent(this, ExibeFotoActivity.class);
+    intent.setData(uri);
+    startActivity(intent);
 
-		// Altera o estado atual
-		setEstado(0);
+  }
 
-		// Inicia a obtenção dos Participantes
-		startActivityParticipante();
+  /**
+   * Inicia o processo do participante do evento.
+   */
+  private void iniciaMaquinaDeEstados() {
 
-		return true;
+    boolean sucesso = iniciaVariaveis();
 
-	}
+    if (!sucesso) {
+      Log.w(TAG, "iniciaProcesso() - Não foi possível inicializar as variáveis");
+      estadoFinal();
+    }
 
-	/**
-	 * <p>
-	 * startActivityParticipante()
-	 * </p>
-	 * 
-	 * Obtém informações sobre o participante do evento<br />
-	 * 
-	 * Inicia a Activity Participante. Passa como parâmetro as informações sobre o
-	 * Evento.<br />
-	 * 
-	 * Aguarda as informações sobre o participante do evento.
-	 * 
-	 */
-	private void startActivityParticipante() {
+  }
 
-		// Cria uma nova Intent para chamar a Activity Participante
-		Intent intentParticipante = new Intent(this, ParticipanteActivity.class);
+  /**
+   * Inicia a execução da máquina de estados da activity<br>
+   * 
+   * @return true se as operações iniciais foram executas com sucesso ou false
+   *         em caso de erro
+   * 
+   */
+  private boolean iniciaVariaveis() {
 
-		// Inclui o parâmetro mEvento (com as informações sobre o evento em
-		// curso)
-		intentParticipante.putExtra(EVENTO, mEvento);
+    // obtem o nº de câmeras disponíveis pelo dispositivo onde a aplicação
+    // está em execução
+    numCameras = android.hardware.Camera.getNumberOfCameras();
 
-		// Inicia a Activity
-		startActivityForResult(intentParticipante, ACTIVITY_PARTICIPANTE);
+    Log.d(TAG, "iniciaVariaveis() - Número de Câmeras disponíveis no hardware: " + numCameras);
 
-	}
+    // verifica se a câmera fotogrática está em operação
+    if (CameraTools.isCameraWorking(currentCamera)) {
 
-	/**
-	 * activityParticipanteResult(int resultCode, Intent data)
-	 * 
-	 * Obtém uma instância de um Participante como retorno da execução da
-	 * activity.
-	 * 
-	 * @param resultCode
-	 *          resultado da execução da activity Participante
-	 * 
-	 * @param data
-	 *          Intent com os resultados (se houverem)
-	 * 
-	 */
-	private void resultActivityParticipante(int resultCode, Intent data) {
+      Log.i(TAG, "iniciaVariaveis() - Camera: [" + currentCamera + "] está em funcionamento...");
 
-		Log.d(TAG, "resultActivityParticipante() ==> processando resultado da ACTIVITY PARTICIPANTE");
+    } else {
 
-		if (resultCode == RESULT_CANCELED) {
+      Log.w(TAG, "iniciaVariaveis() - Camera: [" + currentCamera + "] não está em funcionamento");
 
-			// operação cancelada
-			Log.d(TAG, "resultCode=RESULT_CANCELED - Participante cancelou sua participação");
+      Toast.makeText(this, "Camera não está disponível", Toast.LENGTH_SHORT);
 
-			// Limpa as informações do participante
-			mParticipante = null;
-			mParticipacao = null;
+      return false;
 
-			return;
+    }
 
-		} else if (resultCode != RESULT_OK) {
+    // Obtem a Intent que iniciou esta Activity
+    Intent i = this.getIntent();
 
-			// o resultado execução da activity não é conhecido
-			Log.w(TAG, "resultActivityParticipante() - resultCode não conhecido: " + resultCode);
-			return;
+    // indicador de erro de configuração
+    int erro = 0;
 
-		}
+    // Obtém informações sobre o Contratante
+    if (i.hasExtra(CONTRATANTE)) {
+      mContratante = (Contratante) i.getSerializableExtra(CONTRATANTE);
+    } else {
+      Log.w(TAG, "iniciaVariaveis() - Contratante não pode ser nulo.");
+      Toast.makeText(this, "Contratante não pode ser nulo", Toast.LENGTH_SHORT).show();
+      erro = 1;
+    }
 
-		if (data == null) {
-			// caso a Intent não retorne nada houve algum problema
-			Log.w(TAG, "resultActivityParticipante() - A intent não retornou nenhuma informação");
-			return;
-		}
+    // Obtem informações sobre o Evento
+    if (i.hasExtra(EVENTO)) {
+      mEvento = (Evento) i.getSerializableExtra(EVENTO);
+    } else {
+      Log.w(TAG, "iniciaVariaveis() - Evento não pode ser nulo.");
+      Toast.makeText(this, "Evento não pode ser nulo", Toast.LENGTH_SHORT).show();
+      erro += 2;
+    }
 
-		// exibe a lista de valores retornados
-		FileUtils.showBundle(data.getExtras());
+    if (erro > 0) {
 
-		// atualiza a variável com os dados do participante
-		if (data.hasExtra(PARTICIPANTE)) {
-			mParticipante = (Participante) data.getSerializableExtra(PARTICIPANTE);
-			// Exibe as informações sobre o participante e sua participação
-			Log.d(TAG, "resultActivityParticipante() - mParticipante=" + mParticipante);
+      Log.w(TAG, "iniciaVariaveis() - Informações insuficientes para execução (erro=" + erro + ")");
 
-		}
+      showAlert("Verifique a configuração da aplicação");
 
-		// inicia a activity Participação
-		startActivityParticipacao();
+      return false;
 
-		// obs: nesse ponto já sabemos qual será o tipo da foto
+    }
 
-		// Atualiza o estado da máquina de estados
-		setEstado(1);
+    Log.v(TAG, "iniciaVariaveis() - mContratante=" + mContratante);
+    Log.v(TAG, "iniciaVariaveis() - mEvento=" + mEvento);
 
-	}
+    // Altera o estado atual
+    setEstado(0);
 
-	/**
-	 * startActivityParticipacao()
-	 * 
-	 * A activity participação pega as informações de um participante e escolhe o
-	 * tipo e efeito da foto.
-	 * 
-	 */
-	private void startActivityParticipacao() {
+    // Inicia a obtenção dos Participantes
+    startActivityParticipante();
 
-		// Cria uma nova Intent para chamar a Activity Participacao
-		Intent intentParticipacao = new Intent(this, ParticipacaoActivity.class);
+    return true;
 
-		// Inclui o parâmetro mEvento (com as informações sobre o evento em
-		// curso)
-		intentParticipacao.putExtra(EVENTO, mEvento);
-		intentParticipacao.putExtra(PARTICIPANTE, mParticipante);
+  }
 
-		// Inicia a Activity
-		startActivityForResult(intentParticipacao, ACTIVITY_PARTICIPACAO);
+  /**
+   * Obtém informações sobre o participante do evento<br>
+   * 
+   * Inicia a Activity Participante. Passa como parâmetro as informações sobre o
+   * Evento.<br>
+   * 
+   * Aguarda as informações sobre o participante do evento.
+   * 
+   */
+  private void startActivityParticipante() {
 
-	}
+    // Cria uma nova Intent para chamar a Activity Participante
+    Intent intentParticipante = new Intent(this, ParticipanteActivity.class);
 
-	/**
-	 * resultActivityParticipacao(int resultCode, Intent data)
-	 * 
-	 * Processa o resultado da execução da activity Participação.
-	 * 
-	 * @param resultCode
-	 *          Código de retorno da execução da activity
-	 * 
-	 * @param data
-	 *          intent com os dados retornados
-	 * 
-	 */
-	private void resultActivityParticipacao(int resultCode, Intent data) {
+    // Inclui o parâmetro mEvento (com as informações sobre o evento em
+    // curso)
+    intentParticipante.putExtra(EVENTO, mEvento);
 
-		Log.d(TAG, "resultActivityParticipacao() ==> processando resultado da ACTIVITY PARTICIPACAO");
+    // Inicia a Activity
+    startActivityForResult(intentParticipante, ACTIVITY_PARTICIPANTE);
 
-		if (resultCode == RESULT_CANCELED) {
+  }
 
-			// operação cancelada
+  /**
+   * Obtém uma instância de um Participante como retorno da execução da
+   * activity.<br>
+   * 
+   * @param resultCode
+   *          resultado da execução da activity Participante
+   * 
+   * @param data
+   *          Intent com os resultados (se houverem)
+   * 
+   */
+  private void resultActivityParticipante(int resultCode, Intent data) {
 
-			Log.d(TAG, "resultCode=RESULT_CANCELED - Participação foi cancelada.");
+    Log.d(TAG, "resultActivityParticipante() ==> processando resultado da ACTIVITY PARTICIPANTE");
 
-			// Limpa as variáveis
-			mParticipacao = null;
+    if (resultCode == RESULT_CANCELED) {
 
-			return;
+      // operação cancelada
+      Log.d(TAG, "resultCode=RESULT_CANCELED - Participante cancelou sua participação");
 
-		} else if (resultCode != RESULT_OK) {
+      // Limpa as informações do participante
+      mParticipante = null;
+      mParticipacao = null;
 
-			// o resultado execução da activity não é conhecido
-			Log.w(TAG, "resultActivityParticipacao() - resultCode não conhecido: " + resultCode);
-			return;
+      return;
 
-		}
+    } else if (resultCode != RESULT_OK) {
 
-		if (data == null) {
-			// caso a Intent não retorne nada houve algum problema
-			Log.w(TAG, "resultActivityParticipacao() - A intent não retornou nenhuma informação");
-			return;
-		}
+      // o resultado execução da activity não é conhecido
+      Log.w(TAG, "resultActivityParticipante() - resultCode não conhecido: " + resultCode);
+      return;
 
-		// exibe a lista de valores retornados
-		FileUtils.showBundle(data.getExtras());
+    }
 
-		// atualiza a participacao
-		if (data.hasExtra(PARTICIPACAO)) {
-			mParticipacao = (Participacao) data.getSerializableExtra(PARTICIPACAO);
-			// Exibe as informações sobre o participante e sua participação
-			Log.d(TAG, "resultActivityParticipacao() - mParticipacao=" + mParticipacao);
-		}
+    if (data == null) {
+      // caso a Intent não retorne nada houve algum problema
+      Log.w(TAG, "resultActivityParticipante() - A intent não retornou nenhuma informação");
+      return;
+    }
 
-		// Atualiza o estado da máquina de estados
-		setEstado(1);
+    // exibe a lista de valores retornados
+    FileUtils.showBundle(data.getExtras());
 
-		// Processa o próximo estado
-		tirarFotos();
+    // atualiza a variável com os dados do participante
+    if (data.hasExtra(PARTICIPANTE)) {
+      mParticipante = (Participante) data.getSerializableExtra(PARTICIPANTE);
+      // Exibe as informações sobre o participante e sua participação
+      Log.d(TAG, "resultActivityParticipante() - mParticipante=" + mParticipante);
 
-	}
+    }
 
-	/**
-	 * tirarFotos()
-	 * 
-	 * Nesse passo o usuário já forneceu suas informações pessoais e agora é
-	 * necessário tirar a(s) foto(s).
-	 * 
-	 * Tira as fotos de acordo com a solicitação do participante
-	 * 
-	 */
-	private void tirarFotos() {
+    // inicia a activity Participação
+    startActivityParticipacao();
 
-		if (mParticipacao == null) {
-			Log.d(TAG, "tirarFotos() - não é possível obter as informações do participante");
-			estadoFinal();
-		}
+    // obs: nesse ponto já sabemos qual será o tipo da foto
 
-		if (mEvento == null) {
-			Log.d(TAG, "tirarFotos() - não é possível obter as informações sobre o evento");
-			estadoFinal();
-		}
+    // Atualiza o estado da máquina de estados
+    setEstado(1);
 
-		// obtém o tipo da foto (se o formato da foto é Polaroid ou Cabine)
-		int tipoFoto = mParticipacao.getTipoFoto();
+  }
 
-		Log.i(TAG, "------------------------------------------------------------");
-		Log.i(TAG, "==> tirarFotos() - tipoFoto: " + tipoFoto);
-		Log.i(TAG, "------------------------------------------------------------");
+  /**
+   * A activity participação pega as informações de um participante e escolhe o
+   * tipo e efeito da foto.
+   * 
+   */
+  private void startActivityParticipacao() {
 
-		if (tipoFoto == TIPO_FOTO_POLAROID) {
+    // Cria uma nova Intent para chamar a Activity Participacao
+    Intent intentParticipacao = new Intent(this, ParticipacaoActivity.class);
 
-			// gera um nome para o arquivo onde a foto será armazenada
-			String arquivo = FileUtils.obtemNomeArquivo(".png").getAbsolutePath();
+    // Inclui o parâmetro mEvento (com as informações sobre o evento em
+    // curso)
+    intentParticipacao.putExtra(EVENTO, mEvento);
+    intentParticipacao.putExtra(PARTICIPANTE, mParticipante);
 
-			Log.i(TAG, "tirarFotos() - tipoFoto: POLAROID, arquivo: " + "arquivo");
+    // Inicia a Activity
+    startActivityForResult(intentParticipacao, ACTIVITY_PARTICIPACAO);
 
-			// executa a activity responsável por tirar uma foto e formatá-la como
-			// Polaroid.
-			executaActivityTiraFotoPolaroid(arquivo);
+  }
 
-		} else if (tipoFoto == TIPO_FOTO_CABINE) {
+  /**
+   * resultActivityParticipacao(int resultCode, Intent data)
+   * 
+   * Processa o resultado da execução da activity Participação.
+   * 
+   * @param resultCode
+   *          Código de retorno da execução da activity
+   * 
+   * @param data
+   *          intent com os dados retornados
+   * 
+   */
+  private void resultActivityParticipacao(int resultCode, Intent data) {
 
-			Log.i(TAG, "tirarFotos() - tipoFoto: CABINE");
+    Log.d(TAG, "resultActivityParticipacao() ==> processando resultado da ACTIVITY PARTICIPACAO");
 
-			// executa a activity responsável por tirar uma três foto e formatá-las
-			// como Cabine.
-			executaActivityTiraFotoCabine();
+    if (resultCode == RESULT_CANCELED) {
 
-		} else {
+      // operação cancelada
 
-			Log.w(TAG, "tirarFotos() - tipo de foto: " + tipoFoto + " não suportado.");
-			estadoFinal();
+      Log.d(TAG, "resultCode=RESULT_CANCELED - Participação foi cancelada.");
 
-		}
+      // Limpa as variáveis
+      mParticipacao = null;
 
-	}
+      return;
 
-	/**
-	 * getIntentTirarFoto()
-	 * 
-	 * Cria uma intent para solicitar uma foto a uma activity
-	 * 
-	 * Observe que a variável FLAG é usada para "escolher" a activity que será
-	 * executada e que irá retornar a foto
-	 * 
-	 * @return uma Intent (mensagem) para execução da activity desejada
-	 * 
-	 */
-	private Intent getIntentTirarFoto() {
+    } else if (resultCode != RESULT_OK) {
 
-		Intent intent = null;
+      // o resultado execução da activity não é conhecido
+      Log.w(TAG, "resultActivityParticipacao() - resultCode não conhecido: " + resultCode);
+      return;
 
-		if (FLAG == 0) {
+    }
 
-			// simulação de "tirar uma foto"
-			intent = new Intent(this, ActivityCameraSimplesDummy.class);
+    if (data == null) {
+      // caso a Intent não retorne nada houve algum problema
+      Log.w(TAG, "resultActivityParticipacao() - A intent não retornou nenhuma informação");
+      return;
+    }
 
-			intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
+    // exibe a lista de valores retornados
+    FileUtils.showBundle(data.getExtras());
 
-		} else if (FLAG == 1) {
+    // atualiza a participacao
+    if (data.hasExtra(PARTICIPACAO)) {
+      mParticipacao = (Participacao) data.getSerializableExtra(PARTICIPACAO);
+      // Exibe as informações sobre o participante e sua participação
+      Log.d(TAG, "resultActivityParticipacao() - mParticipacao=" + mParticipacao);
+    }
 
-			// tira uma foto verdadeira
-			intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    // Atualiza o estado da máquina de estados
+    setEstado(1);
 
-			intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+    // Processa o próximo estado
+    tirarFotos();
 
-		} else if (FLAG == 2) {
+  }
 
-			// tira uma foto verdadeira usando a activity CameraActivity
-			intent = new Intent(this, CameraActivity.class);
+  /** 
+   * Nesse passo o usuário já forneceu suas informações pessoais e agora é
+   * necessário tirar a(s) foto(s).<br>
+   * 
+   * Tira as fotos de acordo com a solicitação do participante.
+   * 
+   */
+  private void tirarFotos() {
 
-			intent.putExtra(Constantes.PARTICIPACAO, mParticipacao);
+    logger2.finest("tirarFotos() - inicio");
+    
+    // valida o participante
+    if (mParticipante == null) {
+      Log.d(TAG, "tirarFotos() - não é possível obter as informações do participante");
+      estadoFinal();
+    }
 
-			intent.putExtra("br.com.mltech.cameraId", currentCamera);
-			intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
+    // valida a participação
+    if (mParticipacao == null) {
+      Log.d(TAG, "tirarFotos() - não é possível obter as informações da participação");
+      estadoFinal();
+    }
 
-		}
+    // valida o evento
+    if (mEvento == null) {
+      Log.d(TAG, "tirarFotos() - não é possível obter as informações sobre o evento");
+      estadoFinal();
+    }
 
-		Log.d(TAG, "getIntentTirarFoto() -  " + intent);
-		Log.d(TAG, "getIntentTirarFoto() - outputFileUri: " + outputFileUri);
+    // obtém o tipo da foto (se o formato da foto é Polaroid ou Cabine)
+    int tipoFoto = mParticipacao.getTipoFoto();
 
-		return intent;
+    Log.i(TAG, "------------------------------------------------------------");
+    Log.i(TAG, "==> tirarFotos() - tipoFoto: " + tipoFoto);
+    Log.i(TAG, "------------------------------------------------------------");
 
-	}
+    if (tipoFoto == TIPO_FOTO_POLAROID) {
 
-	/**
-	 * executaActivityTiraFotoPolaroid(String arquivo)
-	 * 
-	 * Inicia a activity responsável por tirar uma foto e formatá-la como cabine.
-	 * 
-	 * @param arquivo
-	 *          nome do arquivo onde a foto original será armazenada
-	 * 
-	 */
-	private void executaActivityTiraFotoPolaroid(String arquivo) {
+      //--------------------
+      // TIPO_FOTO_POLAROID
+      //--------------------
 
-		Log.d(TAG, "executaActivityTiraFotoPolaroid() - arquivo=" + arquivo);
+      // gera um nome para o arquivo onde a foto será armazenada
+      String arquivo = FileUtils.obtemNomeArquivo(".png").getAbsolutePath();
 
-		file = new File(arquivo);
+      Log.i(TAG, "tirarFotos() - tipoFoto: POLAROID, arquivo: " + "arquivo");
+      logger.println("tirarFotos() - tipoFoto: POLAROID, arquivo: " + "arquivo");
+      logger2.info("tirarFotos() - tipoFoto: POLAROID, arquivo: " + "arquivo");
 
-		outputFileUri = Uri.fromFile(file);
+      // executa a activity responsável por tirar uma foto e formatá-la como
+      // Polaroid.
+      executaActivityTiraFotoPolaroid(arquivo);
 
-		Intent intent = getIntentTirarFoto();
+    } else if (tipoFoto == TIPO_FOTO_CABINE) {
 
-		startActivityForResult(intent, TIRA_FOTO_POLAROID);
+      //--------------------
+      // TIPO_FOTO_CABINE
+      //--------------------
 
-	}
+      Log.i(TAG, "tirarFotos() - tipoFoto: CABINE");
+      logger.println("tirarFotos() - tipoFoto: CABINE");
+      logger2.info("tirarFotos() - tipoFoto: CABINE");
 
-	/**
-	 * processaActivityResultPolaroid(int resultCode, Intent data)
-	 * 
-	 * <p>
-	 * Processa o resultado da execução da activity responsável por fornecer uma
-	 * foto.<br>
-	 * 
-	 * Pega a foto retornada e formata-a no formato Polaroid
-	 * 
-	 * @param resultCode
-	 *          resultado da execução da activity
-	 * 
-	 * @param data
-	 *          intent contendo os dados retornados (se houver)
-	 * 
-	 *          Use a variável de classe: file
-	 * 
-	 */
-	private String processaActivityResultPolaroid(int resultCode, Intent data) {
+      // executa a activity responsável por tirar uma três foto e formatá-las
+      // como Cabine.
+      executaActivityTiraFotoCabine();
 
-		Toast.makeText(this, "Processando foto Polaroid ...", Toast.LENGTH_LONG).show();
+    } else {
 
-		String meuArquivo2 = null;
+      Log.w(TAG, "tirarFotos() - tipo de foto: " + tipoFoto + " não suportado.");
+      estadoFinal();
 
-		/**
+    }
+
+  }
+
+  /**
+   * Cria uma intent para solicitar uma foto a uma activity <br>
+   * 
+   * <br>
+   * Observe que a variável FLAG é usada para "escolher" a activity que será
+   * executada e que irá retornar a foto
+   * 
+   * @return uma Intent (mensagem) para execução da activity desejada
+   * 
+   */
+  private Intent getIntentTirarFoto() {
+
+    Intent intent = null;
+
+    if (FLAG == 0) {
+
+      // simulação de "tirar uma foto"
+      intent = new Intent(this, ActivityCameraSimplesDummy.class);
+
+      intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
+
+    } else if (FLAG == 1) {
+
+      // tira uma foto verdadeira
+      intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+      intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+    } else if (FLAG == 2) {
+
+      // tira uma foto verdadeira usando a activity CameraActivity
+      intent = new Intent(this, CameraActivity.class);
+
+      intent.putExtra(Constantes.PARTICIPACAO, mParticipacao);
+
+      intent.putExtra("br.com.mltech.cameraId", currentCamera);
+      intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
+
+    }
+
+    Log.d(TAG, "getIntentTirarFoto() -  " + intent);
+    Log.d(TAG, "getIntentTirarFoto() - outputFileUri: " + outputFileUri);
+
+    return intent;
+
+  }
+
+  /** 
+   * Inicia a activity responsável por tirar uma foto e formatá-la como
+   * polaroid.<br>
+   * 
+   * @param arquivo
+   *          nome do arquivo onde a foto original tirada pela câmera será
+   *          armazenada.
+   * 
+   */
+  private void executaActivityTiraFotoPolaroid(String arquivo) {
+
+    logger2.info("executaActivityTiraFotoPolaroid() - arquivo=" + arquivo);
+    
+    Log.d(TAG, "executaActivityTiraFotoPolaroid() - arquivo=" + arquivo);
+    
+    
+
+    file = new File(arquivo);
+
+    outputFileUri = Uri.fromFile(file);
+
+    Intent intent = getIntentTirarFoto();
+
+    startActivityForResult(intent, TIRA_FOTO_POLAROID);
+
+  }
+
+  /**
+   * Processa o resultado da execução da activity responsável por fornecer uma
+   * foto.
+   * 
+   * Pega a foto retornada e formata-a no formato Polaroid.<br>
+   * 
+   * @param resultCode
+   *          resultado da execução da activity
+   * 
+   * @param data
+   *          intent contendo os dados retornados (se houver)
+   * 
+   *          Use a variável de classe: file
+   * 
+   */
+  private String processaActivityResultPolaroid(int resultCode, Intent data) {
+
+    Toast.makeText(this, "Processando foto Polaroid ...", Toast.LENGTH_LONG).show();
+
+    logger2.info("Processando foto Polaroid ...");
+    
+    String meuArquivo2 = null;
+
+    /**
      * 
      */
-		if (resultCode == RESULT_CANCELED) {
+    if (resultCode == RESULT_CANCELED) {
 
-			// operação cancelada
-			Log.w(TAG, "processaActivityResultPolaroid() - Operação cancelada pelo usuário");
-			estadoFinal();
+      // operação cancelada
+      Log.w(TAG, "processaActivityResultPolaroid() - Operação cancelada pelo usuário");
+      estadoFinal();
 
-		} else if (resultCode != RESULT_OK) {
+    } else if (resultCode != RESULT_OK) {
 
-			Log.w(TAG, "processaActivityResultPolaroid() - Operação não conhecida");
-			estadoFinal();
+      Log.w(TAG, "processaActivityResultPolaroid() - Operação não conhecida");
+      estadoFinal();
 
-		}
+    }
 
-		//
-		// RESULT_OK ==> activity retornou com sucesso
-		//
-		if (data != null) {
+    //
+    // RESULT_OK ==> activity retornou com sucesso
+    //
+    if (data != null) {
 
-			Log.d(TAG, "processaActivityResultPolaroid() - data.getData()= " + data.getData());
+      Log.d(TAG, "processaActivityResultPolaroid() - data.getData()= " + data.getData());
 
-			outputFileUri = data.getData();
+      outputFileUri = data.getData();
 
-			Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
-			// Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " +
-			// data.getStringExtra("outputFileUri"));
-			// Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " +
-			// data.getParcelableExtra("outputFileUri"));
+      Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
+      
+      logger2.info("processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
 
-			// nome do arquivo onde o bitmap está armazenado
-			// file = new File(data.getStringExtra("outputFileUri"));
+      // Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " +
+      // data.getStringExtra("outputFileUri"));
+      // Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " +
+      // data.getParcelableExtra("outputFileUri"));
 
-		} else {
+      // nome do arquivo onde o bitmap está armazenado
+      // file = new File(data.getStringExtra("outputFileUri"));
 
-			// não houve retorno de dados
-			Log.w(TAG, "processaActivityResultPolaroid - data (Intent) é vazia");
+    } else {
 
-			outputFileUri = null;
+      // não houve retorno de dados
+      Log.w(TAG, "processaActivityResultPolaroid - data (Intent) é vazia");
 
-		}
+      outputFileUri = null;
 
-		// exibe a URI contendo a foto
-		Log.i(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
+    }
 
-		// grava o bitmap (foto original)
-		boolean gravouFotoOriginal = ManipulaImagem.gravaBitmapArquivo3(outputFileUri);
+    // exibe a URI contendo a foto
+    Log.i(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
 
-		if (!gravouFotoOriginal) {
-			Log.w(TAG, "processaActivityResultPolaroid() - arquivo: " + outputFileUri + " não pode ser gravado");
-			return null;
-		}
+    // grava o bitmap (foto original)
+    boolean gravouFotoOriginal = ManipulaImagem.gravaBitmapArquivo3(outputFileUri);
 
-		// String meuArquivo = FileUtils.getFilename(file);
-		String meuArquivo = outputFileUri.getPath();
+    if (!gravouFotoOriginal) {
+      Log.w(TAG, "processaActivityResultPolaroid() - arquivo: " + outputFileUri + " não pode ser gravado");
+      return null;
+    }
 
-		meuArquivo = FileUtils.getFilename(outputFileUri);
+    // String meuArquivo = FileUtils.getFilename(file);
+    String meuArquivo = outputFileUri.getPath();
 
-		// cria um novo arquivo para armazenar a foto com a moldura
-		meuArquivo2 = FileUtils.getBasePhotoDirectory() + File.separator + meuArquivo + ".jpg";
-		// meuArquivo2 = FileUtils.obtemNomeArquivo("");
+    meuArquivo = FileUtils.getFilename(outputFileUri);
 
-		Log.w(TAG, "meuArquivo=" + meuArquivo);
-		Log.w(TAG, "meuArquivo2=" + meuArquivo2);
+    // cria um novo arquivo para armazenar a foto com a moldura
+    meuArquivo2 = FileUtils.getBasePhotoDirectory() + File.separator + meuArquivo + ".jpg";
 
-		// -------------------------------------------------------------------------------
-		Log.d(TAG, "carregaImagem()");
+    // meuArquivo2 = FileUtils.obtemNomeArquivo("");
 
-		// atualiza o nº de fotos carregadas
-		numFotosCarregadas++;
+    Log.d(TAG, "meuArquivo=" + meuArquivo);
+    Log.d(TAG, "meuArquivo2=" + meuArquivo2);
 
-		//
-		// Adiciona a nova foto a lista de fotos
-		//
-		listaFotos.add(foto);
+    // -------------------------------------------------------------------------------
+    Log.d(TAG, "carregaImagem()");
 
-		Log.i(TAG, "carregaImagem() ===> numFotosTiradas: " + numFotosTiradas + ", numFotosCarregadas: " + numFotosCarregadas);
+    // atualiza o nº de fotos carregadas
+    numFotosCarregadas++;
 
-		// -------------------------------------------------------------------------------
+    //
+    // Adiciona a nova foto a lista de fotos
+    //
+    listaFotos.add(foto);
 
-		// Obtém uma foto formato polaroid
-		Bitmap fp = formatarPolaroid(outputFileUri);
+    Log.i(TAG, "carregaImagem() ===> numFotosTiradas: " + numFotosTiradas + ", numFotosCarregadas: " + numFotosCarregadas);
 
-		if (fp != null) {
+    // -------------------------------------------------------------------------------
 
-			// bitmap obtido com sucesso
-			boolean gravouFotoComMoldura = ManipulaImagem.gravaBitmapArquivo(fp, meuArquivo2);
+    // Obtém uma foto formato polaroid
+    Bitmap fp = formatarPolaroid(outputFileUri);
 
-			if (!gravouFotoComMoldura) {
-				// foto não foi gravada
-				Log.w(TAG, "processaActivityResultPolaroid() - arquivo: " + meuArquivo2 + " não pode ser gravado");
-				return null;
-			}
+    if (fp != null) {
 
-		}
+      // bitmap obtido com sucesso
+      boolean gravouFotoComMoldura = ManipulaImagem.gravaBitmapArquivo(fp, meuArquivo2);
 
-		Log.w(TAG, "processaActivityResultPolaroid - FIM");
+      if (!gravouFotoComMoldura) {
+        // foto não foi gravada
+        Log.w(TAG, "processaActivityResultPolaroid() - arquivo: " + meuArquivo2 + " não pode ser gravado");
+        return null;
+      }
 
-		// o nome do arquivo onde a foto Polaroid foi gravada.
-		return meuArquivo2;
+    }
 
-	}
+    Log.w(TAG, "processaActivityResultPolaroid - FIM");
+    logger2.info("processaActivityResultPolaroid - FIM");
 
-	/**
-	 * executaActivityTiraFotoCabine()
-	 * 
-	 * 
-	 * 
-	 */
-	private void executaActivityTiraFotoCabine() {
+    // o nome do arquivo onde a foto Polaroid foi gravada.
+    return meuArquivo2;
 
-		Log.i(TAG, "==>");
-		Log.i(TAG, "==> executaActivityTiraFotoCabine() - indiceFoto: " + indiceFoto);
-		Log.i(TAG, "==>");
+  }
 
-		//
-		// cria um arquivo para armazenar a foto
-		//
+  /**
+   * executaActivityTiraFotoCabine()
+   * 
+   * 
+   * 
+   */
+  private void executaActivityTiraFotoCabine() {
 
-		// TODO melhorar a construção abaixo
-		// gera o nome de um arquivo onde será armazenada a foto
+    Log.i(TAG, "==>");
+    Log.i(TAG, "==> executaActivityTiraFotoCabine() - indiceFoto: " + indiceFoto);
+    Log.i(TAG, "==>");
 
-		String arquivo = (FileUtils.obtemNomeArquivo(".png")).getAbsolutePath();
+    //
+    // cria um arquivo para armazenar a foto
+    //
 
-		// cria um File usando o nome do arquivo gerado
-		file = new File(arquivo);
+    // TODO melhorar a construção abaixo
+    // gera o nome de um arquivo onde será armazenada a foto
 
-		Log.d(TAG, "==>");
-		Log.d(TAG, "==> executaActivityTiraFotoCabine() - arquivo=" + file.getAbsolutePath());
-		Log.d(TAG, "==> ");
+    String arquivo = (FileUtils.obtemNomeArquivo(".png")).getAbsolutePath();
 
-		// especifica a Uri do arquivo onde a foto deve ser armazenada
-		outputFileUri = Uri.fromFile(file);
+    // cria um File usando o nome do arquivo gerado
+    file = new File(arquivo);
 
-		// cria uma intent para "tirar a foto"
-		Intent intent = getIntentTirarFoto();
+    Log.d(TAG, "==>");
+    Log.d(TAG, "==> executaActivityTiraFotoCabine() - arquivo=" + file.getAbsolutePath());
+    Log.d(TAG, "==> ");
 
-		// exibe informações sobre a intent criada
-		Log.d(TAG, "executaActivityTiraFotoCabine() - intent: " + intent);
+    // especifica a Uri do arquivo onde a foto deve ser armazenada
+    outputFileUri = Uri.fromFile(file);
 
-		Log.d(TAG, "executaActivityTiraFotoCabine() - " + intent.getParcelableExtra("br.com.mltech.outputFileUri"));
+    // cria uma intent para "tirar a foto"
+    Intent intent = getIntentTirarFoto();
 
-		// inicia a activity responsável por obter a foto usando a intent criada.
-		startActivityForResult(intent, TIRA_FOTO_CABINE);
+    // exibe informações sobre a intent criada
+    Log.d(TAG, "executaActivityTiraFotoCabine() - intent: " + intent);
 
-	}
+    Log.d(TAG, "executaActivityTiraFotoCabine() - " + intent.getParcelableExtra("br.com.mltech.outputFileUri"));
 
-	/**
-	 * processaActivityResultCabine(int resultCode, Intent data)
-	 * 
-	 * <p>
-	 * Esta rotina é responsável por obter três foto da câmera. A variável
-	 * contadorCabine controla o nº de fotos (varia de 0 a 2)
-	 * </p>
-	 * 
-	 * <p>
-	 * Processa o resultado da execução da Activity responsável por obter uma
-	 * foto.
-	 * </p>
-	 * 
-	 * @param resultCode
-	 *          resultado da execução da activity
-	 * 
-	 * @param data
-	 *          dados retornados da execução da activity
-	 * 
-	 */
-	private String processaActivityResultCabine(int resultCode, Intent data) {
+    // inicia a activity responsável por obter a foto usando a intent criada.
+    startActivityForResult(intent, TIRA_FOTO_CABINE);
 
-		Log.i(TAG, "processaActivityResultCabine() -");
+  }
 
-		Bitmap meuBitmap = null;
+  /**
+   * Esta rotina é responsável por obter três foto da câmera. A variável
+   * contadorCabine controla o nº de fotos (varia de 0 a 2).<br>
+   * 
+   * <p>
+   * Processa o resultado da execução da Activity responsável por obter uma
+   * foto.
+   * </p>
+   * 
+   * @param resultCode
+   *          resultado da execução da activity
+   * 
+   * @param data
+   *          dados retornados da execução da activity
+   * 
+   */
+  private String processaActivityResultCabine(int resultCode, Intent data) {
 
-		if (resultCode == RESULT_OK) {
+    Log.i(TAG, "processaActivityResultCabine() -");
 
-			// activity executada com sucesso
-			Log.i(TAG, "processaActivityResultCabine() - indiceFoto=" + indiceFoto);
+    Bitmap meuBitmap = null;
 
-			if (data != null) {
+    if (resultCode == RESULT_OK) {
 
-				outputFileUri = data.getData();
+      // activity executada com sucesso
+      Log.i(TAG, "processaActivityResultCabine() - indiceFoto=" + indiceFoto);
 
-				Log.i(TAG, "processaActivityResultCabine() - outputFileUri: " + outputFileUri);
+      if (data != null) {
 
-				// gera o bitmap com a foto
-				Bitmap b = ManipulaImagem.criaBitmap(outputFileUri);
+        outputFileUri = data.getData();
 
-				// cria uma instância da classe Foto
-				// fornecendo o nome do arquivo onde a foto
-				// deve ser armazenada
-				Foto foto = new Foto(file.getAbsolutePath(), b);
+        Log.i(TAG, "processaActivityResultCabine() - outputFileUri: " + outputFileUri);
 
-				try {
+        // gera o bitmap com a foto
+        Bitmap b = ManipulaImagem.criaBitmap(outputFileUri);
 
-					foto.gravar();
-					Log.v(TAG, "processaActivityResultCabine() - Foto: " + file.getAbsolutePath() + " gravada com sucesso");
-					Log.d(TAG, "processaActivityResultCabine() - Foto: " + file.getPath() + " gravada com sucesso");
-					Log.d(TAG, "processaActivityResultCabine() - Foto: " + file.getName() + " gravada com sucesso");
+        // cria uma instância da classe Foto
+        // fornecendo o nome do arquivo onde a foto
+        // deve ser armazenada
+        Foto foto = new Foto(file.getAbsolutePath(), b);
 
-				} catch (FileNotFoundException e) {
-					Log.w(TAG, "processaActivityResultCabine() - Arquivo não encontrado", e);
+        try {
 
-				} catch (IOException e) {
-					Log.w(TAG, "processaActivityResultCabine() - Exceção de I/O lançada: ", e);
+          foto.gravar();
 
-				}
+          Log.v(TAG, "processaActivityResultCabine() - Foto: " + file.getAbsolutePath() + " gravada com sucesso");
+          Log.d(TAG, "processaActivityResultCabine() - Foto: " + file.getPath() + " gravada com sucesso");
+          Log.d(TAG, "processaActivityResultCabine() - Foto: " + file.getName() + " gravada com sucesso");
 
-				// armazena a foto no índice dado pela variável indiceFoto no array de
-				// fotos do objeto FotoCabine
-				fotoCabine.setFoto(indiceFoto, foto);
+        } catch (FileNotFoundException e) {
+          Log.w(TAG, "processaActivityResultCabine() - Arquivo não encontrado", e);
 
-				// grava o bitmap (foto original)
-				// gravouFotoOriginal =
-				// ManipulaImagem.gravaBitmapArquivo3(outputFileUri);
+        } catch (IOException e) {
+          Log.w(TAG, "processaActivityResultCabine() - Exceção de I/O lançada: ", e);
 
-			}
+        }
 
-			// incrementa o índice usado para armazenar a foto obtida no array de
-			// fotos
-			indiceFoto++;
+        // armazena a foto no índice dado pela variável indiceFoto no array de
+        // fotos do objeto FotoCabine
+        fotoCabine.setFoto(indiceFoto, foto);
 
-			if (indiceFoto < 3) {
+        // grava o bitmap (foto original)
+        // gravouFotoOriginal =
+        // ManipulaImagem.gravaBitmapArquivo3(outputFileUri);
 
-				// obtem uma outra foto
-				executaActivityTiraFotoCabine();
+      }
 
-			} else {
+      // incrementa o índice usado para armazenar a foto obtida no array de
+      // fotos
+      indiceFoto++;
 
-				// três foto já foram obtidas (tiradas)
-				meuBitmap = fimExecucaoActivityTiraFotoCabine();
+      if (indiceFoto < 3) {
 
-				if (meuBitmap == null) {
-					Log.w(TAG, "processaActivityResultCabine() - bitmap retornado é nulo");
-				}
+        // obtem uma outra foto
+        executaActivityTiraFotoCabine();
 
-			}
+      } else {
 
-		} else if (resultCode == RESULT_CANCELED) {
+        // três foto já foram obtidas (tiradas)
+        meuBitmap = fimExecucaoActivityTiraFotoCabine();
 
-			// operação cancelada
-			Log.w(TAG, "processaActivityResultCabine() - Operação cancelada pelo usuário na foto: " + indiceFoto);
-			// TODO aqui deveremos "cancelar" a fotoCabine fazendo-a null (entre
-			// outras coisas)
-			meuBitmap = null;
+        if (meuBitmap == null) {
+          Log.w(TAG, "processaActivityResultCabine() - bitmap retornado é nulo");
+        }
 
-		} else {
+      }
 
-			Log.w(TAG, "processaActivityResultCabine() - Operação não suportada pelo usuário");
+    } else if (resultCode == RESULT_CANCELED) {
 
-		}
+      // operação cancelada
+      Log.w(TAG, "processaActivityResultCabine() - Operação cancelada pelo usuário na foto: " + indiceFoto);
+      // TODO aqui deveremos "cancelar" a fotoCabine fazendo-a null (entre
+      // outras coisas)
+      meuBitmap = null;
 
-		if (meuBitmap == null) {
-			Log.w(TAG, "processaActivityResultCabine() - bitmap é nulo");
-			return null;
-		}
+    } else {
 
-		// cria um novo arquivo para guardar a foto processada
-		String arquivo = (FileUtils.obtemNomeArquivo(".png")).getAbsolutePath();
+      Log.w(TAG, "processaActivityResultCabine() - Operação não suportada pelo usuário");
 
-		// cria uma foto processada
-		Foto fotoProcessada = new Foto(arquivo, meuBitmap);
+    }
 
-		boolean gravouFotoProcessada = false;
+    if (meuBitmap == null) {
+      Log.w(TAG, "processaActivityResultCabine() - bitmap é nulo");
+      return null;
+    }
 
-		try {
+    // cria um novo arquivo para guardar a foto processada
+    String arquivo = (FileUtils.obtemNomeArquivo(".png")).getAbsolutePath();
 
-			gravouFotoProcessada = fotoProcessada.gravar();
+    // cria uma foto processada
+    Foto fotoProcessada = new Foto(arquivo, meuBitmap);
 
-			if (gravouFotoProcessada == false) {
-				Log.w(TAG, "processaActivityResultCabine() - fotoProcessada não foi gravada !!!");
-			}
+    boolean gravouFotoProcessada = false;
 
-		} catch (FileNotFoundException e) {
-			Log.w(TAG, "processaActivityResultCabine() - arquivo não foi encontrado", e);
+    try {
 
-		} catch (IOException e) {
-			Log.w(TAG, "processaActivityResultCabine() - erro de I/O", e);
+      gravouFotoProcessada = fotoProcessada.gravar();
 
-		}
+      if (gravouFotoProcessada == false) {
+        Log.w(TAG, "processaActivityResultCabine() - fotoProcessada não foi gravada !!!");
+      }
 
-		String s = null;
+    } catch (FileNotFoundException e) {
+      Log.w(TAG, "processaActivityResultCabine() - arquivo não foi encontrado", e);
 
-		// retorna o nome do arquivo onde a foto foi armazenada
-		if ((fotoProcessada != null) && (gravouFotoProcessada == true)) {
-			s = fotoProcessada.getArquivo();
-		}
+    } catch (IOException e) {
+      Log.w(TAG, "processaActivityResultCabine() - erro de I/O", e);
 
-		return s;
+    }
 
-	}
+    String s = null;
 
-	/**
-	 * fimExecucaoActivityTiraFotoCabine()
-	 * 
-	 * Processa as três foto tiradas convertendo-as para o tamanho 3x4.
-	 * 
-	 * @return uma instância de Foto ou null em caso de algum problema.
-	 */
-	private Bitmap fimExecucaoActivityTiraFotoCabine() {
+    // retorna o nome do arquivo onde a foto foi armazenada
+    if ((fotoProcessada != null) && (gravouFotoProcessada == true)) {
+      s = fotoProcessada.getArquivo();
+    }
 
-		// Após tirar as três fotos é necessário:
-		// - converter as foto para o formato 3x4
-		// - montar a foto formato cabine juntando as fotos 3x4 e a moldura
-		//
-		// fotoCabine.getFoto[0] --> Foto
-		// fotoCabine.getFoto[1] --> Foto
-		// fotoCabine.getFoto[2] --> Foto
+    return s;
 
-		Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - inicio");
+  }
 
-		if (fotoCabine == null) {
-			Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - fotoCabine é nula");
-			return null;
-		}
+  /**
+   * Processa as três foto tiradas para montar uma foto formato cabine.<br>
+   * Cada foto é convertida para o tamanho 3x4.<br>
+   * 
+   * @return uma instância de Foto ou null em caso de algum problema.
+   */
+  private Bitmap fimExecucaoActivityTiraFotoCabine() {
 
-		// cria o bitmap correspondente a cada foto
-		// criaBitmapFotoCabine(fotoCabine);
+    // Após tirar as três fotos é necessário:
+    // - converter as foto para o formato 3x4
+    // - montar a foto formato cabine juntando as fotos 3x4 e a moldura
+    //
+    // fotoCabine.getFoto[0] --> Foto
+    // fotoCabine.getFoto[1] --> Foto
+    // fotoCabine.getFoto[2] --> Foto
 
-		// Exibe o estado da instância da classe FotoCabine
-		Log.d(TAG, fotoCabine.toString());
+    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - inicio");
 
-		Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - agora é montar a foto cabine ...");
+    if (fotoCabine == null) {
+      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - fotoCabine é nula");
+      return null;
+    }
 
-		Bitmap meuBitmap = null;
+    // cria o bitmap correspondente a cada foto
+    // criaBitmapFotoCabine(fotoCabine);
 
-		meuBitmap = montaFotoCabine(fotoCabine);
+    // Exibe o estado da instância da classe FotoCabine
+    Log.d(TAG, fotoCabine.toString());
 
-		if (meuBitmap == null) {
-			Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - bitmap retornado é nulo");
-		}
+    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - agora é montar a foto cabine ...");
 
-		return meuBitmap;
+    Bitmap meuBitmap = montaFotoCabine(fotoCabine);
 
-	}
+    if (meuBitmap == null) {
+      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - bitmap retornado é nulo");
+    }
 
-	/**
-	 * montaFotoCabine(fotoCabine)
-	 * 
-	 * Cria uma foto com moldura cabine 3,5 x 15 cm a partir de três fotos 3x4 e
-	 * uma moldura.
-	 * 
-	 * @param fotoCabine
-	 *          Instância da classe FotoCabine
-	 * 
-	 * @return bitmap contendo a foto formatada ou null em caso de erro
-	 * 
-	 * @throws IOException
-	 * 
-	 * @throws FileNotFoundException
-	 * 
-	 */
-	private Bitmap montaFotoCabine(FotoCabine fotoCabine) {
+    return meuBitmap;
 
-		if (fotoCabine == null) {
-			// fotoCabine não existe.
-			Log.w(TAG, "montaFotoCabine() - fotoCabine está vazia");
-			return null;
-		}
+  }
 
-		// cria um array contendo referências a três instâncias de Bitmap
-		Bitmap[] fotosRedimesionadas = new Bitmap[3];
+  /**
+   * Cria uma foto com moldura cabine de tamanho 3.5 x 15.0 cm a partir de três fotos 3x4 e
+   * uma moldura.<br>
+   * 
+   * @param fotoCabine
+   *          Instância da classe FotoCabine
+   * 
+   * @return bitmap contendo a foto formatada ou null em caso de erro
+   * 
+   * @throws IOException
+   * 
+   * @throws FileNotFoundException
+   * 
+   */
+  private Bitmap montaFotoCabine(FotoCabine fotoCabine) {
 
-		// o array fotos possui uma posição para cada foto
-		// preenche o array com as fotos armazenadas na fotoCabine
-		Foto[] fotos = fotoCabine.getFotos();
+    if (fotoCabine == null) {
+      // fotoCabine não existe.
+      Log.w(TAG, "montaFotoCabine() - fotoCabine está vazia");
+      return null;
+    }
 
-		//
-		// processa cada uma das fotos e faz o redimensionamento
-		// para o tamanho 3x4
-		//
-		for (int i = 0; i < 3; i++) {
+    // cria um array contendo referências a três instâncias de Bitmap
+    Bitmap[] fotosRedimesionadas = new Bitmap[3];
 
-			Log.i(TAG, "montaFotoCabine() - foto[" + i + "] = " + fotos[i]);
+    // o array fotos possui uma posição para cada foto
+    // preenche o array com as fotos armazenadas na fotoCabine
+    Foto[] fotos = fotoCabine.getFotos();
 
-			// transforma cada foto em 3x4
-			// gera um bitmap com a imagem redimensionada em 3x4
-			fotosRedimesionadas[i] = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 113, 151);
+    //
+    // processa cada uma das fotos e faz o redimensionamento
+    // para o tamanho 3x4
+    //
+    for (int i = 0; i < 3; i++) {
 
-		}
+      Log.i(TAG, "montaFotoCabine() - foto[" + i + "] = " + fotos[i]);
 
-		//
-		// gera um único bitmap a partir das três foto 3x4 e inclui a moldura
-		//
-		Bitmap bitmap = processaFotoFormatoCabine3(fotosRedimesionadas[0], fotosRedimesionadas[1], fotosRedimesionadas[2],
-				mBitmapMolduraCabine);
+      // transforma cada foto em 3x4
+      // gera um bitmap com a imagem redimensionada em 3x4
+      fotosRedimesionadas[i] = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 113, 151);
 
-		if (bitmap != null) {
-			Log.v(TAG, "montaFotoCabine() - bitmap gerado");
-		} else {
-			Log.w(TAG, "montaFotoCabine() - bitmap não foi gerado (retornou nulo)");
-		}
+    }
 
-		// retorna um bitmap ou null em caso de erro
-		return bitmap;
+    //
+    // gera um único bitmap a partir das três foto 3x4 e inclui a moldura
+    //
+    Bitmap bitmap = processaFotoFormatoCabine3(fotosRedimesionadas[0], fotosRedimesionadas[1], fotosRedimesionadas[2],
+        mBitmapMolduraCabine);
 
-	}
+    if (bitmap != null) {
+      Log.v(TAG, "montaFotoCabine() - bitmap gerado");
+    } else {
+      Log.w(TAG, "montaFotoCabine() - bitmap não foi gerado (retornou nulo)");
+    }
 
-	/**
-	 * enviaEmail(Uri lastUri)
-	 * 
-	 * Inicia o processo de envio de email.
-	 * 
-	 * Verifica inicialmente se todas as condições necessárias estão satisfeita
-	 * para o envio do email com a foto anexada.
-	 * 
-	 * Usa: mParticipante e mContratante
-	 * 
-	 * @param lastUri
-	 *          Uri onde a foto está armazenada
-	 * 
-	 * @throws Exception
-	 * 
-	 */
-	private void enviaEmail(Uri lastUri) throws Exception {
+    // retorna um bitmap ou null em caso de erro
+    return bitmap;
 
-		// valida as informações para envio do email
-		validaDadosEmail(lastUri);
+  }
 
-		// carrega as preferências sobre o envio de email
-		SharedPreferences emailPreferences = getSharedPreferences(Constantes.PREF_EMAIL, MODE_PRIVATE);
+  /** 
+   * Inicia o processo de envio de email.<br>
+   * 
+   * Verifica inicialmente se todas as condições necessárias estão satisfeita
+   * 
+   * para o envio do email com a foto anexada.<br>
+   * 
+   * Usa: mParticipante e mContratante
+   * 
+   * @param lastUri
+   *          Uri onde a foto está armazenada
+   * 
+   * @throws Exception
+   * 
+   */
+  private void enviaEmail(Uri lastUri) throws Exception {
 
-		if (emailPreferences == null) {
-			Log.w(TAG, "enviaEmail() - SharedPreferences não foi encontrada.");
-		}
+    Log.d(TAG, "enviaEmail() - lastUri=" + lastUri);
 
-		/**
-		 * Assunto do email
-		 * 
-		 * Recupera o "subject" do email do arquivo de preferências
-		 */
-		String subject = emailPreferences.getString(Constantes.PREFERENCIAS_ASSUNTO, "Evento Inicial");
+    // valida as informações para envio do email
+    validaDadosEmail(lastUri);
 
-		/**
-		 * Corpo do email
-		 * 
-		 * Recupera o "corpo" do email do arquivo de preferências
-		 * 
-		 */
-		String body = emailPreferences.getString(Constantes.PREFERENCIAS_DESCRICAO, "Segue as informações sobre o evento");
-
-		emailPreferences = null;
-
-		// obtém o email do participante do evento
-		String to = mParticipante.getEmail();
-
-		// obtém o email do contratante do evento
-		// ele será copiado em BCC no email enviado
-		String bcc = mContratante.getEmail();
-
-		// envia o email
+    // carrega as preferências sobre o envio de email
+    SharedPreferences emailPreferences = getSharedPreferences(Constantes.PREF_EMAIL, MODE_PRIVATE);
 
-		if (EMAIL_TIPO == 0) {
-
-			// envia email usando uma intent
-			sendEmail(to, bcc, subject, body, lastUri);
-
-		} else if (EMAIL_TIPO == 1) {
-
-			// envia email usando JavaMail ao invés de uma intent
-			boolean enviadoComSucesso = sendEmailExternal(to, bcc, subject, body, lastUri);
-
-			Log.w(TAG, "enviaEmail() - EMAIL ENVIADO COM SUCESSO: " + enviadoComSucesso);
-
-			if (enviadoComSucesso) {
-				// processa o resultado do envio do email com sucesso
-				aposEnviarEmail();
-			} else {
-				// vai para o estado final
-				estadoFinal();
-			}
-
-		}
-
-	}
-
-	/**
-	 * validaDadosEmail(Uri lastUri)
-	 * 
-	 * Valida se existe informações suficientes para envio do email.
-	 * 
-	 * @param lastUri
-	 *          URI da foto
-	 */
-	private void validaDadosEmail(Uri lastUri) {
-
-		boolean erro = false;
-
-		//
-		// TODO verificar o estado da aplicação
-		// aqui é necessário saber se existe uma foto
-		//
-
-		if (getEstado() < 2) {
-			Log.d(TAG, "validaDadosEmail() - Foto não foi tirada");
-			erro = true;
-		}
-
-		if (mParticipante == null) {
-			// Log.d(TAG, "mParticipante é null");
-			Log.w(TAG, "validaDadosEmail() - Não há informações sobre o participante");
-			erro = true;
-		}
-
-		if (mContratante == null) {
-			// Log.d(TAG, "mContrante é null");
-			Log.w(TAG, "validaDadosEmail() - Não há informações sobre o contratante");
-			erro = true;
-		}
-
-		if (lastUri == null) {
-			// Log.d(TAG, "xUri é null");
-			Log.w(TAG, "validaDadosEmail() - Não há foto");
-			erro = true;
-		}
-
-		if (erro) {
-			// TODO o que fazer ???
-		} else {
-			// TODO o que fazer ???
-		}
-
-	}
-
-	/**
-	 * sendEmail(String emailParticipante, String emailContratante, String
-	 * subject, String text, Uri imageURI)
-	 * 
-	 * @param emailParticipante
-	 *          Endereço de email do participante do evento
-	 * 
-	 * @param emailContratante
-	 *          Endereço de email do contratante do evento
-	 * 
-	 * @param subject
-	 *          String usada como "Subject" do email
-	 * 
-	 * @param text
-	 *          String usada como "Body" do email (o conteúdo da mensagem)
-	 * 
-	 * @param imageUri
-	 *          Uri da foto
-	 * 
-	 */
-	private void sendEmail(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri) {
-
-		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+    if (emailPreferences == null) {
+      Log.w(TAG, "enviaEmail() - SharedPreferences não foi encontrada.");
+    }
 
-		Log.d(TAG, "sendEmail() ===> sendEmail()");
+    /**
+     * Assunto do email
+     * 
+     * Recupera o "subject" do email do arquivo de preferências
+     */
+    String subject = emailPreferences.getString(Constantes.PREFERENCIAS_ASSUNTO, "Evento Inicial");
 
-		// To:
-		if (emailParticipante != null) {
-			emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { emailParticipante });
-		} else {
-			// email do participante não pode ser vazio
-		}
+    /**
+     * Corpo do email
+     * 
+     * Recupera o "corpo" do email do arquivo de preferências
+     * 
+     */
+    String body = emailPreferences.getString(Constantes.PREFERENCIAS_DESCRICAO, "Segue as informações sobre o evento");
 
-		// Bcc:
-		if (emailContratante != null) {
-			// email do contratante foi fornecido (BCC:)
-			emailIntent.putExtra(Intent.EXTRA_BCC, new String[] { emailContratante });
-		} else {
-			// email do contratante do evento não pode ser vazio
-		}
-
-		/**
-		 * A constant string holding the desired subject line of a message. Constant
-		 * Value: "android.intent.extra.SUBJECT"
-		 */
-		emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+    emailPreferences = null;
 
-		/**
-		 * A constant CharSequence that is associated with the Intent, used with
-		 * ACTION_SEND to supply the literal data to be sent. Note that this may be
-		 * a styled CharSequence, so you must use Bundle.getCharSequence() to
-		 * retrieve it. Constant Value: "android.intent.extra.TEXT"
-		 */
-		emailIntent.putExtra(Intent.EXTRA_TEXT, text);
+    // obtém o email do participante do evento
+    String to = mParticipante.getEmail();
 
-		// Anexa a foto ao email
-		emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, imageUri);
+    // obtém o email do contratante do evento
+    // ele será copiado em BCC no email enviado
+    String bcc = mContratante.getEmail();
 
-		Log.d(TAG, "sendEmail() - Anexando o arquivo: " + imageUri + " aos anexos ...");
+    // envia o email
 
-		// Define o MIME type do email
-		// emailIntent.setType("message/rfc822");
-		// emailIntent.setType("image/png");
-		emailIntent.setType("image/jpg");
+    if (EMAIL_TIPO == 0) {
 
-		// TODO verificar se funciona !!!
-		startActivityForResult(emailIntent, ACTIVITY_CHOOSER);
+      // envia email usando uma intent
+      sendEmail(to, bcc, subject, body, lastUri);
 
-		// Envia "email" a redes sociais previamente cadastradas
-		sendEmailRedesSociais();
+    } else if (EMAIL_TIPO == 1) {
 
-		// sendEmailByChooser(emailIntent);
+      // envia email usando JavaMail ao invés de uma intent
 
-	}
+      Log.d(TAG, "to: " + to + ", bcc=" + bcc + ", subject=" + subject + ", body=" + body + ", lastUri=" + lastUri);
 
-	/**
-	 * 
-	 * Envia email usando a biblioteca externa de envio de email
-	 * 
-	 * Obs: usa a variável membro mailServer.
-	 * 
-	 * @throws Exception
-	 *           erro no envio do email
-	 * 
-	 */
-	private boolean sendEmailExternal(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri)
-			throws Exception {
+      boolean enviadoComSucesso = sendEmailExternal(to, bcc, subject, body, lastUri);
 
-		// cria um file que será adicionado (anexado) ao email
-		File f = new File(imageUri.getPath());
-		try {
+      Log.w(TAG, "enviaEmail() - EMAIL ENVIADO COM SUCESSO: " + enviadoComSucesso);
 
-			// anexa o arquivo ao email
-			mailServer.addAttachment(f.getAbsolutePath());
+      if (enviadoComSucesso) {
+        // processa o resultado do envio do email com sucesso
+        aposEnviarEmail();
+      } else {
+        // vai para o estado final
+        estadoFinal();
+      }
 
-		} catch (Exception e) {
-			Log.w(TAG, "sendEmailExternal() - não foi encontrado o anexo contendo a foto", e);
-			return false;
+    }
 
-		}
+  }
 
-		// Reply to:
-		mailServer.setFrom(emailContratante);
+  /** 
+   * Valida se existe informações suficientes para envio do email.<br>
+   * 
+   * As condições necessário verificadas são:<br>
+   * <ul>
+   * <li>contratante
+   * <li>participante 
+   * <li>foto
+   * </ul>
+   * 
+   * @param lastUri
+   *          URI da foto
+   */
+  private void validaDadosEmail(Uri lastUri) {
 
-		// To:
-		mailServer.setTo(new String[] { emailParticipante });
+    boolean erro = false;
 
-		// Bcc:
-		mailServer.setBcc(new String[] { emailContratante });
+    //
+    // TODO verificar o estado da aplicação
+    // aqui é necessário saber se existe uma foto
+    //
 
-		// Subject
-		mailServer.setSubject(subject);
+    Log.d(TAG, "validaDadosEmail() - lastUri=" + lastUri);
 
-		// Body
-		mailServer.setBody(text);
+    if (getEstado() < 2) {
+      Log.d(TAG, "validaDadosEmail() - Foto não foi tirada");
+      erro = true;
+    }
 
-		Log.d(TAG, "sendEmailExternal() - " + mailServer);
+    if (mParticipante == null) {
+      // Log.d(TAG, "mParticipante é null");
+      Log.w(TAG, "validaDadosEmail() - Não há informações sobre o participante");
+      erro = true;
+    }
 
-		boolean enviou = false;
+    if (mContratante == null) {
+      // Log.d(TAG, "mContrante é null");
+      Log.w(TAG, "validaDadosEmail() - Não há informações sobre o contratante");
+      erro = true;
+    }
 
-		try {
+    if (lastUri == null) {
+      // Log.d(TAG, "xUri é null");
+      Log.w(TAG, "validaDadosEmail() - Não há foto");
+      erro = true;
+    }
 
-			enviou = mailServer.send();
+    if (erro) {
+      // TODO o que fazer ???
+    } else {
+      // TODO o que fazer ???
+    }
+
+    Log.d(TAG, "validaDadosEmail() - fim");
+
+  }
+
+  /**
+   * Envia o email ao participante e ao contratante (em bcc) com a foto tirada no evento.<br>
+   * Esse método usa o mecanismo de envio de email usado pelo Android.<br>
+   * 
+   * @param emailParticipante
+   *          Endereço de email do participante do evento
+   * 
+   * @param emailContratante
+   *          Endereço de email do contratante do evento
+   * 
+   * @param subject
+   *          String usada como "Subject" do email
+   * 
+   * @param text
+   *          String usada como "Body" do email (o conteúdo da mensagem)
+   * 
+   * @param imageUri
+   *          Uri da foto
+   * 
+   */
+  private void sendEmail(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri) {
+
+    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+    Log.d(TAG, "sendEmail() ===> sendEmail()");
+
+    // To:
+    if (emailParticipante != null) {
+      emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { emailParticipante });
+    } else {
+      // email do participante não pode ser vazio
+    }
+
+    // Bcc:
+    if (emailContratante != null) {
+      // email do contratante foi fornecido (BCC:)
+      emailIntent.putExtra(Intent.EXTRA_BCC, new String[] { emailContratante });
+    } else {
+      // email do contratante do evento não pode ser vazio
+    }
+
+    /**
+     * A constant string holding the desired subject line of a message. Constant
+     * Value: "android.intent.extra.SUBJECT"
+     */
+    emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
 
-		} catch (Exception e) {
-			enviou = false;
-			Log.w(TAG, "sendEmailExternal() - falha no envio do email");
-		}
+    /**
+     * A constant CharSequence that is associated with the Intent, used with
+     * ACTION_SEND to supply the literal data to be sent. Note that this may be
+     * a styled CharSequence, so you must use Bundle.getCharSequence() to
+     * retrieve it. Constant Value: "android.intent.extra.TEXT"
+     */
+    emailIntent.putExtra(Intent.EXTRA_TEXT, text);
 
-		// resultado do envio do email
-		return enviou;
+    // Anexa a foto ao email
+    emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, imageUri);
 
-	}
+    Log.d(TAG, "sendEmail() - Anexando o arquivo: " + imageUri + " aos anexos ...");
 
-	/**
-	 * sendEmailRedesSociais()
-	 * 
-	 * Verifica se as mensagens devem ser postadas nas redes sociais
-	 * 
-	 * Usa mEvento (informações sobre o evento).
-	 * 
-	 */
-	private void sendEmailRedesSociais() {
+    // Define o MIME type do email
+    // emailIntent.setType("message/rfc822");
+    // emailIntent.setType("image/png");
+    emailIntent.setType("image/jpg");
 
-		Log.w(TAG, "sendEmailRedesSociais() - Inicio do método ...");
+    // TODO verificar se funciona !!!
+    startActivityForResult(emailIntent, ACTIVITY_CHOOSER);
 
-		if (mEvento == null) {
-			Log.w(TAG, "sendEmailRedesSociais() - Não foi possível obter os dados do evento.");
-			return;
-		}
+    // Envia "email" a redes sociais previamente cadastradas
+    sendEmailRedesSociais();
 
-		// TODO talvez pudesse ser feito após o envio do email ???
+    // sendEmailByChooser(emailIntent);
 
-		Log.d(TAG, "sendEmailRedesSociais() - mEvento.isEnviaFacebook()=" + mEvento.isEnviaFacebook());
-		Log.d(TAG, "sendEmailRedesSociais() - mEvento.isEnviaTwitter()=" + mEvento.isEnviaTwitter());
+  }
 
-		if (mEvento.isEnviaFacebook()) {
+  /**
+   * Envia email usando a biblioteca externa (JavaMail) de envio de email.
+   * 
+   * O contratante do evento sempre receberá uma cópia do email em cópia
+   * invisível do participante.
+   * 
+   * Obs: usa a variável membro mailServer.
+   * 
+   * @param emailParticipante
+   *          Email do participante do evento
+   * @param emailContratante
+   *          Email do contratante do evento
+   * @param subject
+   *          Assunto tratado pelo email
+   * @param text
+   *          Corpo do email (mensagem)
+   * @param imageUri
+   *          Uri da foto tirada
+   * 
+   * @return true se email enviado com sucesso ou false em caso de erro.
+   * 
+   * @throws Exception
+   *           erro no envio do email
+   */
+  private boolean sendEmailExternal(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri)
+      throws Exception {
 
-			// enviar foto ao Facebook
-			// TODO qual texto ???
+    // cria um file que será adicionado (anexado) ao email
+    File f = new File(imageUri.getPath());
+    try {
 
-			Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Facebook ...");
-			sendMsgFacebook();
+      if (mailServer != null) {
 
-		}
+        // anexa o arquivo ao email
+        mailServer.addAttachment(f.getAbsolutePath());
 
-		if (mEvento.isEnviaTwitter()) {
+      }
+      else {
+        Log.w(TAG, "sendEmailExternal() - mailServer não foi inicializado.");
+      }
 
-			// enviar foto ao Twitter
-			// TODO qual texto ?
+    } catch (Exception e) {
+      Log.w(TAG, "sendEmailExternal() - não foi encontrado o anexo contendo a foto", e);
+      logger.println("sendEmailExternal() - não foi encontrado o anexo contendo a foto");
+      logger2.info("sendEmailExternal() - não foi encontrado o anexo contendo a foto");
+      return false;
 
-			Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Twitter ...");
-			sendMsgTwitter();
+    }
 
-		}
+    // Reply to:
+    mailServer.setFrom(emailContratante);
 
-	}
+    // To:
+    mailServer.setTo(new String[] { emailParticipante });
 
-	/**
-	 * sendMsgFacebook()
-	 */
-	private void sendMsgFacebook() {
+    // Bcc:
+    mailServer.setBcc(new String[] { emailContratante });
 
-	}
+    // Subject
+    mailServer.setSubject(subject);
 
-	/**
-	 * sendMsgTwitter()
-	 */
-	private void sendMsgTwitter() {
+    // Body
+    mailServer.setBody(text);
 
-	}
+    Log.d(TAG, "sendEmailExternal() - " + mailServer);
 
-	/**
-	 * activityChooserResult(int resultCode, Intent data)
-	 * 
-	 * Processa o resultado do envio do email (execução da activity)
-	 * 
-	 * @param resultCode
-	 *          Resultado a execução da activity
-	 * 
-	 * @param data
-	 *          Intent retornada
-	 * 
-	 */
-	private void resultActivityChooser(int resultCode, Intent data) {
+    boolean enviou = false;
 
-		Log.d(TAG, "resultActivityChooser() ===> processando resultado da ACTIVITY CHOOSER: resultCode=" + resultCode);
+    try {
 
-		// Obtém informações sobre a intent chamadora
-		Intent intent = this.getIntent();
+      // envia o email
+      enviou = mailServer.send();
 
-		if (intent != null) {
+      Log.d(TAG, "sendEmailExternal() - enviou: " + enviou);
 
-			ComponentName compName = intent.getComponent();
-			if (compName != null) {
-				Log.d(TAG, "compName=" + compName.getClassName() + ", compName=" + compName.getPackageName());
-			}
+    } catch (Exception e) {
 
-		}
+      enviou = false;
+      Log.w(TAG, "sendEmailExternal() - falha no envio do email");
 
-		// verifica os dados retornados pela Activity que enviou o email
-		if (data != null) {
+    }
 
-			Log.w(TAG, "resultActivityChooser() - dados recebidos não foram trabalhados");
+    // resultado do envio do email
+    return enviou;
 
-			// The action of this intent or null if none is specified.
-			Log.w(TAG, "resultActivityChooser() - data.getAction()=" + data.getAction());
+  }
 
-		}
+  /**
+   * Verifica se as mensagens devem ser postadas nas redes sociais<br>
+   * 
+   * Usa mEvento (informações sobre o evento).
+   * 
+   */
+  private void sendEmailRedesSociais() {
 
-		if (resultCode == 0) {
+    Log.w(TAG, "sendEmailRedesSociais() - Inicio do método ...");
 
-			Log.d(TAG, "ACTIVITY_CHOOSER - email enviado com sucesso");
+    if (mEvento == null) {
+      Log.w(TAG, "sendEmailRedesSociais() - Não foi possível obter os dados do evento.");
+      return;
+    }
 
-			// processa
-			aposEnviarEmail();
+    // TODO talvez pudesse ser feito após o envio do email ???
 
-		} else if (resultCode == RESULT_CANCELED) {
-			// envio do email foi cancelado pelo usuário
-			Log.d(TAG, "resultActivityChooser() - ACTIVITY_CHOOSER - o envio de email foi cancelado");
-			estadoFinal();
+    Log.d(TAG, "sendEmailRedesSociais() - mEvento.isEnviaFacebook()=" + mEvento.isEnviaFacebook());
+    Log.d(TAG, "sendEmailRedesSociais() - mEvento.isEnviaTwitter()=" + mEvento.isEnviaTwitter());
 
-		} else {
+    if (mEvento.isEnviaFacebook()) {
 
-			Log.d(TAG, "resultActivityChooser() - ACTIVITY_CHOOSER - resultCode " + resultCode + " não pde ser tratado");
-			estadoFinal();
+      // enviar foto ao Facebook
+      // TODO qual texto ???
 
-		}
+      Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Facebook ...");
+      sendMsgFacebook();
 
-	}
+    }
 
-	/**
-	 * Após o envio de email com sucesso
-	 * 
-	 * 
-	 */
-	private void aposEnviarEmail() {
+    if (mEvento.isEnviaTwitter()) {
 
-		Log.d(TAG, "aposEnviarEmail() - email enviado com sucesso");
+      // enviar foto ao Twitter
+      // TODO qual texto ?
 
-		// mensagem exibida após envio de email
-		Toast.makeText(this, "Email enviado com sucesso", Toast.LENGTH_LONG).show();
+      Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Twitter ...");
+      sendMsgTwitter();
 
-		// Atualiza o estado da máquina de estado
-		setEstado(3);
+    }
 
-		// Processa o próximo estado
-		estadoFinal();
+  }
 
-	}
+  /**
+   * sendMsgFacebook()
+   */
+  private void sendMsgFacebook() {
 
-	/**
-	 * estadoFinal()
-	 * 
-	 * Representa o estado final da máquina de estado.
-	 * 
-	 * É também o responsável pela finalização da activity, estabelecendo seu
-	 * resultado.
-	 * 
-	 * Se o estado final foi atingido então o processo correu segundo esperado.
-	 * 
-	 */
-	private void estadoFinal() {
+    Log.i(TAG, "sendMsgFacebook() - em construção");
+  }
 
-		// Obtem as informações sobre a Intent "chamadora"
-		Intent intent = getIntent();
+  /**
+   * sendMsgTwitter()
+   */
+  private void sendMsgTwitter() {
 
-		// Obtém o estado corrente da máquina de estado
-		int estadoCorrente = getEstado();
+    Log.i(TAG, "sendMsgTwitter() - em construção");
+  }
 
-		if (estadoCorrente == 3) {
+  /**
+   * Processa o resultado do envio do email (execução da activity)
+   * 
+   * @param resultCode
+   *          Resultado a execução da activity
+   * 
+   * @param data
+   *          Intent retornada
+   * 
+   */
+  private void resultActivityChooser(int resultCode, Intent data) {
 
-			// estado final atingido com sucesso
-			Log.i(TAG, "estadoFinal() - final do processamento");
+    Log.d(TAG, "resultActivityChooser() ===> processando resultado da ACTIVITY CHOOSER: resultCode=" + resultCode);
 
-			// retorna as informações sobre o participante e sobre sua
-			// participação
-			intent.putExtra(PARTICIPANTE, mParticipante);
-			intent.putExtra(PARTICIPACAO, mParticipacao);
+    // Obtém informações sobre a intent chamadora
+    Intent intent = this.getIntent();
 
-			intent.putExtra("br.com.mltech.result", "OK");
+    if (intent != null) {
 
-			// estabelece o resultado da execução da Activity
-			setResult(RESULT_OK, intent);
+      ComponentName compName = intent.getComponent();
+      if (compName != null) {
+        Log.d(TAG, "compName=" + compName.getClassName() + ", compName=" + compName.getPackageName());
+      }
 
-		} else {
+    }
 
-			Toast.makeText(this, "Falha no processo. Estado atual: " + estadoCorrente, Toast.LENGTH_SHORT).show();
+    // verifica os dados retornados pela Activity que enviou o email
+    if (data != null) {
 
-			// estado final atingido porém houve falha
-			Log.w(TAG, "estadoFinal() - não foi possível chegar ao final do processamento.");
+      Log.w(TAG, "resultActivityChooser() - dados recebidos não foram trabalhados");
 
-			intent.putExtra("br.com.mltech.result", "NOT_OK");
+      // The action of this intent or null if none is specified.
+      Log.w(TAG, "resultActivityChooser() - data.getAction()=" + data.getAction());
 
-			// estabelece o resultado da execução da Activity
-			setResult(RESULT_CANCELED, intent);
+    }
 
-		}
+    if (resultCode == 0) {
 
-		// atualiza o modo da tela
-		atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
+      Log.d(TAG, "ACTIVITY_CHOOSER - email enviado com sucesso");
 
-		// Termina a execução da Activity responsável por tirar e enviar uma
-		// foto
-		finish();
+      // processa
+      aposEnviarEmail();
 
-	}
+    } else if (resultCode == RESULT_CANCELED) {
+      // envio do email foi cancelado pelo usuário
+      Log.d(TAG, "resultActivityChooser() - ACTIVITY_CHOOSER - o envio de email foi cancelado");
+      estadoFinal();
 
-	/**
-	 * setEstado(int e)
-	 * 
-	 * Atualiza o estado da uma máquina de estados
-	 * 
-	 * @param e
-	 *          novo estado (próximo estado)
-	 */
-	private void setEstado(int e) {
+    } else {
 
-		Log.i(TAG, "----------------------------------------------------------");
-		Log.i(TAG, "Transição do estado: " + mEstado + " para o estado: " + e);
-		Log.i(TAG, "----------------------------------------------------------");
-		mEstado = e;
-	}
+      Log.d(TAG, "resultActivityChooser() - ACTIVITY_CHOOSER - resultCode " + resultCode + " não pde ser tratado");
+      estadoFinal();
 
-	/**
-	 * getEstado()
-	 * 
-	 * Obtém o estado atual da máquina de estados
-	 * 
-	 * @return Um inteiro contendo o estado da state machine
-	 * 
-	 */
-	private int getEstado() {
+    }
 
-		return mEstado;
-	}
+  }
 
-	/**
-	 * onRestart()
-	 */
-	@Override
-	protected void onRestart() {
+  /**
+   * Executa ações após o envio do email com sucesso.<br>
+   * 
+   * Exibe a mensagem de envio de email com sucesso.<br>
+   * 
+   * Atualiza o estado da aplicação.<br>
+   * 
+   * Finaliza a ação. <br>
+   * 
+   */
+  private void aposEnviarEmail() {
 
-		super.onRestart();
+    Log.d(TAG, "aposEnviarEmail() - email enviado com sucesso");
 
-		contador++;
-		i++;
+    logger.println("aposEnviarEmail() - email enviado com sucesso");
+    logger2.info("aposEnviarEmail() - email enviado com sucesso");
 
-		numRestart++;
-		showClassVariables();
+    // mensagem exibida após envio de email
+    Toast.makeText(this, "Email enviado com sucesso", Toast.LENGTH_LONG).show();
 
-		showVariables();
+    // Atualiza o estado da máquina de estado
+    setEstado(3);
 
-		Log.i(TAG, "*");
-		Log.i(TAG, "****************************************************");
-		Log.i(TAG, "*** onRestart() - A aplicação foi restartada (" + numRestart + ") ... ***");
-		Log.i(TAG, "****************************************************");
-		Log.i(TAG, "*");
+    // Processa o próximo estado
+    estadoFinal();
 
-	}
+  }
 
-	/**
-	 * onStart()
-	 */
-	@Override
-	protected void onStart() {
+  /** 
+   * É o ponto final da activity onde é definido o resultado final da execução da activity.<br>
+   * Representa o estado final da máquina de estado.<br>
+   * 
+   * É também o responsável pela finalização da activity, estabelecendo seu
+   * resultado.<br>
+   * 
+   * Se o estado final foi atingido então o processo correu segundo esperado.<br>
+   * 
+   */
+  private void estadoFinal() {
 
-		super.onStart();
-		Log.d(TAG, "*** onStart() ***");
-		showVariables();
+    // Obtem as informações sobre a Intent "chamadora"
+    Intent intent = getIntent();
 
-	}
+    // Obtém o estado corrente da máquina de estado
+    int estadoCorrente = getEstado();
 
-	/**
-	 * onResume()
-	 */
-	@Override
-	protected void onResume() {
+    if (estadoCorrente == 3) {
 
-		super.onResume();
-		Log.d(TAG, "*** onResume() ***");
-		showVariables();
+      // estado final atingido com sucesso
+      Log.i(TAG, "estadoFinal() - final do processamento");
 
-	}
+      // retorna as informações sobre o participante e sobre sua
+      // participação
+      intent.putExtra(PARTICIPANTE, mParticipante);
+      intent.putExtra(PARTICIPACAO, mParticipacao);
 
-	/**
-	 * onSaveInstanceState(Bundle outState)
-	 */
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+      intent.putExtra("br.com.mltech.result", "OK");
 
-		super.onSaveInstanceState(outState);
-		Log.d(TAG, "*** onSaveInstanceState() ***");
+      // estabelece o resultado da execução da Activity
+      setResult(RESULT_OK, intent);
 
-		outState.putSerializable(PARTICIPANTE, mParticipante);
-		outState.putSerializable(PARTICIPACAO, mParticipacao);
+    } else {
 
-		showClassVariables();
+      Toast.makeText(this, "Falha no processo. Estado atual: " + estadoCorrente, Toast.LENGTH_SHORT).show();
 
-		// FileUtils.showBundle(outState);
+      // estado final atingido porém houve falha
+      Log.w(TAG, "estadoFinal() - não foi possível chegar ao final do processamento.");
+      logger.println("estadoFinal() - não foi possível chegar ao final do processamento.");
+      logger2.info("estadoFinal() - não foi possível chegar ao final do processamento.");
 
-	}
+      intent.putExtra("br.com.mltech.result", "NOT_OK");
 
-	/**
-	 * onPause()
-	 */
-	@Override
-	protected void onPause() {
+      // estabelece o resultado da execução da Activity
+      setResult(RESULT_CANCELED, intent);
 
-		super.onPause();
-		Log.d(TAG, "*** onPause() ***");
-		showVariables();
+    }
 
-	}
+    // atualiza o modo da tela
+    atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
 
-	/**
-	 * onStop()
-	 */
-	@Override
-	protected void onStop() {
+    // Termina a execução da Activity responsável por tirar e enviar uma
+    // foto
+    finish();
 
-		super.onStop();
-		Log.d(TAG, "*** onStop() ***");
+  }
 
-		showVariables();
+  /** 
+   * Atualiza o estado da uma máquina de estados.
+   * 
+   * @param e
+   *          novo estado (próximo estado)
+   */
+  private void setEstado(int e) {
 
-	}
+    Log.i(TAG, "----------------------------------------------------------");
+    Log.i(TAG, "Transição do estado: " + mEstado + " para o estado: " + e);
+    Log.i(TAG, "----------------------------------------------------------");
 
-	/**
-	 * onRestoreInstanceState(Bundle savedInstanceState)
-	 */
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    mEstado = e;
 
-		super.onRestoreInstanceState(savedInstanceState);
+  }
 
-		Log.d(TAG, "*********************************");
-		Log.d(TAG, "*** onRestoreInstanceState() ***");
-		Log.d(TAG, "*********************************");
+  /** 
+   * Obtém o estado atual da máquina de estados.
+   * 
+   * @return Um inteiro contendo o estado da state machine.
+   * 
+   */
+  private int getEstado() {
 
-		if (savedInstanceState == null) {
-			Log.w(TAG, "onRestoreInstanceState() - savedInstaceState é nulo");
-		}
+    return mEstado;
+  }
 
-		if (savedInstanceState.containsKey(PARTICIPANTE)) {
-			mParticipante = (Participante) savedInstanceState.getSerializable(PARTICIPANTE);
-		}
+  /**
+   * Aplicação foi reinicializada.<br>
+   * 
+   * Por qual motivo a aplicação foi reinicializada ???
+   * 
+   */
+  @Override
+  protected void onRestart() {
 
-		if (savedInstanceState.containsKey(PARTICIPACAO)) {
-			mParticipacao = (Participacao) savedInstanceState.getSerializable(PARTICIPACAO);
-		}
+    super.onRestart();
 
-		// FileUtils.showBundle(savedInstanceState);
+    contador++;
+    i++;
 
-		showClassVariables();
+    numRestart++;
 
-	}
+    showClassVariables();
 
-	/**
-	 * showAlert(String msg)
-	 * 
-	 * Exibe uma caixa de diálogo com a mensagem recebida como parâmetro e um
-	 * botão para fechar a janela
-	 * 
-	 * @param msg
-	 *          Mensagem que será exibida na caixa de diálogo exibida.
-	 * 
-	 */
-	private Dialog showAlert(String msg) {
+    showVariables();
 
-		if (msg == null) {
-			// retorna se a mensagem for nula
-			return null;
-		}
+    Log.i(TAG, "*");
+    Log.i(TAG, "*********************************************************************");
+    Log.i(TAG, "*** onRestart() - A aplicação foi restartada (" + numRestart + ") ...");
+    Log.i(TAG, "*********************************************************************");
+    Log.i(TAG, "*");
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    logger2.warning("*** onRestart() - A aplicação foi restartada (" + numRestart + ") ...");
+    
+  }
 
-		builder.setMessage(msg).setNeutralButton("Fechar", null);
+  /**
+   * onStart() - inicio da activity.
+   */
+  @Override
+  protected void onStart() {
 
-		// Cria uma janela a partir dos dados solicitados no builder
-		AlertDialog alert = builder.create();
+    super.onStart();
+    Log.d(TAG, "*** onStart() ***");
+    logger2.finest("*** onStart() ***");
+    showVariables();
 
-		// exibe a janela
-		alert.show();
+  }
 
-		// retorna a instância da ciaxa de diálogos criada (para que possa ser
-		// destruída).
-		return alert;
+  /**
+   * onResume()
+   */
+  @Override
+  protected void onResume() {
 
-	}
+    super.onResume();
 
-	/**
-	 * showVariables()
-	 * 
-	 * Exibe o valor dos atributos da classe (se forem diferente de null).
-	 * 
-	 * Apenas os atributos não nulos serão exibidos.
-	 * 
-	 */
-	private void showVariables() {
+    // cria o sistema de log em disco
+    try {
+      logger = new br.com.mltech.utils.Logger("/mnt/sdcard/Pictures/logger.log", true);
+    } catch (IOException e1) {
+      Log.w(TAG, "onCreate() - falha na abertura do sistema de logs", e1);
 
-		Log.v(TAG, "=================================");
-		Log.v(TAG, "showVariables() - Variáveis de classe:");
+    }
 
-		if (mContratante != null) {
-			// Log.v(TAG, "  mContratante=" + mContratante);
-		}
+    Log.d(TAG, "*** onResume() ***");
+    logger2.finest("*** onResume() ***");
+    showVariables();
 
-		if (mEvento != null) {
-			// Log.v(TAG, "  mEvento=" + mEvento);
-		}
+  }
 
-		if (mParticipante != null) {
-			// Log.v(TAG, "  mParticipante=" + mParticipante);
-		}
+  /**
+   * onSaveInstanceState(Bundle outState)
+   */
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
 
-		if (mParticipacao != null) {
-			// Log.v(TAG, "  mParticipacao=" + mParticipacao);
-		}
+    super.onSaveInstanceState(outState);
+    Log.d(TAG, "*** onSaveInstanceState() ***");
+    
+    logger2.info("*** onSaveInstanceState() ***");
 
-		if (xUri != null) {
-			Log.v(TAG, "  xUri=" + xUri);
-		}
+    outState.putSerializable(PARTICIPANTE, mParticipante);
+    outState.putSerializable(PARTICIPACAO, mParticipacao);
 
-		Log.v(TAG, "  mEstado=" + mEstado + ", mContador=" + mContador);
-		Log.v(TAG, "  mCurrentCamera=" + currentCamera);
+    showClassVariables();
 
-		showClassVariables();
+    // FileUtils.showBundle(outState);
 
-		Log.v(TAG, "=================================");
+  }
 
-	}
+  /**
+   * onPause()
+   */
+  @Override
+  protected void onPause() {
 
-	/**
-	 * leArquivoMoldura(String arquivoMoldura)
-	 * 
-	 * Carrega arquivo de moldura
-	 * 
-	 * @param arquivoMoldura
-	 *          Nome do arquivo
-	 * 
-	 * @return um bitmap com o arquivo contendo a moldura ou null no caso de algum
-	 *         problema
-	 * 
-	 */
-	private Bitmap leArquivoMoldura(String arquivoMoldura) {
+    super.onPause();
+    Log.d(TAG, "*** onPause() ***");
+    logger2.info("*** onPause() ***");
+    showVariables();
 
-		Log.d(TAG, "leArquivoMoldura() - arquivoMoldura: [" + arquivoMoldura + "].");
+    logger.close();
 
-		File moldura = new File(arquivoMoldura);
+  }
 
-		if ((moldura != null) && (!moldura.exists())) {
-			Log.w(TAG, "leArquivoMoldura() - arquivoMoldura: [" + arquivoMoldura + "] não existe.");
-			return null;
-		}
+  /**
+   * onStop()
+   */
+  @Override
+  protected void onStop() {
 
-		// lê o bitmap contendo a moldura
-		Bitmap bmMoldura = ManipulaImagem.getBitmapFromFile(moldura);
+    super.onStop();
+    Log.d(TAG, "*** onStop() ***");
 
-		if (bmMoldura == null) {
+    logger2.info("*** onStop() ***");
+    
+    showVariables();
 
-			Log.w(TAG, "leArquivoMoldura() - arquivo contento a moldura está vazio.");
-			return null;
+    logger.close();
 
-		} else {
-			Log.v(TAG, "leArquivoMoldura() - largura x altura da moldura: " + ManipulaImagem.getStringBitmapSize(bmMoldura));
+  }
 
-			return bmMoldura;
+  /**
+   * onRestoreInstanceState(Bundle savedInstanceState)
+   */
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
-		}
+    super.onRestoreInstanceState(savedInstanceState);
 
-	}
+    logger2.info("*** onRestoreInstanceState() ***");
+    
+    Log.d(TAG, "*********************************");
+    Log.d(TAG, "*** onRestoreInstanceState() ***");
+    Log.d(TAG, "*********************************");
 
-	/**
-	 * getSharedPreference(String sharedPreferencesName, String attribute)
-	 * 
-	 * Obtém um parâmetro da lista de preferências.
-	 * 
-	 * @param sharedPreferencesName
-	 * @param attribute
-	 * 
-	 * @return o valor do atributo solicitado ou null caso haja algum erro (o
-	 *         parâmetro não foi encontrado)
-	 * 
-	 */
-	private String getSharedPreference(String sharedPreferencesName, String attribute) {
+    if (savedInstanceState == null) {
+      Log.w(TAG, "onRestoreInstanceState() - savedInstaceState é nulo");
+    }
 
-		SharedPreferences preferences = getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
+    if (savedInstanceState.containsKey(PARTICIPANTE)) {
+      mParticipante = (Participante) savedInstanceState.getSerializable(PARTICIPANTE);
+    }
 
-		String sValue = preferences.getString(attribute, "");
+    if (savedInstanceState.containsKey(PARTICIPACAO)) {
+      mParticipacao = (Participacao) savedInstanceState.getSerializable(PARTICIPACAO);
+    }
 
-		preferences = null;
+    // FileUtils.showBundle(savedInstanceState);
 
-		return sValue;
+    showClassVariables();
 
-	}
+  }
 
-	/**
-	 * showClassVariables()
-	 * 
-	 * Exibe o valor de algumas variáveis de classe previamente selecionadas.
-	 * 
-	 */
-	private void showClassVariables() {
+  /** 
+   * Exibe uma caixa de diálogo com a mensagem recebida como parâmetro e um
+   * botão para fechar a janela.
+   * 
+   * @param msg
+   *          Mensagem que será exibida na caixa de diálogo exibida.
+   * 
+   */
+  private Dialog showAlert(String msg) {
 
-		Log.v(TAG, "    showClassVariables() - file: " + file);
-		Log.v(TAG, "    showClassVariables() - outputFileUri: " + outputFileUri);
-		Log.v(TAG, "    showClassVariables() - Contador: " + contador + ", i=" + i);
-		Log.v(TAG, "    showClassVariables() - numCreate: " + numCreate + ", numRestart: " + numRestart);
+    if (msg == null) {
+      // retorna se a mensagem for nula
+      return null;
+    }
 
-	}
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-	// ---------------------------------------------------------------------------
-	//
-	//
-	// ---------------------------------------------------------------------------
+    builder.setMessage(msg).setNeutralButton("Fechar", null);
 
-	/**
-	 * <p>
-	 * formatarPolaroid(Uri uriFotoOriginal)
-	 * </p>
-	 * 
-	 * Recebe o endereço de uma foto; redimensiona a foto; insere a moldura e
-	 * transforma a foto no tamanho 9x11<br />
-	 * 
-	 * @return um bitmap contendo a foto com a moldura
-	 * 
-	 * 
-	 */
-	private Bitmap formatarPolaroid(Uri uriFotoOriginal) {
+    // Cria uma janela a partir dos dados solicitados no builder
+    AlertDialog alert = builder.create();
 
-		/**
-		 * TODO Esse método gera dois arquivos contendo fotos intermediários que
-		 * poderiam ser descartadas
-		 * 
-		 */
+    // exibe a janela
+    alert.show();
 
-		Log.d(TAG, "formatarPolaroid() - uriFotoOriginal: " + uriFotoOriginal);
+    // retorna a instância da ciaxa de diálogos criada (para que possa ser
+    // destruída).
+    return alert;
 
-		// Cria um bitmap a partir da Uri da foto
-		Bitmap bmFotoOriginal = ManipulaImagem.criaBitmap(uriFotoOriginal);
+  }
 
-		if (bmFotoOriginal == null) {
-			Log.w(TAG, "formatarPolaroid() - bmFotoOriginal: " + bmFotoOriginal);
-			return null;
-		}
+  /** 
+   * Exibe o valor de alguns atributos da classe (se forem diferente de null).<br>
+   * 
+   * Apenas os atributos não nulos serão exibidos.
+   * 
+   */
+  private void showVariables() {
 
-		// redimensiona a foto original para 9x12 para manter a proporção 3:4
-		Bitmap bmFoto9x12 = ManipulaImagem.getScaledBitmap2(bmFotoOriginal, 340, 454);
+    Log.v(TAG, "=================================");
+    Log.v(TAG, "showVariables() - Variáveis de classe:");
 
-		if (bmFoto9x12 == null) {
-			Log.d(TAG, "formatarPolaroid() - falha no redimensionamento da foto - bmFoto9x12: " + bmFoto9x12);
-			return null;
-		}
+    logger2.info("showVariables()");
+    
+    if (mContratante != null) {
+      // Log.v(TAG, "  mContratante=" + mContratante);
+    }
 
-		// Define o nome da foto redimensionada
-		String nomeArquivo = FileUtils.getBasePhotoDirectory() + File.separator + FileUtils.getFilename(uriFotoOriginal) + "_9x12.png";
+    if (mEvento != null) {
+      // Log.v(TAG, "  mEvento=" + mEvento);
+    }
 
-		// Grava a foto redimensionada em um arquivo "intermediário"
-		boolean gravou = ManipulaImagem.gravaBitmapArquivo(bmFoto9x12, nomeArquivo);
+    if (mParticipante != null) {
+      // Log.v(TAG, "  mParticipante=" + mParticipante);
+    }
 
-		if (!gravou) {
-			// foto não pode ser gravada. Retorna.
-			Log.d(TAG, "formatarPolaroid() - foto não pode ser gravada");
-			return null;
-		}
+    if (mParticipacao != null) {
+      // Log.v(TAG, "  mParticipacao=" + mParticipacao);
+    }
 
-		//
-		// redimensiona a foto 9x12 para 8x8, isto é, copia uma "janela" 8x8 da foto
-		//
-		// Create a default Options object, which if left unchanged will give the
-		// same result
-		// from the decoder as if null were passed.
-		//
-		Options options = new Options();
+    if (xUri != null) {
+      Log.v(TAG, "  xUri=" + xUri);
+    }
 
-		// TODO verificar qual será a "janela" da foto
-		Rect rect = new Rect(0, 0, 302, 302);
+    Log.v(TAG, "  mEstado=" + mEstado + ", mContador=" + mContador);
+    Log.v(TAG, "  mCurrentCamera=" + currentCamera);
 
-		// Obtem um bitmap com a foto redimensionada para 8x8
-		Bitmap bmFoto8x8 = ManipulaImagem.getBitmapRegion(nomeArquivo, rect, options);
+    showClassVariables();
 
-		nomeArquivo = FileUtils.getBasePhotoDirectory() + FileUtils.getFilename(uriFotoOriginal) + "_8x8.png";
+    Log.v(TAG, "=================================");
 
-		// Aplica a moldura a foto
-		Bitmap bmFotoComMoldura = ManipulaImagem.overlay4(bmFoto8x8, mBitmapMolduraPolaroid);
+  }
 
-		// o nome completo do arquivo onde a foto com moldura foi armazenada
-		return bmFotoComMoldura;
+  /**
+   * Carrega arquivo de moldura.<br>
+   * 
+   * @param arquivoMoldura
+   *          Nome do arquivo onde se encontra o bitmap com a moldura.
+   * 
+   * @return um bitmap com o arquivo contendo a moldura ou null no caso de algum
+   *         problema.
+   * 
+   */
+  private Bitmap leArquivoMoldura(String arquivoMoldura) {
 
-	}
+    Log.d(TAG, "leArquivoMoldura() - arquivoMoldura: [" + arquivoMoldura + "].");
 
-	/**
-	 * <p>
-	 * atualizaModoTela(int novaOrientacao)
-	 * </p>
-	 * 
-	 * Atualiza a orientação atual da tela para outro modo (se necessário). <br />
-	 * 
-	 * Configuration.ORIENTATION_LANDSCAPE ou Configuration.ORIENTATION_PORTRAIT
-	 * 
-	 * @param novaOrientacao
-	 *          nova orientação
-	 */
-	private void atualizaModoTela(int novaOrientacao) {
+    File moldura = new File(arquivoMoldura);
 
-		// obtém a orientação atual da tela
-		int orientacaoAtual = this.getResources().getConfiguration().orientation;
+    if ((moldura != null) && (!moldura.exists())) {
+      Log.w(TAG, "leArquivoMoldura() - arquivoMoldura: [" + arquivoMoldura + "] não existe.");
+      return null;
+    }
 
-		// exibe qual é a orientação atual da tela
-		Log.d(TAG, "atualizaModoTela() - Orientação atual: " + orientacaoAtual + " - " + getScreenOrientation(orientacaoAtual));
+    // lê o bitmap contendo a moldura do arquivo. 
+    Bitmap bmMoldura = ManipulaImagem.getBitmapFromFile(moldura);
 
-		if (novaOrientacao != orientacaoAtual) {
-			// muda a orientação
-			this.setRequestedOrientation(novaOrientacao);
-			// exibe a nova orientação
-			Log.d(TAG, "atualizaModoTela() - nova orientação: " + novaOrientacao + " - " + getScreenOrientation(novaOrientacao));
-		}
-
-	}
-
-	/**
-	 * <p>
-	 * getScreenOrientation(int orientacao)
-	 * </p>
-	 * 
-	 * Obtém o nome correspondente a orientaçã da tela: Landscape ou Portrait<br />
-	 * 
-	 * @param orientacao
-	 *          Configuration.ORIENTATION_LANDSCAPE ou
-	 *          Configuration.ORIENTATION_PORTRAIT
-	 * 
-	 * @return uma string com o nome da orientação da tela ou "Não suportado"
-	 *         indicando que a orientação não é suportada.
-	 */
-	private static String getScreenOrientation(int orientacao) {
-
-		String s = null;
-
-		if (orientacao == Configuration.ORIENTATION_LANDSCAPE) {
-			s = "Landscape";
-		} else if (orientacao == Configuration.ORIENTATION_PORTRAIT) {
-			s = "Portrait";
-		} else {
-			s = "Não suportado";
-		}
-
-		return s;
-
-	}
-
-	/**
-	 * processaFotoFormatoCabine3(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3,
-	 * Bitmap bmMoldura)
-	 * 
-	 * Cria uma foto a partir da combição de três outras fotos. As fotos são
-	 * colocadas na vertical, isto é, uma embaixo da outra.
-	 * 
-	 * @param bmFoto1
-	 *          primeira foto
-	 * 
-	 * @param bmFoto2
-	 *          segunda foto
-	 * 
-	 * @param bmFoto3
-	 *          terceira foto
-	 * 
-	 * @param bmMoldura
-	 *          bitmap contendo a moldura
-	 * 
-	 * @return uma nova foto (bitmap) contendo as três fotos e a moldura ou null
-	 *         em caso de erro.
-	 */
-	private static Bitmap processaFotoFormatoCabine3(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3, Bitmap bmMoldura) {
-
-		if (bmMoldura == null) {
-			Log.w(TAG, "processaFotoFormatoCabine3() - Moldura formato Cabine está vazia !");
-			return null;
-		}
-
-		// executa o merge das três fotos
-		Bitmap bmImgJoin = mergeFotosCabine(bmFoto1, bmFoto2, bmFoto3);
-
-		if (bmImgJoin == null) {
-			Log.w(TAG, "processaFotoFormatoCabine3() - não foi possível fazer o merge das três fotos !");
-			return null;
-		}
-
-		// Obtém uma imagem redimensionada
-		Bitmap scaledBitmap = ManipulaImagem.getScaledBitmap2(bmImgJoin, 113, 453);
-
-		if (scaledBitmap == null) {
-			//
-			Log.w(TAG, "processaFotoFormatoCabine3() - não foi possível redimensionar a foto");
-			return null;
-		}
-
-		// combina a foto com a moldura
-		Bitmap fotoComMoldura = ManipulaImagem.aplicaMolduraFoto(scaledBitmap, bmMoldura);
-
-		return fotoComMoldura;
-
-		/*
-		 * String arqSaida = PATH_FOTOS + "xxx3-join-moldura.png";
-		 * 
-		 * boolean gravouImagemComMoldura =
-		 * ManipulaImagem.gravaBitmapArquivo(fotoComMoldura, arqSaida);
-		 * 
-		 * if (gravouImagemComMoldura) {
-		 * 
-		 * // imagem escalonada gravada com sucesso Log.v(TAG,
-		 * "processaFotoFormatoCabine2() - Imagem com moldura gravada com sucesso no arquivo "
-		 * + arqSaida); } else { Log.v(TAG,
-		 * "processaFotoFormatoCabine2() - Falha na gravação da imagem com moldura no arquivo: "
-		 * + arqSaida); return null; }
-		 * 
-		 * return arqSaida;
-		 */
-
-	}
-
-	/**
-	 * mergeFotosCabine(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3)
-	 * 
-	 * Cria uma nova foto (bitmap) a partir de três fotos recebidas.
-	 * 
-	 * <pre>
-	 * 
-	 * |foto1|
-	 * |foto2|
-	 * |foto3|
-	 * 
-	 * </pre>
-	 * 
-	 * @param bmFoto1
-	 *          primeira foto
-	 * 
-	 * @param bmFoto2
-	 *          segunda foto
-	 * 
-	 * @param bmFoto3
-	 *          terceira foto
-	 * 
-	 * @return o bitmap contendo as três fotos ou null em caso de algum erro
-	 */
-	private static Bitmap mergeFotosCabine(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3) {
-
-		if (bmFoto1 == null) {
-			Log.w(TAG, "processaFotoFormatoCabine3() - Foto1 está vazia !");
-			return null;
-		}
-
-		if (bmFoto2 == null) {
-			Log.w(TAG, "processaFotoFormatoCabine3() - Foto2 está vazia !");
-			return null;
-		}
-
-		if (bmFoto3 == null) {
-			Log.w(TAG, "processaFotoFormatoCabine3() - Foto3 está vazia !");
-			return null;
-		}
-
-		// =========================================================================
-		// Cria um novo bitmap a partir da composição das três fotos.
-		// As fotos serão organizadas na vertical, isto é, uma nova foto
-		// será colocada abaixo da outra.
-		// =========================================================================
-		Bitmap bmImgJoin = ManipulaImagem.verticalJoin(bmFoto1, bmFoto2, bmFoto3);
-
-		if (bmImgJoin != null) {
-
-			Log.i(TAG, "processaFotoFormatoCabin3() - Imagens foram juntadas com sucesso");
-			Log.v(TAG, "processaFotoFormatoCabine3() -  ==> Tamanho da foto após join: " + ManipulaImagem.getStringBitmapSize(bmImgJoin));
-
-		} else {
-
-			Log.w(TAG, "processaFotoFormatoCabine3() - Erro no merge das três fotos");
-			return null;
-
-		}
-
-		return bmImgJoin;
-
-	}
-
-	// ---------------------------------------------------------------------------
-	// Métodos não usados
-	// TODO avaliar a remoção dos mesmos
-	// ---------------------------------------------------------------------------
-
-	/**
-	 * sendEmailByChooser(Intent emailIntent)
-	 * 
-	 * Permite escolher qual aplicação será usada para o envio de email
-	 * 
-	 * @param emailIntent
-	 *          Intent
-	 * 
-	 */
-	private void sendEmailByChooser(Intent emailIntent) {
-
-		//
-		// TODO aqui pode acontecer de ser necessário forçar a aplicação de
-		// email
-		//
-
-		// Cria uma intent do tipo chooser a partir da intent recebida
-		Intent chooser = Intent.createChooser(emailIntent, "Selecione sua aplicação de email !");
-
-		if (chooser != null) {
-
-			Log.w(TAG, "sendEmailByChooser() - chooser.getAction()=" + chooser.getAction());
-
-			ComponentName compName = chooser.getComponent();
-
-			if (compName != null) {
-				Log.w(TAG, "==> CHOOSER ==> compName=" + compName.getClassName() + ", compName=" + compName.getPackageName());
-			} else {
-				Log.v(TAG, "compName IS NULL");
-			}
-
-		}
-
-		// Inicia a Activity para envio do email
-		// TODO aqui é necessário fixa o uso do email como mecanismo de envio
-		// TODO talvez seja necessário permitir o envio via Facebook e Twitter
-		// também
-
-		sendEmailRedesSociais();
-
-		startActivityForResult(chooser, ACTIVITY_CHOOSER);
-
-	}
-
-	/**
-	 * getActivityName(int i)
-	 * 
-	 * Retorna o nome da Activity dado seu requestCode
-	 * 
-	 * @param requestCode
-	 *          código que identifica o retorna da Activity
-	 * 
-	 * @return Retorna o nome da Activity dado seu requestCode
-	 */
-	private String getActivityName(int requestCode) {
-
-		String nome = null;
-
-		switch (requestCode) {
-		case TIRA_FOTO:
-			nome = "TIRA_FOTO";
-			break;
-
-		case TIRA_FOTO_POLAROID:
-			nome = "TIRA_FOTO_POLAROID";
-			break;
-
-		case TIRA_FOTO_CABINE:
-			nome = "TIRA_FOTO_CABINE";
-			break;
-
-		case ACTIVITY_PARTICIPANTE:
-			nome = "ACTIVITY_PARTICIPANTE";
-			break;
-
-		case ACTIVITY_PARTICIPACAO:
-			nome = "ACTIVITY_PARTICIPACAO";
-			break;
-
-		case ACTIVITY_CHOOSER:
-			nome = "ACTIVITY_CHOOSER";
-			break;
-
-		default:
-			nome = "Activity não encontrada.";
-			break;
-		}
-
-		return nome;
-
-	}
-
-	/**
-	 * initEmailConfig()
-	 * 
-	 * 
-	 * <p>
-	 * Lê as configurações para envio de email usando uma conta externa.<br>
-	 * Usa a variável membro: mailServer
-	 * 
-	 * 
-	 * 
-	 * usuario, senha, host, porta, remetente
-	 * 
-	 */
-	public void initEmailConfig() throws IllegalArgumentException {
-
-		String mEmail = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_USUARIO_EMAIL);
-
-		String mSenha = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_SENHA_EMAIL);
-
-		String mHost = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_SERVIDOR_SMTP);
-
-		String mPort = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_SERVIDOR_SMTP_PORTA);
-
-		String mRemetente = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_REMETENTE_EMAIL);
-
-		// valida os argumentos obrigatórios do email
-		validaArgumentosEmail(mEmail, mSenha, mHost, mPort, mRemetente);
-
-		//
-		Mail mailServer = new Mail(mEmail, mSenha);
-
-		mailServer.setHost(mHost);
-
-		mailServer.setPort(mPort);
-
-		mailServer.setFrom(mRemetente);
-
-		//
-		// TODO remover e acrescentar na configuração
-		//
-		mailServer.setDebuggable(true);
-
-		//
-		// TODO remover e acrescentar na configuração
-		//
-		mailServer.setAuth(true);
-
-		//
-		// TODO remover e acrescentar na configuração
-		//
-		mailServer.setSsl(false);
-
-	}
-
-	/**
-	 * validaArgumentosEmail(String mEmail, String mSenha, String mHost, String
-	 * mPort, String mRemetente)
-	 * 
-	 * @param mEmail
-	 * @param mSenha
-	 * @param mHost
-	 * @param mPort
-	 * @param mRemetente
-	 * 
-	 */
-	private void validaArgumentosEmail(String mEmail, String mSenha, String mHost, String mPort, String mRemetente) {
-
-		if ((mEmail != null) && (mEmail.equals(""))) {
-			throw new IllegalArgumentException("Usuário da conta de email não foi fornecido");
-		}
-
-		if ((mSenha != null) && (mSenha.equals(""))) {
-			throw new IllegalArgumentException("Senha da conta de email não foi fornecida");
-		}
-
-		if ((mHost != null) && (mHost.equals(""))) {
-			throw new IllegalArgumentException("Endereço do servidor de email (SMTP) não foi fornecido");
-		}
-
-		if ((mPort != null) && (mPort.equals(""))) {
-			throw new IllegalArgumentException("Porta do servidor de email (SMTP) não foi fornecida");
-		}
-
-		// TODO validar se a porta é um nº válido entre 0 e 1023 ???
-
-		if ((mRemetente != null) && (mRemetente.equals(""))) {
-			throw new IllegalArgumentException("Endereço do remetente do email não foi fornecido");
-		} else if (!isValidInternetAddress(mRemetente, "Remetente")) {
-			throw new IllegalArgumentException("Endereço do remetente do email não é válido");
-		}
-
-	}
-
-	/**
-	 * verifica se o endereço de email fornecido é sintaticamente válido
-	 * 
-	 * @param emailAddress
-	 *          Endereço do email do remetente
-	 * @param mMsg
-	 *          nome do campo
-	 * 
-	 * @return true se o endereço for válido ou false caso contrário
-	 * 
-	 */
-	private boolean isValidInternetAddress(String emailAddress, String mMsg) {
-
-		try {
-			InternetAddress address = new InternetAddress(emailAddress);
-		} catch (AddressException e) {
-
-			String x = mMsg + " não é válido (posição: " + e.getPos() + ", ref: " + e.getRef() + ")";
-
-			Log.w(TAG, x, e);
-
-			return false;
-
-		}
-		return true;
-	}
-
-	public void execute() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void updateView() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
-	
+    if (bmMoldura == null) {
+
+      Log.w(TAG, "leArquivoMoldura() - arquivo contento a moldura está vazio.");
+      return null;
+
+    } else {
+      Log.v(TAG, "leArquivoMoldura() - largura x altura da moldura: " + ManipulaImagem.getStringBitmapSize(bmMoldura));
+
+      return bmMoldura;
+
+    }
+
+  }
+
+  /**
+   * Obtém um parâmetro da lista de preferências.
+   * 
+   * @param sharedPreferencesName
+   *          nome do arquivo de preferências
+   * @param attribute
+   *          nome do atributo guardado no arquivo
+   * 
+   * @return o valor do atributo solicitado ou uma string vazia caso haja algum
+   *         erro (o parâmetro não foi encontrado)
+   * 
+   */
+  private String getSharedPreference(String sharedPreferencesName, String attribute) {
+
+    // TODO o problema desse método é o acesso ao disco toda veze que buscamos um parâmetro.
+
+    SharedPreferences preferences = getSharedPreferences(sharedPreferencesName, MODE_PRIVATE);
+
+    String sValue = preferences.getString(attribute, "");
+
+    preferences = null;
+
+    return sValue;
+
+  }
+
+  /**
+   * Exibe o valor de algumas variáveis de classe previamente selecionadas.
+   * 
+   */
+  private void showClassVariables() {
+
+    Log.v(TAG, "    showClassVariables() - file: " + file);
+    Log.v(TAG, "    showClassVariables() - outputFileUri: " + outputFileUri);
+    Log.v(TAG, "    showClassVariables() - Contador: " + contador + ", i=" + i);
+    Log.v(TAG, "    showClassVariables() - numCreate: " + numCreate + ", numRestart: " + numRestart);
+
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Formata uma foto no formato Polaroid.<br>
+   * 
+   * Recebe o endereço de uma foto;<br>
+   * redimensiona a foto;<br>
+   * insere a moldura e transforma a foto no tamanho 9x11<br>
+   * 
+   * @return um bitmap contendo a foto com a moldura ou null em caso de algum
+   *         erro.
+   * 
+   */
+  private Bitmap formatarPolaroid(Uri uriFotoOriginal) {
+
+    /**
+     * TODO Esse método gera dois arquivos contendo fotos intermediários que
+     * poderiam ser descartadas
+     * 
+     */
+
+    Log.d(TAG, "formatarPolaroid() - uriFotoOriginal: " + uriFotoOriginal);
+
+    // Cria um bitmap a partir da Uri da foto.
+    Bitmap bmFotoOriginal = ManipulaImagem.criaBitmap(uriFotoOriginal);
+
+    if (bmFotoOriginal == null) {
+      Log.w(TAG, "formatarPolaroid() - Não foi possível criar o bitmap com a foto original: " + bmFotoOriginal);
+      return null;
+    }
+
+    if(ManipulaImagem.isLandscape(bmFotoOriginal)) {
+      // foto possui a largura maior que a altura
+      
+    }
+    else {
+      // foto possui a altura maior que a largura
+      
+    }
+    
+    // redimensiona a foto original para 9x12 para manter a proporção 3:4
+    Bitmap bmFoto9x12 = ManipulaImagem.getScaledBitmap2(bmFotoOriginal, 340, 454);
+
+    if (bmFoto9x12 == null) {
+      Log.d(TAG, "formatarPolaroid() - falha no redimensionamento da foto - bmFoto9x12: " + bmFoto9x12);
+      return null;
+    }
+
+    // Define o nome da foto redimensionada
+    String nomeArquivo = FileUtils.getBasePhotoDirectory() + File.separator + FileUtils.getFilename(uriFotoOriginal) + "_9x12.png";
+
+    // Grava a foto redimensionada em um arquivo "intermediário"
+    boolean gravou = ManipulaImagem.gravaBitmapArquivo(bmFoto9x12, nomeArquivo);
+
+    if (!gravou) {
+      // foto não pode ser gravada. Retorna.
+      Log.d(TAG, "formatarPolaroid() - foto não pode ser gravada");
+      return null;
+    }
+
+    //
+    // redimensiona a foto 9x12 para 8x8, isto é, copia uma "janela" 8x8 da foto
+    //
+    // Create a default Options object, which if left unchanged will give the
+    // same result
+    // from the decoder as if null were passed.
+    //
+    Options options = new Options();
+
+    // TODO verificar qual será a "janela" da foto
+    Rect rect = new Rect(0, 0, 310, 310);
+
+    // Obtem um bitmap com a foto redimensionada para 8x8
+    Bitmap bmFoto8x8 = ManipulaImagem.getBitmapRegion(nomeArquivo, rect, options);
+
+    nomeArquivo = FileUtils.getBasePhotoDirectory() + FileUtils.getFilename(uriFotoOriginal) + "_8x8.png";
+
+    // Aplica a moldura a foto
+    Bitmap bmFotoComMoldura = ManipulaImagem.overlay4(bmFoto8x8, mBitmapMolduraPolaroid);
+
+    // o nome completo do arquivo onde a foto com moldura foi armazenada
+    return bmFotoComMoldura;
+
+  }
+
+  /**
+   * Atualiza a orientação atual da tela para outro modo (se necessário). <br>
+   * 
+   * Configuration.ORIENTATION_LANDSCAPE ou Configuration.ORIENTATION_PORTRAIT
+   * 
+   * @param novaOrientacao
+   *          nova orientação
+   */
+  private void atualizaModoTela(int novaOrientacao) {
+
+    // obtém a orientação atual da tela
+    int orientacaoAtual = this.getResources().getConfiguration().orientation;
+
+    // exibe qual é a orientação atual da tela
+    Log.d(TAG, "atualizaModoTela() - Orientação atual: " + orientacaoAtual + " - " + getScreenOrientation(orientacaoAtual));
+    
+    logger2.info("atualizaModoTela() - Orientação atual: " + orientacaoAtual + " - " + getScreenOrientation(orientacaoAtual));
+    
+
+    if (novaOrientacao != orientacaoAtual) {
+      // muda a orientação
+      this.setRequestedOrientation(novaOrientacao);
+      // exibe a nova orientação
+      Log.d(TAG, "atualizaModoTela() - nova orientação: " + novaOrientacao + " - " + getScreenOrientation(novaOrientacao));
+      logger2.info("atualizaModoTela() - nova orientação: " + novaOrientacao + " - " + getScreenOrientation(novaOrientacao));
+    }
+
+  }
+
+  /**
+   * Obtém o nome correspondente a orientação da tela: Landscape ou Portrait<br>
+   * 
+   * @param orientacao
+   *          Configuration.ORIENTATION_LANDSCAPE ou
+   *          Configuration.ORIENTATION_PORTRAIT
+   * 
+   * @return uma string com o nome da orientação da tela ou "Não suportado"
+   *         indicando que a orientação não é suportada.
+   * 
+   */
+  private static String getScreenOrientation(int orientacao) {
+
+    String s = null;
+
+    if (orientacao == Configuration.ORIENTATION_LANDSCAPE) {
+      s = "Landscape";
+    } else if (orientacao == Configuration.ORIENTATION_PORTRAIT) {
+      s = "Portrait";
+    } else {
+      s = "Não suportado";
+    }
+
+    return s;
+
+  }
+
+  /**
+   * Cria uma foto a partir da combição de três outras fotos. As fotos são
+   * colocadas na vertical, isto é, uma embaixo da outra.
+   * 
+   * <pre>
+   * 
+   * |--------|
+   * |        |
+   * | foto1  |
+   * |        |
+   * |        |
+   * |--------|
+   * |        |
+   * | foto2  |
+   * |        |
+   * |        |
+   * |--------|
+   * |        |
+   * | foto3  |
+   * |        |
+   * |        |
+   * |--------|
+   * 
+   * 
+   * </pre>
+   * 
+   * 
+   * @param bmFoto1
+   *          primeira foto
+   * 
+   * @param bmFoto2
+   *          segunda foto
+   * 
+   * @param bmFoto3
+   *          terceira foto
+   * 
+   * @param bmMoldura
+   *          bitmap contendo a moldura
+   * 
+   * @return uma nova foto (bitmap) contendo as três fotos e a moldura ou null
+   *         em caso de erro.
+   */
+  private static Bitmap processaFotoFormatoCabine3(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3, Bitmap bmMoldura) {
+
+    if (bmMoldura == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - Moldura formato Cabine está vazia !");
+      return null;
+    }
+
+    // executa o merge das três fotos
+    Bitmap bmImgJoin = mergeFotosCabine(bmFoto1, bmFoto2, bmFoto3);
+
+    if (bmImgJoin == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - não foi possível fazer o merge das três fotos !");
+      return null;
+    }
+
+    // Obtém uma imagem redimensionada
+    Bitmap scaledBitmap = ManipulaImagem.getScaledBitmap2(bmImgJoin, 113, 453);
+
+    if (scaledBitmap == null) {
+      //
+      Log.w(TAG, "processaFotoFormatoCabine3() - não foi possível redimensionar a foto");
+      return null;
+    }
+
+    // combina a foto com a moldura
+    Bitmap fotoComMoldura = ManipulaImagem.aplicaMolduraFoto(scaledBitmap, bmMoldura);
+
+    return fotoComMoldura;
+
+    /*
+     * String arqSaida = PATH_FOTOS + "xxx3-join-moldura.png";
+     * 
+     * boolean gravouImagemComMoldura =
+     * ManipulaImagem.gravaBitmapArquivo(fotoComMoldura, arqSaida);
+     * 
+     * if (gravouImagemComMoldura) {
+     * 
+     * // imagem escalonada gravada com sucesso Log.v(TAG,
+     * "processaFotoFormatoCabine2() - Imagem com moldura gravada com sucesso no arquivo "
+     * + arqSaida); } else { Log.v(TAG,
+     * "processaFotoFormatoCabine2() - Falha na gravação da imagem com moldura no arquivo: "
+     * + arqSaida); return null; }
+     * 
+     * return arqSaida;
+     */
+
+  }
+
+  /**
+   * Cria uma nova foto (bitmap) a partir de três fotos recebidas.<br>
+   * 
+   * <pre>
+   * 
+   * |foto1|
+   * |foto2|
+   * |foto3|
+   * 
+   * </pre>
+   * 
+   * @param bmFoto1
+   *          primeira foto
+   * 
+   * @param bmFoto2
+   *          segunda foto
+   * 
+   * @param bmFoto3
+   *          terceira foto
+   * 
+   * @return o bitmap contendo as três fotos ou null em caso de algum erro
+   */
+  private static Bitmap mergeFotosCabine(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3) {
+
+    if (bmFoto1 == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - Foto1 está vazia !");
+      return null;
+    }
+
+    if (bmFoto2 == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - Foto2 está vazia !");
+      return null;
+    }
+
+    if (bmFoto3 == null) {
+      Log.w(TAG, "processaFotoFormatoCabine3() - Foto3 está vazia !");
+      return null;
+    }
+
+    // =========================================================================
+    // Cria um novo bitmap a partir da composição das três fotos.
+    // As fotos serão organizadas na vertical, isto é, uma nova foto
+    // será colocada abaixo da outra.
+    // =========================================================================
+    Bitmap bmImgJoin = ManipulaImagem.verticalJoin(bmFoto1, bmFoto2, bmFoto3);
+
+    if (bmImgJoin != null) {
+
+      Log.i(TAG, "processaFotoFormatoCabin3() - Imagens foram juntadas com sucesso");
+      Log.v(TAG, "processaFotoFormatoCabine3() -  ==> Tamanho da foto após join: " + ManipulaImagem.getStringBitmapSize(bmImgJoin));
+
+    } else {
+
+      Log.w(TAG, "processaFotoFormatoCabine3() - Erro no merge das três fotos");
+      return null;
+
+    }
+
+    return bmImgJoin;
+
+  }
+
+  // ---------------------------------------------------------------------------
+  // Métodos não usados
+  // TODO avaliar a remoção dos mesmos
+  // ---------------------------------------------------------------------------
+
+  /**
+   * sendEmailByChooser(Intent emailIntent)
+   * 
+   * Permite escolher qual aplicação será usada para o envio de email
+   * 
+   * @param emailIntent
+   *          Intent
+   * 
+   */
+  private void sendEmailByChooser(Intent emailIntent) {
+
+    //
+    // TODO aqui pode acontecer de ser necessário forçar a aplicação de
+    // email
+    //
+
+    // Cria uma intent do tipo chooser a partir da intent recebida
+    Intent chooser = Intent.createChooser(emailIntent, "Selecione sua aplicação de email !");
+
+    if (chooser != null) {
+
+      Log.w(TAG, "sendEmailByChooser() - chooser.getAction()=" + chooser.getAction());
+
+      ComponentName compName = chooser.getComponent();
+
+      if (compName != null) {
+        Log.w(TAG, "==> CHOOSER ==> compName=" + compName.getClassName() + ", compName=" + compName.getPackageName());
+      } else {
+        Log.v(TAG, "compName IS NULL");
+      }
+
+    }
+
+    // Inicia a Activity para envio do email
+    // TODO aqui é necessário fixa o uso do email como mecanismo de envio
+    // TODO talvez seja necessário permitir o envio via Facebook e Twitter
+    // também
+
+    sendEmailRedesSociais();
+
+    startActivityForResult(chooser, ACTIVITY_CHOOSER);
+
+  }
+
+  /**
+   * Retorna o nome da Activity dado seu requestCode<br>
+   * 
+   * @param requestCode
+   *          código que identifica o retorna da Activity
+   * 
+   * @return Retorna o nome da Activity
+   */
+  private String getActivityName(int requestCode) {
+
+    String nome = null;
+
+    switch (requestCode) {
+      case TIRA_FOTO:
+        nome = "TIRA_FOTO";
+        break;
+
+      case TIRA_FOTO_POLAROID:
+        nome = "TIRA_FOTO_POLAROID";
+        break;
+
+      case TIRA_FOTO_CABINE:
+        nome = "TIRA_FOTO_CABINE";
+        break;
+
+      case ACTIVITY_PARTICIPANTE:
+        nome = "ACTIVITY_PARTICIPANTE";
+        break;
+
+      case ACTIVITY_PARTICIPACAO:
+        nome = "ACTIVITY_PARTICIPACAO";
+        break;
+
+      case ACTIVITY_CHOOSER:
+        nome = "ACTIVITY_CHOOSER";
+        break;
+
+      default:
+        nome = "Activity não encontrada.";
+        break;
+    }
+
+    return nome;
+
+  }
+
+  /**
+   * Lê as configurações para envio de email usando uma conta externa.<br>
+   * <br>
+   * <u>IMPORTANTE</u>: Usa a variável membro: <b>mailServer.</b><br>
+   * <br>
+   * 
+   * 
+   * usuario, senha, host, porta, remetente
+   * 
+   */
+  public void initEmailConfig() throws IllegalArgumentException {
+
+    Log.d(TAG, "initEmailConfig() - inicio");
+
+    String mEmail = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_USUARIO_EMAIL);
+
+    String mSenha = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_SENHA_EMAIL);
+
+    String mHost = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_SERVIDOR_SMTP);
+
+    String mPort = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_SERVIDOR_SMTP_PORTA);
+
+    String mRemetente = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_REMETENTE_EMAIL);
+
+    // valida os argumentos obrigatórios do email
+    validaArgumentosEmail(mEmail, mSenha, mHost, mPort, mRemetente);
+
+    // cria a instância do sistema de email
+    mailServer = new Mail(mEmail, mSenha);
+    Log.d(TAG, "initEmailConfig() - cria a instância de mailServer");
+
+    //
+    mailServer.setHost(mHost);
+    Log.d(TAG, "initEmailConfig() - SMTP host: " + mHost);
+
+    //
+    mailServer.setPort(mPort);
+    Log.d(TAG, "initEmailConfig() - SMTP port: " + mPort);
+
+    //
+    mailServer.setFrom(mRemetente);
+    Log.d(TAG, "initEmailConfig() - from: " + mRemetente);
+
+    //
+    // TODO remover e acrescentar na configuração
+    //
+    mailServer.setDebuggable(true);
+    Log.d(TAG, "initEmailConfig() - debuggable: " + mailServer.isDebuggable());
+
+    //
+    // TODO remover e acrescentar na configuração
+    //
+    mailServer.setAuth(true);
+    Log.d(TAG, "initEmailConfig() - authorization: " + mailServer.isAuth());
+
+    //
+    // TODO remover e acrescentar na configuração
+    //
+    mailServer.setSsl(false);
+    Log.d(TAG, "initEmailConfig() - SSL: " + mailServer.isSsl());
+
+    Log.d(TAG, "initEmailConfig() - fim");
+
+  }
+
+  /**
+   * Verifica se todos os argumentos enviado ao email são não nulos.<br>
+   * 
+   * @param mEmail
+   *          identificador da conta de email
+   * @param mSenha
+   *          senha da conta de email
+   * @param mHost
+   *          endereço do servidor SMTP
+   * @param mPort
+   *          porta do servidor SMTP
+   * @param mRemetente
+   *          remetente do email
+   * 
+   */
+  private void validaArgumentosEmail(String mEmail, String mSenha, String mHost, String mPort, String mRemetente) {
+
+    if ((mEmail != null) && (mEmail.equals(""))) {
+      throw new IllegalArgumentException("Usuário da conta de email não foi fornecido");
+    }
+
+    if ((mSenha != null) && (mSenha.equals(""))) {
+      throw new IllegalArgumentException("Senha da conta de email não foi fornecida");
+    }
+
+    if ((mHost != null) && (mHost.equals(""))) {
+      throw new IllegalArgumentException("Endereço do servidor de email (SMTP) não foi fornecido");
+    }
+
+    if ((mPort != null) && (mPort.equals(""))) {
+      throw new IllegalArgumentException("Porta do servidor de email (SMTP) não foi fornecida");
+    }
+
+    // TODO validar se a porta é um nº válido entre 0 e 1023 ???
+
+    if ((mRemetente != null) && (mRemetente.equals(""))) {
+      throw new IllegalArgumentException("Endereço do remetente do email não foi fornecido");
+    } else if (!isValidInternetAddress(mRemetente, "Remetente")) {
+      throw new IllegalArgumentException("Endereço do remetente do email não é válido");
+    }
+
+  }
+
+  /** 
+   * Verifica se o endereço de email fornecido é válido (sintaticamente).
+   * 
+   * @param emailAddress
+   *          Endereço do email do remetente
+   *          
+   * @param mMsg
+   *          nome do campo
+   * 
+   * @return true se o endereço for válido ou false caso contrário
+   * 
+   */
+  private boolean isValidInternetAddress(String emailAddress, String mMsg) {
+
+    try {
+      InternetAddress address = new InternetAddress(emailAddress);
+    } catch (AddressException e) {
+
+      String x = mMsg + " não é válido (posição: " + e.getPos() + ", ref: " + e.getRef() + ")";
+
+      Log.w(TAG, x, e);
+
+      return false;
+
+    }
+    return true;
+  }
+
+  /**
+   * 
+   */
+  public void execute() throws Exception {
+
+    // TODO Auto-generated method stub
+
+  }
+
+  /**
+   * 
+   */
+  public void updateView() {
+
+    // TODO Auto-generated method stub
+
+  }
+
 }

@@ -3,11 +3,9 @@ package br.com.mltech.modelo;
 import java.io.Serializable;
 import java.util.Arrays;
 
-/**
- * Parametros.java
- * 
+/** 
  * Definição do nome dos parâmetros adicionais do evento que serão preenchidos
- * pelos participantes
+ * pelos participantes.
  * 
  * @author maurocl
  * 

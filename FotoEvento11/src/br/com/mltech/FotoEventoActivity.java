@@ -105,6 +105,19 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     Log.i(TAG, "*** onCreate() ***");
 
+    int orientacaoAtual = this.getResources().getConfiguration().orientation;
+
+    // exibe informações sobre a configuração atual da tela
+    if (orientacaoAtual == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
+      Log.d(TAG, "onCreate() - Orientação atual da tela: " + orientacaoAtual + "(PORTRAIT)");
+    }
+    else if (orientacaoAtual == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
+      Log.d(TAG, "onCreate() - Orientação atual da tela: " + orientacaoAtual + "(LANDSCAPE)");
+    }
+    else {
+      Log.d(TAG, "onCreate() - Orientação atual da tela: " + orientacaoAtual + "(não suportado)");
+    }
+
     // prepara o ambiente para execução da aplicação
     boolean resultado = preparaAmbiente();
 
@@ -217,6 +230,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
       public void onClick(View v) {
 
+        // executa o diálogo verificando se o usuário deseja realmente sair da aplicação.
         dialogoDesejaSairDaAplicacao();
 
       }
@@ -282,7 +296,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
         return false;
 
       }
-      
+
     });
 
   }
@@ -454,7 +468,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * resultActivityManutencao(int resultCode, Intent data)
    * 
-   * Resultado da execução da Activity de Manutenção
+   * Processa o resultado da execução da Activity de Manutenção
    * 
    * @param resultCode
    *          Resultado da execução da activity
@@ -482,6 +496,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
   /**
    * resultActivityLogin(int resultCode, Intent data)
+   * 
+   * Processa o resultado da execução da Activity de Login
    * 
    * @param resultCode
    *          Resultado da execução da Activity
@@ -548,7 +564,15 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * resultActivityDummy3(int resultCode, Intent data)
    * 
-   * Processa o resultado da execução da activity responsável por obter uma foto
+   * <p>
+   * Processa o resultado da execução da activity responsável por executar um
+   * ciclo completo da aplicação que é:
+   * <ul>
+   * <li>Obter informações sobre o participante do ebvento (nome, email, etc)
+   * <li>Obter informações sobre o tipo da foto (polaroid/cabine) e o efeito
+   * aplicado (cores/p&b)
+   * <li>Obter a foto no formato e efeito desejado mais a inclusão da moldura.
+   * </ul>
    * 
    * @param resultCode
    *          Resultado da execução da activity
@@ -713,16 +737,18 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * preparaAmbiente()
    * 
-   * <p>Prepara o sistema de arquivos para execução da aplicação.
-   * ambiente para conter as molduras, a tela
-   * inicial e para gravação das fotos. <br>
+   * <p>
+   * Prepara o sistema de arquivos para execução da aplicação. ambiente para
+   * conter as molduras, a tela inicial e para gravação das fotos. <br>
+   * 
    * <pre>
    *   +--+ /fotoevento
    *      |--- /fotos
    *      |--- /molduras
    *      |--- /telainicial
-   *     
+   * 
    * </pre>
+   * 
    * O método retorna false caso o SDCard não esteja montado.<br>
    * 
    * @return true caso o ambiente seja criado com sucesso ou false caso haja
@@ -746,20 +772,20 @@ public class FotoEventoActivity extends Activity implements Constantes {
     File f = null;
 
     //f = CameraTools.getDir2("fotoevento/fotos");
-    f = CameraTools.getDir2(FileUtils.BASE_DIR+File.separator+FileUtils.PHOTO_DIR);
+    f = CameraTools.getDir2(FileUtils.BASE_DIR + File.separator + FileUtils.PHOTO_DIR);
 
     if (DEBUG == 1) {
       FileUtils.showFileDetails(f, "fotoevento/fotos");
     }
 
     //f = CameraTools.getDir2("fotoevento/molduras");
-    f = CameraTools.getDir2(FileUtils.BASE_DIR+File.separator+FileUtils.MOLDURA_DIR);
+    f = CameraTools.getDir2(FileUtils.BASE_DIR + File.separator + FileUtils.MOLDURA_DIR);
     if (DEBUG == 1) {
       FileUtils.showFileDetails(f, "fotoevento/molduras");
     }
 
     //f = CameraTools.getDir2("fotoevento/telainicial");
-    f = CameraTools.getDir2(FileUtils.BASE_DIR+File.separator+FileUtils.TELAINICIAL_DIR);
+    f = CameraTools.getDir2(FileUtils.BASE_DIR + File.separator + FileUtils.TELAINICIAL_DIR);
     if (DEBUG == 1) {
       FileUtils.showFileDetails(f, "fotoevento/telainicial");
     }
@@ -771,8 +797,9 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * lerConfiguracoes(String name)
    * 
-   * Lê as configurações gravadas em um arquivo de preferência. Inicia os
-   * atributos mContratante e mEvento.
+   * <p>
+   * Lê as configurações gravadas em um arquivo de preferência e inicializa os
+   * atributos contratante e evento<br />
    * 
    * @param name
    *          Identificador do sistema de preferências compartilhadas
@@ -852,7 +879,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * updateListaParticipacao()
    * 
-   * <p>Insere um novo participante na lista de participação do evento
+   * <p>
+   * Insere um novo participante na lista de participação do evento
    * 
    */
   private void updateListaParticipacao() {
@@ -885,10 +913,10 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * obtemImagemTelaInicial()
-   * 
+   * <p>
    * Obtem um bitmap que será exibido na tela inicial da aplicação. Caso nenhum
    * bitmap seja configurado será usado um bitmap padrão.
+   * </p>
    * 
    * @return uma instância do objeto Bitmap contendo a imagem da tela inicial se
    *         configurada ou null caso haja algum erro.
@@ -904,37 +932,33 @@ public class FotoEventoActivity extends Activity implements Constantes {
       return null;
     }
 
-    String urlImagem = preferences.getString("preferencias_url_imagem", "");
+    String urlImagem = preferences.getString("preferencias_url_imagem", null);
 
-    if ((urlImagem == null) || (urlImagem.equals(""))) {
-      Log.w(TAG, "obtemImagemTelaInicial() - Não foi possível encontrar a tela inicial. Usando a tela padrão");
+    preferences = null;
+
+    if (urlImagem == null) {
+      Log.w(TAG,
+          "obtemImagemTelaInicial() - Não foi possível encontrar o parâmetro de configuração 'preferencias_url_imagem'. Usando a tela padrão");
       return null;
     }
 
     File f = new File(urlImagem);
 
-    if (f != null) {
+    if (f.exists()) {
 
-      if (f.exists()) {
+      // arquivo existe
+      // carrega (decodifica o arquivo e cria um objeto bitmap)
+      bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
 
-        // arquivo existe
-        // carrega (decodifica o arquivo e cria um objeto bitmap)
-        bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+    } else {
 
-      } else {
+      // arquivo não existe (ou não foi configurado)
+      // carrega a foto default (padrão)
+      // TODO definir o tamanho da imagem inicial
 
-        // arquivo não existe (ou não foi configurado)
-
-        // carrega a foto default (padrão)
-        // TODO definir o tamanho da imagem inicial
-
-        Log.w(TAG, "obtemImagemTelaInicial() - Arquivo: " + f.getAbsolutePath() + " não foi encontrado.");
-
-      }
+      Log.w(TAG, "obtemImagemTelaInicial() - Arquivo: " + f.getAbsolutePath() + " não foi encontrado.");
 
     }
-
-    preferences = null;
 
     // retorna o bitmap
     return bitmap;
@@ -980,7 +1004,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * getActivityName(int i)
+   * Obtém o nome associado a activity dado de requestCode.
    * 
    * @param requestCode
    *          inteiro originalmente fornecido na chamada ao método

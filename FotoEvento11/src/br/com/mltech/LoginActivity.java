@@ -9,9 +9,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-/**
- * Activity Login
- * 
+/** 
  * Activity responsável por pegar as informações de login e senha para acesso a telas
  * protegidas.
  * 

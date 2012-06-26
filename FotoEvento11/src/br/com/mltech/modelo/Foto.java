@@ -16,9 +16,6 @@ import android.util.Log;
 import br.com.mltech.utils.ManipulaImagem;
 
 /**
- * Foto
- * 
- * <p>
  * Representa uma foto
  * 
  * <br>
@@ -75,9 +72,6 @@ public class Foto implements Serializable {
   }
 
   /**
-   * Foto(String arquivo, Bitmap bm)
-   * 
-   * <br>
    * Construtor
    * 
    * @param arquivo
@@ -112,10 +106,7 @@ public class Foto implements Serializable {
   // -------------------------------------------------------
 
   /**
-   * 
-   * <p>
-   * Armazena a foto no arquivo
-   * </p>
+   * Armazena a foto no arquivo<br>
    * 
    * O formato padrão de gravação é .PNG
    * 

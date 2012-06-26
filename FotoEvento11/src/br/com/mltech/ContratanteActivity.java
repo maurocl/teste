@@ -12,14 +12,12 @@ import android.widget.Toast;
 import br.com.mltech.modelo.Contratante;
 
 /**
- * ContratanteActivity
- * 
- * Essa tela lê as informações a respeito do contratante
+ * Essa tela gerencia as informações a respeito do Contratante do evento.
  * 
  * @author maurocl
  * 
  */
-public class ContratanteActivity extends Activity implements Constantes{
+public class ContratanteActivity extends Activity implements Constantes {
 
   private static final String TAG = "ContratanteActivity";
 
@@ -52,20 +50,22 @@ public class ContratanteActivity extends Activity implements Constantes{
 
     }
 
+    // identifica os elementos de UI da tela
     final EditText nome = (EditText) findViewById(R.id.nome);
     final EditText email = (EditText) findViewById(R.id.email);
     final EditText telefone = (EditText) findViewById(R.id.telefone);
 
     // Inicializa os dados do contratante
+    // atualiza os componente de UI com seus valores iniciais (se houverem).
 
     if (mContratante.getNome() != null) {
       nome.setText(mContratante.getNome());
     }
-    
+
     if (mContratante.getEmail() != null) {
       email.setText(mContratante.getEmail());
     }
-    
+
     if (mContratante.getTelefone() != null) {
       telefone.setText(mContratante.getTelefone());
     }
@@ -85,30 +85,34 @@ public class ContratanteActivity extends Activity implements Constantes{
         String email1 = email.getText().toString();
         String telefone1 = telefone.getText().toString();
 
+        // atualiza o objeto contratante com os valores obtidos da tela.
         mContratante.setNome(nome1);
         mContratante.setEmail(email1);
         mContratante.setTelefone(telefone1);
 
         if (checkCamposObrigatorios(nome, email, telefone) == true) {
-          
+
           // campos obrigatórios foram forncecidos
           // cria uma nova Intent para retorno de informações
           Intent it = new Intent();
 
           // retorna uma instância de contratante
-          it.putExtra("br.com.mltech.contratante", mContratante);
+          it.putExtra(Constantes.CONTRATANTE, mContratante);
 
           setResult(RESULT_OK, it);
 
+          // finaliza a activity
           finish();
+
         } else {
+
           // campos obrigatórios não foram preenchidos
           Toast.makeText(ContratanteActivity.this, "Campos obrigatórios não foram preenchidos", Toast.LENGTH_SHORT).show();
+
         }
 
+        // loga as informações do contratante;
         Log.d(TAG, "Contratante: " + mContratante);
-
-      
 
       }
 
@@ -124,6 +128,7 @@ public class ContratanteActivity extends Activity implements Constantes{
 
         Log.d(TAG, "Botão cancelar selecionado");
 
+        // finaliza a activity
         finish();
 
       }
@@ -136,29 +141,31 @@ public class ContratanteActivity extends Activity implements Constantes{
    * checkCamposObrigatorios(final EditText nome, final EditText email, final
    * EditText telefone)
    * 
-   * @param nome Nome do contratante
-   * @param email Email do contratante
-   * @param telefone Telefone do contratante
+   * @param nome
+   *          Nome do contratante
+   * @param email
+   *          Email do contratante
+   * @param telefone
+   *          Telefone do contratante
    * 
    */
   private boolean checkCamposObrigatorios(final EditText nome, final EditText email, final EditText telefone) {
 
     boolean validado = true;
 
-    
-    if( (nome==null) || (email==null) || (telefone==null)) {
+    if ((nome == null) || (email == null) || (telefone == null)) {
       return false;
     }
-    
-    if(nome!=null && nome.getText().toString().equals("")) {
+
+    if (nome != null && nome.getText().toString().equals("")) {
       validado = false;
     }
 
-    if(email!=null && email.getText().toString().equals("")) {
+    if (email != null && email.getText().toString().equals("")) {
       validado = false;
     }
 
-    if(telefone!=null && telefone.getText().toString().equals("")) {
+    if (telefone != null && telefone.getText().toString().equals("")) {
       validado = false;
     }
 
