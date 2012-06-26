@@ -136,7 +136,7 @@ public class Logger {
     }
 
   }
-  
+
   /**
    * Loga a mensagem e pula uma linha (se o log estiver habilitado)
    * 
