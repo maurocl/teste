@@ -210,7 +210,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
    *          a nova largura da superfície (surface)
    * 
    * @param height
-   *          a nova altura da superfície (surface)
+   *          a nova altura da superfí
+   *          cie (surface)
    * 
    */
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {

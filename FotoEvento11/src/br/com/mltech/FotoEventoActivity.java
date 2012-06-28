@@ -384,9 +384,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * lancaActivityManutencao()
-   * 
-   * Lança a Activity responsável pela manutenção da aplicação
+   * Lança a Activity responsável pela manutenção da aplicação.<br>
    * 
    */
   private void launchActivityManutencao() {

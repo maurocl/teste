@@ -210,7 +210,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
         Toast.makeText(getBaseContext(), "Cria backup da configuração em arquivo", Toast.LENGTH_SHORT).show();
 
-        String arquivo = FileUtils.getBaseDirectory()+File.separator + "config_backup.txt";
+        String arquivo = FileUtils.getBaseDirectory() + File.separator + "config_backup.txt";
 
         boolean gravou = gravaArquivoConfiguracao(arquivo);
 
@@ -234,42 +234,107 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ManutencaoActivity.this);
 
-        builder.setMessage("Você tem certeza que apagar todos os dados e restaurar do arquivo ?").setCancelable(false)
-            .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+        /*
+         * builder.setMessage(
+         * "Você tem certeza que apagar todos os dados e restaurar do arquivo ?"
+         * ).setCancelable(false) .setPositiveButton("Sim", new
+         * DialogInterface.OnClickListener() {
+         * 
+         * public void onClick(DialogInterface dialog, int id) {
+         * 
+         * String arquivo = FileUtils.getBaseDirectory() + File.separator +
+         * "config.txt";
+         * 
+         * HashMap<String, String> hash = null;
+         * 
+         * // Lê o arquivo de configuração try {
+         * 
+         * hash = leArquivoConfiguracao(arquivo);
+         * 
+         * } catch (FileNotFoundException e) { Log.w(TAG, "onClick(restore) - "
+         * + arquivo + " não foi encontrado", e);
+         * Toast.makeText(getBaseContext(), "Falha na abertura do arquivo: " +
+         * arquivo, Toast.LENGTH_SHORT).show();
+         * 
+         * } catch (IOException e) { Log.w(TAG,
+         * "onClick(restore) - Erro na abertura do arquivo: " + arquivo, e);
+         * 
+         * }
+         * 
+         * // Atualiza as variáveis de preferência if (hash != null) { if
+         * (saveMapPreferences(hash)) { Toast.makeText(getBaseContext(),
+         * "Restauração feita com sucesso do arquivo: " + arquivo,
+         * Toast.LENGTH_SHORT) .show(); } else {
+         * Toast.makeText(getBaseContext(),
+         * "Falha na restauração da configuração", Toast.LENGTH_SHORT).show(); }
+         * } else { Log.w(TAG,
+         * "onClick(restore) - Erro na restauração do arquivo: " + arquivo); }
+         * 
+         * }
+         * 
+         * }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
+         * 
+         * public void onClick(DialogInterface dialog, int id) {
+         * 
+         * dialog.cancel(); }
+         * 
+         * });
+         */
 
-              public void onClick(DialogInterface dialog, int id) {
+        builder.setMessage("Você tem certeza que apagar todos os dados e restaurar do arquivo ?");
+        
+        builder.setCancelable(false);
+        
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
 
-                String arquivo = FileUtils.getBaseDirectory()+File.separator + "config.txt";
+          public void onClick(DialogInterface dialog, int id) {
 
-                HashMap<String, String> hash = null;
+            String arquivo = FileUtils.getBaseDirectory() + File.separator + "config.txt";
 
-                // Lê o arquivo de configuração 
-                hash = leArquivoConfiguracao(arquivo);
+            HashMap<String, String> hash = null;
 
-                // Atualiza as variáveis de preferência
-                if (hash != null) {
-                  if (saveMapPreferences(hash)) {
-                    Toast.makeText(getBaseContext(), "Restauração feita com sucesso do arquivo: " + arquivo, Toast.LENGTH_SHORT)
-                        .show();
-                  }
-                  else {
-                    Toast.makeText(getBaseContext(), "Falha na restauração da configuração", Toast.LENGTH_SHORT).show();
-                  }
-                }
-                else {
-                  Log.w(TAG, "Erro na restauração do arquivo: " + arquivo);
-                }
+            // Lê o arquivo de configuração 
+            try {
 
+              hash = leArquivoConfiguracao(arquivo);
+
+            } catch (FileNotFoundException e) {
+              Log.w(TAG, "onClick(restore) - " + arquivo + " não foi encontrado", e);
+              Toast.makeText(getBaseContext(), "Falha na abertura do arquivo: " + arquivo, Toast.LENGTH_SHORT).show();
+
+            } catch (IOException e) {
+              Log.w(TAG, "onClick(restore) - Erro na abertura do arquivo: " + arquivo, e);
+
+            }
+
+            // Atualiza as variáveis de preferência
+            if (hash != null) {
+              
+              if (saveMapPreferences(hash)) {
+                Toast.makeText(getBaseContext(), "Restauração feita com sucesso do arquivo: " + arquivo, Toast.LENGTH_SHORT)
+                    .show();
               }
-
-            }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
-
-              public void onClick(DialogInterface dialog, int id) {
-
-                dialog.cancel();
+              else {
+                Toast.makeText(getBaseContext(), "Falha na restauração da configuração", Toast.LENGTH_SHORT).show();
               }
+              
+            }
+            else {
+              Log.w(TAG, "onClick(restore) - Erro na restauração do arquivo: " + arquivo);
+            }
 
-            });
+          }
+
+        });
+
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+
+          public void onClick(DialogInterface dialog, int id) {
+
+            dialog.cancel();
+          }
+
+        });
 
         AlertDialog alert = builder.create();
         alert.show();
@@ -534,10 +599,8 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * gravarPreferencias()
-   * 
    * Grava a configuração do Contratante e do Evento na estrutura de
-   * preferências (Preferences)
+   * preferências (Preferences).
    * 
    * @return true caso a gravação ocorra com sucesso ou false caso haja algum
    *         problema.
@@ -656,13 +719,11 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * lerPreferencias()
-   * 
    * Lê a configuração do Contratante e do Evento armazenada na estrutura de
-   * preferências (Preferences).
+   * preferências (Preferences).<br>
    * 
    * Inicializa as variáveis mContratante e mEvento com os valores lidos ou
-   * apenas cria uma instância delas.
+   * apenas cria uma instância delas.<br>
    * 
    * @return true em caso de sucesso ou false no caso de falhas
    * 
@@ -778,15 +839,16 @@ public class ManutencaoActivity extends Activity implements Constantes {
    * leArquivoConfiguracao(String filename)
    * 
    * Lê um arquivo com as configurações. O nome das chaves deve ser colocado em
-   * letras maiúsculas
+   * letras maiúsculas.<br>
    * 
    * @param filename
    *          nome do arquivo de configuração
    * 
    * @return um HashMap<String,String> com as associações entre chave e valor
+   * @throws IOException
    * 
    */
-  private HashMap<String, String> leArquivoConfiguracao(String filename) {
+  private HashMap<String, String> leArquivoConfiguracao(String filename) throws FileNotFoundException, IOException {
 
     BufferedReader buf = null;
 
@@ -795,66 +857,54 @@ public class ManutencaoActivity extends Activity implements Constantes {
     // número da linha do arquivo
     int linha = 0;
 
-    try {
+    buf = new BufferedReader(new FileReader(filename));
 
-      buf = new BufferedReader(new FileReader(filename));
+    String line = null;
 
-      String line = null;
+    while ((line = buf.readLine()) != null) {
 
-      while ((line = buf.readLine()) != null) {
+      linha++;
 
-        linha++;
-
-        if (line.startsWith("#")) {
-          // ignora linhas começas por '#'
-          continue;
-        }
-
-        Log.d(TAG, linha + ": " + line);
-
-        String[] atribuicao = line.split("=");
-
-        // Log.v(TAG, "Tamanho=" + atribuicao.length);
-
-        String chave = null;
-        String valor = null;
-
-        if (atribuicao.length > 1) {
-
-          chave = atribuicao[0];
-          valor = atribuicao[1];
-
-          Log.v(TAG, "Tamanho=" + atribuicao.length + ", Chave=" + chave + ", Valor=" + valor);
-
-        }
-        else if (atribuicao.length == 1) {
-          chave = atribuicao[0];
-
-          Log.v(TAG, "Chave=" + chave + ", Valor=" + valor);
-        }
-        else {
-          Log.w(TAG, "Erro de atribuição na linha: " + linha);
-        }
-
-        hash.put(chave.toLowerCase(), valor);
-
+      if (line.startsWith("#")) {
+        // ignora linhas começas por '#'
+        continue;
       }
 
-    } catch (FileNotFoundException e) {
-      //
-      Log.w(TAG, "Arquivo não foi encontrado", e);
+      Log.d(TAG, linha + ": " + line);
 
-    } catch (IOException e) {
-      //
-      Log.w(TAG, "IOException", e);
+      String[] atribuicao = line.split("=");
 
-    } finally {
-      if (buf != null) {
-        try {
-          buf.close();
-        } catch (IOException e) {         
-          e.printStackTrace();
-        }
+      // Log.v(TAG, "Tamanho=" + atribuicao.length);
+
+      String chave = null;
+      String valor = null;
+
+      if (atribuicao.length > 1) {
+
+        chave = atribuicao[0];
+        valor = atribuicao[1];
+
+        Log.v(TAG, "Tamanho=" + atribuicao.length + ", Chave=" + chave + ", Valor=" + valor);
+
+      }
+      else if (atribuicao.length == 1) {
+        chave = atribuicao[0];
+
+        Log.v(TAG, "Chave=" + chave + ", Valor=" + valor);
+      }
+      else {
+        Log.w(TAG, "Erro de atribuição na linha: " + linha);
+      }
+
+      hash.put(chave.toLowerCase(), valor);
+
+    }
+
+    if (buf != null) {
+      try {
+        buf.close();
+      } catch (IOException e) {
+        e.printStackTrace();
       }
     }
 
@@ -863,9 +913,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * saveMapPreferences(HashMap<String, String> hash)
-   * 
-   * Grava nos arquivos de SharedPreferences os valores mapeados em um HashMap
+   * Grava nos arquivos de SharedPreferences os valores mapeados em um HashMap.
    * 
    * @param hash
    *          HashMap contendo a relação de chaves e valores.
@@ -970,10 +1018,8 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * readPreferencesMap()
-   * 
    * Lê os valores armazenados no arquivo de preferência e cria um HashMap com
-   * os mapeamentos de chaves e valores
+   * os mapeamentos de chaves e valores.
    * 
    * @return um HashMap com o mapeamento entra chave e valores ou null caso haja
    *         algum problema
@@ -1021,7 +1067,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * gravaArquivoConfiguracao(String filename)
+   * Grava um arquivo de configuração das preferências da aplicação.<br>
    * 
    * @param filename
    *          nome do arquivo

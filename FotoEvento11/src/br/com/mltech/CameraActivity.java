@@ -52,16 +52,19 @@ public class CameraActivity extends Activity implements Constantes {
   // flag usado para controle da aplicação
   private static int flag = 0;
 
-  // Variável usada para desenhar a foto na tela
+  // Variável usada para desenhar a imagem da câmera na tela
   private FrameLayout layoutPreview;
 
   // botões da máquina
   private static Button btnOk;
 
+  // botão nova foto
   private static Button btnNovo;
 
+  // botão cancelar
   private static Button btnCancelar;
 
+  // botão capturar
   private static Button btnCapture;
 
   // handler usado para controle do disparo automático
@@ -90,6 +93,7 @@ public class CameraActivity extends Activity implements Constantes {
   /**
    * identificador da câmera do dispositivo
    */
+  // TODO alterar !!!
   private static int cameraId = 0;
 
   /**
@@ -114,7 +118,8 @@ public class CameraActivity extends Activity implements Constantes {
     }
 
     // obtém o identificador da câmera
-    cameraId = (intent.getIntExtra("br.com.mltech.cameraId", 0));
+    cameraId = intent.getIntExtra("br.com.mltech.cameraId", 0);
+    
     Log.d(TAG, "onCreate() - atualizando o dientificador da câmera - cameraId = " + cameraId);
 
     int numCamerasDisponiveis = Camera.getNumberOfCameras();
@@ -451,24 +456,52 @@ public class CameraActivity extends Activity implements Constantes {
 
     Log.d(TAG, "*** onResume() ***");
 
+    Log.d(TAG,"onResume() - cameraId="+cameraId);
+    
+    Log.d(TAG,"==> -4");
+    
     if (mCamera == null) {
 
+      Log.d(TAG,"==> -3");
       // obtém uma instância da câmera
       mCamera = CameraTools.getCameraInstance(cameraId);
+      Log.d(TAG,"==> -2");
 
     }
 
+    Log.d(TAG,"==> -1");
+    
+    // verifica o estado de mPreview
+    if(mPreview==null) {
+      Log.d(TAG,"==> mPreview é nulo");
+    }
+    else {
+      Log.d(TAG,"==> mPreview não é nulo");
+    }
+    
+    Log.i(TAG,"==> mCamera="+mCamera);
+    
     //--------------------------------------------------------
     // configura os parâmetros usados para configurar a câmera
     //--------------------------------------------------------
-    configuraParamCamera();
+    
+    if(mPreview==null) {
+      // configura os parâmetros da câmera apenas se mPreview for nulo.
+      configuraParamCamera();
+    }
 
+    Log.d(TAG,"==> 0");
+    
     // cria uma instância da "tela" de preview
     mPreview = new CameraPreview(this, mCamera);
 
+    Log.d(TAG,"==> 0.1");
+    
     // TODO verificar o layout da câmera
     layoutPreview.addView(mPreview);
 
+    Log.d(TAG,"==> 0.2");
+    
     // TODO verificar o disparo automático da câmera      
     if (tipoDisparo == AUTOMATICO) {
       setDisparoAutomatico(3);
@@ -477,33 +510,48 @@ public class CameraActivity extends Activity implements Constantes {
       // não faz nada
     }
 
+    Log.d(TAG,"==> 1");
+    
     if (mCamera == null) {
 
+      Log.d(TAG,"==> 2");
       Log.w(TAG, "onResume - mCamera is null");
 
+      
+      
     } else {
 
+      Log.d(TAG,"==> 3");
+      
       // camera é diferente de null
 
       Log.d(TAG, "onResume() - flag=" + flag);
 
       if (flag == 0) {
 
+        Log.d(TAG,"==> 4");
+        
         flag = 1;
 
       } else {
 
         Log.d(TAG, "onResume() - antes da chamada do método mCamera.startPreview()");
 
+        Log.d(TAG,"==> 5");
+        
         // Stops capturing and drawing preview frames to the surface, and resets
         // the camera for a future call to startPreview().
         mCamera.stopPreview();
 
+        Log.d(TAG,"==> 6");
+        
         // Starts capturing and drawing preview frames to the screen
         mCamera.startPreview();
 
         Log.d(TAG, "onResume() - após chamada do método mCamera.startPreview()");
 
+        
+        
       }
 
     }
@@ -623,9 +671,7 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
-   * showCameraParameters
-   * 
-   * Exibe algumas configurações dos parâmetros da câmera
+   * Exibe algumas configurações dos parâmetros da câmera.
    * 
    * @param c
    *          Instância de uma câmera
@@ -656,9 +702,7 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
-   * reiniciaCamera()
-   * 
-   * Reinicia a câmera (o preview da câmera)
+   * Reinicia a câmera (o preview da câmera).
    * 
    */
   private void reiniciaCamera() {
@@ -707,8 +751,6 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
-   * releaseCamera()
-   * 
    * Libera a câmera para ser usada em outras aplicações (se a câmera estiver em
    * uso pela aplicação)
    * 
@@ -742,16 +784,14 @@ public class CameraActivity extends Activity implements Constantes {
 
   }
 
-  /**
-   * gravaArquivo(byte[] data, String nomeArquivo)
-   * 
-   * Grava um array de bytes (contendo a foto) em um arquivo em disco
+  /** 
+   * Grava uma foto num arquivo. A foto encontra-se em representada por um array de bytes.
    * 
    * @param data
    *          Array de bytes
    * 
    * @param nomeArquivo
-   *          Nome do arquivo
+   *          Nome do arquivo onde a foto será gravada
    * 
    * @return true se o arquivo gravado com sucesso ou false caso ocorra algum
    *         erro.
@@ -796,6 +836,7 @@ public class CameraActivity extends Activity implements Constantes {
         String msg = "gravaArquivo() - Arquivo: " + f.getAbsolutePath() + " foi gerado e ocupa "
             + fmtFloat((float) (f.length() / 1024.0)) + " KBytes";
 
+        // loga a mensagem
         Log.d(TAG, msg);
 
         gravou = true;
@@ -828,10 +869,8 @@ public class CameraActivity extends Activity implements Constantes {
 
   }
 
-  /**
-   * fmtFloat(String args)
-   * 
-   * Formata um valor float para 2 casas decimais
+  /** 
+   * Formata um valor float para duas casas decimais
    * 
    * @param args
    *          valor float para formatar
@@ -850,9 +889,7 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
-   * setDisparoAutomatico(int segundos)
-   * 
-   * Dispara automaticamente a câmera após o número de segundos fornecidos
+   * Dispara automaticamente a câmera após o número de segundos fornecidos.
    * 
    * @param segundos
    *          nº de segundos antes do disparo da foto
@@ -865,10 +902,11 @@ public class CameraActivity extends Activity implements Constantes {
     }
 
     if (mCamera == null) {
-      Log.e(TAG, "setDisparoAutomatico() - camera não está nula");
+      Log.e(TAG, "setDisparoAutomatico() - câmera não está nula");
       return;
     }
 
+    // Exibe o aviso de disparo automático
     Toast.makeText(getBaseContext(), "disparo automático em " + (segundos * 1000) + " segundos.", Toast.LENGTH_SHORT).show();
 
     Message msg = new Message();
@@ -901,7 +939,7 @@ public class CameraActivity extends Activity implements Constantes {
       // o atributo msg.what permite identificar a mensagem
       if (msg.what == 1) {
 
-        Toast.makeText(getBaseContext(), "mensagem", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getBaseContext(), "Disparando a captura ...", Toast.LENGTH_SHORT).show();
 
         // tira uma foto
         mCamera.takePicture(shutter, null, jpeg);
@@ -929,17 +967,22 @@ public class CameraActivity extends Activity implements Constantes {
 
   }
 
-  /**
-   * configuraParamCamera()
+  /** 
+   * Configura os parâmetros da câmera.
+   * 
    */
   private void configuraParamCamera() {
 
+    Log.d(TAG,"configuraParamCamera() - início");
+    
+    Log.d(TAG,"configuraParamCamera() - setDisplayOrientation(0)");
     mCamera.setDisplayOrientation(0);
     
+    Log.d(TAG,"configuraParamCamera() - setCameraDisplayOrientation");
     CameraTools.setCameraDisplayOrientation(this, cameraId, mCamera);
     
 
-    // 
+    // Obtém os parâmetros de configuração da câmera
     Camera.Parameters params = mCamera.getParameters();
 
     // altera o tamanho da foto
@@ -950,12 +993,15 @@ public class CameraActivity extends Activity implements Constantes {
      * EFFECT_POSTERIZE EFFECT_SEPIA EFFECT_SOLARIZE EFFECT_WHITEBOARD
      */
 
+    // Obtém o efeito que será aplicado a foto.
     int efeitoFoto = mParticipacao.getEfeitoFoto();
 
     if (efeitoFoto == CORES) {
+      Log.d(TAG,"configuraParamCamera() - altera o color effect para cores");
       params.setColorEffect(Camera.Parameters.EFFECT_NONE);
     }
     else if (efeitoFoto == PB) {
+      Log.d(TAG,"configuraParamCamera() - altera o color effect para preto & branco");
       params.setColorEffect(Camera.Parameters.EFFECT_MONO);
     }
     else {
@@ -970,12 +1016,17 @@ public class CameraActivity extends Activity implements Constantes {
 
     // Exibe alguns parametros da camera
     showCameraParameters(mCamera);
+    
+    Log.d(TAG,"configuraParamCamera() - fim");
+    
   }
 
   /**
    * confirmaFoto()
+   * 
    */
   private void confirmaFoto() {
+    
     Log.i(TAG,"---------------------------------------------------------");
     Log.i(TAG," => confirmaFoto()");
     Log.i(TAG,"---------------------------------------------------------");
