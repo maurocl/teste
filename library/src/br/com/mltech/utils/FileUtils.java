@@ -11,7 +11,7 @@ import android.util.Log;
 import br.com.mltech.utils.camera.CameraTools;
 
 /**
- * Métodos estáticos para manipulação de arquivos
+ * Métodos estáticos para manipulação de arquivos.
  * 
  * @author maurocl
  * 
@@ -21,16 +21,17 @@ public class FileUtils {
   public static final String TAG = "FileUtils";
 
   public static final String BASE_DIR = "fotoevento";
-  
-  public static final String PHOTO_DIR = "fotos";
-  public static final String MOLDURA_DIR = "molduras";
-  public static final String TELAINICIAL_DIR = "molduras";
 
+  public static final String PHOTO_DIR = "fotos";
+
+  public static final String MOLDURA_DIR = "molduras";
+
+  public static final String TELAINICIAL_DIR = "telainicial";
+
+  // é formado pelo diretório base (nome da aplicação) + o diretório onde são armazenadas as fotos dentro da aplicação
   public static final String APP_NAME = BASE_DIR + File.separator + PHOTO_DIR;
 
   /**
-   * getTimeStamp()
-   * 
    * Retorna uma string com a data e hora no formato yyyyMMdd_HHmmss. É útil
    * para geração de nomes de arquivos.
    * 
@@ -43,9 +44,9 @@ public class FileUtils {
   }
 
   /**
-   * Obtém o diretório básico onde são armazenadas as fotos no dispositivo
+   * Obtém o diretório básico onde são armazenadas as fotos no dispositivo.
    * 
-   * @return
+   * @return o arquivo onde as fotos são armazenadas.
    * 
    */
   public static File getBaseDirectory() {
@@ -59,7 +60,7 @@ public class FileUtils {
   /**
    * Obtém o diretório onde são armazenadas as fotos da aplicação
    * 
-   * @return 
+   * @return obtém o diretório onde são armazenadas as fotos da aplicação.
    * 
    */
   public static File getBasePhotoDirectory() {
@@ -73,26 +74,27 @@ public class FileUtils {
   }
 
   /**
-   * Obtém o diretório onde são armazenadas as fotos da aplicação
+   * Obtém o diretório onde são armazenadas as molduras da aplicação
    * 
-   * @return
+   * @return O diretório onde são armazenadas as molduras da aplicação
    * 
    */
   public static File getBaseMolduraDirectory() {
 
-    String s = CameraTools.getExternalStoragePublicDirectoryPictures().getAbsoluteFile() + File.separator + BASE_DIR + File.separator + MOLDURA_DIR;
+    String s = CameraTools.getExternalStoragePublicDirectoryPictures().getAbsoluteFile() + File.separator + BASE_DIR
+        + File.separator + MOLDURA_DIR;
 
     File file = new File(s);
 
     return file;
 
   }
-  
-  
+
   /**
-   * obtemNomeArquivo()
+   * Retorna um arquivo para uso na captura de uma foto e armazenamento no
+   * formato .png (sem compressão).
    * 
-   * @return
+   * @return o arquivo
    */
   public static File obtemNomeArquivo() {
 
@@ -106,10 +108,9 @@ public class FileUtils {
   }
 
   /**
-   * obtemNomeArquivo(String extensao)
-   * 
-   * gera um nome de arquivo a partir do numero de mili segundos atuais
-   * retornados pelo sistema
+   * Gera um nome de arquivo a partir do número de milisegundos atuais
+   * retornados pelo sistema operacional. O arquivo gerado possui a extensão
+   * .jpg
    * 
    * extensao=".jpg"
    */
@@ -133,9 +134,9 @@ public class FileUtils {
   }
 
   /**
-   * obtemNomeArquivoPNG()
    * 
-   * @return o nome do arquivo localizado no diretório de fotos com a extensão .png
+   * @return o nome do arquivo localizado no diretório de fotos com a extensão
+   *         .png
    */
   public static File obtemNomeArquivoPNG() {
 
@@ -149,9 +150,8 @@ public class FileUtils {
   }
 
   /**
-   * obtemNomeArquivoJPEG()
-   * 
-   * @return @return o nome do arquivo localizado no diretório de fotos com a extensão .jpg
+   * @return @return o nome do arquivo localizado no diretório de fotos com a
+   *         extensão .jpg
    */
   public static File obtemNomeArquivoJPEG() {
 
@@ -165,13 +165,18 @@ public class FileUtils {
   }
 
   /**
-   * getFileExtension(Uri uri)
+   * Obtém a extensão do nome do arquivo referenciado por sua Uri (o schema da
+   * URI deve ser do tipo file).<br>
+   * <br>
    * 
-   * Obtém a extensão de um arquivo representado por uma Uri cujo schema é file.
+   * <b>Exemplo:</b><br>
    * 
+   * <pre>
    * Se a Uri do arquivo for:
-   * file:///mnt/sdcard/Pictures/fotoevento/fotos20120603_130124.png Então
-   * retorna: png
+   *   file:///mnt/sdcard/Pictures/fotoevento/fotos20120603_130124.png 
+   * Então
+   *   retorna: png
+   * </pre>
    * 
    * @param uri
    *          URI do arquivo
@@ -193,11 +198,10 @@ public class FileUtils {
   }
 
   /**
-   * getFileExtension(File f)
+   * Obtém a extensão do nome do arquivo.
    * 
-   * Obtém a extensão de um arquivo.
-   * 
-   * @param f 
+   * @param f
+   *          Nome do arquivo.
    * 
    * @return uma string contendo a extensão do arquivo, sem (".")
    * 
@@ -215,15 +219,13 @@ public class FileUtils {
   }
 
   /**
-   * getFilename(Uri uri)
-   * 
-   * Obtém o nome do arquivo (sem a extensão) de um arquivo representado por uma
-   * Uri cujo schema é file.
+   * Obtém o nome do arquivo referenciado por uma URI. O nome do arquivo voltará
+   * sem a sua extensão.
    * 
    * @param uri
    *          URI do arquivo
    * 
-   * @return o nome do arquivo ou null caso haja algum problema
+   * @return o nome do arquivo (sem extensão) ou null caso haja algum problema.
    */
   public static String getFilename(Uri uri) {
 
@@ -242,12 +244,10 @@ public class FileUtils {
   }
 
   /**
-   * getFilename(File f)
-   * 
-   * Obtém o nome do arquivo (sem a extensão)
+   * Obtém o nome do arquivo (sem a extensão).
    * 
    * @param f
-   *          Arquivo
+   *          Nome completo do arquivo.
    * 
    * @return o nome do arquivo ou null caso haja algum problema
    */
@@ -268,12 +268,10 @@ public class FileUtils {
   }
 
   /**
-   * isFileURI(Uri uri)
-   * 
-   * Testa se uma Uri é do tipo (schema) file.
+   * Testa se a Uri referencia um objeto do tipo (schema) file.
    * 
    * @param uri
-   *          URI
+   *          URI do objeto.
    * 
    * @return true em caso schema seja file ou null caso contrário
    */
@@ -288,14 +286,12 @@ public class FileUtils {
   }
 
   /**
-   * isValidFile(File f)
-   * 
-   * Verifica se um arquivo existe e é um arquivo
+   * Verifica se um arquivo existe e é um arquivo.
    * 
    * @param f
    *          Arquivo
    * 
-   * @return true se o arquivo existir e for um arquivo
+   * @return true se o arquivo existir e for um arquivo.
    * 
    */
   public static boolean isValidFile(File f) {
@@ -313,8 +309,6 @@ public class FileUtils {
   }
 
   /**
-   * isValidDirectory(File f)
-   * 
    * Verifica se um diretório existe.
    * 
    * @param f
@@ -338,9 +332,8 @@ public class FileUtils {
   }
 
   /**
-   * showBundle(Bundle b)
-   * 
-   * Exibe todas as chaves/valores armazenadas no bundle
+   * Exibe todas as chaves/valores armazenadas no bundle.<br>
+   * Os dados são armazenados no log do sistema.
    * 
    * @param bundle
    *          Instância da classe Bundle
@@ -372,31 +365,29 @@ public class FileUtils {
   }
 
   /**
-   * showFile(File f)
+   * Exibe detalhes sobre um arquivo no log da aplicação.<br>
    * 
-   * Exibe detalhes sobre um arquivo.
+   * Se o arquivo for nulo então nenhuma mensagem será exibida.
    * 
-   * Exibe as informações no Log.
-   * 
-   * @param f
+   * @param file
    *          Instância da classe File
    * 
    */
-  public static void showFile(File f) {
+  public static void showFile(File file) {
+
+    if (file == null) {
+      return;
+    }
 
     Log.v(TAG, "showFile():");
 
-    if (f != null) {
-      Log.v(TAG, "  getName()=" + f.getName());
-      Log.v(TAG, "  getAbsolutePath()=" + f.getAbsolutePath());
-      Log.v(TAG, "  getPath()=" + f.getPath());
-    }
+    Log.v(TAG, "  getName()=" + file.getName());
+    Log.v(TAG, "  getAbsolutePath()=" + file.getAbsolutePath());
+    Log.v(TAG, "  getPath()=" + file.getPath());
 
   }
 
   /**
-   * ShowFileDetails(File f, String msg)
-   * 
    * Exibe informações detalhadas sobre um arquivo
    * 
    * @param f
@@ -404,6 +395,10 @@ public class FileUtils {
    * 
    */
   public static void showFileDetails(File f, String msg) {
+
+    if (f == null) {
+      return;
+    }
 
     Log.v(TAG, "ShowFileDetails() ==> " + msg);
 
@@ -428,13 +423,18 @@ public class FileUtils {
   }
 
   /**
-   * showUri(Uri uri)
+   * Exibe informações detalhadas uma Uri.<br>
    * 
-   * Exibe detalhadas sobre informações sobre uma Uri
+   * Se a URI fornecida for nula então nenhuma mensagem será exibida.
    * 
    * @param uri
+   *          Uri referenciando um objeto.
    */
   public static void showUri(Uri uri) {
+
+    if (uri == null) {
+      return;
+    }
 
     Log.v(TAG, "showUri() - exibe informações sobre uma Uri:");
     Log.v(TAG, "  uri=" + uri);
