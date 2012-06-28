@@ -9,6 +9,9 @@
     <!-- Permissão do uso da Camera -->
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Permissão de uso camera autofocus -->
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <!-- Permissão para gravar arquivos no dispositivo de armazenamento externo -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -106,14 +109,14 @@
         </activity>
         <activity
             android:name=".DummyActivity2"
-            android:label="Câmera Simples fornecida pelo Android" >
+            android:label="Câmera Simples fornecida pelo Android (2)" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
             android:name=".DummyActivity3"
-            android:label="Câmera Simples fornecida pelo Android" >
+            android:label="Câmera Simples fornecida pelo Android (3)" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -134,7 +137,7 @@
         </activity>
         <activity
             android:name=".TestCameraActivity"
-            android:label="Testa o funcinamento da activity CameraActivity" >
+            android:label="Testa o funcionamento da activity CameraActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
