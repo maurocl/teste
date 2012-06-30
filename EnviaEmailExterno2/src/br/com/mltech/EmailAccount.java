@@ -1,5 +1,11 @@
 package br.com.mltech;
 
+/**
+ * EmailAccount
+ * 
+ * @author maurocl
+ *
+ */
 public class EmailAccount {
 
   //---------------------------------------------------------------------------

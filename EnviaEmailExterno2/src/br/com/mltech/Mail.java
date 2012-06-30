@@ -27,9 +27,6 @@ import javax.mail.internet.MimeMultipart;
 import android.util.Log;
 
 /**
- * Mail
- * 
- * <p>
  * Classe responsável pelo envio de email usando o JavaMail.
  * 
  * 
@@ -71,7 +68,7 @@ public class Mail extends javax.mail.Authenticator {
   private String from;
 
   /**
-   * responder para
+   * endereço que deve ser usado para responder o email
    */
   private String replyTo;
 
@@ -121,16 +118,14 @@ public class Mail extends javax.mail.Authenticator {
   private Multipart multipart;
 
   /**
-   * Mail()
-   * 
    * Construtor
    * 
    */
   public Mail() {
 
-    auth = true; // smtp authentication - default on
+    this.auth = true; // smtp authentication - default on
 
-    multipart = new MimeMultipart();
+    this.multipart = new MimeMultipart();
 
     // There is something wrong with MailCap, javamail can not find a
     // handler for the multipart/mixed part, so this bit needs to be added.
@@ -148,13 +143,13 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * Mail(String user, String pass)
+   * Construtor
    * 
    * @param user
-   *          Username
+   *          Username nome do usuário da conta de email
    * 
    * @param pass
-   *          Password
+   *          Password senha do usuário da conta de email
    * 
    */
   public Mail(String user, String pass) {
@@ -169,14 +164,14 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * send()
+   * Envia o email.<br>
    * 
-   * <p>
-   * Envia o email.
+   * Usa os atributos para preencher ...<br>
    * 
    * @return true email enviado com sucesso ou false caso contrário
    * 
    * @throws Exception
+   *           se houver algum erro.
    */
   public boolean send() throws Exception {
 
@@ -268,8 +263,7 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * send(String to, String bcc, String from, String subject, String body,
-   * String foto)
+   * Envia um email usando os parâmetros.
    * 
    * @param to
    * @param bcc
@@ -352,8 +346,6 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * addAttachment(String filename)
-   * 
    * Adiciona um arquivo como anexo ao email.
    * 
    * @param filename
@@ -365,36 +357,36 @@ public class Mail extends javax.mail.Authenticator {
    */
   public void addAttachment(String filename) throws Exception {
 
+    // Cria um BodyPart.
     BodyPart messageBodyPart = new MimeBodyPart();
 
+    // Cria um DataSource associado ao arquivo de anexo.
     DataSource source = new FileDataSource(filename);
 
+    // Estabelece o handler para o arquivo.
     messageBodyPart.setDataHandler(new DataHandler(source));
 
+    // Associa o arquivo
     // lança MessagingException
     messageBodyPart.setFileName(filename);
 
+    // Adiciona o BodyPart ao multipart.
     multipart.addBodyPart(messageBodyPart);
 
   }
 
   /**
-   * getPasswordAuthentication()
-   * 
-   * <p>
    * Called when password authentication is needed. Subclasses should override
-   * the default implementation, which returns null.
+   * the default implementation, which returns null.<br>
    * 
    * Note that if this method uses a dialog to prompt the user for this
    * information, the dialog needs to block until the user supplies the
-   * information.
+   * information.<br>
    * 
-   * This method can not simply return after showing the dialog.
+   * This method can not simply return after showing the dialog.<br>
    * 
    * Returns: The PasswordAuthentication collected from the user, or null if
-   * none is provided.
-   * 
-   * 
+   * none is provided.<br>
    * 
    */
   @Override
@@ -405,35 +397,38 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * setProperties()
+   * Estabelece as propriedades do email.
    * 
-   * Estabelece as propriedades do email
+   * @return uma instância de Properties.
    * 
-   * @return uma instância de Properties
    */
   private Properties setProperties() {
 
     Properties props = new Properties();
 
     if (debuggable) {
-      props.put("mail.debug", "true");
+      props.setProperty("mail.debug", "true");
     }
-
-    props.setProperty("mail.transport.protocol", "smtp");
-
-    props.put("mail.smtp.host", host);
 
     if (auth) {
-      props.put("mail.smtp.auth", "true");
+      props.setProperty("mail.smtp.auth", "true");
+    }
+    
+    props.setProperty("mail.transport.protocol", "smtp");
+
+    props.setProperty("mail.smtp.host", host);
+
+    props.setProperty("mail.smtp.port", port);
+
+    if (isSsl()) {
+      
+      props.setProperty("mail.smtp.socketFactory.port", sport);
+
+      props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+
     }
 
-    props.put("mail.smtp.port", port);
-
-    // props.put("mail.smtp.socketFactory.port", sport);
-
-    // props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
-
-    props.put("mail.smtp.socketFactory.fallback", "false");
+    props.setProperty("mail.smtp.socketFactory.fallback", "false");
 
     props.setProperty("mail.smtp.quitwait", "false");
 
@@ -568,8 +563,9 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
+   * Obtém o nº da porta segura.
    * 
-   * @return
+   * @return O n º da porta segura.
    */
   public String getSport() {
 
@@ -577,8 +573,11 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
+   * Atribui o nº da porta segura;
    * 
    * @param sport
+   *          O nº da porta segura.
+   * 
    */
   public void setSport(String sport) {
 
@@ -588,7 +587,7 @@ public class Mail extends javax.mail.Authenticator {
   /**
    * Retorna o host onde o servidor SMTP está executando
    * 
-   * @return
+   * @return O endereço do servidor SMTP usado.
    */
   public String getHost() {
 
@@ -609,7 +608,7 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * Indica se o usuário está autenticado
+   * Indica se o usuário está autenticado.
    * 
    * @return true se o usuário estiver autenticado ou false caso contrário.
    * 
@@ -631,7 +630,7 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * Verifdica se a rotina é debugável
+   * Verifica se a rotina é debugável.
    * 
    * @return true rotina debugável ou false caso contrário
    * 
@@ -642,8 +641,10 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
+   * Atribui o use de debug.
    * 
    * @param debuggable
+   *          true se debugavel ou false caso contrário.
    */
   public void setDebuggable(boolean debuggable) {
 
@@ -651,9 +652,9 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * Obtém um Multipart
+   * Obtém um Multipart.
    * 
-   * @return
+   * @return Um multipart.
    * 
    */
   public Multipart getMultipart() {
@@ -662,8 +663,10 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
+   * Atribui um multipart
    * 
    * @param multipart
+   * 
    */
   public void setMultipart(Multipart multipart) {
 
@@ -692,7 +695,7 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * Obtém o subject do email
+   * Obtém o subject do email.
    * 
    * @return o assunto do email
    */
@@ -712,9 +715,12 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * Seta o array dos emails que serão enviados em cópia oculta
+   * Atribui o array dos emails que serão enviados em cópia oculta
    * 
    * @param cc
+   *          array de strings onde cada elemento é um endereço de email que
+   *          será enviado em CC.
+   * 
    */
   public void setCc(String[] cc) {
 
@@ -724,7 +730,7 @@ public class Mail extends javax.mail.Authenticator {
   /**
    * Obtém o array dos emails que serão enviados em cópia oculta
    * 
-   * @return
+   * @return um
    */
   public String[] getBcc() {
 
@@ -732,9 +738,9 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * Seta o endereço de email de retorno
+   * Atribui o endereço de email de retorno.
    * 
-   * @return
+   * @return o endereço de email que deverá ser usado para retornar a mensagem.
    * 
    */
   public String getReplyTo() {
@@ -743,8 +749,11 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
+   * Atribui o endereço de email de retorno
    * 
    * @param replyTo
+   *          o endereço de email de retorno.
+   * 
    */
   public void setReplyTo(String replyTo) {
 
@@ -763,9 +772,9 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * Obtem o uso do SSL
+   * Obtem o uso do SSL (Secure Socket Layer).
    * 
-   * @return
+   * @return true se estiver usando SSL ou false caso contrário.
    */
   public boolean isSsl() {
 
@@ -773,9 +782,10 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * Estabelece o uso do SSL
+   * Estabelece o uso do SSL (Secure Socket Layer).
    * 
    * @param ssl
+   *          true para usar SSL ou false caso contrário.
    * 
    */
   public void setSsl(boolean ssl) {
@@ -794,16 +804,37 @@ public class Mail extends javax.mail.Authenticator {
   // ---------------------------------------------------------------------------
 
   /**
-   * loadPropertiesFile()
+   * Carrega o arquivo de propriedades.<br>
+   * 
+   * O arquivo de propriedades padrão é: "mail.properties"
    * 
    * @throws FileNotFoundException
+   *           se o arquivo não for encontrado.
+   * 
    * @throws IOException
+   *           caso haja algum outro erro de I/O.
    */
-  void loadPropertiesFile() throws FileNotFoundException, IOException {
+  private void loadPropertiesFile() throws FileNotFoundException, IOException {
+
+    loadPropertiesFile("mail.properties");
+
+  }
+
+  /**
+   * Carrega o arquivo de propriedades localizado no arquivo fornecido.
+   * 
+   * @param filename
+   *          Nome do arquivo de propriedades
+   * 
+   * @throws FileNotFoundException
+   * 
+   * @throws IOException
+   * 
+   */
+  private void loadPropertiesFile(String filename) throws FileNotFoundException, IOException {
 
     // o arquivo encontra-se no mesmo diretório
-
-    File file = new File("mail.properties");
+    File file = new File(filename);
 
     Properties emailProperties = new Properties();
 
@@ -817,11 +848,17 @@ public class Mail extends javax.mail.Authenticator {
   }
 
   /**
-   * savePropertiesFile()
+   * Grava o arquivo de propriedades.<br>
    * 
+   * O arquivo padrão de gravação é dado por: "mail2.properties".
+   * 
+   * @throws FileNotFoundException
+   *           Arquivo não encontrado
    * @throws IOException
+   *           Erro de I/O
+   * 
    */
-  void savePropertiesFile() throws FileNotFoundException, IOException {
+  private void savePropertiesFile() throws FileNotFoundException, IOException {
 
     // o arquivo encontra-se no mesmo diretório da aplicação
     Properties emailProperties = new Properties();
