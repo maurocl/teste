@@ -6,16 +6,44 @@ import android.test.AndroidTestCase;
 import android.util.Log;
 import br.com.mltech.Mail;
 
+/**
+ * Conjunto de testes de envio de email usando JavaMail adpatado para Android.
+ * 
+ * @author maurocl
+ * 
+ */
 public class TestMail extends AndroidTestCase {
 
   public static final String TAG = "TestMail";
 
+  
+  
+  public TestMail() {
+
+    // TODO Auto-generated constructor stub
+    Log.d(TAG,"TestMail constructor() ...");
+  }
+  
+  @Override
+  protected void setUp() throws Exception {
+  
+    // TODO Auto-generated method stub
+    super.setUp();
+    
+    Log.d(TAG,"setUp() ...");
+    
+    Log.d(TAG,"getName(): "+this.getName());
+    
+    
+  }
   
   /**
    * 
    */
   public void test01() {
 
+    Log.w(TAG,"test01() - Start ...");
+    
     //Mail m = new Mail("maurocl.lopes@gmail.com", "Mcl16dcjl");
     Mail m = null;
 
@@ -27,12 +55,14 @@ public class TestMail extends AndroidTestCase {
    * 
    * @throws Exception
    */
-  public void test02() throws Exception {
+  public void test02()  {
 
+    Log.w(TAG,"test02() - Start ...");
+    
     Mail m = new Mail("maurocl@terra.com.br", "Mcl16dcjl");
 
     m.setDebuggable(true);
-    
+
     m.setFrom("maurocl@terra.com.br");
 
     m.setTo(new String[] { "maurocl@terra.com.br" });
@@ -45,18 +75,28 @@ public class TestMail extends AndroidTestCase {
 
     m.setAuth(true);
 
-    boolean enviou = m.send();
+    boolean enviou = false;
+    try {
+      enviou = m.send();
+    } catch (Exception e) {
+      // TODO: handle exception
+      Log.w(TAG, "test02() - ", e);
+    }
 
     assertTrue("Erro no envio do email", enviou);
+    
+    
 
   }
 
-  public void test03() throws Exception {
+  public void test03()  {
 
+    Log.w(TAG,"test03() - Start ...");
+    
     Mail m = new Mail("maurocl@mltech.com.br", "mcl16d");
 
     m.setDebuggable(true);
-    
+
     m.setFrom("maurocl@mltech.com.br");
 
     m.setTo(new String[] { "maurocl@terra.com.br" });
@@ -68,44 +108,65 @@ public class TestMail extends AndroidTestCase {
     m.setPort("587");
 
     File f = new File("/mnt/sdcard/Pictures/fotoevento/fotos/20120619_104431.jpg");
-    m.addAttachment(f.getAbsolutePath());
+    try {
+      m.addAttachment(f.getAbsolutePath());
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     m.setAuth(true);
 
-    boolean enviou = m.send();
+    boolean enviou=false;
+    try {
+      enviou = m.send();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     assertTrue("Erro no envio do email", enviou);
 
   }
-  
-  
+
   /**
    * 
    * @throws Exception
    */
-  public void test04() throws Exception {
+  public void test04()  {
+    
+    Log.w(TAG,"test04() - Start ...");
 
     Mail m = new Mail("maurocl@mltech.com.br", "mcl16d");
 
     m.setDebuggable(true);
 
     m.setHost("smtp.mltech.com.br");
-    
+
     m.setPort("587");
 
     m.setAuth(true);
 
-    boolean enviou = m.send("maurocl@terra.com.br", "maurocl@mltech.com.br", "maurocl@mltech.com.br", "test04 - envio de email", "corpo", "/mnt/sdcard/Pictures/fotoevento/fotos/20120619_104431.jpg");
+    boolean enviou=false;
+    try {
+      enviou = m.send("maurocl@terra.com.br", "maurocl@mltech.com.br", "maurocl@mltech.com.br", "test04 - envio de email",
+          "corpo", "/mnt/sdcard/Pictures/fotoevento/fotos/20120619_104431.jpg");
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     assertTrue("Erro no envio do email", enviou);
 
   }
-  
+
   /**
    * 
    */
   public void test05() {
 
+    Log.w(TAG,"test05() - Start ...");
+    
     Mail m = new Mail("maurocl@mltech.com.br", "mcl16d");
 
     m.setDebuggable(true);
@@ -115,21 +176,25 @@ public class TestMail extends AndroidTestCase {
 
     m.setAuth(true);
 
-   
-    boolean enviou=false;
-    
+    boolean enviou = false;
+
     try {
-      enviou = m.send("maurocl@terra.com.br", "maurocl@terra.com.br", "maurocl@terra.com.br", "test05 - envio de email", "corpo", "/mnt/sdcard/Pictures/fotoevento/fotos/20120619_104431.jpg");
+      enviou = m.send("maurocl@terra.com.br", "maurocl@terra.com.br", "maurocl@terra.com.br", "test05 - envio de email", "corpo",
+          "/mnt/sdcard/Pictures/fotoevento/fotos/20120619_104431.jpg");
     } catch (Exception e) {
-     
-      Log.e(TAG,"erro",e);
-      assertTrue("Erro no envio do email", true);
+
+      Log.w(TAG,"getMessage(): " + e.getMessage());
+      Log.w(TAG,"getLocalizedMessage(): " + e.getLocalizedMessage());
+      Log.w(TAG,"getCause(): " + e.getCause());
+      
+      Log.e(TAG, "erro", e);
+      assertTrue("Erro no envio do email", enviou);
     }
 
     assertFalse("Erro no envio do email", enviou);
 
   }
-  
+
   /**
    * 
    * @throws Exception
@@ -139,7 +204,7 @@ public class TestMail extends AndroidTestCase {
     Mail m = new Mail("maurocl.lopes@google.com", "Mcl16dcjl");
 
     m.setDebuggable(true);
-    
+
     m.setFrom("maurocl.lopes@gmail.com");
 
     m.setTo(new String[] { "maurocl@terra.com.br" });
@@ -151,8 +216,6 @@ public class TestMail extends AndroidTestCase {
     m.setPort("465");
     m.setSport("465");
 
-
-
     m.setAuth(true);
 
     boolean enviou = m.send();
@@ -160,6 +223,16 @@ public class TestMail extends AndroidTestCase {
     assertTrue("Erro no envio do email", enviou);
 
   }
-  
 
+  @Override
+  protected void tearDown() throws Exception {
+  
+    // TODO Auto-generated method stub
+    super.tearDown();
+    
+    Log.d(TAG,"tearDown() ...");
+    
+    
+  }
+  
 }
