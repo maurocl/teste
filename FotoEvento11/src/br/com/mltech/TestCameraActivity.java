@@ -2,7 +2,6 @@ package br.com.mltech;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,251 +9,261 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import br.com.mltech.utils.FileUtils;
 
 /**
  * TestCameraActivity
  * 
  * @author maurocl
- *
+ * 
  */
 public class TestCameraActivity extends Activity {
 
-	private static final String TAG = "TestCameraActivity";
+  private static final String TAG = "TestCameraActivity";
 
-	private static Bitmap mImageBitmap;
-	
-	private static ImageView mImageView;
-	
-	private static Uri mUri;
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+  private ImageView mImageView;
 
-		super.onCreate(savedInstanceState);
+  private Uri mUri;
 
-		Log.d(TAG, "*** onCreate() ***");
+  private static int numRestarts;
 
-		setContentView(R.layout.testcameraprev);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
 
-		Button btnOk = (Button) findViewById(R.id.btnOk);
-		btnOk.setText("Capturar");
-				
-		Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
-		btnCancelar.setText("Voltar");
-		
-		mImageView = (ImageView) findViewById(R.id.imageView); 
+    super.onCreate(savedInstanceState);
 
-		// tratamento do botão Ok
-		btnOk.setOnClickListener(new OnClickListener() {
+    Log.d(TAG, "*** onCreate() ***");
 
-			public void onClick(View v) {
-			
-				Log.d(TAG, "btnOk - botão ok");
+    setContentView(R.layout.testcameraprev);
 
-				// cria uma intent para execução da CameraActivity
-			  Intent i = new Intent(getBaseContext(),CameraActivity.class);
-				
-			  // inicia a activity
-				startActivityForResult(i, 100);
+    Button btnOk = (Button) findViewById(R.id.btnOk);
+    btnOk.setText("Capturar");
 
-			}
-			
-		});
+    Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
+    btnCancelar.setText("Voltar");
 
-		// tratamento do botão Cancelar
-		btnCancelar.setOnClickListener(new OnClickListener() {
+    mImageView = (ImageView) findViewById(R.id.imageView);
 
-			public void onClick(View v) {
-			
-				Log.d(TAG, "btnCancelar - botão cancelar");
-				finish();
-				
-			}
-			
-		});
+    // tratamento do botão Ok
+    btnOk.setOnClickListener(new OnClickListener() {
 
-	}
+      public void onClick(View v) {
 
-	/**
-	 * onActivityResult(int requestCode, int resultCode, Intent data)
-	 * 
-	 * @param requestCode
-	 * @param resultCode
-	 * @param data
+        Log.d(TAG, "btnOk - botão ok");
+
+        // cria uma intent para execução da CameraActivity
+        Intent i = new Intent(getBaseContext(), CameraActivity.class);
+
+        // inicia a activity
+        startActivityForResult(i, 100);
+
+      }
+
+    });
+
+    // tratamento do botão Cancelar
+    btnCancelar.setOnClickListener(new OnClickListener() {
+
+      public void onClick(View v) {
+
+        Log.d(TAG, "btnCancelar - botão cancelar");
+        finish();
+
+      }
+
+    });
+
+  }
+
+  /**
 	 * 
 	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-		super.onActivityResult(requestCode, resultCode, data);
+  @Override
+  protected void onStart() {
 
-		Log.i(TAG, "onActivityResult() - requestCode: " + requestCode + ", resultCode: " + ", data: " + data);
+    super.onStart();
 
-		switch (requestCode) {
-		case 100:
-			
-			if(resultCode==RESULT_OK) {
-				
-				Log.d(TAG, "onActivityResult() - resultado: OK");
-				
-				if(data!=null) {
-					
-					Bundle extras = data.getExtras();
-					
-					mUri =(Uri) extras.get("data");
-					
-					FileUtils.showBundle(extras);
-					
-					if(mImageBitmap==null) {
-						Log.w(TAG, "onActivityResult() - mImageBitmap é nulo");
-					}
-					else {
-						Log.d(TAG, "onActivityResult() - mImageBitmap é possui um bitmap");
-					}
-					
-					if(mUri==null) {
-						Log.w(TAG, "onActivityResult() - mUri é nulo");
-					}
-					else {
-						Log.d(TAG, "onActivityResult() - mUri: "+mUri);
-					}
-					
-				}
-				else {
-					Log.w(TAG, "onActivityResult() - data é nulo");
-				}
-				
-				// Atualiza a imagem
-				//mImageView.setImageBitmap(mImageBitmap);
-				
-				// exibe a imagem a partir de um Uri
-				mImageView.setImageURI(mUri);
-				
-				
-			}else if(resultCode==RESULT_CANCELED) {
-				Log.w(TAG, "onActivityResult() - resultado: CANCELED");
-			}
-			else {
-				Log.w(TAG, "onActivityResult() - resultado: "+resultCode+" é desconhecido.");
-			}
-			
-			break;
-		default:
-			Log.w(TAG, "onActivityResult() - requestCode: "+requestCode+" é desconhecido.");
-			break;
-		
-		}
+    Log.d(TAG, "*** onStart() ***");
 
-	}
+  }
 
-	/**
-	 * onStart(2)
-	 */
-	@Override
-	protected void onStart() {
+  /**
+   * onResume(3)
+   * 
+   * Esse callback é chamado a partir da sequência:<br>
+   * 
+   * onCreate() --> onStart() --> onResume() ou<br>
+   * 
+   * após (a aplicação estar no estado Pause e retorna a funcionar)<br>
+   * 
+   * onPause() --> on Resume().
+   * 
+   */
+  @Override
+  protected void onResume() {
 
-		super.onStart();
+    super.onResume();
 
-		Log.d(TAG, "*** onStart() ***");
+    Log.d(TAG, "*** onResume() ***");
 
-	}
+  }
 
-	/**
-	 * onResume(3)
-	 * 
-	 * Esse callback é chamado a partir da sequencia: onCreate() --> onStart() -->
-	 * onResume() ou após ( a aplicação estar no estado Pause e retorna a
-	 * funcionar) onPause() --> on Resume().
-	 * 
-	 */
-	@Override
-	protected void onResume() {
+  /**
+   * Activity foi colocada em pausa
+   * 
+   */
+  @Override
+  protected void onPause() {
 
-		super.onResume();
+    super.onPause();
 
-		Log.d(TAG, "*** onResume() ***");
+    Log.d(TAG, "*** onPause() ***");
 
-	}
+  }
 
-	/**
-	 * onPause(4)
-	 * 
-	 * Activity foi colocada em pausa
-	 * 
-	 */
-	@Override
-	protected void onPause() {
+  /**
+   * onStop()
+   */
+  @Override
+  protected void onStop() {
 
-		super.onPause();
+    super.onStop();
+    Log.d(TAG, "*** onStop() ***");
 
-		Log.d(TAG, "*** onPause() ***");
+  }
 
-	}
+  /**
+   * Aplicação foi reinicializada.<br>
+   * 
+   * É executado após um onStop()
+   * 
+   */
+  @Override
+  protected void onRestart() {
 
-	/**
-	 * onStop()
-	 */
-	@Override
-	protected void onStop() {
+    super.onRestart();
 
-		super.onStop();
-		Log.d(TAG, "*** onStop() ***");
+    numRestarts++;
 
-	}
+    Log.d(TAG, "*******************");
+    Log.d(TAG, "*** onRestart(" + numRestarts + ") ***");
+    Log.d(TAG, "*******************");
 
-	/**
-	 * onRestart()
-	 * 
-	 * Aplicação foi reinicializada.
-	 * 
-	 * É executado após um onStop()
-	 * 
-	 */
-	@Override
-	protected void onRestart() {
+  }
 
-		super.onRestart();
+  /**
+   * Callback chamado quando da destruição da activity.
+   */
+  @Override
+  protected void onDestroy() {
 
-		Log.d(TAG, "*******************");
-		Log.d(TAG, "*** onRestart() ***");
-		Log.d(TAG, "*******************");
-	}
+    super.onDestroy();
 
-	/**
-	 * onDestroy();
-	 */
-	@Override
-	protected void onDestroy() {
+    Log.d(TAG, "*** onDestroy() ***");
 
-		super.onDestroy();
+  }
 
-		Log.d(TAG, "*** onDestroy() ***");
+  /**
+   * 
+   */
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
 
-	}
+    super.onSaveInstanceState(outState);
 
-	/**
-	 * onSaveInstanceState(Bundle outState)
-	 */
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+    Log.d(TAG, "*** onSaveInstanceState() *** "+outState);
 
-		super.onSaveInstanceState(outState);
+  }
 
-		Log.d(TAG, "*** onSaveInstanceState() ***");
+  /**
+   * 
+   */
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
-	}
+    super.onRestoreInstanceState(savedInstanceState);
 
-	/**
-	 * onRestoreInstanceState(Bundle savedInstanceState)
-	 */
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    Log.d(TAG, "*** onRestoreInstanceState() *** "+savedInstanceState);
 
-		super.onRestoreInstanceState(savedInstanceState);
+  }
 
-		Log.d(TAG, "*** onRestoreInstanceState() ***");
+  /**
+   * 
+   */
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-	}
+    super.onActivityResult(requestCode, resultCode, data);
+
+    Log.i(TAG, "===> onActivityResult() - requestCode: " + requestCode + ", resultCode: " + resultCode + ", data: " + data);
+
+    if (requestCode == 100) {
+
+      testaResultado(resultCode, data);
+
+    }
+    else {
+      Log.w(TAG, "onActivityResult() - requestCode: " + requestCode + " é desconhecido.");
+    }
+
+  }
+
+  /**
+   * Testa o resultado da execução da activity.
+   * 
+   * @param resultCode
+   *          resultado da execução da activity
+   * @param data
+   *          intent com os dados recebidos
+   */
+  private void testaResultado(int resultCode, Intent data) {
+
+    Log.d(TAG, "testaResultado() - resultCode: " + resultCode);
+
+    if (resultCode == RESULT_OK) {
+
+      Log.d(TAG, "testaResultado() - resultado: OK");
+
+      //
+      trataData(data);
+
+      // exibe a imagem a partir de um Uri
+      mImageView.setImageURI(mUri);
+
+    } else if (resultCode == RESULT_CANCELED) {
+
+      Log.w(TAG, "testaResultado() - resultado: CANCELED");
+
+    }
+    else {
+
+      Log.w(TAG, "testaResultado() - resultado: " + resultCode + " é desconhecido.");
+
+    }
+
+  }
+
+  /**
+   * Trata a intent data
+   * 
+   * @param data
+   * 
+   */
+  private void trataData(Intent data) {
+
+    if (data == null) {
+      Log.w(TAG, "trataData() - data é nulo");
+      return;
+    }
+
+    mUri = data.getData();
+
+    if (mUri == null) {
+      Log.w(TAG, "trataData() - mUri é nulo");
+    }
+    else {
+      Log.d(TAG, "trataData() - mUri: " + mUri);
+    }
+
+  }
 
 }

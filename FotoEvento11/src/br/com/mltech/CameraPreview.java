@@ -9,16 +9,15 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 /**
- * CameraPreview
+ * A basic Camera preview class.<br>
  * 
- * A basic Camera preview class
- * 
- * Uma classe básica para pre-visualização da imagem capturada pela câmera
+ * Uma classe básica para pre-visualização da imagem capturada pela câmera.
  * 
  * @author maurocl
  * 
- * 
- *         SurfaceView. SurfaceHolder.Callback SurfaceHolder
+ * SurfaceView<br>
+ * SurfaceHolder.Callback<br>
+ * SurfaceHolder<br>
  * 
  */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
@@ -32,8 +31,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
   private static Camera mCamera;
 
   /**
-   * CameraPreview(Context context, Camera camera)
-   * 
    * Construtor
    * 
    * @param context
@@ -41,6 +38,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
    * 
    * @param camera
    *          Instância da Camera
+   * 
+   * Variáveis da classe:<br>
+   * - mCamera<br>
+   * - mHolder<br>
+   * 
    * 
    */
   public CameraPreview(Context context, Camera camera) {
@@ -55,7 +57,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     // Return the SurfaceHolder providing access and control over this SurfaceView's underlying surface.
     //
     // Retorna uma instância do objeto SurfaceHolder que provê acesso e controle sobre
-    // essa superfície sob a SurfaceView 
+    // a superfície sob a SurfaceView. 
     //
     // SurfaceHolder: The holder of the surface.
     //    
@@ -87,19 +89,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
   }
 
   /**
-   * surfaceCreated(SurfaceHolder holder)
+   * Esse método é chamado imediatamente após a primeira criação da superfície.<br>
    * 
-   * Esse método é chamado imediatamente após a primeira criação da superfície
-   * 
-   * the surface has been created, adquired the camera and tell it where to draw
+   * the surface has been created, adquired the camera and tell it where to draw<br>
+   * A superficire (surfcae) foi criada, adquiriu a câmera e diz onde a câmera deve desenhar.<br>
    * 
    * @param holder
-   *          o SurfaceHolder cuja superfície (surface) está sendo criada
+   *          o SurfaceHolder cuja superfície (surface) está sendo criada.
    * 
    */
   public void surfaceCreated(SurfaceHolder holder) {
 
-    Log.d(TAG, "surfaceCreated() ...");
+    Log.d(TAG, "*** surfaceCreated() ***");
 
     try {
 
@@ -131,7 +132,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
       // if the method fails (for example, if the surface is unavailable or
       // unsuitable).
-      Log.w(TAG, "surfaceCreated() - IOException - Error setting camera preview: " + e.getMessage());
+      Log.w(TAG, "surfaceCreated() - IOException - Error setting camera preview: " + e.getMessage(), e);
 
     } catch (Exception e) {
 
@@ -142,24 +143,22 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
   }
 
   /**
-   * surfaceDestroyed(SurfaceHolder holder)
-   * 
    * Método chamado imediatamente antes da superficie ser destruída. Após essa
-   * chamada você não deverá mais tentar acesso a essa superfície.
+   * chamada você não deverá mais tentar acesso a essa superfície.<br>
    * 
    * Se você possuir uma thread de rendering (desenho) que acessa diretamente a
    * superfície, você deverá garantir que a thread não esteja mais atuando sobre
-   * (tocando) a superfície antes de retornar dessa função.
+   * (tocando) a superfície antes de retornar dessa função.<br>
    * 
    * 
-   * This is called immediately before a surface is being destroyed.
+   * This is called immediately before a surface is being destroyed.<br>
    * 
    * After returning from this call, you should no longer try to access this
-   * surface.
+   * surface.<br>
    * 
    * If you have a rendering thread that directly accesses the surface, you must
    * ensure that thread is no longer touching the Surface before returning from
-   * this function.
+   * this function.<br>
    * 
    * Parameters holder The SurfaceHolder whose surface is being destroyed.
    * 
@@ -174,29 +173,28 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     // empty. Take care of releasing the camera preview in your activity
     // método vazio. Tome cuidado em liberar a preview da câmera em sua activity
 
-    Log.d(TAG, "surfaceDestroyed()");
+    Log.d(TAG, "*** surfaceDestroyed() ***");
 
   }
 
   /**
    * This is called immediately after any structural changes (format or size)
-   * have been made to the surface.
+   * have been made to the surface.<br>
    * 
    * You should at this point update the imagery in the surface. This method is
-   * always called at least once, after surfaceCreated(SurfaceHolder).
+   * always called at least once, after surfaceCreated(SurfaceHolder).<br>
    * 
    * Parameters holder The SurfaceHolder whose surface has changed. format The
    * new PixelFormat of the surface. width The new width of the surface. height
-   * The new height of the surface.
+   * The new height of the surface.<br>
    */
 
   /**
-   * surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-   * 
-   * Esse método é chamado após alguma mudança estrutural, isto é, no formato ou
-   * tamanho, feito na superfície (surface). É nesse ponto que devemos atualizar
-   * a imagem na superfície. Esse método é chamado pelo menos uma vez depois do
-   * SurfaceCreated.
+   * Esse método de callback é chamado após alguma mudança estrutural na
+   * superfície de exibição, isto é, no formato ou tamanho, da superfície
+   * (surface).<br>
+   * É nesse ponto que devemos atualizar a imagem na superfície. Esse método é
+   * chamado pelo menos uma vez depois do SurfaceCreated.
    * 
    * @param holder
    *          a superfície mantida sob controle cuja superfície mudou
@@ -210,15 +208,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
    *          a nova largura da superfície (surface)
    * 
    * @param height
-   *          a nova altura da superfí
-   *          cie (surface)
+   *          a nova altura da superfí cie (surface)
    * 
    */
   public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     // TODO a grande dúvida aqui é saber se uso a variável holder ou mHolder
 
-    Log.w(TAG, "holder=" + holder + ", mHolder=" + mHolder);
+    Log.w(TAG, "*** surfaceChanged() ***");
+    Log.w(TAG, "surfaceChanged() - holder=" + holder + ", mHolder=" + mHolder);
+    
     showSurfaceHolder(holder, "holder");
     showSurfaceHolder(mHolder, "mHolder");
 
@@ -239,9 +238,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
   }
 
   /**
-   * showSurfaceHolder(SurfaceHolder sh)
+   * Exibe informações sobre SurfaceHolder.
    * 
-   * @param sh uma instância de SurfaceHolder
+   * @param sh
+   *          uma instância de SurfaceHolder
+   * @param msg
+   *          mensagem exibida
    * 
    */
   void showSurfaceHolder(SurfaceHolder sh, String msg) {
@@ -249,9 +251,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     if (sh == null) {
       return;
     }
-    
-    Log.d(TAG, "showSurfaceHolder() - "+msg);
-    
+
+    Log.d(TAG, "showSurfaceHolder() - " + msg);
+
     Log.d(TAG, "showSurfaceHolder() - sh.toString(): " + sh.toString());
     Log.d(TAG, "showSurfaceHolder() - sh.isCreating(): " + sh.isCreating());
     Log.d(TAG, "showSurfaceHolder() - sh.getSurfaceFrame(): " + sh.getSurfaceFrame());

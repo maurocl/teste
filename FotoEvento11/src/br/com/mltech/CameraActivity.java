@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -77,6 +79,9 @@ public class CameraActivity extends Activity implements Constantes {
 
   // controla o tipo de disparo da câmera
   private static int tipoDisparo = AUTOMATICO;
+  
+  // controla o nº de vezes que a activity foi reinicializada.
+  private static int numRestarts = 0;
 
   /**
    * Bitmap
@@ -88,16 +93,23 @@ public class CameraActivity extends Activity implements Constantes {
    */
   private static Uri mUri;
 
+  /**
+   * Instancia da classe Participação.
+   */
   private static Participacao mParticipacao;
 
   /**
    * identificador da câmera do dispositivo
    */
-  // TODO alterar !!!
   private static int cameraId = 0;
 
   /**
-   * onCreate(Bundle savedInstanceState)
+   * onCreate(Bundle savedInstanceState)<br>
+   * 
+   * Esta activity espera dois parâmetros para sua execução:<br>
+   * - uma instância da classe Participacao (para poder escolher ...)<br>
+   * - o identificador da câmera que será usado.
+   * 
    */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -111,37 +123,19 @@ public class CameraActivity extends Activity implements Constantes {
     // obtem informações da intent chamadora
     Intent intent = getIntent();
 
-    if (intent.getSerializableExtra(Constantes.PARTICIPACAO) != null) {
+    // Obtém informações do participante
+    obtemInfoParticipacao(intent);
 
-      mParticipacao = (Participacao) intent.getSerializableExtra(Constantes.PARTICIPACAO);
-
-    }
-
-    // obtém o identificador da câmera
-    cameraId = intent.getIntExtra("br.com.mltech.cameraId", 0);
-    
-    Log.d(TAG, "onCreate() - atualizando o dientificador da câmera - cameraId = " + cameraId);
-
-    int numCamerasDisponiveis = Camera.getNumberOfCameras();
+    // Obtém o identificador da câmera
+    obtemIdentificadorCamera(intent);
 
     Log.d(TAG, "onCreate() - Nº de câmeras do dispositivo:  " + Camera.getNumberOfCameras());
 
     boolean isCameraAvailable = CameraTools.checkCameraHardware(this);
 
-    if (isCameraAvailable) {
-
-      if (numCamerasDisponiveis == 1) {
-        Log.d(TAG, "onCreate() - há uma câmera disponível.");
-      }
-      else {
-        Log.d(TAG, "onCreate() - há  " + Camera.getNumberOfCameras() + " câmeras disponíveis.");
-      }
-
-    } else {
-
+    if (!isCameraAvailable) {
       Log.e(TAG, "onCreate() - não há câmeras disponíveis");
       return;
-
     }
 
     if (!CameraTools.isCameraWorking(cameraId)) {
@@ -149,6 +143,7 @@ public class CameraActivity extends Activity implements Constantes {
       return;
     }
 
+    // objeto onde será exibido a tela da câmera
     layoutPreview = (FrameLayout) findViewById(R.id.camera_preview);
 
     /**
@@ -219,19 +214,18 @@ public class CameraActivity extends Activity implements Constantes {
     });
 
     /**
-     * Botão Ok
+     * Trata o pressionamento do Botão Ok.<br>
      * 
-     * Confirma a foto.
+     * Confirma a foto.<br>
      * 
-     * e sai da activity
+     * e sai da activity.<br>
      * 
      */
     btnOk.setOnClickListener(new OnClickListener() {
 
       public void onClick(View view) {
 
-        Log.d(TAG, "onClick(btnOk) - botão Ok");
-        Log.d(TAG, "onClick(btnOk) - Confirma a foto");
+        Log.d(TAG, "onClick(btnOk) - botão Ok - Confirma a foto");
 
         CameraInfo cameraInfo = new CameraInfo();
 
@@ -250,10 +244,6 @@ public class CameraActivity extends Activity implements Constantes {
 
         // exibe informações sobre a foto
         ManipulaImagem.showBitmapInfo2(mImageBitmap);
-
-        // seta os dados de retorno (data)
-        // Uri contendo a localização da foto
-        //intent.putExtra("data", mUri);
 
         Log.i(TAG, "onClick(btnOk) - mUri: [" + mUri + "]");
 
@@ -285,13 +275,7 @@ public class CameraActivity extends Activity implements Constantes {
         // finalizaActivity();
         Log.d(TAG, "onClick(btnCancelar) - botão cancelar");
 
-        Intent intent = new Intent();
-
-        // estabelece o resultado da execução da activity
-        setResult(RESULT_CANCELED, intent);
-
-        // finaliza a activity
-        finish();
+        finalizaActivityResultCanceled();
 
       }
     });
@@ -299,8 +283,41 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
-   * shutter
    * 
+   * @param intent
+   */
+  private void obtemIdentificadorCamera(Intent intent) {
+
+    // obtém o identificador da câmera
+    cameraId = intent.getIntExtra("br.com.mltech.cameraId", -1);
+
+    if (cameraId == -1) {
+      Log.w(TAG, "obtemIdentificadorCamera() - O identificador da câmera não foi encontrado. Será usado 0 como padrão.");
+      cameraId = 0;
+    }
+
+    Log.d(TAG, "obtemIdentificadorCamera() - atualizando o dientificador da câmera - cameraId = " + cameraId);
+  }
+
+  /**
+   * 
+   * @param intent
+   */
+  private void obtemInfoParticipacao(Intent intent) {
+
+    if (intent.getSerializableExtra(Constantes.PARTICIPACAO) != null) {
+
+      mParticipacao = (Participacao) intent.getSerializableExtra(Constantes.PARTICIPACAO);
+
+    }
+    else {
+      Log.w(TAG, "obtemInfoParticipacao() - mParticipação é nula");
+      mParticipacao = new Participacao(null, Constantes.TIPO_FOTO_POLAROID, Constantes.CORES, null);
+      Log.w(TAG, "obtemInfoParticipacao() - Usando um contratante null, formato de foto polaroid a cores, e nome do arquivo nulo");
+    }
+  }
+
+  /**
    * É uma instância da classe ShutterCallback.
    * 
    * Define um objeto que contém uma instância da classe ShutterCallback
@@ -320,8 +337,6 @@ public class CameraActivity extends Activity implements Constantes {
   };
 
   /**
-   * raw
-   * 
    * É uma instância da classe PictureCallback.
    * 
    * Define um objeto que contém uma instância da classe PictureCallback
@@ -341,14 +356,14 @@ public class CameraActivity extends Activity implements Constantes {
   };
 
   /**
-   * jpeg
-   * 
-   * É uma instância da classe PictureCallback.
+   * É uma instância da classe PictureCallback.<br>
    * 
    * Define um objeto que contém uma instância da classe PictureCallback
    * responsável pelo tratamento do evento do recebimento da imagem JPEG da
-   * câmera. Invocado assim que a imagem com compressão (comprimida), no formato
-   * JPEG, está disponível.
+   * câmera.<br>
+   * 
+   * Invocado assim que a imagem com compressão (comprimida), no formato JPEG,
+   * está disponível.<br>
    * 
    */
   final PictureCallback jpeg = new PictureCallback() {
@@ -370,22 +385,19 @@ public class CameraActivity extends Activity implements Constantes {
       }
 
       // TODO aqui deveremos criar o nome dos arquivos
-
-      // String nomeArquivo = System.currentTimeMillis() + ".jpg";
-      // File f = FileUtils.obtemNomeArquivoJPEG();
       File f = FileUtils.obtemNomeArquivo(".jpg");
-
       String nomeArquivo = f.getAbsolutePath();
 
       if (data != null) {
 
         // cria o bitmap a partir do array de bytes capturados
         mImageBitmap = ManipulaImagem.getBitmapFromByteArray(data);
-        
-        if(mImageBitmap==null) {
-          Log.w(TAG,"mImageBitmap é nulo");
+
+        if (mImageBitmap == null) {
+          Log.w(TAG, "mImageBitmap é nulo");
         }
 
+        // grava a foto no arquivo
         boolean gravou = gravaArquivo(data, nomeArquivo);
 
         if (gravou) {
@@ -422,7 +434,7 @@ public class CameraActivity extends Activity implements Constantes {
 
         // confirma a foto
         confirmaFoto();
-        
+
       }
 
     }
@@ -444,9 +456,12 @@ public class CameraActivity extends Activity implements Constantes {
   /**
    * onResume(3)
    * 
-   * Esse callback é chamado a partir da sequencia: onCreate() --> onStart() -->
-   * onResume() ou após ( a aplicação estar no estado Pause e retorna a
-   * funcionar) onPause() --> on Resume().
+   * Esse callback é chamado a partir da sequencia:<br>
+   * onCreate() --> onStart() --> onResume() ou<br>
+   * após ( a aplicação estar no estado Pause e retorna a funcionar).<br>
+   * onPause() --> on Resume().<br>
+   * <br>
+   * Obs: cameraId é uma variável da classe.
    * 
    */
   @Override
@@ -456,52 +471,56 @@ public class CameraActivity extends Activity implements Constantes {
 
     Log.d(TAG, "*** onResume() ***");
 
-    Log.d(TAG,"onResume() - cameraId="+cameraId);
-    
-    Log.d(TAG,"==> -4");
-    
+    Log.d(TAG, "onResume() - cameraId=" + cameraId);
+
+    Log.d(TAG, "==> -4");
+
     if (mCamera == null) {
 
-      Log.d(TAG,"==> -3");
+      Log.d(TAG, "==> -3 - mCamera é nula");
       // obtém uma instância da câmera
       mCamera = CameraTools.getCameraInstance(cameraId);
-      Log.d(TAG,"==> -2");
+      Log.d(TAG, "==> -2 - após obter instância da câmera: " + cameraId);
 
     }
 
-    Log.d(TAG,"==> -1");
-    
-    // verifica o estado de mPreview
-    if(mPreview==null) {
-      Log.d(TAG,"==> mPreview é nulo");
+    Log.i(TAG, "==> mCamera=" + mCamera);
+
+    Log.d(TAG, "==> -1");
+
+    //--------------------------------------------------------
+    // configura os parâmetros de configuração da câmera
+    //--------------------------------------------------------
+
+    if (mPreview == null) {
+
+      Log.d(TAG, "==> mPreview é nulo");
+
+      // configura os parâmetros da câmera apenas se mPreview for nulo.
+      Log.w(TAG, "onResume() - chama configuraParamCamera()");
+
+      configuraParamCamera(mParticipacao.getEfeitoFoto());
+
     }
     else {
-      Log.d(TAG,"==> mPreview não é nulo");
-    }
-    
-    Log.i(TAG,"==> mCamera="+mCamera);
-    
-    //--------------------------------------------------------
-    // configura os parâmetros usados para configurar a câmera
-    //--------------------------------------------------------
-    
-    if(mPreview==null) {
-      // configura os parâmetros da câmera apenas se mPreview for nulo.
-      configuraParamCamera();
+
+      Log.d(TAG, "==> mPreview não é nulo");
+      Log.w(TAG, "onResume() - Configuração dos parâmetros não foi feita !!!");
+
     }
 
-    Log.d(TAG,"==> 0");
-    
+    Log.d(TAG, "==> 0 - antes da criação do mPreview");
+
     // cria uma instância da "tela" de preview
     mPreview = new CameraPreview(this, mCamera);
 
-    Log.d(TAG,"==> 0.1");
-    
+    Log.d(TAG, "==> 0.1 - após a criação do mPreview");
+
     // TODO verificar o layout da câmera
     layoutPreview.addView(mPreview);
 
-    Log.d(TAG,"==> 0.2");
-    
+    Log.d(TAG, "==> 0.2 - após adicionar a view no layout");
+
     // TODO verificar o disparo automático da câmera      
     if (tipoDisparo == AUTOMATICO) {
       setDisparoAutomatico(3);
@@ -510,48 +529,47 @@ public class CameraActivity extends Activity implements Constantes {
       // não faz nada
     }
 
-    Log.d(TAG,"==> 1");
-    
+    Log.d(TAG, "==> 1 - após selecionar o tipo do disparo");
+
     if (mCamera == null) {
 
-      Log.d(TAG,"==> 2");
+      Log.d(TAG, "==> 2");
       Log.w(TAG, "onResume - mCamera is null");
 
-      
-      
     } else {
 
-      Log.d(TAG,"==> 3");
-      
+      Log.d(TAG, "==> 3 - mCamera não é nula");
+
       // camera é diferente de null
 
       Log.d(TAG, "onResume() - flag=" + flag);
 
       if (flag == 0) {
 
-        Log.d(TAG,"==> 4");
-        
+        Log.d(TAG, "==> 4 - flag alterado de 0 ==> 1");
+
         flag = 1;
 
       } else {
 
-        Log.d(TAG, "onResume() - antes da chamada do método mCamera.startPreview()");
+        Log.d(TAG, "==> 5 - antes da chamada do método mCamera.stopPreview()");
 
-        Log.d(TAG,"==> 5");
+        // TODO observe que aqui estmos dando um stop e depois damos um start no preview
+        // TODO será que isso é realmente necessário ????
         
         // Stops capturing and drawing preview frames to the surface, and resets
         // the camera for a future call to startPreview().
         mCamera.stopPreview();
 
-        Log.d(TAG,"==> 6");
-        
+        Log.d(TAG, "==> 6 - após chamada do método mCamera.stopPreview()");
+
+        Log.d(TAG, "onResume() - antes da chamada do método mCamera.startPreview()");
+
         // Starts capturing and drawing preview frames to the screen
         mCamera.startPreview();
 
         Log.d(TAG, "onResume() - após chamada do método mCamera.startPreview()");
 
-        
-        
       }
 
     }
@@ -571,6 +589,8 @@ public class CameraActivity extends Activity implements Constantes {
 
     Log.d(TAG, "*** onPause() ***");
 
+    // TODO é necessário dar um stop no preview antes de liberar a câmera ????
+    
     // libera o uso da câmera para outras aplicações
     boolean isCameraReleased = releaseCamera();
 
@@ -602,9 +622,9 @@ public class CameraActivity extends Activity implements Constantes {
   /**
    * onRestart()
    * 
-   * Aplicação foi reinicializada.
+   * Aplicação foi reinicializada.<br>
    * 
-   * É executado após um onStop()
+   * É executado após um onStop()<br>
    * 
    */
   @Override
@@ -612,9 +632,12 @@ public class CameraActivity extends Activity implements Constantes {
 
     super.onRestart();
 
-    Log.d(TAG, "*******************");
-    Log.d(TAG, "*** onRestart() ***");
-    Log.d(TAG, "*******************");
+    // incrementa o nº de vezes que a activity foi reinicializada.
+    numRestarts++;
+    
+    Log.d(TAG, "*");
+    Log.d(TAG, "*** onRestart("+numRestarts+") ***");
+    Log.d(TAG, "*");
 
   }
 
@@ -688,7 +711,8 @@ public class CameraActivity extends Activity implements Constantes {
     Camera.Parameters parameters = c.getParameters();
 
     if (parameters == null) {
-      Log.w(TAG, "showCameraParameters() - Parâmetros de configuração da câmera está nulo");
+      //Log.w(TAG, "showCameraParameters() - Parâmetros de configuração da câmera está nulo");
+      Log.w(TAG, "showCameraParameters() - Câmera não retornou nenhum parâmetro de configuração");
       return;
     }
 
@@ -784,8 +808,9 @@ public class CameraActivity extends Activity implements Constantes {
 
   }
 
-  /** 
-   * Grava uma foto num arquivo. A foto encontra-se em representada por um array de bytes.
+  /**
+   * Grava uma foto num arquivo. A foto encontra-se em representada por um array
+   * de bytes.
    * 
    * @param data
    *          Array de bytes
@@ -799,22 +824,9 @@ public class CameraActivity extends Activity implements Constantes {
    */
   private boolean gravaArquivo(byte[] data, String nomeArquivo) {
 
-    String externalStorageState = Environment.getExternalStorageState();
-
-    if (!externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
-      // mídia não está montada
-      Log.w(TAG, "gravaArquivo() - mídia não está montada");
+    if (!validaExternalStorageAvailable()) {
       return false;
     }
-
-    if (externalStorageState.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
-      // mídia montada apenas para leitura
-      Log.w(TAG, "gravaArquivo() - mídia montada porém está ReadOnly");
-      return false;
-    }
-
-    // exibe o estado do dispositivo de externo de armazenamento
-    Log.d(TAG, "gravaArquivo() - getExternalStorageState()=" + Environment.getExternalStorageState());
 
     // cria uma arquivo para armazernar a foto
     File f = new File(nomeArquivo);
@@ -832,12 +844,6 @@ public class CameraActivity extends Activity implements Constantes {
 
         fos = new FileOutputStream(f);
         fos.write(data);
-
-        String msg = "gravaArquivo() - Arquivo: " + f.getAbsolutePath() + " foi gerado e ocupa "
-            + fmtFloat((float) (f.length() / 1024.0)) + " KBytes";
-
-        // loga a mensagem
-        Log.d(TAG, msg);
 
         gravou = true;
 
@@ -865,17 +871,62 @@ public class CameraActivity extends Activity implements Constantes {
       Log.w(TAG, "gravaArquivo() - IOException", e);
     }
 
+    if (gravou) {
+      String msg = "gravaArquivo() - Arquivo: " + f.getAbsolutePath() + " foi gerado e ocupa "
+          + fmtFloat((float) (f.length() / 1024.0)) + " KBytes";
+
+      // loga a mensagem
+      Log.d(TAG, msg);
+    }
+
+    // retorna o resultado da gravação
     return gravou;
 
   }
 
-  /** 
-   * Formata um valor float para duas casas decimais
+  /**
+   * 
+   * @return true se a media existir e estiver permissão de escrita, caso
+   *         contrário retorno false.
+   */
+  private boolean validaExternalStorageAvailable() {
+
+    boolean retorno = true;
+
+    // obtém o estado do dispositivo de armazenamento externo
+    String externalStorageState = Environment.getExternalStorageState();
+
+    if (externalStorageState == null) {
+      Log.w(TAG, "gravaArquivo() - externalStorageState retornou null");
+      retorno = false;
+    }
+
+    if (!externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
+      // mídia não está montada
+      Log.w(TAG, "gravaArquivo() - mídia não está montada");
+      retorno = false;
+    }
+
+    if (externalStorageState.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
+      // mídia montada apenas para leitura
+      Log.w(TAG, "gravaArquivo() - mídia montada porém está ReadOnly");
+      retorno = false;
+    }
+
+    // exibe o estado do dispositivo de externo de armazenamento
+    Log.d(TAG, "gravaArquivo() - getExternalStorageState()=" + Environment.getExternalStorageState());
+
+    return retorno;
+
+  }
+
+  /**
+   * Formata um valor float para duas casas decimais.
    * 
    * @param args
    *          valor float para formatar
    * 
-   * @return uma string contendo um float formatado com duas casas decimais
+   * @return uma string contendo o valor formatado com duas casas decimais.
    * 
    */
   private static String fmtFloat(float args) {
@@ -902,12 +953,12 @@ public class CameraActivity extends Activity implements Constantes {
     }
 
     if (mCamera == null) {
-      Log.e(TAG, "setDisparoAutomatico() - câmera não está nula");
+      Log.e(TAG, "setDisparoAutomatico() - câmera está nula");
       return;
     }
 
     // Exibe o aviso de disparo automático
-    Toast.makeText(getBaseContext(), "disparo automático em " + (segundos * 1000) + " segundos.", Toast.LENGTH_SHORT).show();
+    Toast.makeText(getBaseContext(), "disparo automático em " + segundos + " segundos.", Toast.LENGTH_SHORT).show();
 
     Message msg = new Message();
     msg.what = 1;
@@ -967,24 +1018,41 @@ public class CameraActivity extends Activity implements Constantes {
 
   }
 
-  /** 
-   * Configura os parâmetros da câmera.
+  /**
+   * Configura os parâmetros da câmera.<br>
+   * 
+   * Usa a variáveis: mCamera<br>
+   * 
+   * @param efeitoFoto
+   *          Efeito da foto (cores ou P&B).
    * 
    */
-  private void configuraParamCamera() {
+  private void configuraParamCamera(int efeitoFoto) {
 
-    Log.d(TAG,"configuraParamCamera() - início");
-    
-    Log.d(TAG,"configuraParamCamera() - setDisplayOrientation(0)");
-    mCamera.setDisplayOrientation(0);
-    
-    Log.d(TAG,"configuraParamCamera() - setCameraDisplayOrientation");
+    // Set the clockwise rotation of preview display in degrees. 
+    // This affects the preview frames and the picture displayed after snapshot. 
+    // This method is useful for portrait mode applications. 
+    // Note that preview display of front-facing cameras is flipped horizontally before the rotation, 
+    // that is, the image is reflected along the central vertical axis of the camera sensor. 
+    // So the users can see themselves as looking into a mirror. 
+    int displayOrientation = 0;
+
+    Log.d(TAG, "configuraParamCamera() - início");
+
+    Log.d(TAG, "configuraParamCamera() - setDisplayOrientation(" + displayOrientation + ")");
+    mCamera.setDisplayOrientation(displayOrientation);
+
+    Log.d(TAG, "configuraParamCamera() - setCameraDisplayOrientation");
     CameraTools.setCameraDisplayOrientation(this, cameraId, mCamera);
-    
 
     // Obtém os parâmetros de configuração da câmera
+    // Obtém a configuração corrente para esse serviço de câmera.
     Camera.Parameters params = mCamera.getParameters();
 
+    //HashMap<String, List<String>> hash = CameraTools.getParametersDetail(mCamera);
+    
+    CameraTools.showParametersDetail(mCamera);
+    
     // altera o tamanho da foto
     params.setPictureSize(640, 480);
 
@@ -993,15 +1061,12 @@ public class CameraActivity extends Activity implements Constantes {
      * EFFECT_POSTERIZE EFFECT_SEPIA EFFECT_SOLARIZE EFFECT_WHITEBOARD
      */
 
-    // Obtém o efeito que será aplicado a foto.
-    int efeitoFoto = mParticipacao.getEfeitoFoto();
-
     if (efeitoFoto == CORES) {
-      Log.d(TAG,"configuraParamCamera() - altera o color effect para cores");
+      Log.d(TAG, "configuraParamCamera() - altera o color effect para cores");
       params.setColorEffect(Camera.Parameters.EFFECT_NONE);
     }
     else if (efeitoFoto == PB) {
-      Log.d(TAG,"configuraParamCamera() - altera o color effect para preto & branco");
+      Log.d(TAG, "configuraParamCamera() - altera o color effect para preto & branco");
       params.setColorEffect(Camera.Parameters.EFFECT_MONO);
     }
     else {
@@ -1012,25 +1077,30 @@ public class CameraActivity extends Activity implements Constantes {
     //params.setColorEffect(Camera.Parameters.EFFECT_SEPIA);
 
     // Atualiza os parametros
-    mCamera.setParameters(params);
+    // Atualiza a configuração para esse serviço de câmera.
+    try {
+      mCamera.setParameters(params);
+    } catch (RuntimeException e) {
+      Log.w(TAG, "configuraParamCamera() -  RuntimeException durante a configuração da câmera");
+    }
 
     // Exibe alguns parametros da camera
-    showCameraParameters(mCamera);
-    
-    Log.d(TAG,"configuraParamCamera() - fim");
-    
+    //showCameraParameters(mCamera);
+
+    Log.d(TAG, "configuraParamCamera() - fim");
+
   }
 
   /**
-   * confirmaFoto()
+   * Confirma a foto tirada, isto é, a foto que foi disparada automaticamente pelo temporizador.
    * 
    */
   private void confirmaFoto() {
-    
-    Log.i(TAG,"---------------------------------------------------------");
-    Log.i(TAG," => confirmaFoto()");
-    Log.i(TAG,"---------------------------------------------------------");
-    
+
+    Log.i(TAG, "---------------------------------------------------------");
+    Log.i(TAG, " => confirmaFoto()");
+    Log.i(TAG, "---------------------------------------------------------");
+
     CameraInfo cameraInfo = new CameraInfo();
 
     // obtém informações sobre a câmera
@@ -1049,29 +1119,65 @@ public class CameraActivity extends Activity implements Constantes {
     // exibe informações sobre a foto
     ManipulaImagem.showBitmapInfo2(mImageBitmap);
 
-    // seta os dados de retorno (data)
-    // Uri contendo a localização da foto
-    //intent.putExtra("data", mUri);
 
     Log.i(TAG, "confirmaFoto() - mUri: [" + mUri + "]");
+
+    Log.d(TAG, "confirmaFoto() - retorno");
+
+    // Finaliza activity com sucesso
+    finalizaActivityResultOk();
+
+  }
+
+  /**
+   * Finaliza a activity com resultado Ok.
+   */
+  private void finalizaActivityResultOk() {
+
+    Log.d(TAG, "finalizaActivityResultOk()");
 
     // cria uma intent de resposta
     Intent intent = new Intent();
 
-    // Set the data this intent is operating on. 
-    // This method automatically clears any type that was previously set by setType(String). 
+    // Set the data this intent is operating on.
     intent.setData(mUri);
 
     // estabelece o resultado da execução da activity
     setResult(RESULT_OK, intent);
 
-    Log.d(TAG, "confirmaFoto() -  - retorno");
+    finaliza();
+
+  }
+
+  /**
+   * Finaliza a activity com um cancelamento.
+   */
+  private void finalizaActivityResultCanceled() {
+
+    Log.d(TAG, "finalizaActivityResultCanceled()");
+
+    Intent intent = new Intent();
+
+    //intent.setData(null);
+
+    // estabelece o resultado da execução da activity
+    setResult(RESULT_CANCELED, intent);
+
+    finaliza();
+
+  }
+
+  /**
+   * Executa o fechamento da activity.
+   */
+  private void finaliza() {
+
+    Log.d(TAG, "finaliza()");
 
     // finaliza a activity
     finish();
-    
   }
-  
+
 }
 
 /**
