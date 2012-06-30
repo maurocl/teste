@@ -93,10 +93,7 @@ public class CameraTools {
   }
 
   /**
-   * chooseFileDir()
-   * 
    * @return a Uri de um arquivo
-   * 
    */
   private static Uri chooseFileDir(String nomeArquivo) {
 
@@ -173,9 +170,7 @@ public class CameraTools {
   }
 
   /**
-   * createImageFile()
-   * 
-   * Cria um nome para identificar um arquivo
+   * Cria um nome para identificar um arquivo.
    * 
    * @return um arquivo File criado ou null caso haja algum problema
    * 
@@ -208,8 +203,6 @@ public class CameraTools {
   }
 
   /**
-   * deleteExternalStoragePublicPicture()
-   * 
    * Apaga (ou remove) uma imagem da área pública de armzenamento externo
    * 
    */
@@ -225,8 +218,6 @@ public class CameraTools {
   }
 
   /**
-   * exibeCameraInfo(int cameraId, CameraInfo cameraInfo)
-   * 
    * Exibe informações (a direção e a orientação) sobre a câmera selecionada.
    * 
    * @param cameraId
@@ -254,9 +245,7 @@ public class CameraTools {
   }
 
   /**
-   * getNumCameras()
-   * 
-   * <p>Retorna o nº de câmeras de um dispositivo.
+   * Retorna o nº de câmeras de um dispositivo.<br>
    * 
    * @return Retorna o nº de câmeras físicas disponíveis em um dispositivo.
    * 
@@ -267,11 +256,9 @@ public class CameraTools {
   }
 
   /**
-   * getCameraInstance()
+   * Obtém a instância da câmera padrão (Id=0).<br>
    * 
-   * <p>Obtém a instância da câmera padrão (Id=0).
-   * 
-   * @return a instância da câmera padrão (se houver) do dispositivo ou null
+   * @return a instância da câmera padrão do dispositivo (se houver) ou null
    *         caso haja algum problema.
    * 
    */
@@ -282,10 +269,8 @@ public class CameraTools {
   }
 
   /**
-   * getCameraInstance(int num)
-   * 
-   * <p>Obtém a instância da câmera dado seu Id. A câmera traseira possui Id igual
-   * a 0.
+   * Obtém a instância da câmera dado seu Id. A câmera traseira possui Id igual
+   * a 0.<br>
    * 
    * @param cameraId
    *          identificador da câmera
@@ -323,9 +308,7 @@ public class CameraTools {
   }
 
   /**
-   * getParametersFlatten(Camera c)
-   * 
-   * <p>Obtém os detalhes da configuração de uma câmera em uma única string.
+   * Obtém os detalhes da configuração de uma câmera em uma única string.<br>
    * 
    * @param c
    *          Instância de uma câmera<br>
@@ -350,9 +333,7 @@ public class CameraTools {
   }
 
   /**
-   * getTimeStamp()
-   * 
-   * Retorna a data e hora do sistema de acordo com o formato solicitado
+   * Retorna a data e hora do sistema de acordo com o formato solicitado.
    * 
    * @return String contendo a data atual no formato: yyyyMMdd_HHmmss
    * 
@@ -366,8 +347,6 @@ public class CameraTools {
   }
 
   /**
-   * File getAlbumDir()
-   * 
    * Obtém o diretório onde ...
    * 
    * @return
@@ -400,8 +379,6 @@ public class CameraTools {
   }
 
   /**
-   * getAlbumStorageDir(String albumName)
-   * 
    * @param albumName
    * 
    * @return um arquivo
@@ -424,9 +401,8 @@ public class CameraTools {
   }
 
   /**
-   * getParametersDetail(Camera c)
-   * 
-   * Cria um HashMap com todos os parâmetros de um câmera.
+   * Cria uma estrutura de dados (HashMap) com todos os parâmetros de
+   * configuração de um câmera.<br>
    * 
    * @param c
    *          Instância de uma câmera
@@ -506,10 +482,9 @@ public class CameraTools {
   }
 
   /**
-   * getDir2(String dirName)
-   * 
-   * <p>Retorna o diretório solicitado dentro de
-   * getExternalStoragePublicDirectoryPictures. Cria-o caso ele não exista.
+   * Retorna o diretório solicitado dentro de
+   * getExternalStoragePublicDirectoryPictures.<br>
+   * Cria-o caso ele não exista.<br>
    * 
    * @param dirName
    *          Nome do diretório (no sistema de arquivos)
@@ -571,13 +546,11 @@ public class CameraTools {
   }
 
   /**
-   * getStorageDir(String name)
-   * 
-   * Cria um arquivo dentro do dieretório publico para armazenamento de dados no
+   * Cria um arquivo dentro do diretório público para armazenamento de dados no
    * dispositivo de armazenamento externo.
    * 
    * @param name
-   *          Nome
+   *          Nome do diretório
    * 
    * @return Um nome de arquivo
    * 
@@ -608,8 +581,6 @@ public class CameraTools {
   // ---------------------------------------------------------
 
   /**
-   * getExternalStoragePublicDirectory()
-   * 
    * Obtém o nome do diretório público onde estão armazenadas as imagens
    * 
    * @return O nome do diretório público onde são armazenada as imagens
@@ -655,8 +626,6 @@ public class CameraTools {
   }
 
   /**
-   * hasExternalStoragePublicPicture()
-   * 
    * @return true se o arquivo existir no diretório ou false, caso contrário.
    * 
    */
@@ -677,9 +646,7 @@ public class CameraTools {
   }
 
   /**
-   * isExternalStorageMounted()
-   * 
-   * <p>Verifica se há algum disco externo disponível e montado no dispositivo.
+   * Verifica se há algum disco externo disponível e montado no dispositivo.
    * 
    * @return true, caso haja ou false, caso contrário
    */
@@ -698,8 +665,6 @@ public class CameraTools {
   }
 
   /**
-   * isExternalMediaMounted()
-   * 
    * @return true se uma media de armazenamento externo estiver montada; retorna
    *         false, caso contrário.
    * 
@@ -725,13 +690,11 @@ public class CameraTools {
   }
 
   /**
-   * isCameraWorking(int cameraID)
-   * 
-   * <p>Verifica se a câmera identificada por cameraID está em funcionamento. Para
-   * fazer essa verificação tentamos abrir a câmera. Caso ela consiga ser aberta
-   * indica que a câmera está disponível e nesse caso simplesmente liberamos a
-   * câmera para uso. Se houver erro indica que a câmera não está disponível
-   * para uso pela aplicação.
+   * Verifica se a câmera identificada por cameraID está em funcionamento.<br>
+   * Para fazer essa verificação tentamos abrir a câmera. Caso ela consiga ser
+   * aberta indica que a câmera está disponível e nesse caso simplesmente
+   * liberamos a câmera para uso. Se houver erro indica que a câmera não está
+   * disponível para uso pela aplicação.
    * 
    * @param cameraID
    *          Identificador da câmera do dispositivo
@@ -765,8 +728,6 @@ public class CameraTools {
   }
 
   /**
-   * createExternalStoragePublicPicture()
-   * 
    * Cria um storage externo público para armazenamento de figuras (pictures)
    * 
    */
@@ -839,6 +800,7 @@ public class CameraTools {
       mCamera.release();
       mCamera = null;
     }
+
   }
 
   /**
@@ -864,7 +826,6 @@ public class CameraTools {
   // ---------------------------------------------------------
 
   /**
-   * setUpPhotoFile()
    * 
    * @return
    * 
@@ -882,7 +843,7 @@ public class CameraTools {
   }
 
   /**
-   * setPic()
+   * 
    */
   private void setPic() {
 
@@ -929,10 +890,8 @@ public class CameraTools {
   }
 
   /**
-   * showHash(HashMap<String, List<String>> hash)
-   * 
    * Exibe os dados de um HashMap onde a chave é uma string e o valor é uma
-   * lista de strings
+   * lista de strings.
    * 
    * @param hash
    *          instância do HashMap
@@ -963,30 +922,34 @@ public class CameraTools {
   }
 
   /**
-   * showCameraInfo()
-   * 
-   * Exibe informações sobre a configuração de todas as câmeras
+   * Exibe informações sobre a configuração de todas as câmeras disponíveis no
+   * dispositivo.
    * 
    */
   public static void showCameraInfo() {
 
     Camera camera = null;
 
+    // Obtém o nº de câmeras do dispositivo.
     int num = Camera.getNumberOfCameras();
 
     Log.d(TAG, "showCameraInfo() - número de câmera(s) disponível(eis):  " + num);
 
+    // percorre todas as câmeras disponíveis.
     for (int i = 0; i < num; i++) {
 
+      // obtém a instância de uma câmera
       camera = getCameraInstance(i);
 
       if (camera != null) {
 
+        // câmera retornada
         Log.d(TAG, "showCameraInfo() - *** Detalhes de configuração da câmera: " + i);
         showParametersDetail(camera);
 
       } else {
 
+        // câmera não está disponível
         Log.d(TAG, "showCameraInfo() - câmera " + i + " não está disponível");
 
       }
@@ -996,13 +959,16 @@ public class CameraTools {
   }
 
   /**
-   * showParametersDetail(Camera c)
+   * Exibe os detalhes dos parâmetros de configuração da câmera.<br>
+   * As informações serão exibidad no log.
    * 
-   * Exibe os detalhes dos parâmetros de configuração da câmera
+   * @param c
+   *          Instância da classe Camera.
    * 
    */
   public static void showParametersDetail(Camera c) {
 
+    // obtém os parametros de configuração da Camera.
     Parameters params = c.getParameters();
 
     // O método flatten retorna uma String
@@ -1060,10 +1026,7 @@ public class CameraTools {
   }
 
   /**
-   * setCameraDisplayOrientation(Activity activity, int cameraId,
-   * android.hardware.Camera camera)
-   * 
-   * <p>Esse método foi tirado do site developer.android.com (Reference)<br>
+   * Esse método foi tirado do site developer.android.com (Reference)<br>
    * 
    * @param activity
    * @param cameraId
@@ -1109,9 +1072,7 @@ public class CameraTools {
   }
 
   /**
-   * getCameraSize(Camera.Size size)
-   * 
-   * <p>Image size (width and height dimensions). height of the picture width of
+   * Image size (width and height dimensions). height of the picture width of
    * the picture
    * 
    * @param size
@@ -1124,13 +1085,18 @@ public class CameraTools {
     if (size != null) {
       return size.width + "x" + size.height;
     }
-    
+
     return null;
-    
+
   }
 
   //---------------------------------------------------------------------------
 
+  /**
+   * @param param
+   * 
+   * @return
+   */
   public List<String> getSupportedAntibanding(Camera.Parameters param) {
 
     return null;
@@ -1151,7 +1117,6 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
    * @return
    */
@@ -1161,7 +1126,6 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
    * @return
    */
@@ -1171,8 +1135,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<Camera.Size> getSupportedJpegThumbnailSizes(Camera.Parameters param) {
@@ -1181,8 +1145,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<Integer> getSupportedPictureFormats(Camera.Parameters param) {
@@ -1191,8 +1155,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<Camera.Size> getSupportedPictureSizes(Camera.Parameters param) {
@@ -1201,8 +1165,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<Integer> getSupportedPreviewFormats(Camera.Parameters param) {
@@ -1211,8 +1175,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<int[]> getSupportedPreviewFpsRange(Camera.Parameters param) {
@@ -1221,8 +1185,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<Integer> getSupportedPreviewFrameRates(Camera.Parameters param) {
@@ -1231,8 +1195,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<Camera.Size> getSupportedPreviewSizes(Camera.Parameters param) {
@@ -1241,8 +1205,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<String> getSupportedSceneModes(Camera.Parameters param) {
@@ -1251,8 +1215,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<Camera.Size> getSupportedVideoSizes(Camera.Parameters param) {
@@ -1261,8 +1225,8 @@ public class CameraTools {
   }
 
   /**
-   * 
    * @param param
+   * 
    * @return
    */
   public List<String> getSupportedWhiteBalance(Camera.Parameters param) {
@@ -1270,11 +1234,7 @@ public class CameraTools {
     return null;
   }
 
-  //---------------------------------------------------------------------------
-
   /**
-   * preparaDirerorioFotos()
-   * 
    * Prepara o diretório onde as fotos serão armazenadas
    * 
    */
@@ -1313,10 +1273,7 @@ public class CameraTools {
   }
 
   /**
-   * showFile(File f)
-   * 
-   * <p>
-   * Exibe informações sobre um arquivo:
+   * Exibe informações sobre um arquivo:<br>
    * <ul>
    * <li>informações sobre a permissão de leitura (R), escrita (W) e execução
    * (X) do um arquivo f
@@ -1325,7 +1282,7 @@ public class CameraTools {
    * </ul>
    * 
    * @param foto
-   *          instância de um objeto da classe File
+   *          instância de um objeto da classe File.
    * 
    */
   private void showFile(File foto) {
@@ -1355,8 +1312,7 @@ public class CameraTools {
 
   };
 
-  /**
-   * 
+  /** 
    * @param ctx
    */
   private static void xxx(Context ctx) {
