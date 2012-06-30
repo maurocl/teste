@@ -544,8 +544,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * <br>
    * <u>IMPORTANTE</u>: Usa a variável membro: <b>mailServer.</b><br>
    * <br>
-   * 
-   * 
+   *  
    * usuario, senha, host, porta, remetente
    * 
    */
@@ -564,11 +563,18 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     String mRemetente = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_REMETENTE_EMAIL);
 
+    String mEmailDebug = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_EMAIL_DEBUG);
+    
+    String mEmailAuth = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_EMAIL_AUTH);
+    
+    String mEmailSsl = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_EMAIL_SSL);
+
     // valida os argumentos obrigatórios do email
     validaArgumentosEmail(mEmail, mSenha, mHost, mPort, mRemetente);
 
     // cria a instância do sistema de email
     mailServer = new Mail(mEmail, mSenha);
+
     Log.d(TAG, "initEmailConfig() - cria a instância de mailServer");
     logger2.finer("initEmailConfig() - cria a instância de mailServer");
 
@@ -585,22 +591,16 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     Log.d(TAG, "initEmailConfig() - from: " + mRemetente);
 
     //
-    // TODO remover e acrescentar na configuração
-    //
-    mailServer.setDebuggable(true);
-    Log.d(TAG, "initEmailConfig() - debuggable: " + mailServer.isDebuggable());
+    mailServer.setDebuggable(mEmailDebug.equalsIgnoreCase("true")?true:false);
+    Log.d(TAG, "initEmailConfig() - debuggable: " + mEmailDebug);
 
     //
-    // TODO remover e acrescentar na configuração
-    //
-    mailServer.setAuth(true);
-    Log.d(TAG, "initEmailConfig() - authorization: " + mailServer.isAuth());
+    mailServer.setAuth(mEmailAuth.equalsIgnoreCase("true")?true:false);
+    Log.d(TAG, "initEmailConfig() - authorization: " + mEmailAuth);
 
     //
-    // TODO remover e acrescentar na configuração
-    //
-    mailServer.setSsl(false);
-    Log.d(TAG, "initEmailConfig() - SSL: " + mailServer.isSsl());
+    mailServer.setSsl(mEmailSsl.equalsIgnoreCase("true")?true:false);
+    Log.d(TAG, "initEmailConfig() - SSL: " + mEmailSsl);
 
     Log.d(TAG, "initEmailConfig() - fim");
     logger2.finer("initEmailConfig() - fim");
@@ -1737,12 +1737,16 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * 
    * @param emailParticipante
    *          Email do participante do evento
+   * 
    * @param emailContratante
    *          Email do contratante do evento
+   * 
    * @param subject
    *          Assunto tratado pelo email
+   * 
    * @param text
    *          Corpo do email (mensagem)
+   * 
    * @param imageUri
    *          Uri da foto tirada
    * 
@@ -1756,6 +1760,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     // cria um file que será adicionado (anexado) ao email
     File f = new File(imageUri.getPath());
+
     try {
 
       if (mailServer != null) {
@@ -1769,14 +1774,17 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
       }
 
     } catch (Exception e) {
+
       Log.w(TAG, "sendEmailExternal() - não foi encontrado o anexo contendo a foto", e);
       //logger.println("sendEmailExternal() - não foi encontrado o anexo contendo a foto");
+
       logger2.info("sendEmailExternal() - não foi encontrado o anexo contendo a foto");
+
       return false;
 
     }
 
-    // Reply to:
+    // From:
     mailServer.setFrom(emailContratante);
 
     // To:
@@ -1790,6 +1798,24 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     // Body
     mailServer.setBody(text);
+
+    /*
+    mailServer.setDebuggable(true);
+    mailServer.setSsl(false);
+    mailServer.setAuth(true);
+    mailServer.setPort("587");
+    mailServer.setHost("");
+    */
+
+    //mail.debug= true
+    //mail.transport.protocol=smtp
+    //  mail.smtp.host=host
+    //  mail.smtp.auth=true
+    //  mail.smtp.port=port
+    //  mail.smtp.socketFactory.port=sport
+    //  mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory
+    //  mail.smtp.socketFactory.fallback=false
+    //  mail.smtp.quitwait=false
 
     Log.d(TAG, "sendEmailExternal() - " + mailServer);
 

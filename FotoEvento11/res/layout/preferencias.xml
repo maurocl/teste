@@ -41,8 +41,7 @@
             android:id="@+id/editAssunto"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="Assunto (subject) no envio de email"
-             />
+            android:hint="Assunto (subject) no envio de email" />
 
         <!-- Descrição do corpo do email -->
 
@@ -51,13 +50,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Descrição:" />
-
+
         <EditText
             android:id="@+id/editDescricao"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="Descrição do evento"
-            android:text="editDescricao" />
+            android:hint="Descrição do evento" />
 
         <!-- Usuário da conta do email -->
 
@@ -66,13 +64,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Usuário da conta de email:" />
-
+
         <EditText
             android:id="@+id/editUsuario"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="Nome do usuário da conta de email"
-            android:text="editUsuario" />
+            android:hint="Nome do usuário da conta de email" />
 
         <!-- Senha da conta do email -->
 
@@ -81,13 +78,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Senha da conta de email:" />
-
+
         <EditText
             android:id="@+id/editSenha"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="Senha do usuário da conta de email"
-            android:text="editSenha" />
+            android:hint="Senha do usuário da conta de email" />
 
         <!-- Servidor SMTP -->
 
@@ -96,13 +92,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Servidor SMTP:" />
-
+
         <EditText
             android:id="@+id/editServidorSMTP"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="Endereço do servidor SMTP"
-            android:text="editServidorSMTP" />
+            android:hint="Endereço do servidor SMTP" />
 
         <!-- porta do Servidor SMTP -->
 
@@ -111,13 +106,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Porta Servidor SMTP:" />
-
+
         <EditText
             android:id="@+id/editServidorSMTPPorta"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="Nº da porta do servidor SMTP"
-            android:text="editServidorSMTPPorta" />
+            android:hint="Nº da porta do servidor SMTP" />
 
         <!-- Email do Remetente -->
 
@@ -126,14 +120,58 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Email do Remetente:" />
-
+
         <EditText
             android:id="@+id/editRemetente"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="Email do Remetente"            
-            android:paddingBottom="5dp"
-            android:text="editRemetente" />
+            android:hint="Email do Remetente"
+            android:paddingBottom="5dp" />
+
+        <!-- Email é debugável -->
+
+        <TextView
+            android:id="@+id/tvDebugavel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Debugável:" />
+
+        <CheckBox
+            android:id="@+id/chkDebugavel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:text="Permite debug do email" />
+
+        <!-- Email solicita autorização -->
+
+        <TextView
+            android:id="@+id/tvAuthorization"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Solicita Autorização:" />
+
+        <CheckBox
+            android:id="@+id/chkAuth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:text="Solicita Autorização" />
+
+        <!-- Email usa SSL -->
+
+        <TextView
+            android:id="@+id/tvSsl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usa SSL:" />
+
+        <CheckBox
+            android:id="@+id/chkSsl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:text="Usa SSL" />
 
         <!-- Configuração de redes sociais -->
 
@@ -141,8 +179,8 @@
             android:id="@+id/textRedesSociais"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
             android:paddingBottom="5dp"
+            android:paddingTop="20dp"
             android:text="Redes Sociais"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -177,17 +215,17 @@
 
         <!--  -->
 
+
         <!-- Outras configurações importantes -->
-        
+
         <TextView
             android:id="@+id/textOutros"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
             android:paddingBottom="5dp"
+            android:paddingTop="20dp"
             android:text="Outros:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
 
         <!-- URL da imagem da tela inicial da aplicação -->
 
@@ -197,14 +235,12 @@
             android:layout_height="wrap_content"
             android:paddingTop="5dp"
             android:text="Imagem da tela inicial" />
-
+
         <EditText
             android:id="@+id/editUrlImagem"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="URL da Imagem da tela inicial"
-            android:text="URL da Imagem" />
-
+            android:hint="URL da Imagem da tela inicial" />
 
         <!-- Nº da Câmera Frontal -->
 
@@ -213,13 +249,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nº da câmera frontal:" />
-
+
         <EditText
             android:id="@+id/editNumCameraFrontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:hint="Nº da câmera frontal"
-            android:text="Nº da câmera frontal" />
+            android:inputType="number" />
 
         <!-- Botões -->
 

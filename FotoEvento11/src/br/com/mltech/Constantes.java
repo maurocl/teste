@@ -128,5 +128,10 @@ public interface Constantes {
   public static final String PREFERENCIAS_SERVIDOR_SMTP_PORTA = "preferencias_servidor_smtp_porta";
 
   public static final String PREFERENCIAS_REMETENTE_EMAIL = "preferencias_remetente_email";
+  
+  
+  public static final String PREFERENCIAS_EMAIL_DEBUG = "preferencias_email_debug";
+  public static final String PREFERENCIAS_EMAIL_AUTH = "preferencias_email_auth";
+  public static final String PREFERENCIAS_EMAIL_SSL = "preferencias_email_ssl";
 
 }

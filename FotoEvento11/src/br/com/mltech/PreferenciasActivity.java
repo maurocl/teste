@@ -7,12 +7,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 /**
- * PreferenciasActivity
- * 
- * <p>Activity responsável pela manutenção das preferências de uso do sistema<br>
+ * Activity responsável pela manutenção das preferências de uso do sistema<br>
  * 
  * Aqui são configuradas as preferências de:<br>
  * 
@@ -30,8 +29,6 @@ import android.widget.EditText;
 public class PreferenciasActivity extends Activity implements Constantes {
 
   public static final String TAG = "Preferencias";
-
-  public static final String PREF_EMAIL = "pref_email";
 
   private static SharedPreferences preferences;
 
@@ -53,13 +50,18 @@ public class PreferenciasActivity extends Activity implements Constantes {
     final EditText urlImagem = (EditText) findViewById(R.id.editUrlImagem);
     final EditText numCameraFrontal = (EditText) findViewById(R.id.editNumCameraFrontal);
 
+    // Preferências de envio de email
     final EditText editUsuario = (EditText) findViewById(R.id.editUsuario);
-
     final EditText editSenha = (EditText) findViewById(R.id.editSenha);
     final EditText editServidorSMTP = (EditText) findViewById(R.id.editServidorSMTP);
     final EditText editServidorSMTPPorta = (EditText) findViewById(R.id.editServidorSMTPPorta);
     final EditText editRemetente = (EditText) findViewById(R.id.editRemetente);
 
+    final CheckBox chkDebugavel = (CheckBox) findViewById(R.id.chkDebugavel);
+    final CheckBox chkAuth = (CheckBox) findViewById(R.id.chkAuth);
+    final CheckBox chkSsl = (CheckBox) findViewById(R.id.chkSsl);
+
+    // Botões 
     final Button btnGravarPreferencias = (Button) findViewById(R.id.btnGravarPreferencias);
     final Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
 
@@ -84,6 +86,39 @@ public class PreferenciasActivity extends Activity implements Constantes {
     editServidorSMTPPorta.setText(preferences.getString(Constantes.PREFERENCIAS_SERVIDOR_SMTP_PORTA, ""));
     editRemetente.setText(preferences.getString(Constantes.PREFERENCIAS_REMETENTE_EMAIL, ""));
 
+    boolean checked;
+    String s;
+    
+    s = preferences.getString(Constantes.PREFERENCIAS_EMAIL_DEBUG, "");
+    if (s.equalsIgnoreCase("true")) {
+      checked = true;
+    }
+    else {
+      checked = false;
+    }
+    chkDebugavel.setChecked(checked);
+
+    
+    s = preferences.getString(Constantes.PREFERENCIAS_EMAIL_AUTH, "");
+    if (s.equalsIgnoreCase("true")) {
+      checked = true;
+    }
+    else {
+      checked = false;
+    }
+    chkAuth.setChecked(checked);
+
+
+    s = preferences.getString(Constantes.PREFERENCIAS_EMAIL_SSL, "");
+    if (s.equalsIgnoreCase("true")) {
+      checked = true;
+    }
+    else {
+      checked = false;
+    }
+    chkSsl.setChecked(checked);
+
+    
     //---------------------------
     // processa o botão de Gravar
     //---------------------------
@@ -110,6 +145,10 @@ public class PreferenciasActivity extends Activity implements Constantes {
         edit.putString(Constantes.PREFERENCIAS_SERVIDOR_SMTP, editServidorSMTP.getText().toString());
         edit.putString(Constantes.PREFERENCIAS_SERVIDOR_SMTP_PORTA, editServidorSMTPPorta.getText().toString());
         edit.putString(Constantes.PREFERENCIAS_REMETENTE_EMAIL, editRemetente.getText().toString());
+        
+        edit.putString(Constantes.PREFERENCIAS_EMAIL_DEBUG, ((chkDebugavel.isChecked()==true)?"true":"false"));
+        edit.putString(Constantes.PREFERENCIAS_EMAIL_AUTH, ((chkAuth.isChecked()==true)?"true":"false"));
+        edit.putString(Constantes.PREFERENCIAS_EMAIL_SSL, ((chkSsl.isChecked()==true)?"true":"false"));
 
         // grava as preferências
         boolean b = edit.commit();
