@@ -250,6 +250,7 @@ public class Mail extends javax.mail.Authenticator {
       msg.saveChanges();
 
       // send email
+
       Transport.send(msg);
 
       return true;
@@ -413,7 +414,7 @@ public class Mail extends javax.mail.Authenticator {
     if (auth) {
       props.setProperty("mail.smtp.auth", "true");
     }
-    
+
     props.setProperty("mail.transport.protocol", "smtp");
 
     props.setProperty("mail.smtp.host", host);
@@ -421,7 +422,7 @@ public class Mail extends javax.mail.Authenticator {
     props.setProperty("mail.smtp.port", port);
 
     if (isSsl()) {
-      
+
       props.setProperty("mail.smtp.socketFactory.port", sport);
 
       props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
@@ -874,6 +875,21 @@ public class Mail extends javax.mail.Authenticator {
 
     fos.close();
 
+  }
+
+  /**
+   * Exibe detalhes sobre uma exceção gerada.
+   * 
+   * @param e
+   *          Exception
+   * 
+   */
+  public void showException(Exception e) {
+
+    Log.w(TAG, "getMessage(): " + e.getMessage());
+    Log.w(TAG, "getLocalizedMessage(): " + e.getLocalizedMessage());
+    Log.w(TAG, "getCause(): " + e.getCause());
+    Log.w(TAG, "test03() - ", e);
   }
 
 }
