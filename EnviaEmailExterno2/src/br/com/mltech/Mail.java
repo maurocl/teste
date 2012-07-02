@@ -26,6 +26,8 @@ import javax.mail.internet.MimeMultipart;
 
 import android.util.Log;
 
+
+
 /**
  * Classe responsável pelo envio de email usando o JavaMail.
  * 
@@ -408,22 +410,22 @@ public class Mail extends javax.mail.Authenticator {
     Properties props = new Properties();
 
     if (debuggable) {
-      props.setProperty("mail.debug", "true");
+      props.setProperty("mail.debug",this.isDebuggable()?"true":"false");
     }
 
     if (auth) {
-      props.setProperty("mail.smtp.auth", "true");
+      props.setProperty("mail.smtp.auth", this.isAuth()?"true":"false");
     }
 
     props.setProperty("mail.transport.protocol", "smtp");
 
-    props.setProperty("mail.smtp.host", host);
+    props.setProperty("mail.smtp.host", this.getHost());
 
-    props.setProperty("mail.smtp.port", port);
+    props.setProperty("mail.smtp.port", this.getPort());
 
     if (isSsl()) {
 
-      props.setProperty("mail.smtp.socketFactory.port", sport);
+      props.setProperty("mail.smtp.socketFactory.port", this.getSport());
 
       props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
