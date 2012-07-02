@@ -15,15 +15,12 @@ import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 
 /**
- * @class Participacao.java
+ * Criação da tela para obter informações sobre o tipo e o efeito que será
+ * aplicado a uma foto.<br />
  * 
- *        Criação da tela para obter informações sobre o tipo e o efeito que
- *        será aplicado a uma foto.<br />
+ * Essa activity recebe como parâmetros: Evento; Participante; Participação<br />
  * 
- *        Essa activity recebe como parâmetros: Evento; Participante;
- *        Participação<br />
- * 
- *        O usuário poderá Confirmar ou Cancelar a participação.
+ * O usuário poderá Confirmar ou Cancelar a participação.
  * 
  * @author maurocl
  * 
@@ -65,7 +62,6 @@ public class ParticipacaoActivity extends Activity implements Constantes {
 
     this.setContentView(R.layout.participacao);
 
- 
     Log.d(TAG, "*** onCreate() ***");
 
     // obtém informações sobre a intent usada para iniciar a activity
@@ -97,7 +93,7 @@ public class ParticipacaoActivity extends Activity implements Constantes {
     //-------------------------------------------------------------------------
     // Tratamento de Evento dos Botões
     //-------------------------------------------------------------------------
-    
+
     /**
      * Tratamento do botão Enviar
      */

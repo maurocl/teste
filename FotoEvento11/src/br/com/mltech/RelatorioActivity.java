@@ -28,7 +28,7 @@ import br.com.mltech.modelo.Participante;
  * @author maurocl
  * 
  */
-public class RelatorioActivity extends Activity {
+public class RelatorioActivity extends Activity implements Constantes {
 
   private static final String TAG = "RelatorioActivity";
 
@@ -82,8 +82,8 @@ public class RelatorioActivity extends Activity {
       }
 
       // recupera as informações sobre o evento
-      if (params.getSerializable("br.com.mltech.evento") != null) {
-        mEvento = (Evento) params.getSerializable("br.com.mltech.evento");
+      if (params.getSerializable(Constantes.EVENTO) != null) {
+        mEvento = (Evento) params.getSerializable(Constantes.EVENTO);
       } else {
         Log.w(TAG, "onCreate() - não há informações sobre o evento");
       }
@@ -94,24 +94,21 @@ public class RelatorioActivity extends Activity {
 
     EditText numParticipantes = (EditText) findViewById(R.id.numParticipantes);
 
-    Button btn1 = (Button) findViewById(R.id.btn1);
-    // Button btn2 = (Button) findViewById(R.id.btn2);
+    Button btnExportExcel = (Button) findViewById(R.id.btn1);
 
-    // Button btn3 = (Button) findViewById(R.id.btn3);
-    // Button btn4 = (Button) findViewById(R.id.btn4);
-
-    btn1.setText("Exportar arquivo para Excel");
+    btnExportExcel.setText("Exportar arquivo para Excel");
 
     // TODO Obter o número de participantes
     numParticipantes.setText(num);
 
     // Tratamento do evento do botão 1
-    btn1.setOnClickListener(new OnClickListener() {
+    btnExportExcel.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
 
-        Log.d(TAG, "onCreate() - Botão 1 foi pressionado");
+        Log.d(TAG, "onCreate() - 'Exportar arquivo para Excel' foi pressionado");
 
+        // Grava a lista no arquivo CSV
         boolean gravou = gravarArquivoCSV(CSVFILE, lista);
 
         if (gravou) {
@@ -133,31 +130,14 @@ public class RelatorioActivity extends Activity {
      * });
      */
 
-    // Tratamento do evento do botão 3
-    /*
-     * btn3.setOnClickListener(new OnClickListener() {
-     * 
-     * public void onClick(View v) { // TODO Auto-generated method stub
-     * Log.d(TAG, "Botão 3 foi pressionado"); } });
-     */
-
-    // Tratamento do evento do botão 4
-    /*
-     * btn4.setOnClickListener(new OnClickListener() {
-     * 
-     * public void onClick(View v) { // TODO Auto-generated method stub
-     * Log.d(TAG, "Botão 4 foi pressionado"); } });
-     */
-
   }
 
   /**
-   * gravarArquivoCSV(File f, List<Participacao> lista)
-   * 
    * O arquivo será armazenado em /data/data/<nomeAplicacao>/files/<nomeArquivo>
    * 
    * @param filename
    *          nome do arquivo (sem separadores de path)
+   *          
    * @param lista
    *          Lista de participantes do evento
    * 
@@ -282,12 +262,14 @@ public class RelatorioActivity extends Activity {
       Toast.makeText(this, "Erro na gravação do arquivo " + filename + ".", Toast.LENGTH_SHORT).show();
 
     } finally {
+      
       try {
         // fecha o arquivo de gravação
         dos.close();
       } catch (IOException e) {
         Log.w(TAG, "gravarArquivoCSV() - IOException encontrada", e);
       }
+      
     }
 
     Log.d(TAG, "gravarArquivoCSV() - Nº total de participantes: " + numParticipantes);

@@ -282,9 +282,9 @@ public class ManutencaoActivity extends Activity implements Constantes {
          */
 
         builder.setMessage("Você tem certeza que apagar todos os dados e restaurar do arquivo ?");
-        
+
         builder.setCancelable(false);
-        
+
         builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
 
           public void onClick(DialogInterface dialog, int id) {
@@ -309,7 +309,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
             // Atualiza as variáveis de preferência
             if (hash != null) {
-              
+
               if (saveMapPreferences(hash)) {
                 Toast.makeText(getBaseContext(), "Restauração feita com sucesso do arquivo: " + arquivo, Toast.LENGTH_SHORT)
                     .show();
@@ -317,7 +317,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
               else {
                 Toast.makeText(getBaseContext(), "Falha na restauração da configuração", Toast.LENGTH_SHORT).show();
               }
-              
+
             }
             else {
               Log.w(TAG, "onClick(restore) - Erro na restauração do arquivo: " + arquivo);
@@ -427,7 +427,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * processActivityContratante(int resultCode, Intent data)
+   * Processa o resultado da execução da Activity de manutenção de contrante.
    * 
    * @param resultCode
    *          Resultado da execução da intent
@@ -448,6 +448,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
         Log.d(TAG, "processando contratante=" + mContratante);
       }
 
+      // atualiza o arquivo de preferências
       boolean b = gravarPreferencias();
       if (b) {
         Log.d(TAG, "processActivityContratante() - Arquivo de preferências foi gravado com sucesso após alteração de contratante");
@@ -466,9 +467,10 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * processActivityEvento(int resultCode, Intent data)
+   * Processa o resultado da execução da Activity de manutenção de evento.
    * 
    * @param resultCode
+   * 
    * @param data
    * 
    */
@@ -485,6 +487,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
         Log.d(TAG, "processActivityEvento() - processando evento=" + mEvento);
       }
 
+      // grava as preferências
       boolean b = gravarPreferencias();
       if (b) {
         Log.d(TAG, "processActivityEvento() - Arquivo de preferências foi gravado com sucesso após alteração do evento");
@@ -494,8 +497,10 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
     } else if (resultCode == RESULT_CANCELED) {
       Log.d(TAG, "processActivityEvento() - Usuário cancelou a tela de eventos");
+
     } else {
       Log.d(TAG, "processActivityEvento() - Erro ...");
+
     }
 
   }
@@ -514,22 +519,17 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
       Log.d(TAG, "processActivityPreferencias() - processando RESULT_OK");
 
-      /*
-       * if (data != null) { evento = (Evento)
-       * data.getSerializableExtra("br.com.mltech.evento"); }
-       */
-
-      // Log.d(TAG, "processando evento=" + mEvento);
-
     } else if (resultCode == RESULT_CANCELED) {
       Log.d(TAG, "processActivityPreferencias() - Usuário cancelou a tela de preferências");
+
     } else {
+
       Log.d(TAG, "processActivityPreferencias() - Erro ...");
+
     }
   }
 
   /**
-   * processActivityRelatorios(int resultCode, Intent data)
    * 
    * @param resultCode
    * @param data
@@ -542,13 +542,6 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
       Log.d(TAG, "processActivityRelatorios() - processando RESULT_OK na tela de relatórios");
 
-      /*
-       * if (data != null) { evento = (Evento)
-       * data.getSerializableExtra("br.com.mltech.evento"); }
-       */
-
-      // Log.d(TAG, "processando evento=" + mEvento);
-
     } else if (resultCode == RESULT_CANCELED) {
 
       Log.d(TAG, "processActivityRelatorios() - O usuário cancelou a tela de relatórios");
@@ -560,26 +553,27 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * isConfiguracaoCompleta()
+   * Verifica se a aplicação está configurada para uso.<br>
    * 
-   * verifica se a aplicação está configurada para uso
+   * Testa se o Contrante está preenchido.<br>
+   * Testa se o evento está preenchido<br>
+   * Testa se as bordas estão configuradas para o evento.<br>
    * 
-   * Testa se o contrante está preenchido Testa se o evento está preenchido
-   * Testa se as bordas estão configuradas para o evento
+   * @return Retorna true em caso de sucesso e false no caso de haver algum
+   *         problema
    * 
-   * Retorna true em caso de sucesso e false no caso de haver algum problema
    */
   private boolean isConfiguracaoCompleta() {
 
     boolean configuracaoCompleta = true;
 
-    // verifica se existe um contratante configurado
+    // verifica se existe um Contratante configurado
     if (mContratante == null) {
       configuracaoCompleta = false;
       Log.w(TAG, "isConfiguracaoCompleta() - Contratante não foi configurado");
     }
 
-    // verifica se existe um evento cadastrado
+    // verifica se existe um Evento cadastrado
     if (mEvento == null) {
       configuracaoCompleta = false;
       Log.w(TAG, "isConfiguracaoCompleta() - Evento não foi configurado");
@@ -672,11 +666,13 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * gravarPreferencias(HashMap<String, String> hash)
+   * Grava arquivo de preferências.
    * 
    * @param hash
+   *          Estrutura com os parâmetros de configuração.
    * 
-   * @return
+   * @return true se o arquivo foi salvo com sucesso ou false caso contrário.
+   * 
    */
   private boolean gravarPreferencias(HashMap<String, String> hash) {
 
@@ -735,6 +731,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
     mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
 
     if (mPreferences == null) {
+      // TODO não seria melhor fazer mContratante e mEvento igual a null ?
       Log.w(TAG, "lerPreferencias() - mPreferences is null. Falha na execução do comandos getSharedPreferences()");
       return false;
     }
@@ -742,7 +739,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
     if (mContratante == null) {
 
       // Contratante não foi inicializado
-      // Cria um novo contratante vazio
+      // Cria um novo Contratante vazio
       mContratante = new Contratante();
 
     }
@@ -800,17 +797,15 @@ public class ManutencaoActivity extends Activity implements Constantes {
   }
 
   /**
-   * limpaConfiguracoes()
-   * 
-   * Reinicia o SharedPreferences("preferencias") Limpa a configuração de
-   * Contratante e Evento
+   * Reinicia o SharedPreferences("preferencias").<br>
+   * Limpa a configuração de Contratante e Evento.<br>
    * 
    * @return true se sucesso ou false caso haja algum erro.
    * 
+   *         Usa a variável membro mPreferences.
+   * 
    */
   private boolean limpaConfiguracoes() {
-
-    boolean commitDone;
 
     mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
 
@@ -822,7 +817,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
     edit.clear();
 
     // grava as preferências
-    commitDone = edit.commit();
+    boolean commitDone = edit.commit();
 
     if (commitDone) {
       Log.d(TAG, "limpaConfiguracoes() - Gravando as preferências compartilhadas ...");
@@ -845,6 +840,8 @@ public class ManutencaoActivity extends Activity implements Constantes {
    *          nome do arquivo de configuração
    * 
    * @return um HashMap<String,String> com as associações entre chave e valor
+   * 
+   * @throws FileNotFoundException
    * @throws IOException
    * 
    */
@@ -908,6 +905,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
       }
     }
 
+    // a estrutura de chaves e valores usadas na configuração.
     return hash;
 
   }
@@ -936,7 +934,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
       return false;
     }
 
-    SharedPreferences mPreferencesEmail = getSharedPreferences("pref_email", MODE_PRIVATE);
+    SharedPreferences mPreferencesEmail = getSharedPreferences(Constantes.PREF_EMAIL, MODE_PRIVATE);
 
     if (mPreferencesEmail == null) {
       Log.w(TAG, "saveMapPreferences() - mPreferencesEmail é nulo");
@@ -965,7 +963,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
     else {
 
       if (commitDone1 == true) {
-        Log.i(TAG, "saveMapPreferences() - gravação 1 realizada com sucesso");
+        Log.i(TAG, "saveMapPreferences() - Gravação 1 realizada com sucesso");
       }
       else {
         Log.w(TAG, "saveMapPreferences() - Gravação 1 realizada com fracasso");
@@ -981,18 +979,21 @@ public class ManutencaoActivity extends Activity implements Constantes {
     }
 
     //------------------------------------------------------------------------
-    //
+    // Returns a map containing a list of pairs key/value representing the preferences.
+    // Retorna um mapa contendo a lista de pares chave/valor representando as preferências.
     //------------------------------------------------------------------------
     Map<String, ?> mapa = mPreferences.getAll();
 
     Log.d(TAG, "saveMapPreferences() - mapa possui: " + mapa.size());
 
+    // exibe a lista de chaves e valores
     for (String chave : mapa.keySet()) {
       Log.v(TAG, "saveMapPreferences() - mapa: " + chave + ", valor: " + mapa.get(chave));
     }
 
     //------------------------------------------------------------------------
-    //
+    // Returns a map containing a list of pairs key/value representing the preferences.
+    // Retorna um mapa contendo a lista de pares chave/valor representando as preferências.
     //------------------------------------------------------------------------
     Map<String, ?> mapa2 = mPreferencesEmail.getAll();
 
@@ -1034,8 +1035,8 @@ public class ManutencaoActivity extends Activity implements Constantes {
     }
 
     if (mPreferencesEmail == null) {
-      mPreferencesEmail = getSharedPreferences("pref_email", MODE_PRIVATE);
-      Log.w(TAG, "obtemValores() - mPreferences é nulo");
+      mPreferencesEmail = getSharedPreferences(Constantes.PREF_EMAIL, MODE_PRIVATE);
+      Log.w(TAG, "obtemValores() - " + Constantes.PREF_EMAIL + " é nulo");
     }
 
     // obtém o conjunto de chaves da estrutura SharedPreference
@@ -1070,7 +1071,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
    * Grava um arquivo de configuração das preferências da aplicação.<br>
    * 
    * @param filename
-   *          nome do arquivo
+   *          nome do arquivo onde as preferências serão salvas.
    * 
    * @return true em caso de sucesso ou false caso contrário
    */
@@ -1078,10 +1079,9 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
     BufferedWriter buf = null;
 
-    //HashMap<String, String> hash = new HashMap<String, String>();
-
     boolean gravou = false;
 
+    // inicia o HashMap a partir da leitura das preferências
     HashMap<String, String> hash = readPreferencesMap();
 
     if (hash == null) {

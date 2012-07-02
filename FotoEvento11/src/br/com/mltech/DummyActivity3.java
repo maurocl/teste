@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import android.app.Activity;
@@ -42,6 +41,7 @@ import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
 import br.com.mltech.utils.Transaction;
 import br.com.mltech.utils.camera.CameraTools;
+
 
 /**
  * DummyActivity3
@@ -433,8 +433,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   }
 
   /**
-   * carregaMolduras()
-   * 
    * Inicializa as variáveis (da classe) que vão conter o bitmap das molduras:<br>
    * 
    * mBitmapMolduraPolaroid.<br>
@@ -442,8 +440,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * <br>
    * molduraPolaroid<br>
    * molduraCabine<br>
-   * 
-   * 
+   *  
    */
   private void carregaMolduras() {
 
@@ -544,7 +541,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * <br>
    * <u>IMPORTANTE</u>: Usa a variável membro: <b>mailServer.</b><br>
    * <br>
-   *  
+   * 
    * usuario, senha, host, porta, remetente
    * 
    */
@@ -554,19 +551,17 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     logger2.finer("initEmailConfig() - início");
 
     String mEmail = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_USUARIO_EMAIL);
-
     String mSenha = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_SENHA_EMAIL);
 
     String mHost = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_SERVIDOR_SMTP);
-
     String mPort = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_SERVIDOR_SMTP_PORTA);
 
     String mRemetente = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_REMETENTE_EMAIL);
 
     String mEmailDebug = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_EMAIL_DEBUG);
-    
+
     String mEmailAuth = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_EMAIL_AUTH);
-    
+
     String mEmailSsl = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_EMAIL_SSL);
 
     // valida os argumentos obrigatórios do email
@@ -578,28 +573,18 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     Log.d(TAG, "initEmailConfig() - cria a instância de mailServer");
     logger2.finer("initEmailConfig() - cria a instância de mailServer");
 
-    //
     mailServer.setHost(mHost);
-    Log.d(TAG, "initEmailConfig() - SMTP host: " + mHost);
-
-    //
     mailServer.setPort(mPort);
-    Log.d(TAG, "initEmailConfig() - SMTP port: " + mPort);
-
-    //
     mailServer.setFrom(mRemetente);
+    mailServer.setDebuggable(mEmailDebug.equalsIgnoreCase("true") ? true : false);
+    mailServer.setAuth(mEmailAuth.equalsIgnoreCase("true") ? true : false);
+    mailServer.setSsl(mEmailSsl.equalsIgnoreCase("true") ? true : false);
+    
+    Log.d(TAG, "initEmailConfig() - SMTP host: " + mHost);
+    Log.d(TAG, "initEmailConfig() - SMTP port: " + mPort);
     Log.d(TAG, "initEmailConfig() - from: " + mRemetente);
-
-    //
-    mailServer.setDebuggable(mEmailDebug.equalsIgnoreCase("true")?true:false);
     Log.d(TAG, "initEmailConfig() - debuggable: " + mEmailDebug);
-
-    //
-    mailServer.setAuth(mEmailAuth.equalsIgnoreCase("true")?true:false);
     Log.d(TAG, "initEmailConfig() - authorization: " + mEmailAuth);
-
-    //
-    mailServer.setSsl(mEmailSsl.equalsIgnoreCase("true")?true:false);
     Log.d(TAG, "initEmailConfig() - SSL: " + mEmailSsl);
 
     Log.d(TAG, "initEmailConfig() - fim");
@@ -1486,9 +1471,9 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     // chama enviaEmail passando a Uri onde se encontra a foto
 
-    Log.i(TAG, "Enviando email com foto em: " + Uri.fromFile(fff));
+    Log.i(TAG, "meuMetodo() - Enviando email com foto em: " + Uri.fromFile(fff));
     //logger.println("Enviando email com foto em: " + Uri.fromFile(fff));
-    logger2.info("Enviando email com foto em: " + Uri.fromFile(fff));
+    logger2.info("meuMetodo() - Enviando email com foto em: " + Uri.fromFile(fff));
 
     try {
 
@@ -1529,7 +1514,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    */
   private void enviaEmail(Uri lastUri) throws Exception {
 
-    Log.d(TAG, "enviaEmail() - lastUri=" + lastUri);
+    Log.d(TAG, "*** enviaEmail() - lastUri=" + lastUri);
 
     // valida as informações para envio do email
     validaDadosEmail(lastUri);
@@ -1758,6 +1743,8 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   private boolean sendEmailExternal(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri)
       throws Exception {
 
+    Log.d(TAG,"sendEmailExternal() - inicio");
+    
     // cria um file que será adicionado (anexado) ao email
     File f = new File(imageUri.getPath());
 
@@ -1800,15 +1787,13 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     mailServer.setBody(text);
 
     /*
-    mailServer.setDebuggable(true);
-    mailServer.setSsl(false);
-    mailServer.setAuth(true);
-    mailServer.setPort("587");
-    mailServer.setHost("");
-    */
+     * mailServer.setDebuggable(true); mailServer.setSsl(false);
+     * mailServer.setAuth(true); mailServer.setPort("587");
+     * mailServer.setHost("");
+     */
 
-    //mail.debug= true
-    //mail.transport.protocol=smtp
+    //  mail.debug= true
+    //  mail.transport.protocol=smtp
     //  mail.smtp.host=host
     //  mail.smtp.auth=true
     //  mail.smtp.port=port
@@ -1824,14 +1809,16 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     try {
 
       // envia o email
-      enviou = mailServer.send();
+      enviou = mailServer.send(imageUri.getPath());
 
       Log.d(TAG, "sendEmailExternal() - enviou: " + enviou);
 
     } catch (Exception e) {
 
       enviou = false;
-      Log.w(TAG, "sendEmailExternal() - falha no envio do email");
+      
+      Log.w(TAG, "sendEmailExternal() - falha no envio do email",e);
+      Log.w(TAG, "sendEmailExternal() - getMessage(): "+e.getMessage());
 
     }
 
@@ -2716,7 +2703,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     try {
       InternetAddress address = new InternetAddress(emailAddress);
-    } catch (AddressException e) {
+    } catch (javax.mail.internet.AddressException e) {
 
       String x = mMsg + " não é válido (posição: " + e.getPos() + ", ref: " + e.getRef() + ")";
 
