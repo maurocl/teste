@@ -174,7 +174,7 @@ public class Mail extends javax.mail.Authenticator {
    * @throws Exception
    *           se houver algum erro.
    */
-  public boolean send(String foto) throws Exception {
+  public boolean send() throws Exception {
 
     /*
      * m.setDebuggable(true); m.setAuth(true);
@@ -214,11 +214,33 @@ public class Mail extends javax.mail.Authenticator {
 
     }
 
-    if (!user.equals("") && !pass.equals("") && to.length > 0 && !from.equals("") && !subject.equals("") && !body.equals("")) {
+    Log.d(TAG,"toString2(): "+toString2());
+    
+    
+    Log.d(TAG,"!user.equals('')   : "+!user.equals(""));
+    Log.d(TAG,"!pass.equals('')   : "+!pass.equals("")  );
+    Log.d(TAG,"to.length > 0      : "+(to.length > 0) );
+    Log.d(TAG,"!from.equals('')   : "+!from.equals("") );
+    Log.d(TAG,"!subject.equals(''): "+!subject.equals(""));
+    Log.d(TAG,"!body.equals('')   : "+!body.equals(""));
+    
+    
+    
+    if (!user.equals("")     && 
+        !pass.equals("")     && 
+        (to.length > 0)      && 
+        !from.equals("")     && 
+        !subject.equals("")  && 
+        !body.equals("")
+    ) {
 
+      Log.d(TAG,"110");
+      
       // obtém uma sessão para envio de email
       Session session = Session.getInstance(props, this);
 
+      Log.d(TAG,"120");
+      
       // Session session = Session.getInstance(props, null);
 
       // cria uma mensagem (associada a sessão)
@@ -227,6 +249,8 @@ public class Mail extends javax.mail.Authenticator {
       // atualiza a origem da mensagem
       msg.setFrom(new InternetAddress(from));
 
+      Log.d(TAG,"130");
+      
       // -----------------------------------------------------------------------
       // To:
       // -----------------------------------------------------------------------
@@ -238,6 +262,8 @@ public class Mail extends javax.mail.Authenticator {
 
       msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
 
+      Log.d(TAG,"140");
+      
       // -----------------------------------------------------------------------
       // Cc:
       // -----------------------------------------------------------------------
@@ -252,6 +278,8 @@ public class Mail extends javax.mail.Authenticator {
 
       }
 
+      Log.d(TAG,"150");
+      
       // -----------------------------------------------------------------------
       // Bcc:
       // -----------------------------------------------------------------------
@@ -266,6 +294,8 @@ public class Mail extends javax.mail.Authenticator {
         // -----------------------------------------------------------------------
       }
 
+      Log.d(TAG,"160");
+      
       // subject do email
       msg.setSubject(this.getSubject());
 
@@ -275,32 +305,36 @@ public class Mail extends javax.mail.Authenticator {
       // setup message body
       BodyPart messageBodyPart = new MimeBodyPart();
 
+      Log.d(TAG,"170");
+      
       // adiciona o corpo do email
       messageBodyPart.setText(this.getBody());
 
+      Log.d(TAG,"180");
       multipart.addBodyPart(messageBodyPart);
 
+      Log.d(TAG,"183");
+      
       // Put parts in message
       msg.setContent(multipart);
-      
-      //--------------------------------------------------------
-
-      // anexa a foto
-      File f = new File(foto);
-      addAttachment(f.getAbsolutePath());
-      
-      //---------------------------------------------------------
             
+      
+      Log.d(TAG,"185");
+      
       // não sei se é necessário
-      msg.saveChanges();
+     // msg.saveChanges();
 
+      Log.d(TAG,"190");
+      
       // send email
-      Transport.send(msg);
+     Transport.send(msg);
 
+      
+      Log.d(TAG,"***** retornando true");
       return true;
 
     } else {
-
+      Log.d(TAG,"***** retornando false");
       return false;
 
     }
@@ -459,30 +493,30 @@ public class Mail extends javax.mail.Authenticator {
     Properties props = new Properties();
 
     if (this.isDebuggable()) {
-      props.setProperty("mail.debug", this.isDebuggable() ? "true" : "false");
+      props.put("mail.debug", this.isDebuggable() ? "true" : "false");
     }
 
     if (this.isAuth()) {
-      props.setProperty("mail.smtp.auth", this.isAuth() ? "true" : "false");
+      props.put("mail.smtp.auth", this.isAuth() ? "true" : "false");
     }
 
-    props.setProperty("mail.transport.protocol", "smtp");
+    props.put("mail.transport.protocol", "smtp");
 
-    props.setProperty("mail.smtp.host", this.getHost());
+    props.put("mail.smtp.host", this.getHost());
 
-    props.setProperty("mail.smtp.port", this.getPort());
+    props.put("mail.smtp.port", this.getPort());
 
     if (this.isSsl()) {
 
-      props.setProperty("mail.smtp.socketFactory.port", this.getSport());
+      props.put("mail.smtp.socketFactory.port", this.getSport());
 
-      props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+      props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
     }
 
-    props.setProperty("mail.smtp.socketFactory.fallback", "false");
+    props.put("mail.smtp.socketFactory.fallback", "false");
 
-    props.setProperty("mail.smtp.quitwait", "false");
+    props.put("mail.smtp.quitwait", "false");
 
     Enumeration<Object> e = props.elements();
 
@@ -939,4 +973,27 @@ public class Mail extends javax.mail.Authenticator {
         + ", multipart=" + multipart + "]";
   }
 
+  public String toString2() {
+
+    return "Mail ["+
+    "\nuser=" + user + 
+    ", \npass=" + pass + 
+    ", \nto*=" + Arrays.toString(to) + 
+    ", \ncc*=" + Arrays.toString(cc) + 
+    ", \nbcc*="+ Arrays.toString(bcc) + 
+    ", \nfrom=" + from + 
+    ", \nreplyTo=" + replyTo + 
+    ", \nport=" + port + 
+    ", \nsport=" + sport + 
+    ", \nhost=" + host + 
+    ", \nsubject=" + subject + 
+    ", \nbody=" + body + 
+    ", \nauth=" + auth + 
+    ", \ndebuggable=" + debuggable + 
+    ", \nssl=" + ssl    + 
+    ", \nmultipart=" + multipart + 
+    "]";
+  }
+
+  
 }

@@ -588,6 +588,15 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     Log.d(TAG, "initEmailConfig() - authorization: " + mEmailAuth);
     Log.d(TAG, "initEmailConfig() - SSL: " + mEmailSsl);
 
+    
+    Log.d(TAG, "initEmailConfig(2) - SMTP host: " + mailServer.getHost());
+    Log.d(TAG, "initEmailConfig(2) - SMTP port: " + mailServer.getPort());
+    Log.d(TAG, "initEmailConfig(2) - from: " + mailServer.getFrom());
+    Log.d(TAG, "initEmailConfig(2) - debuggable: " + mailServer.isDebuggable());
+    Log.d(TAG, "initEmailConfig(2) - authorization: " + mailServer.isAuth());
+    Log.d(TAG, "initEmailConfig(2) - SSL: " + mailServer.isSsl());
+
+    
     Log.d(TAG, "initEmailConfig() - fim");
     logger2.finer("initEmailConfig() - fim");
 
@@ -1755,10 +1764,12 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
         // anexa o arquivo ao email
         mailServer.addAttachment(f.getAbsolutePath());
+        
+        Log.d(TAG,"sendEmailExternal() - foto anexada ao email.");
 
       }
       else {
-        Log.w(TAG, "sendEmailExternal() - mailServer não foi inicializado.");
+        Log.w(TAG, "sendEmailExternal() - mailServer está nulo.");
       }
 
     } catch (Exception e) {
@@ -1810,7 +1821,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     try {
 
       // envia o email
-      enviou = mailServer.send(imageUri.getPath());
+      enviou = mailServer.send();
 
       Log.d(TAG, "sendEmailExternal() - enviou: " + enviou);
 
