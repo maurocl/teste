@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.activation.CommandMap;
@@ -25,8 +26,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import android.util.Log;
-
-
 
 /**
  * Classe responsável pelo envio de email usando o JavaMail.
@@ -177,13 +176,49 @@ public class Mail extends javax.mail.Authenticator {
    */
   public boolean send() throws Exception {
 
+    /*
+     * m.setDebuggable(true); m.setAuth(true);
+     * 
+     * m.setHost("smtp.mltech.com.br"); m.setPort("587");
+     * 
+     * m.setFrom("maurocl@mltech.com.br");
+     * 
+     * m.setSsl(false);
+     * 
+     * m.setTo(new String[] { "maurocl@terra.com.br" }); m.setBcc(new String[] {
+     * "maurocl@mltech.com.br" });
+     * 
+     * m.setSubject("test02"); m.setBody("test02 - envio de email");
+     */
+
     // cria uma instância das propriedades
     Properties props = setProperties();
+
+    // grava as propriedades em um arquivo
+    savePropertiesFile(props);
+    
+    if((props!=null) && (props.isEmpty())) {
+      Log.w(TAG,"send() - propriedades está vazia");     
+    }
+    
+    if (!props.isEmpty()) {
+
+      Log.w(TAG,"send() - nº de entradas: "+props.size());
+      
+      Enumeration<Object> e = props.keys();
+      
+      while (e.hasMoreElements()) {
+        String key = (String) e.nextElement();
+        Log.d(TAG, "send() - Key=" + key + ", Value=" + props.get(key));
+      }
+
+    }
 
     if (!user.equals("") && !pass.equals("") && to.length > 0 && !from.equals("") && !subject.equals("") && !body.equals("")) {
 
       // obtém uma sessão para envio de email
       Session session = Session.getInstance(props, this);
+
       // Session session = Session.getInstance(props, null);
 
       // cria uma mensagem (associada a sessão)
@@ -232,7 +267,7 @@ public class Mail extends javax.mail.Authenticator {
       }
 
       // subject do email
-      msg.setSubject(subject);
+      msg.setSubject(this.getSubject());
 
       // data de envio do email
       msg.setSentDate(new Date());
@@ -241,18 +276,18 @@ public class Mail extends javax.mail.Authenticator {
       BodyPart messageBodyPart = new MimeBodyPart();
 
       // adiciona o corpo do email
-      messageBodyPart.setText(body);
+      messageBodyPart.setText(this.getBody());
 
       multipart.addBodyPart(messageBodyPart);
 
       // Put parts in message
       msg.setContent(multipart);
-
+     
+                 
       // não sei se é necessário
       msg.saveChanges();
 
       // send email
-
       Transport.send(msg);
 
       return true;
@@ -269,15 +304,22 @@ public class Mail extends javax.mail.Authenticator {
    * Envia um email usando os parâmetros.
    * 
    * @param to
+   *          Endereço do destinatário
    * @param bcc
+   *          Endereço do bcc
    * @param from
+   *          Endereço do remetente
    * @param subject
+   *          Assunto do email
    * @param body
+   *          Corpo do email
    * @param foto
+   *          Foto
    * 
    * @return true email enviado com sucesso ou false caso contrário
    * 
    * @throws Exception
+   *           Lançada em caso de erros.
    * 
    */
   public boolean send(String to, String bcc, String from, String subject, String body, String foto) throws Exception {
@@ -409,12 +451,12 @@ public class Mail extends javax.mail.Authenticator {
 
     Properties props = new Properties();
 
-    if (debuggable) {
-      props.setProperty("mail.debug",this.isDebuggable()?"true":"false");
+    if (this.isDebuggable()) {
+      props.setProperty("mail.debug", this.isDebuggable() ? "true" : "false");
     }
 
-    if (auth) {
-      props.setProperty("mail.smtp.auth", this.isAuth()?"true":"false");
+    if (this.isAuth()) {
+      props.setProperty("mail.smtp.auth", this.isAuth() ? "true" : "false");
     }
 
     props.setProperty("mail.transport.protocol", "smtp");
@@ -423,7 +465,7 @@ public class Mail extends javax.mail.Authenticator {
 
     props.setProperty("mail.smtp.port", this.getPort());
 
-    if (isSsl()) {
+    if (this.isSsl()) {
 
       props.setProperty("mail.smtp.socketFactory.port", this.getSport());
 
@@ -434,6 +476,13 @@ public class Mail extends javax.mail.Authenticator {
     props.setProperty("mail.smtp.socketFactory.fallback", "false");
 
     props.setProperty("mail.smtp.quitwait", "false");
+
+    Enumeration<Object> e = props.elements();
+
+    while (e.hasMoreElements()) {
+      Log.d(TAG, "setProperties(): " + e.nextElement());
+
+    }
 
     // retorna as propriedades
     return props;
@@ -796,32 +845,7 @@ public class Mail extends javax.mail.Authenticator {
     this.ssl = ssl;
   }
 
-  @Override
-  public String toString() {
-
-    return "Mail [user=" + user + ", pass=" + pass + ", to=" + Arrays.toString(to) + ", cc=" + Arrays.toString(cc) + ", bcc="
-        + Arrays.toString(bcc) + ", from=" + from + ", port=" + port + ", sport=" + sport + ", host=" + host + ", subject="
-        + subject + ", body=" + body + ", auth=" + auth + ", debuggable=" + debuggable + ", multipart=" + multipart + "]";
-  }
-
   // ---------------------------------------------------------------------------
-
-  /**
-   * Carrega o arquivo de propriedades.<br>
-   * 
-   * O arquivo de propriedades padrão é: "mail.properties"
-   * 
-   * @throws FileNotFoundException
-   *           se o arquivo não for encontrado.
-   * 
-   * @throws IOException
-   *           caso haja algum outro erro de I/O.
-   */
-  private void loadPropertiesFile() throws FileNotFoundException, IOException {
-
-    loadPropertiesFile("mail.properties");
-
-  }
 
   /**
    * Carrega o arquivo de propriedades localizado no arquivo fornecido.
@@ -833,8 +857,10 @@ public class Mail extends javax.mail.Authenticator {
    * 
    * @throws IOException
    * 
+   * @return Uma instância de properties.
+   * 
    */
-  private void loadPropertiesFile(String filename) throws FileNotFoundException, IOException {
+  private Properties loadPropertiesFile(String filename) throws FileNotFoundException, IOException {
 
     // o arquivo encontra-se no mesmo diretório
     File file = new File(filename);
@@ -847,6 +873,8 @@ public class Mail extends javax.mail.Authenticator {
     emailProperties.load(inputStream);
 
     inputStream.close();
+
+    return emailProperties;
 
   }
 
@@ -861,12 +889,13 @@ public class Mail extends javax.mail.Authenticator {
    *           Erro de I/O
    * 
    */
-  private void savePropertiesFile() throws FileNotFoundException, IOException {
+  private void savePropertiesFile(Properties emailProperties) throws FileNotFoundException, IOException {
 
-    // o arquivo encontra-se no mesmo diretório da aplicação
-    Properties emailProperties = new Properties();
+    if (emailProperties == null) {
+      throw new IllegalArgumentException("Properties é nula.");
+    }
 
-    File file = new File("mail2.properties");
+    File file = new File("/mnt/sdcard/Pictures/mail2.properties");
 
     FileOutputStream fos = null;
 
@@ -888,10 +917,19 @@ public class Mail extends javax.mail.Authenticator {
    */
   public void showException(Exception e) {
 
-    Log.w(TAG, "getMessage(): " + e.getMessage());
-    Log.w(TAG, "getLocalizedMessage(): " + e.getLocalizedMessage());
-    Log.w(TAG, "getCause(): " + e.getCause());
-    Log.w(TAG, "test03() - ", e);
+    Log.w(TAG, "showException() - getMessage(): " + e.getMessage());
+    Log.w(TAG, "showException() - getLocalizedMessage(): " + e.getLocalizedMessage());
+    Log.w(TAG, "showException() - getCause(): " + e.getCause());
+    Log.w(TAG, "showException() - Exception - ", e);
+  }
+
+  @Override
+  public String toString() {
+
+    return "Mail [user=" + user + ", pass=" + pass + ", to=" + Arrays.toString(to) + ", cc=" + Arrays.toString(cc) + ", bcc="
+        + Arrays.toString(bcc) + ", from=" + from + ", replyTo=" + replyTo + ", port=" + port + ", sport=" + sport + ", host="
+        + host + ", subject=" + subject + ", body=" + body + ", auth=" + auth + ", debuggable=" + debuggable + ", ssl=" + ssl
+        + ", multipart=" + multipart + "]";
   }
 
 }
