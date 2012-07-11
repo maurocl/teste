@@ -220,10 +220,12 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     // Carrega as molduras para fotos Polaroid e Cabine
 
-    carregaMolduras();
-
-    Log.w(TAG, "onCreate() - molduras não foram carregadas");
-    logger2.info("onCreate() - molduras não foram carregadas");
+    try {
+			carregaMolduras();
+		} catch (IllegalArgumentException e) { 
+			Log.w(TAG, "onCreate() - molduras não foram configuradas adequadamente.");
+      logger2.info("onCreate() - molduras não foram configuradas adequadamente.");
+		}
 
     // Obtem o identificado da câmera que será usada para tirar as fotos
     currentCamera = obtemIdentificadorCamera();
@@ -443,14 +445,14 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * molduraCabine<br>
    *  
    */
-  private void carregaMolduras() {
+  private void carregaMolduras() throws IllegalArgumentException{
 
     mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
 
     if (mPreferences == null) {
 
       Log.w(TAG, "carregaMolduras() - mPreferences é nula. Falha na execução do comandos getSharedPreferences()");
-      return;
+      throw new IllegalArgumentException();
 
     }
 
@@ -465,16 +467,16 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     if (arquivoMolduraPolaroid == null) {
       // não foi possível encontrar a variável Constantes.EVENTO_BORDA_POLAROID no arquivo de configuração 
-      Log.d(TAG, "carregaMolduras() - moldura formato Polaroid não foi configurada.");
+      Log.w(TAG, "carregaMolduras() - moldura formato Polaroid não foi configurada.");
       logger2.warning("carregaMolduras() - moldura formato Polaroid não foi configurada.");
-      estadoFinal();
+      return;
     }
 
     if (arquivoMolduraCabine == null) {
       // não foi possível encontrar a variável Constantes.EVENTO_BORDA_CABINE no arquivo de configuração
-      Log.d(TAG, "carregaMolduras() - moldura formato Cabine não foi configurada.");
+      Log.w(TAG, "carregaMolduras() - moldura formato Cabine não foi configurada.");
       logger2.warning("carregaMolduras() - moldura formato Cabine não foi configurada.");
-      estadoFinal();
+      throw new IllegalArgumentException();
     }
 
     // ----------------------------------------------------------
@@ -1763,7 +1765,8 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
       if (mailServer != null) {
 
         // anexa o arquivo ao email
-        mailServer.addAttachment(f.getAbsolutePath());
+        //mailServer.addAttachment(f.getAbsolutePath());
+      	mailServer.setFilename(f.getAbsolutePath());
         
         Log.d(TAG,"sendEmailExternal() - foto anexada ao email.");
 
@@ -2230,6 +2233,11 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     Log.d(TAG, "leArquivoMoldura() - arquivoMoldura: [" + arquivoMoldura + "].");
 
+    if((arquivoMoldura!=null) && (arquivoMoldura.equals(""))) {
+      Log.w(TAG, "leArquivoMoldura() - o nome do arquivo está vazio.");
+      return null;    	
+    }
+    
     File moldura = new File(arquivoMoldura);
 
     if (!moldura.exists()) {
@@ -2323,7 +2331,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   }
 
   /**
-   * Exibe o valor de algumas variáveis de classe previamente selecionadas.
+   * Exibe o valor de algumas variáveis de classe previamente selecionadas no log da aplicação.
    * 
    */
   private void showClassVariables() {

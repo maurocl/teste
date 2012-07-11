@@ -118,6 +118,8 @@ public class Mail extends javax.mail.Authenticator {
    */
   private Multipart multipart;
 
+  private String filename;
+  
   /**
    * Construtor
    * 
@@ -317,7 +319,8 @@ public class Mail extends javax.mail.Authenticator {
       
       // Put parts in message
       msg.setContent(multipart);
-            
+                  
+      this.addAttachment(this.getFilename());
       
       Log.d(TAG,"185");
       
@@ -341,7 +344,17 @@ public class Mail extends javax.mail.Authenticator {
 
   }
 
-  /**
+  
+	public String getFilename() {
+		return filename;
+	}
+
+	
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	/**
    * Envia um email usando os parâmetros.
    * 
    * @param to
