@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 /**
+ * Executa uma tarefa de transacao
  * 
  * @author maurocl
  * 
@@ -21,13 +22,12 @@ public class TransactionTask extends AsyncTask<Void, Void, Boolean> {
 	private int aguardeMsg;
 
 	/**
-	 * TransactionTask(Context context, Transaction transacao, int aguardeMsg)
-	 * 
 	 * Construtor
 	 * 
 	 * @param context Contexto da aplicação
 	 * @param transacao Uma transacao
-	 * @param aguardeMsg 
+	 * @param aguardeMsg
+	 *  
 	 */
 	public TransactionTask(Context context, Transaction transacao, int aguardeMsg) {
 		super();
@@ -54,7 +54,8 @@ public class TransactionTask extends AsyncTask<Void, Void, Boolean> {
 	protected Boolean doInBackground(Void... params) {
 
 		try {
-		  
+		 
+			// executa a transacao
 			transacao.execute();
 			 
 		} catch (Throwable e) {
@@ -68,6 +69,8 @@ public class TransactionTask extends AsyncTask<Void, Void, Boolean> {
 			
 		} finally {
 			try {
+				
+				// fecha a caixa de diálogo
 				closeProgress();
 
 			} catch (Exception e) {
@@ -82,9 +85,9 @@ public class TransactionTask extends AsyncTask<Void, Void, Boolean> {
 	}
 
 	/**
-	 * atualiza o componente visual da transação.
+	 * Atualiza o componente visual da transação.
 	 * 
-	 * @result 
+	 * @param result Resultado da transação
 	 * 
 	 */
 	@Override

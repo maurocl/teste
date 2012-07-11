@@ -24,22 +24,22 @@ public class FileDownload {
   private static final String TAG = "FileDownload";
 
   /**
-   * 
+   * URL
    */
   private String mUrl;
 
   /**
-   * 
+   * contexto da aplicação
    */
   private Context context;
 
   /**
-   * 
+   * componente onde a imagem será visualizada
    */
   private ImageView imageView;
 
   /**
-   * 
+   * ProgressDialog
    */
   private ProgressDialog dialog;
 
@@ -49,7 +49,7 @@ public class FileDownload {
   private Handler handler = new Handler();
 
   /**
-   * 
+   * imagem
    */
   private Bitmap bitmap;
 
@@ -136,16 +136,13 @@ public class FileDownload {
 
         } catch (MalformedURLException e) {
 
-          Log.w(TAG, "MalformedURLException");
-
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          Log.w(TAG, "MalformedURLException",e);
 
           return;
 
         } catch (IOException e) {
 
-          // TODO Auto-generated catch block
+         
           e.printStackTrace();
 
         }
@@ -221,7 +218,7 @@ public class FileDownload {
   /**
    * Obtém um diálogo de progresso da atividade
    * 
-   * @return
+   * @return um ProgressDialog
    */
   public ProgressDialog getDialog() {
 
@@ -231,7 +228,7 @@ public class FileDownload {
   /**
    * Estabelece um diálogo de progresso da atividade
    * 
-   * @param dialog
+   * @param dialog Instância de ProgressDialog
    */
   public void setDialog(ProgressDialog dialog) {
 
