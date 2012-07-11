@@ -87,8 +87,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
   private boolean mAdminAccount = false;
 
   /**
-   * onCreate(Bundle savedInstanceState)
-   * 
    * Called when the activity is first created.
    * 
    */
@@ -275,7 +273,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * criaMenuManutencao(Menu menu)
+   * Cria o Menu Manutencao.
    * 
    * @param menu
    *          Instância da classe Menu
@@ -302,8 +300,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * launchActivity(Context ctx, Class<?> cls, Bundle params, int requestCode)
-   * 
    * Lança uma Activity passando o contexto de execução, o nome da classe que
    * será executada, parâmetros extras (se houverem) e o requestCode, isto é, o
    * código de requisição que é usado para identificar o retorno da activity.
@@ -338,8 +334,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * processaClickItemMenuManutencao()
-   * 
    * Executa a ação do click no menu item Manutenção
    * 
    */
@@ -415,12 +409,10 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * onActivityResult(int requestCode, int resultCode, Intent data)
-   * 
-   * Called when an activity you launched exits
+   * Called when an activity you launched exits.
    * 
    * @param requestCode
-   *          código da requisição
+   *          código da requisição (da execução da activity)
    * 
    * @param resultCode
    *          código do resultado da execução da activity
@@ -464,9 +456,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * resultActivityManutencao(int resultCode, Intent data)
-   * 
-   * Processa o resultado da execução da Activity de Manutenção
+   * Processa o resultado da execução da Activity de Manutenção.
    * 
    * @param resultCode
    *          Resultado da execução da activity
@@ -493,9 +483,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * resultActivityLogin(int resultCode, Intent data)
-   * 
-   * Processa o resultado da execução da Activity de Login
+   * Processa o resultado da execução da Activity de Login.
    * 
    * @param resultCode
    *          Resultado da execução da Activity
@@ -560,8 +548,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * resultActivityDummy3(int resultCode, Intent data)
-   * 
    * <p>
    * Processa o resultado da execução da activity responsável por executar um
    * ciclo completo da aplicação que é:
@@ -625,7 +611,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * resultActivityCamera(int resultCode, Intent data)
+   * Processo o resultado da activity camera;
    * 
    * @param resultCode
    *          Resultado da execução da Activity
@@ -678,13 +664,11 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * isCondicoesIniciaisSatisfeitas()
-   * 
    * Verifica se as configurações iniciais estão satisfeitas para execução de
-   * uma participação no evento.
+   * uma participação no evento.<br>
    * 
-   * contratante - ter um contratante configurado evento - ter um evento
-   * configurado
+   * contratante - ter um contratante configurado<br>
+   * evento - ter um evento configurado<br>
    * 
    * @return true se as condições forem satisfeitas e false, caso contrário
    */
@@ -703,12 +687,26 @@ public class FotoEventoActivity extends Activity implements Constantes {
       Toast.makeText(this, "Contratante não foi configurado", Toast.LENGTH_LONG).show();
       b = false;
     }
+    else {
+      if (mContratante.getNome().equals("")) {
+        Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - O nome do contratante está vazio");
+        Toast.makeText(this, "Contratante não foi configurado", Toast.LENGTH_LONG).show();
+        b = false;
+      }
+    }
 
     // verifica se existe um evento cadastrado
     if (mEvento == null) {
       Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Evento não foi configurado");
       Toast.makeText(this, "Evento não foi configurado", Toast.LENGTH_LONG).show();
       b = false;
+    }
+    else {
+      if (mEvento.getNome().equals("")) {
+        Log.w(TAG, "isCondicoesIniciaisSatisfeitas() - Nome do evento não foi configurado.");
+        Toast.makeText(this, "Evento não foi configurado", Toast.LENGTH_LONG).show();
+        b = false;
+      }
     }
 
     // verifica se as bordas das fotos já foram disponibilizadas ao
@@ -733,8 +731,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * preparaAmbiente()
-   * 
    * <p>
    * Prepara o sistema de arquivos para execução da aplicação. ambiente para
    * conter as molduras, a tela inicial e para gravação das fotos. <br>
@@ -793,8 +789,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * lerConfiguracoes(String name)
-   * 
    * <p>
    * Lê as configurações gravadas em um arquivo de preferência e inicializa os
    * atributos contratante e evento<br />
@@ -875,10 +869,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * updateListaParticipacao()
-   * 
-   * <p>
-   * Insere um novo participante na lista de participação do evento
+   * Insere um novo participante na lista de participação do evento.
    * 
    */
   private void updateListaParticipacao() {
@@ -964,10 +955,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * dialogoDesejaSairDaAplicacao()
-   * 
    * Exibe uma caixa de diálogo e a mensagem perguntando se o usuário deseja
-   * sair da aplicação.
+   * sair da aplicação.<br>
    * 
    * Caso o usuário pressione "Sim" a aplicação será encerrada. Caso contrário a
    * caixa de diálogo irá desaparecer e a aplicação continua´ra em execução.
