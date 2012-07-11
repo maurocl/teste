@@ -4,6 +4,7 @@ import android.test.AndroidTestCase;
 import android.util.Log;
 import br.com.mltech.Mail;
 
+
 /**
  * Conjunto de testes de envio de email usando JavaMail adpatado para Android.
  * 
