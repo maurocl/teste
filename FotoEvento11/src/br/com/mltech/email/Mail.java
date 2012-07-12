@@ -8,14 +8,19 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.activation.CommandMap;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.activation.MailcapCommandMap;
+import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -23,6 +28,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.MimeMultipart;
 
 import android.util.Log;
@@ -119,7 +125,7 @@ public class Mail extends javax.mail.Authenticator {
   private Multipart multipart;
 
   private String filename;
-  
+
   /**
    * Construtor
    * 
@@ -178,81 +184,78 @@ public class Mail extends javax.mail.Authenticator {
    */
   public boolean send() throws Exception {
 
-    /*
-     * m.setDebuggable(true); m.setAuth(true);
-     * 
-     * m.setHost("smtp.mltech.com.br"); m.setPort("587");
-     * 
-     * m.setFrom("maurocl@mltech.com.br");
-     * 
-     * m.setSsl(false);
-     * 
-     * m.setTo(new String[] { "maurocl@terra.com.br" }); m.setBcc(new String[] {
-     * "maurocl@mltech.com.br" });
-     * 
-     * m.setSubject("test02"); m.setBody("test02 - envio de email");
-     */
+    // m.setDebuggable(true); 
+    // m.setAuth(true);
+    // m.setHost("smtp.mltech.com.br"); 
+    // m.setPort("587");
+    // m.setFrom("maurocl@mltech.com.br");
+    // m.setSsl(false);      
+    // m.setTo(new String[] { "maurocl@terra.com.br" }); 
+    // m.setBcc(new String[] {"maurocl@mltech.com.br" });     
+    // m.setSubject("test02"); m.setBody("test02 - envio de email");
 
-    // cria uma instância das propriedades
+    // cria uma instância das propriedades de configuração do email.
     Properties props = setProperties();
 
-    // grava as propriedades em um arquivo
+    // grava as propriedades num arquivo padrão
     savePropertiesFile(props);
-    
-    if((props!=null) && (props.isEmpty())) {
-      Log.w(TAG,"send() - propriedades está vazia");     
+
+    if ((props != null) && (props.isEmpty())) {
+      Log.w(TAG, "send() - propriedades está vazia");
     }
-    
+
     if (!props.isEmpty()) {
 
-      Log.w(TAG,"send() - nº de entradas: "+props.size());
-      
+      Log.w(TAG, "send() - nº de entradas: " + props.size());
+
+      // obtém uma enumeração com o nome das propriedades
       Enumeration<Object> e = props.keys();
-      
+
       while (e.hasMoreElements()) {
         String key = (String) e.nextElement();
+        // exibe a chave e seu valor associado
         Log.d(TAG, "send() - Key=" + key + ", Value=" + props.get(key));
       }
 
     }
 
-    Log.d(TAG,"toString2(): "+toString2());
-    
-    
-    Log.d(TAG,"!user.equals('')   : "+!user.equals(""));
-    Log.d(TAG,"!pass.equals('')   : "+!pass.equals("")  );
-    Log.d(TAG,"to.length > 0      : "+(to.length > 0) );
-    Log.d(TAG,"!from.equals('')   : "+!from.equals("") );
-    Log.d(TAG,"!subject.equals(''): "+!subject.equals(""));
-    Log.d(TAG,"!body.equals('')   : "+!body.equals(""));
-    
-    
-    
-    if (!user.equals("")     && 
-        !pass.equals("")     && 
-        (to.length > 0)      && 
-        !from.equals("")     && 
-        !subject.equals("")  && 
-        !body.equals("")
-    ) {
+    Log.d(TAG, "toString2(): " + toString2());
 
-      Log.d(TAG,"110");
-      
+    Log.d(TAG, "!user.equals('')   : " + !user.equals(""));
+    Log.d(TAG, "!pass.equals('')   : " + !pass.equals(""));
+    Log.d(TAG, "to.length > 0      : " + (to.length > 0));
+    Log.d(TAG, "!from.equals('')   : " + !from.equals(""));
+    Log.d(TAG, "!subject.equals(''): " + !subject.equals(""));
+    Log.d(TAG, "!body.equals('')   : " + !body.equals(""));
+
+    if (!user.equals("") &&
+        !pass.equals("") &&
+        (to.length > 0) &&
+        !from.equals("") &&
+        !subject.equals("") &&
+        !body.equals("")) {
+
       // obtém uma sessão para envio de email
       Session session = Session.getInstance(props, this);
 
-      Log.d(TAG,"120");
-      
+      session.setDebug(true);
+
       // Session session = Session.getInstance(props, null);
 
       // cria uma mensagem (associada a sessão)
       MimeMessage msg = new MimeMessage(session);
 
+      Log.d(TAG, "-------------------------------------------------------------------");
+      Log.d(TAG, "--- SESSION");
+      Log.d(TAG, "-------------------------------------------------------------------");
+
+      showSession(session);
+
+      assert (from != null);
+
       // atualiza a origem da mensagem
       msg.setFrom(new InternetAddress(from));
 
-      Log.d(TAG,"130");
-      
       // -----------------------------------------------------------------------
       // To:
       // -----------------------------------------------------------------------
@@ -264,8 +267,6 @@ public class Mail extends javax.mail.Authenticator {
 
       msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
 
-      Log.d(TAG,"140");
-      
       // -----------------------------------------------------------------------
       // Cc:
       // -----------------------------------------------------------------------
@@ -280,8 +281,6 @@ public class Mail extends javax.mail.Authenticator {
 
       }
 
-      Log.d(TAG,"150");
-      
       // -----------------------------------------------------------------------
       // Bcc:
       // -----------------------------------------------------------------------
@@ -296,152 +295,384 @@ public class Mail extends javax.mail.Authenticator {
         // -----------------------------------------------------------------------
       }
 
-      Log.d(TAG,"160");
-      
+      //
+      // ReplyTo:
+      //
+      InternetAddress[] x = new InternetAddress[1];
+      x[0] = new InternetAddress(from);
+      msg.setReplyTo(x);
+
       // subject do email
       msg.setSubject(this.getSubject());
 
       // data de envio do email
       msg.setSentDate(new Date());
 
+      //------------------------
+      // criação do 1º BodyPart
+      //------------------------
+
       // setup message body
       BodyPart messageBodyPart = new MimeBodyPart();
 
-      Log.d(TAG,"170");
-      
       // adiciona o corpo do email
       messageBodyPart.setText(this.getBody());
 
-      Log.d(TAG,"180");
+      // acrescenta o primeiro BodyPart - o corpo (texto) do email
       multipart.addBodyPart(messageBodyPart);
 
-      Log.d(TAG,"183");
-      
-      // Put parts in message
-      msg.setContent(multipart);
-                  
+      Log.d(TAG, "send() - multipart.getCount(): " + multipart.getCount());
+
+      // 
+      Log.d(TAG, "send() - getFilename=" + this.getFilename());
+
+      // adiciona um anexo ao email
+      // o anexo é adicionado como um novo BodyPart
       this.addAttachment(this.getFilename());
-      
-      Log.d(TAG,"185");
-      
-      // não sei se é necessário
-     // msg.saveChanges();
 
-      Log.d(TAG,"190");
-      
+      Log.d(TAG, "send() - multipart.getCount(): " + multipart.getCount());
+
+      // Put parts in message
+      // Especifica que o conteúdo da mensagem é um multipart.
+      msg.setContent(multipart);
+
+      Log.d(TAG, "-------------------------------------------------------------------");
+      Log.d(TAG, "--- MULTIPART");
+      Log.d(TAG, "-------------------------------------------------------------------");
+      showMultipart(multipart);
+
+      Log.d(TAG, "-------------------------------------------------------------------");
+      Log.d(TAG, "--- MESSAGE");
+      Log.d(TAG, "-------------------------------------------------------------------");
+      showMessage(msg);
+
       // send email
-     Transport.send(msg);
+      Transport.send(msg);
 
-      
-      Log.d(TAG,"***** retornando true");
+      Log.d(TAG, "***** retornando true");
       return true;
 
     } else {
-      Log.d(TAG,"***** retornando false");
+      Log.d(TAG, "***** retornando false");
       return false;
 
     }
 
   }
 
-  
-	public String getFilename() {
-		return filename;
-	}
+  public boolean send2() throws Exception {
 
-	
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
+    // m.setDebuggable(true); 
+    // m.setAuth(true);
+    // m.setHost("smtp.mltech.com.br"); 
+    // m.setPort("587");
+    // m.setFrom("maurocl@mltech.com.br");
+    // m.setSsl(false);      
+    // m.setTo(new String[] { "maurocl@terra.com.br" }); 
+    // m.setBcc(new String[] {"maurocl@mltech.com.br" });     
+    // m.setSubject("test02"); m.setBody("test02 - envio de email");
 
-	/**
-   * Envia um email usando os parâmetros.
-   * 
-   * @param to
-   *          Endereço do destinatário
-   * @param bcc
-   *          Endereço do bcc
-   * @param from
-   *          Endereço do remetente
-   * @param subject
-   *          Assunto do email
-   * @param body
-   *          Corpo do email
-   * @param foto
-   *          Foto
-   * 
-   * @return true email enviado com sucesso ou false caso contrário
-   * 
-   * @throws Exception
-   *           Lançada em caso de erros.
-   * 
-   */
-  public boolean send(String to, String bcc, String from, String subject, String body, String foto) throws Exception {
-
+    setDebuggable(true); 
+    setAuth(true);
+    setHost("smtp.mltech.com.br"); 
+    setPort("587");
+    setFrom("maurocl@mltech.com.br");
+    setSsl(false);      
+    setTo(new String[] { "maurocl@terra.com.br" }); 
+    setBcc(new String[] {"maurocl@mltech.com.br" });     
+    setSubject("test02");
+    setBody("test02 - envio de email");
+    
     Properties props = setProperties();
 
-    if (!user.equals("") && !pass.equals("") && (!to.equals("")) && (!bcc.equals("")) && (!foto.equals("")) && !from.equals("")
-        && !subject.equals("") && !body.equals("")) {
+    // obtém uma sessão para envio de email
+    Session session = Session.getInstance(props, this);
 
-      Session session = Session.getInstance(props, this);
-      // Session session = Session.getInstance(props, null);
+    session.setDebug(true);
 
-      MimeMessage msg = new MimeMessage(session);
+    // cria uma mensagem (associada a sessão)
+    MimeMessage msg = new MimeMessage(session);
 
-      msg.setFrom(new InternetAddress(from));
+    // atualiza a origem da mensagem
+    msg.setFrom(new InternetAddress(from));
 
-      // -----------------------------------------------------------------------
-      // To:
-      // -----------------------------------------------------------------------
-      InternetAddress[] addressTo = { new InternetAddress(to) };
+    InternetAddress[] addressTo = new InternetAddress[1];
+    addressTo[0] = new InternetAddress(to[0]);
+    msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
 
-      msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
+    // -----------------------------------------------------------------------
 
-      // -----------------------------------------------------------------------
-      // Bcc:
-      // -----------------------------------------------------------------------
-      InternetAddress[] addressBcc = { new InternetAddress(bcc) };
+    InternetAddress[] x = new InternetAddress[1];
+    x[0] = new InternetAddress(getFrom());
+    msg.setReplyTo(x);
 
-      msg.setRecipients(MimeMessage.RecipientType.BCC, addressBcc);
+    // subject do email
+    msg.setSubject(this.getSubject());
 
-      // -----------------------------------------------------------------------
-      // subject do email
-      msg.setSubject(subject);
+    // data de envio do email
+    msg.setSentDate(new Date());
 
-      // data de envio do email
-      msg.setSentDate(new Date());
+    //------------------------
+    // criação do 1º BodyPart
+    //------------------------
 
-      // setup message body
-      BodyPart messageBodyPart = new MimeBodyPart();
+    // setup message body
+    BodyPart mbp1 = new MimeBodyPart();
 
-      // adiciona o corpo do email
-      messageBodyPart.setText(body);
+    // adiciona o corpo do email
+    mbp1.setText(this.getBody());
 
-      multipart.addBodyPart(messageBodyPart);
+    // acrescenta o primeiro BodyPart - o corpo (texto) do email
+    multipart.addBodyPart(mbp1);
 
-      // Put parts in message
-      msg.setContent(multipart);
+    //------------------------
+    // criação do 2º BodyPart
+    //------------------------
 
-      // anexa a foto
-      File f = new File(foto);
-      addAttachment(f.getAbsolutePath());
+    // Cria um BodyPart.
+    BodyPart mbp2 = new MimeBodyPart();
 
-      // não sei se é necessário
-      msg.saveChanges();
+    // Cria um DataSource associado ao arquivo de anexo.
+    DataSource source = new FileDataSource(filename);
 
-      // send email
-      Transport.send(msg);
+    // Estabelece o handler para o arquivo.
+    mbp2.setDataHandler(new DataHandler(source));
 
-      return true;
+    // Associa o arquivo
+    // lança MessagingException
+    mbp2.setFileName(filename);
 
-    } else {
+    // Adiciona o BodyPart ao multipart.
+    multipart.addBodyPart(mbp2);
+    
+    // Put parts in message
+    // Especifica que o conteúdo da mensagem é um multipart.
+    msg.setContent(multipart);
 
-      Log.w(TAG, "send() - falha no envio do email");
+    Log.d(TAG, "-------------------------------------------------------------------");
+    Log.d(TAG, "--- MULTIPART");
+    Log.d(TAG, "-------------------------------------------------------------------");
+    showMultipart(multipart);
 
-      return false;
+    Log.d(TAG, "-------------------------------------------------------------------");
+    Log.d(TAG, "--- MESSAGE");
+    Log.d(TAG, "-------------------------------------------------------------------");
+    showMessage(msg);
+
+    // send email
+    Transport.send(msg);
+
+    return true;
+
+  }
+
+  /**
+   * Exibe as informações sobre Session.
+   * 
+   * @param s
+   *          Instância de Session
+   * 
+   */
+  public void showSession(Session s) {
+
+    s.getDebug();
+
+    s.getDebugOut();
+    s.getProviders();
+
+    Properties p = s.getProperties();
+
+    Enumeration e = p.elements();
+
+    int i = 0;
+
+    Set<Entry<Object, Object>> conjunto = p.entrySet();
+
+    for (Entry elem : conjunto) {
+      Log.d(TAG, "showSession(): " + i + " - Key=" + elem.getKey() + ", Value=" + elem.getValue());
+      i++;
+    }
+
+  }
+
+  /**
+   * showMessage(Message msg)
+   * 
+   * @param msg
+   * @throws Exception
+   */
+  public void showMessage(Message msg) throws Exception {
+
+    if (msg instanceof MimeMessage) {
+      MimeMessage mm = (MimeMessage) msg;
+
+      Log.d(TAG, "showMessage() - mm.getFrom: " + mm.getFrom());
+      Log.d(TAG, "showMessage() - mm.getRecipients(TO): " + mm.getRecipients(RecipientType.TO));
+      Log.d(TAG, "showMessage() - mm.getRecipients(CC): " + mm.getRecipients(RecipientType.CC));
+      Log.d(TAG, "showMessage() - mm.getRecipients(BCC): " + mm.getRecipients(RecipientType.BCC));
+      Log.d(TAG, "showMessage() - mm.getSubject(): " + mm.getSubject());
+      Log.d(TAG, "showMessage() - mm.getSentDate: " + mm.getSentDate());
+
+      Log.d(TAG, "showMessage() - mm.getMessageNumber: " + mm.getMessageNumber());
+      Log.d(TAG, "showMessage() - mm.getContentType: " + mm.getContentType());
+      Log.d(TAG, "showMessage() - mm.getSender: " + mm.getSender());
+      Log.d(TAG, "showMessage() - mm.getEncoding: " + mm.getEncoding());
+
+      int i = 0;
+      Enumeration e = mm.getAllHeaderLines();
+      for (; e.hasMoreElements();) {
+        Log.d(TAG, "showMessage() - enum - " + i + " - " + e.nextElement());
+        i++;
+      }
 
     }
 
+    try {
+
+      Log.d(TAG, "showMessage() - getContentType: " + msg.getContentType());
+      Log.d(TAG, "showMessage() - getContent: " + msg.getContent());
+      Log.d(TAG, "showMessage() - getSubject: " + msg.getSubject());
+
+      Log.d(TAG, "showMessage() - getDescription: " + msg.getDescription());
+      Log.d(TAG, "showMessage() - getFileName: " + msg.getFileName());
+      Log.d(TAG, "showMessage() - getLineCount: " + msg.getLineCount());
+
+      Log.d(TAG, "showMessage() - getLineCount: " + msg.getLineCount());
+      Log.d(TAG, "showMessage() - getMessageNumber: " + msg.getMessageNumber());
+
+      Log.d(TAG, "showMessage() - getSentDate: " + msg.getSentDate());
+
+      Log.d(TAG, "showMessage() - getFrom: ");
+      showAddress(msg.getFrom());
+
+      Log.d(TAG, "showMessage() - getReplyTo: ");
+      showAddress(msg.getReplyTo());
+
+      Log.d(TAG, "showMessage() - getSize: " + msg.getSize());
+
+    } catch (IOException e) {
+      Log.w(TAG, "showMessage() - ", e);
+    } catch (MessagingException e) {
+      Log.w(TAG, "showMessage() - ", e);
+    }
+
+  }
+
+  /**
+   * 
+   * @param a
+   */
+  public void showAddress(Address[] a) {
+
+    for (Address x : a) {
+      Log.d(TAG, "showAddress() - " + x.toString());
+    }
+  }
+
+  public String toAddress(Address[] a) {
+
+    StringBuffer sb = new StringBuffer();
+
+    for (Address x : a) {
+      sb.append(x.toString());
+    }
+
+    return sb.toString();
+
+  }
+
+  /**
+   * 
+   * @param mp
+   * @throws IOException
+   */
+  public void showMultipart(Multipart mp) throws IOException {
+
+    MimeMultipart mmp;
+
+    if (mp instanceof MimeMultipart) {
+
+      mmp = (MimeMultipart) mp;
+
+      Log.d(TAG, "showMultipart() - toString: " + mmp.toString());
+      Log.d(TAG, "showMultipart() - getContentType: " + mmp.getContentType());
+
+      try {
+
+        Log.d(TAG, "showMultipart() - getCount():  " + mp.getCount());
+
+        mmp.getCount();
+
+        for (int i = 0; i < mmp.getCount(); i++) {
+
+          Log.d(TAG, "showMultipart(): showBodyPart ==> " + i);
+
+          showBodyPart(mmp.getBodyPart(i));
+
+        }
+
+      } catch (MessagingException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+
+    }
+
+    mp.getContentType();
+
+  }
+
+  /**
+   * 
+   * @param bp
+   * @throws MessagingException
+   * @throws IOException
+   */
+  void showBodyPart(BodyPart bp) throws MessagingException, IOException {
+
+    MimeBodyPart mbp = null;
+
+    if (bp instanceof MimeBodyPart) {
+
+      mbp = (MimeBodyPart) bp;
+
+      Log.d(TAG, "showBodyPart(): getContentType: " + mbp.getContentType());
+      Log.d(TAG, "showBodyPart(): getContent: " + mbp.getContent());
+
+      Log.d(TAG, "showBodyPart(): toString(): " + mbp.toString());
+      Log.d(TAG, "showBodyPart(): getContentID: " + mbp.getContentID());
+      Log.d(TAG, "showBodyPart(): getDescription: " + mbp.getDescription());
+      Log.d(TAG, "showBodyPart(): getFileName: " + mbp.getFileName());
+
+      Log.d(TAG, "showBodyPart(): getLineCount: " + mbp.getLineCount());
+
+      Log.d(TAG, "showBodyPart(): getEncoding: " + mbp.getEncoding());
+      Log.d(TAG, "showBodyPart(): getSize: " + mbp.getSize());
+
+    }
+
+  }
+
+  /**
+   * Obtém o nome do arquivo que será anexado
+   * 
+   * @return O nome do arquivo
+   */
+  public String getFilename() {
+
+    return filename;
+  }
+
+  /**
+   * Estabelece o nome do arquivo do anexo
+   * 
+   * @param filename
+   *          Nome completo do arquivo
+   * 
+   */
+  public void setFilename(String filename) {
+
+    this.filename = filename;
   }
 
   /**
@@ -470,7 +701,7 @@ public class Mail extends javax.mail.Authenticator {
     messageBodyPart.setFileName(filename);
 
     // Adiciona o BodyPart ao multipart.
-    multipart.addBodyPart(messageBodyPart);
+    this.multipart.addBodyPart(messageBodyPart);
 
   }
 
@@ -988,25 +1219,27 @@ public class Mail extends javax.mail.Authenticator {
 
   public String toString2() {
 
-    return "Mail ["+
-    "\nuser=" + user + 
-    ", \npass=" + pass + 
-    ", \nto*=" + Arrays.toString(to) + 
-    ", \ncc*=" + Arrays.toString(cc) + 
-    ", \nbcc*="+ Arrays.toString(bcc) + 
-    ", \nfrom=" + from + 
-    ", \nreplyTo=" + replyTo + 
-    ", \nport=" + port + 
-    ", \nsport=" + sport + 
-    ", \nhost=" + host + 
-    ", \nsubject=" + subject + 
-    ", \nbody=" + body + 
-    ", \nauth=" + auth + 
-    ", \ndebuggable=" + debuggable + 
-    ", \nssl=" + ssl    + 
-    ", \nmultipart=" + multipart + 
-    "]";
+    return "Mail [" +
+        "\nuser=" + user +
+        ", \n  pass=" + pass +
+        ", \n  to*=" + Arrays.toString(to) +
+        ", \n  cc*=" + Arrays.toString(cc) +
+        ", \n  bcc*=" + Arrays.toString(bcc) +
+        ", \n  from=" + from +
+        ", \n  replyTo=" + replyTo +
+        ", \n  port=" + port +
+        ", \n  sport=" + sport +
+        ", \n  host=" + host +
+        ", \n  subject=" + subject +
+        ", \n  body=" + body +
+        ", \n  auth=" + auth +
+        ", \n  debuggable=" + debuggable +
+        ", \n  ssl=" + ssl +
+        ", \n  multipart=" + multipart +
+        "]";
   }
 
+  
+  
   
 }

@@ -43,7 +43,6 @@ import br.com.mltech.utils.ManipulaImagem;
 import br.com.mltech.utils.Transaction;
 import br.com.mltech.utils.camera.CameraTools;
 
-
 /**
  * DummyActivity3
  * 
@@ -221,11 +220,11 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     // Carrega as molduras para fotos Polaroid e Cabine
 
     try {
-			carregaMolduras();
-		} catch (IllegalArgumentException e) { 
-			Log.w(TAG, "onCreate() - molduras não foram configuradas adequadamente.");
+      carregaMolduras();
+    } catch (IllegalArgumentException e) {
+      Log.w(TAG, "onCreate() - molduras não foram configuradas adequadamente.");
       logger2.info("onCreate() - molduras não foram configuradas adequadamente.");
-		}
+    }
 
     // Obtem o identificado da câmera que será usada para tirar as fotos
     currentCamera = obtemIdentificadorCamera();
@@ -443,9 +442,9 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * <br>
    * molduraPolaroid<br>
    * molduraCabine<br>
-   *  
+   * 
    */
-  private void carregaMolduras() throws IllegalArgumentException{
+  private void carregaMolduras() throws IllegalArgumentException {
 
     mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
 
@@ -562,13 +561,8 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     String mRemetente = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_REMETENTE_EMAIL);
 
     String mEmailDebug = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_EMAIL_DEBUG);
-
     String mEmailAuth = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_EMAIL_AUTH);
-
     String mEmailSsl = getSharedPreference(Constantes.PREF_EMAIL, Constantes.PREFERENCIAS_EMAIL_SSL);
-
-    // valida os argumentos obrigatórios do email
-    validaArgumentosEmail(mEmail, mSenha, mHost, mPort, mRemetente);
 
     // cria a instância do sistema de email
     mailServer = new Mail(mEmail, mSenha);
@@ -579,26 +573,20 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     mailServer.setHost(mHost);
     mailServer.setPort(mPort);
     mailServer.setFrom(mRemetente);
-    mailServer.setDebuggable(mEmailDebug.equalsIgnoreCase("true") ? true : false);
-    mailServer.setAuth(mEmailAuth.equalsIgnoreCase("true") ? true : false);
-    mailServer.setSsl(mEmailSsl.equalsIgnoreCase("true") ? true : false);
-    
-    Log.d(TAG, "initEmailConfig() - SMTP host: " + mHost);
-    Log.d(TAG, "initEmailConfig() - SMTP port: " + mPort);
-    Log.d(TAG, "initEmailConfig() - from: " + mRemetente);
-    Log.d(TAG, "initEmailConfig() - debuggable: " + mEmailDebug);
-    Log.d(TAG, "initEmailConfig() - authorization: " + mEmailAuth);
-    Log.d(TAG, "initEmailConfig() - SSL: " + mEmailSsl);
+    mailServer.setDebuggable((mEmailDebug.equalsIgnoreCase("true")) ? true : false);
+    mailServer.setAuth((mEmailAuth.equalsIgnoreCase("true")) ? true : false);
+    mailServer.setSsl((mEmailSsl.equalsIgnoreCase("true")) ? true : false);
 
-    
-    Log.d(TAG, "initEmailConfig(2) - SMTP host: " + mailServer.getHost());
-    Log.d(TAG, "initEmailConfig(2) - SMTP port: " + mailServer.getPort());
-    Log.d(TAG, "initEmailConfig(2) - from: " + mailServer.getFrom());
-    Log.d(TAG, "initEmailConfig(2) - debuggable: " + mailServer.isDebuggable());
-    Log.d(TAG, "initEmailConfig(2) - authorization: " + mailServer.isAuth());
-    Log.d(TAG, "initEmailConfig(2) - SSL: " + mailServer.isSsl());
+    Log.d(TAG, "initEmailConfig() - SMTP host: " + mailServer.getHost());
+    Log.d(TAG, "initEmailConfig() - SMTP port: " + mailServer.getPort());
+    Log.d(TAG, "initEmailConfig() - from: " + mailServer.getFrom());
+    Log.d(TAG, "initEmailConfig() - debuggable: " + mailServer.isDebuggable());
+    Log.d(TAG, "initEmailConfig() - authorization: " + mailServer.isAuth());
+    Log.d(TAG, "initEmailConfig() - SSL: " + mailServer.isSsl());
 
-    
+    // valida os argumentos obrigatórios do email
+    validaArgumentosEmail(mEmail, mSenha, mailServer.getHost(), mailServer.getPort(), mailServer.getFrom());
+
     Log.d(TAG, "initEmailConfig() - fim");
     logger2.finer("initEmailConfig() - fim");
 
@@ -1727,8 +1715,8 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   /**
    * Envia email usando a biblioteca externa (JavaMail) de envio de email.<br>
    * 
-   * O contratante do evento sempre receberá uma cópia do email em cópia
-   * invisível do participante.<br>
+   * O contratante do evento sempre receberá (em cópia invisível ao
+   * destinatário) o email enviado ao participante do evento.<br>
    * 
    * Obs: usa a variável membro mailServer.<br>
    * 
@@ -1755,10 +1743,13 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   private boolean sendEmailExternal(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri)
       throws Exception {
 
-    Log.d(TAG,"sendEmailExternal() - inicio");
-    
+    Log.d(TAG, "sendEmailExternal() - inicio");
+
     // cria um file que será adicionado (anexado) ao email
     File f = new File(imageUri.getPath());
+
+    // TODO object mailServer começa ser configurado em initEmailConfig()
+    // host, port, from, debugabble, auth, ssl
 
     try {
 
@@ -1766,9 +1757,9 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
         // anexa o arquivo ao email
         //mailServer.addAttachment(f.getAbsolutePath());
-      	mailServer.setFilename(f.getAbsolutePath());
-        
-        Log.d(TAG,"sendEmailExternal() - foto anexada ao email.");
+        mailServer.setFilename(f.getAbsolutePath());
+
+        Log.d(TAG, "sendEmailExternal() - foto anexada ao email.");
 
       }
       else {
@@ -1778,7 +1769,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     } catch (Exception e) {
 
       Log.w(TAG, "sendEmailExternal() - não foi encontrado o anexo contendo a foto", e);
-      //logger.println("sendEmailExternal() - não foi encontrado o anexo contendo a foto");
 
       logger2.info("sendEmailExternal() - não foi encontrado o anexo contendo a foto");
 
@@ -1801,13 +1791,13 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     // Body
     mailServer.setBody(text);
 
-    /*
-     * mailServer.setDebuggable(true); mailServer.setSsl(false);
-     * mailServer.setAuth(true); mailServer.setPort("587");
-     * mailServer.setHost("");
-     */
+    // mailServer.setDebuggable(true); 
+    // mailServer.setSsl(false);
+    // mailServer.setAuth(true); 
+    // mailServer.setPort("587");
+    // mailServer.setHost("");
 
-    //  mail.debug= true
+    //  mail.debug=true
     //  mail.transport.protocol=smtp
     //  mail.smtp.host=host
     //  mail.smtp.auth=true
@@ -1824,16 +1814,16 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     try {
 
       // envia o email
-      enviou = mailServer.send();
+      enviou = mailServer.send2();
 
       Log.d(TAG, "sendEmailExternal() - enviou: " + enviou);
 
     } catch (Exception e) {
 
       enviou = false;
-      
-      Log.w(TAG, "sendEmailExternal() - falha no envio do email",e);
-      Log.w(TAG, "sendEmailExternal() - getMessage(): "+e.getMessage());
+
+      Log.w(TAG, "sendEmailExternal() - falha no envio do email", e);
+      Log.w(TAG, "sendEmailExternal() - getMessage(): " + e.getMessage());
 
     }
 
@@ -2233,11 +2223,11 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     Log.d(TAG, "leArquivoMoldura() - arquivoMoldura: [" + arquivoMoldura + "].");
 
-    if((arquivoMoldura!=null) && (arquivoMoldura.equals(""))) {
+    if ((arquivoMoldura != null) && (arquivoMoldura.equals(""))) {
       Log.w(TAG, "leArquivoMoldura() - o nome do arquivo está vazio.");
-      return null;    	
+      return null;
     }
-    
+
     File moldura = new File(arquivoMoldura);
 
     if (!moldura.exists()) {
@@ -2331,7 +2321,8 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   }
 
   /**
-   * Exibe o valor de algumas variáveis de classe previamente selecionadas no log da aplicação.
+   * Exibe o valor de algumas variáveis de classe previamente selecionadas no
+   * log da aplicação.
    * 
    */
   private void showClassVariables() {
