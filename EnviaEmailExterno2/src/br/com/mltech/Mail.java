@@ -16,6 +16,7 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.activation.MailcapCommandMap;
 import javax.mail.BodyPart;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -25,6 +26,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.util.Log;
 
 /**
@@ -118,11 +121,17 @@ public class Mail extends javax.mail.Authenticator {
    */
   private Multipart multipart;
 
+  
+  /**
+   * 
+   */
+  private String filename;
+  
   /**
    * Construtor
    * 
    */
-  public Mail() {
+   public Mail() {
 
     this.auth = true; // smtp authentication - default on
 
@@ -299,12 +308,13 @@ public class Mail extends javax.mail.Authenticator {
       // Put parts in message
       msg.setContent(multipart);
 
-      //addAttachment(f.getAbsolutePath());
+      addAttachment(getFilename());
       //addAttachment("/mnt/sdcard/Pictures/config.txt");
 
       // send email
-      Transport.send(msg);
-
+      //Transport.send(msg);
+      new MyAsyncTask().execute(msg);
+      
       return true;
 
     } else {
@@ -950,4 +960,68 @@ public class Mail extends javax.mail.Authenticator {
         + ", multipart=" + multipart + "]";
   }
 
+  
+  
+  /**
+   * 
+   * @return
+   */
+  public String getFilename() {
+  
+    return filename;
+  }
+  
+  /**
+   * 
+   * @param filename
+   */
+
+  
+  public void setFilename(String filename) {
+  
+    this.filename = filename;
+  }
+
+  private class MyAsyncTask extends AsyncTask<MimeMessage, Void, Boolean>
+  {
+
+    Boolean b;
+    
+      ProgressDialog mProgressDialog;
+      
+      @Override
+      protected void onPostExecute(Boolean result) {
+        if(mProgressDialog!=null) {
+          mProgressDialog.dismiss();
+        }
+        
+    
+        
+      }
+
+      @Override
+      protected void onPreExecute() {
+         // mProgressDialog = ProgressDialog.show(ActivityName.this, "Loading...", "Data is Loading...");
+      }
+
+      @Override
+      protected Boolean doInBackground(MimeMessage... params) {
+         // your network operation
+        
+        // send the message
+        //Transport.send(msg);
+        try {
+          Transport.send(params[0]);
+          b = true;
+        } catch (MessagingException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+          b=false;
+        }
+        
+          return b;
+      }
+  }
+  
+  
 }

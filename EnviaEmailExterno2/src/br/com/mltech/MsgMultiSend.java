@@ -18,6 +18,9 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
+
 /**
  * MsgMultiSendSample creates a simple multipart/mixed message and sends it.
  * Both body parts are text/plain.
@@ -307,7 +310,10 @@ public class MsgMultiSend extends javax.mail.Authenticator {
       Utils.showMessage(msg);
 
       // send the message
-      Transport.send(msg);
+      //Transport.send(msg);
+      
+      new MyAsyncTask().execute(msg);
+      
 
     } catch (MessagingException mex) {
 
@@ -323,6 +329,45 @@ public class MsgMultiSend extends javax.mail.Authenticator {
     }
   }
 
- 
+  private class MyAsyncTask extends AsyncTask<MimeMessage, Void, Boolean>
+  {
+
+    Boolean b;
+    
+      ProgressDialog mProgressDialog;
+      
+      @Override
+      protected void onPostExecute(Boolean result) {
+        if(mProgressDialog!=null) {
+          mProgressDialog.dismiss();
+        }
+        
+    
+        
+      }
+
+      @Override
+      protected void onPreExecute() {
+         // mProgressDialog = ProgressDialog.show(ActivityName.this, "Loading...", "Data is Loading...");
+      }
+
+      @Override
+      protected Boolean doInBackground(MimeMessage... params) {
+         // your network operation
+        
+        // send the message
+        //Transport.send(msg);
+        try {
+          Transport.send(params[0]);
+          b = true;
+        } catch (MessagingException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+          b=false;
+        }
+        
+          return b;
+      }
+  }
   
 }
