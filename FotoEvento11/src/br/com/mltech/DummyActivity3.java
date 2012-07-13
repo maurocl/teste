@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
-import br.com.mltech.email.Mail;
 import br.com.mltech.modelo.Contratante;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Foto;
@@ -852,6 +851,14 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * Nesse ponto o usuário já forneceu suas informações pessoais e agora é
    * necessário tirar a(s) foto(s).<br>
    * 
+   * Esse método depende dos valores das variáveis:<br>
+   * mParticipante, mParticipação, mEvento.<br>
+   * 
+   * A aplicação prepara-se para tirar as fotos de acordo com a escolha do
+   * participante. Poderá ser do tipo Polaroid ou Cabine.<br>
+   * 
+   * Cada escolha irá disparar uma nova activity encarregada pela obtenção das fotos.
+   * 
    */
   private void tirarFotos() {
 
@@ -882,6 +889,8 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     Log.i(TAG, "==> tirarFotos() - tipoFoto: " + tipoFoto);
     Log.i(TAG, "------------------------------------------------------------");
 
+    logger2.finest("tirarFotos() - tipoFoto: " + tipoFoto);
+    
     if (tipoFoto == TIPO_FOTO_POLAROID) {
 
       //--------------------
@@ -892,7 +901,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
       String arquivo = FileUtils.obtemNomeArquivo(".png").getAbsolutePath();
 
       Log.i(TAG, "tirarFotos() - tipoFoto: POLAROID, arquivo: " + arquivo);
-      //logger.println("tirarFotos() - tipoFoto: POLAROID, arquivo: " + "arquivo");
       logger2.info("tirarFotos() - tipoFoto: POLAROID, arquivo: " + arquivo);
 
       // executa a activity responsável por tirar uma foto e formatá-la como
@@ -906,7 +914,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
       //--------------------
 
       Log.i(TAG, "tirarFotos() - tipoFoto: CABINE");
-      //logger.println("tirarFotos() - tipoFoto: CABINE");
       logger2.info("tirarFotos() - tipoFoto: CABINE");
 
       // executa a activity responsável por tirar uma três foto e formatá-las
@@ -988,8 +995,10 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     outputFileUri = Uri.fromFile(file);
 
+    // obtém a intent responsável pela obtenção da foto
     Intent intent = getIntentTirarFoto();
 
+    // inicia a activity selecionada
     startActivityForResult(intent, TIRA_FOTO_POLAROID);
 
   }
@@ -1427,7 +1436,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     String msg = null;
 
-    // executa ação baseada no rquestCode
+    // executa ação baseada no requestCode
     switch (requestCode) {
 
       case TIRA_FOTO_POLAROID:
@@ -1564,6 +1573,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
       Log.d(TAG, "to: " + to + ", bcc=" + bcc + ", subject=" + subject + ", body=" + body + ", lastUri=" + lastUri);
 
       boolean enviadoComSucesso = sendEmailExternal(to, bcc, subject, body, lastUri);
+      //boolean enviadoComSucesso = sendEmailExternal2(to, bcc, subject, body, lastUri);
 
       Log.w(TAG, "enviaEmail() - EMAIL ENVIADO COM SUCESSO: " + enviadoComSucesso);
 
@@ -1791,22 +1801,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     // Body
     mailServer.setBody(text);
 
-    // mailServer.setDebuggable(true); 
-    // mailServer.setSsl(false);
-    // mailServer.setAuth(true); 
-    // mailServer.setPort("587");
-    // mailServer.setHost("");
-
-    //  mail.debug=true
-    //  mail.transport.protocol=smtp
-    //  mail.smtp.host=host
-    //  mail.smtp.auth=true
-    //  mail.smtp.port=port
-    //  mail.smtp.socketFactory.port=sport
-    //  mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory
-    //  mail.smtp.socketFactory.fallback=false
-    //  mail.smtp.quitwait=false
-
     Log.d(TAG, "sendEmailExternal() - " + mailServer);
 
     boolean enviou = false;
@@ -1814,7 +1808,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     try {
 
       // envia o email
-      enviou = mailServer.send2();
+      enviou = mailServer.send();
 
       Log.d(TAG, "sendEmailExternal() - enviou: " + enviou);
 
@@ -1824,6 +1818,55 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
       Log.w(TAG, "sendEmailExternal() - falha no envio do email", e);
       Log.w(TAG, "sendEmailExternal() - getMessage(): " + e.getMessage());
+
+    }
+
+    // resultado do envio do email
+    return enviou;
+
+  }
+
+  /**
+   * 
+   * @param emailParticipante
+   * @param emailContratante
+   * @param subject
+   * @param text
+   * @param imageUri
+   * @return
+   * @throws Exception
+   */
+  private boolean sendEmailExternal2(String emailParticipante, String emailContratante, String subject, String text, Uri imageUri)
+      throws Exception {
+
+    Log.d(TAG, "sendEmailExternal2() - início");
+
+    MsgMultiSend meuMail = new MsgMultiSend("maurocl@mltech.com.br", "mcl16d");
+
+    String from = emailContratante;
+    String to = emailParticipante;
+    String bcc = emailContratante;
+
+    String subject2 = subject;
+    String body = text;
+    String filename = imageUri.getPath();
+
+    boolean enviou = false;
+
+    try {
+
+      meuMail.send(to, bcc, from, subject2, body, filename);
+
+      Log.d(TAG, "sendEmailExternal2() - enviou: " + enviou);
+
+      enviou = true;
+
+    } catch (Exception e) {
+
+      enviou = false;
+
+      Log.w(TAG, "sendEmailExternal2() - falha no envio do email", e);
+      Log.w(TAG, "sendEmailExternal2() - getMessage(): " + e.getMessage());
 
     }
 
@@ -2344,9 +2387,12 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * 
    * Recebe o endereço de uma foto;<br>
    * redimensiona a foto;<br>
-   * insere a moldura e transforma a foto no tamanho 9x11<br>
+   * Insere a moldura e transforma a foto no tamanho 9x11<br>
    * 
-   * @return um bitmap contendo a foto com a moldura ou null em caso de algum
+   * @param uriFotoOriginal
+   *          Uri da foto original
+   * 
+   * @return Um bitmap contendo a foto com a moldura ou null em caso de algum
    *         erro.
    * 
    */
@@ -2368,17 +2414,20 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
       return null;
     }
 
+    Log.d(TAG, "formatarPolaroid() - w=" + bmFotoOriginal.getWidth() + ", h=" + bmFotoOriginal.getHeight());
+
     if (ManipulaImagem.isLandscape(bmFotoOriginal)) {
       // foto possui a largura maior que a altura
-
+      Log.d(TAG, "formatarPolaroid() - Foto landscape");
     }
     else {
       // foto possui a altura maior que a largura
-
+      Log.d(TAG, "formatarPolaroid() - Foto portrait");
     }
 
     // redimensiona a foto original para 9x12 para manter a proporção 3:4
-    Bitmap bmFoto9x12 = ManipulaImagem.getScaledBitmap2(bmFotoOriginal, 340, 454);
+    //Bitmap bmFoto9x12 = ManipulaImagem.getScaledBitmap2(bmFotoOriginal, 340, 454);
+    Bitmap bmFoto9x12 = ManipulaImagem.getScaledBitmap2(bmFotoOriginal, 454, 340);
 
     if (bmFoto9x12 == null) {
       Log.d(TAG, "formatarPolaroid() - falha no redimensionamento da foto - bmFoto9x12: " + bmFoto9x12);
@@ -2417,7 +2466,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     // Aplica a moldura a foto
     Bitmap bmFotoComMoldura = ManipulaImagem.overlay4(bmFoto8x8, mBitmapMolduraPolaroid);
 
-    // o nome completo do arquivo onde a foto com moldura foi armazenada
+    // o bitmap contendo a foto com a moldura aplicada
     return bmFotoComMoldura;
 
   }
@@ -2520,18 +2569,18 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   private static Bitmap mergeFotosCabine(Bitmap bmFoto1, Bitmap bmFoto2, Bitmap bmFoto3) {
 
     if (bmFoto1 == null) {
-      Log.w(TAG, "processaFotoFormatoCabine3() - Foto1 está vazia !");
-      return null;
+      Log.w(TAG, "mergeFotosCabine() - Foto1 está vazia !");
+      throw new IllegalArgumentException("mergeFotosCabine() - Foto1 está vazia !");
     }
 
     if (bmFoto2 == null) {
-      Log.w(TAG, "processaFotoFormatoCabine3() - Foto2 está vazia !");
-      return null;
+      Log.w(TAG, "mergeFotosCabine() - Foto2 está vazia !");
+      throw new IllegalArgumentException("mergeFotosCabine() - Foto2 está vazia !");
     }
 
     if (bmFoto3 == null) {
-      Log.w(TAG, "processaFotoFormatoCabine3() - Foto3 está vazia !");
-      return null;
+      Log.w(TAG, "mergeFotosCabine() - Foto3 está vazia !");
+      throw new IllegalArgumentException("mergeFotosCabine() - Foto3 está vazia !");
     }
 
     // =========================================================================
@@ -2543,12 +2592,12 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     if (bmImgJoin != null) {
 
-      Log.i(TAG, "processaFotoFormatoCabin3() - Imagens foram juntadas com sucesso");
-      Log.v(TAG, "processaFotoFormatoCabine3() -  ==> Tamanho da foto após join: " + ManipulaImagem.getStringBitmapSize(bmImgJoin));
+      Log.i(TAG, "mergeFotosCabine() - Imagens foram juntadas com sucesso");
+      Log.v(TAG, "mergeFotosCabine() -  ==> Tamanho da foto após join: " + ManipulaImagem.getStringBitmapSize(bmImgJoin));
 
     } else {
 
-      Log.w(TAG, "processaFotoFormatoCabine3() - Erro no merge das três fotos");
+      Log.w(TAG, "mergeFotosCabine() - Erro no merge das três fotos");
       return null;
 
     }
@@ -2608,7 +2657,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   }
 
   /**
-   * Retorna o nome da Activity dado seu requestCode<br>
+   * Retorna o nome da Activity dado seu requestCode.<br>
    * 
    * @param requestCode
    *          código que identifica o retorna da Activity
@@ -2716,9 +2765,9 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
       InternetAddress address = new InternetAddress(emailAddress);
     } catch (javax.mail.internet.AddressException e) {
 
-      String x = mMsg + " não é válido (posição: " + e.getPos() + ", ref: " + e.getRef() + ")";
+      String mensagem = mMsg + " não é válido (posição: " + e.getPos() + ", ref: " + e.getRef() + ")";
 
-      Log.w(TAG, x, e);
+      Log.w(TAG, mensagem, e);
 
       return false;
 
