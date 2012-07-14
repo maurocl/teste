@@ -28,19 +28,19 @@ public class Participacao implements Serializable {
 	// nome do arquivo que contém a foto
 	private String nomeArqFoto;
 
+	/**
+	 * Construtor
+	 */
 	public Participacao() {
 		this.participante = null;
 	}
 
-	/**
-	 * Participacao(Participante participante, int tipoFoto,
-			int efeitoFoto, String nomeArqFoto)
-	 * 
+	/** 
 	 * Construtor
 	 * 
 	 * @param participante Objeto participante
 	 * @param tipoFoto Tipo da foto
-	 * @param efeitoFoto 
+	 * @param efeitoFoto Tipo do efeito que será aplicado a foto 
 	 * @param nomeArqFoto Arquivo com a foto
 	 * 
 	 */
@@ -55,7 +55,7 @@ public class Participacao implements Serializable {
 	}
 
 	/**
-	 * getParticipante()
+	 * Obtem o participante do evento.
 	 * 
 	 * @return Objeto da classe participante
 	 */
@@ -64,16 +64,16 @@ public class Participacao implements Serializable {
 	}
 
 	/**
-	 * setParticipante(Participante participante)
+   * Seta o participante do evento
 	 * 
-	 * @param participante
+	 * @param participante 
 	 */
 	public void setParticipante(Participante participante) {
 		this.participante = participante;
 	}
 
 	/**
-	 * getTipoFoto()
+	 * Retorna o tipo (formato) da foto: Polaroid, Cabine.
 	 * 
 	 * @return tipo da foto
 	 * 
@@ -83,23 +83,28 @@ public class Participacao implements Serializable {
 	}
 
 	/**
-	 * setTipoFoto(int tipoFoto)
+	 * Atualiza o tipo da foto
+	 * 
 	 * @param tipoFoto
+	 * 
 	 */
 	public void setTipoFoto(int tipoFoto) {
 		this.tipoFoto = tipoFoto;
 	}
 
 	/**
-	 * getEfeitoFoto()
-	 * @return
+	 * Obtem o efeito de cores aplicado a foto
+	 * 
+	 * @return O identificador do efeito de cores aplicado
+	 * 
 	 */
 	public int getEfeitoFoto() {
 		return efeitoFoto;
 	}
 
 	/**
-	 * setEfeitoFoto(int efeitoFoto)
+	 * Estabelece o efeito de cores que será usado.
+	 *  
 	 * @param efeitoFoto
 	 */
 	public void setEfeitoFoto(int efeitoFoto) {
@@ -107,16 +112,20 @@ public class Participacao implements Serializable {
 	}
 
 	/**
-	 * getNomeArqFoto()
-	 * @return
+	 * Obtem o nome do arquivo onde a foto está armzenada
+	 * 
+	 * @return O nome completo do arquivo
+	 * 
 	 */
 	public String getNomeArqFoto() {
 		return nomeArqFoto;
 	}
 
 	/**
-	 * setNomeArqFoto(String nomeArqFoto)
-	 * @param nomeArqFoto
+	 * Atualiza o nome do arquivo onde a foto foi armazenada
+	 * 
+	 * @param nomeArqFoto Nome completo do arquivo
+	 * 
 	 */
 	public void setNomeArqFoto(String nomeArqFoto) {
 		this.nomeArqFoto = nomeArqFoto;

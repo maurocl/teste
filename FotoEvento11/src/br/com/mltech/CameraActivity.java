@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -283,6 +281,9 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
+   * Obtém o identificador da câmera que será usada.<br>
+   * 
+   * Caso o parâmetro de configuração não seja configurado será usado 0 como default.
    * 
    * @param intent
    */
@@ -300,6 +301,7 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
+   * Obtem informação sobre a participação.
    * 
    * @param intent
    */
@@ -1080,6 +1082,7 @@ public class CameraActivity extends Activity implements Constantes {
     // Atualiza a configuração para esse serviço de câmera.
     try {
       mCamera.setParameters(params);
+      Log.d(TAG, "configuraParamCamera() -  parâmetros atualizados com sucesso");
     } catch (RuntimeException e) {
       Log.w(TAG, "configuraParamCamera() -  RuntimeException durante a configuração da câmera");
     }
@@ -1168,7 +1171,8 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
-   * Executa o fechamento da activity.
+   * Executa o fechamento da activity retornando o controle o método onActivityResult().
+   * 
    */
   private void finaliza() {
 
