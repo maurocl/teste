@@ -39,989 +39,999 @@ import android.util.Log;
  */
 public class Mail extends javax.mail.Authenticator {
 
-  public static final String TAG = "Mail";
+	public static final String TAG = "Mail";
 
-  /**
-   * nome do usuário da conta de email
-   */
-  private String user;
+	/**
+	 * nome do usuário da conta de email
+	 */
+	private String user;
 
-  /**
-   * senha do usuário da conta de email
-   */
-  private String pass;
+	/**
+	 * senha do usuário da conta de email
+	 */
+	private String pass;
 
-  /**
-   * array de endereços de email (to)
-   */
-  private String[] to;
+	/**
+	 * array de endereços de email (to)
+	 */
+	private String[] to;
 
-  /**
-   * array de endereços de email (cc)
-   */
-  private String[] cc;
+	/**
+	 * array de endereços de email (cc)
+	 */
+	private String[] cc;
 
-  /**
-   * array de endereços de email (bcc)
-   */
-  private String[] bcc;
+	/**
+	 * array de endereços de email (bcc)
+	 */
+	private String[] bcc;
 
-  /**
-   * email do remetente
-   */
-  private String from;
+	/**
+	 * email do remetente
+	 */
+	private String from;
 
-  /**
-   * endereço que deve ser usado para responder o email
-   */
-  private String replyTo;
+	/**
+	 * endereço que deve ser usado para responder o email
+	 */
+	private String replyTo;
 
-  /**
-   * porta do servidor SMTP
-   */
-  private String port;
+	/**
+	 * porta do servidor SMTP
+	 */
+	private String port;
 
-  /**
-   * default socket factory port
-   */
-  private String sport;
+	/**
+	 * default socket factory port
+	 */
+	private String sport;
 
-  /**
-   * endereço do servidor SMTP
-   */
-  private String host;
+	/**
+	 * endereço do servidor SMTP
+	 */
+	private String host;
 
-  /**
-   * Assunto do email
-   */
-  private String subject;
+	/**
+	 * Assunto do email
+	 */
+	private String subject;
 
-  /**
-   * Corpo do email
-   */
-  private String body;
+	/**
+	 * Corpo do email
+	 */
+	private String body;
 
-  /**
-   * Indica se o usuário está autenticado ou não
-   */
-  private boolean auth;
+	/**
+	 * Indica se o usuário está autenticado ou não
+	 */
+	private boolean auth;
 
-  /**
-   * Indica se a rotina é debugavel
-   */
-  private boolean debuggable;
+	/**
+	 * Indica se a rotina é debugavel
+	 */
+	private boolean debuggable;
 
-  /**
-   * SSL = Secure Socket Layer
-   */
-  private boolean ssl;
+	/**
+	 * SSL = Secure Socket Layer
+	 */
+	private boolean ssl;
 
-  /**
+	/**
    * 
    */
-  private Multipart multipart;
+	private Multipart multipart;
 
-  
-  /**
+	/**
    * 
    */
-  private String filename;
-  
-  /**
-   * Construtor
-   * 
-   */
-   public Mail() {
-
-    this.auth = true; // smtp authentication - default on
-
-    this.multipart = new MimeMultipart();
-
-    // There is something wrong with MailCap, javamail can not find a
-    // handler for the multipart/mixed part, so this bit needs to be added.
-
-    MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
-
-    mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-    mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-    mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-    mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-    mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+	private String filename;
+
+	/**
+	 * Construtor
+	 * 
+	 */
+	public Mail() {
+
+		this.auth = true; // smtp authentication - default on
+
+		this.multipart = new MimeMultipart();
+
+		// There is something wrong with MailCap, javamail can not find a
+		// handler for the multipart/mixed part, so this bit needs to be added.
+
+		MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
 
-    CommandMap.setDefaultCommandMap(mc);
+		mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+		mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+		mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+		mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+		mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
 
-  }
+		CommandMap.setDefaultCommandMap(mc);
 
-  /**
-   * Construtor
-   * 
-   * @param user
-   *          Username nome do usuário da conta de email
-   * 
-   * @param pass
-   *          Password senha do usuário da conta de email
-   * 
-   */
-  public Mail(String user, String pass) {
+	}
 
-    // executa o construtor inicial (sem parâmetros).
-    this();
+	/**
+	 * Construtor
+	 * 
+	 * @param user
+	 *          Username nome do usuário da conta de email
+	 * 
+	 * @param pass
+	 *          Password senha do usuário da conta de email
+	 * 
+	 */
+	public Mail(String user, String pass) {
 
-    // atualiza os usuário e senha
-    this.user = user;
-    this.pass = pass;
+		// executa o construtor inicial (sem parâmetros).
+		this();
 
-  }
+		// atualiza os usuário e senha
+		this.user = user;
+		this.pass = pass;
 
-  /**
-   * Envia o email.<br>
-   * 
-   * Usa os atributos para preencher ...<br>
-   * 
-   * @return true email enviado com sucesso ou false caso contrário
-   * 
-   * @throws Exception
-   *           se houver algum erro.
-   */
-  public boolean send() throws Exception {
+	}
 
-    /*
-     * m.setDebuggable(true); m.setAuth(true);
-     * 
-     * m.setHost("smtp.mltech.com.br"); m.setPort("587");
-     * 
-     * m.setFrom("maurocl@mltech.com.br");
-     * 
-     * m.setSsl(false);
-     * 
-     * m.setTo(new String[] { "maurocl@terra.com.br" }); m.setBcc(new String[] {
-     * "maurocl@mltech.com.br" });
-     * 
-     * m.setSubject("test02"); m.setBody("test02 - envio de email");
-     */
+	/**
+	 * Envia o email.<br>
+	 * 
+	 * Usa os atributos para preencher ...<br>
+	 * 
+	 * @return true email enviado com sucesso ou false caso contrário
+	 * 
+	 * @throws Exception
+	 *           se houver algum erro.
+	 */
+	public boolean send() throws Exception {
 
-    // cria uma instância das propriedades
-    Properties props = setProperties();
+		/*
+		 * m.setDebuggable(true); m.setAuth(true);
+		 * 
+		 * m.setHost("smtp.mltech.com.br"); m.setPort("587");
+		 * 
+		 * m.setFrom("maurocl@mltech.com.br");
+		 * 
+		 * m.setSsl(false);
+		 * 
+		 * m.setTo(new String[] { "maurocl@terra.com.br" }); m.setBcc(new String[] {
+		 * "maurocl@mltech.com.br" });
+		 * 
+		 * m.setSubject("test02"); m.setBody("test02 - envio de email");
+		 */
 
-    // grava as propriedades em um arquivo
-    savePropertiesFile(props);
+		// cria uma instância das propriedades
+		Properties props = setProperties();
 
-    if ((props != null) && (props.isEmpty())) {
-      Log.w(TAG, "send() - propriedades está vazia");
-    }
+		// grava as propriedades em um arquivo
+		savePropertiesFile(props);
 
-    if (!props.isEmpty()) {
+		if ((props != null) && (props.isEmpty())) {
+			Log.w(TAG, "send() - propriedades está vazia");
+		}
 
-      Log.w(TAG, "send() - nº de entradas: " + props.size());
+		if (!props.isEmpty()) {
 
-      Enumeration<Object> e = props.keys();
+			Log.w(TAG, "send() - nº de entradas: " + props.size());
 
-      while (e.hasMoreElements()) {
-        String key = (String) e.nextElement();
-        Log.d(TAG, "send() - Key=" + key + ", Value=" + props.get(key));
-      }
+			Enumeration<Object> e = props.keys();
 
-    }
+			while (e.hasMoreElements()) {
+				String key = (String) e.nextElement();
+				Log.d(TAG, "send() - Key=" + key + ", Value=" + props.get(key));
+			}
 
-    if (!user.equals("") && !pass.equals("") && to.length > 0 && !from.equals("") && !subject.equals("") && !body.equals("")) {
+		}
 
-      // obtém uma sessão para envio de email
-      Session session = Session.getInstance(props, this);
+		if (!user.equals("") && !pass.equals("") && to.length > 0 && !from.equals("") && !subject.equals("") && !body.equals("")) {
 
-      // Session session = Session.getInstance(props, null);
+			// obtém uma sessão para envio de email
+			Session session = Session.getInstance(props, this);
 
-      // cria uma mensagem (associada a sessão)
-      MimeMessage msg = new MimeMessage(session);
+			// Session session = Session.getInstance(props, null);
 
-      //-------------------------------------
-      // atualiza a origem da mensagem
-      //-------------------------------------
-      msg.setFrom(new InternetAddress(from));
+			// cria uma mensagem (associada a sessão)
+			MimeMessage msg = new MimeMessage(session);
 
-      InternetAddress[] xx = new InternetAddress[] { new InternetAddress() };
+			// -------------------------------------
+			// atualiza a origem da mensagem
+			// -------------------------------------
+			msg.setFrom(new InternetAddress(from));
 
-      xx[0] = new InternetAddress(from);
+			InternetAddress[] xx = new InternetAddress[] { new InternetAddress() };
 
-      msg.setReplyTo(xx);
+			xx[0] = new InternetAddress(from);
 
-      InternetAddress[] replyTo = new InternetAddress[1];
+			msg.setReplyTo(xx);
 
-      for (int i = 0; i < to.length; i++) {
-        replyTo[i] = new InternetAddress(from);
-      }
+			InternetAddress[] replyTo = new InternetAddress[1];
 
-      msg.setReplyTo(replyTo);
+			for (int i = 0; i < to.length; i++) {
+				replyTo[i] = new InternetAddress(from);
+			}
 
-      //-----------------------------------------------------------------------
-      // To:
-      //-----------------------------------------------------------------------
-      InternetAddress[] addressTo = new InternetAddress[to.length];
+			msg.setReplyTo(replyTo);
 
-      for (int i = 0; i < to.length; i++) {
-        addressTo[i] = new InternetAddress(to[i]);
-      }
+			// -----------------------------------------------------------------------
+			// To:
+			// -----------------------------------------------------------------------
+			InternetAddress[] addressTo = new InternetAddress[to.length];
 
-      msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
+			for (int i = 0; i < to.length; i++) {
+				addressTo[i] = new InternetAddress(to[i]);
+			}
 
-      // -----------------------------------------------------------------------
-      // Cc:
-      // -----------------------------------------------------------------------
-      if (cc != null) {
-        InternetAddress[] addressCc = new InternetAddress[cc.length];
+			msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
 
-        for (int i = 0; i < cc.length; i++) {
-          addressCc[i] = new InternetAddress(cc[i]);
-        }
+			// -----------------------------------------------------------------------
+			// Cc:
+			// -----------------------------------------------------------------------
+			if (cc != null) {
+				InternetAddress[] addressCc = new InternetAddress[cc.length];
 
-        msg.setRecipients(MimeMessage.RecipientType.CC, addressCc);
+				for (int i = 0; i < cc.length; i++) {
+					addressCc[i] = new InternetAddress(cc[i]);
+				}
 
-      }
+				msg.setRecipients(MimeMessage.RecipientType.CC, addressCc);
 
-      // -----------------------------------------------------------------------
-      // Bcc:
-      // -----------------------------------------------------------------------
-      if (bcc != null) {
-        InternetAddress[] addressBcc = new InternetAddress[bcc.length];
+			}
 
-        for (int i = 0; i < bcc.length; i++) {
-          addressBcc[i] = new InternetAddress(bcc[i]);
-        }
+			// -----------------------------------------------------------------------
+			// Bcc:
+			// -----------------------------------------------------------------------
+			if (bcc != null) {
+				InternetAddress[] addressBcc = new InternetAddress[bcc.length];
 
-        msg.setRecipients(MimeMessage.RecipientType.BCC, addressBcc);
-        // -----------------------------------------------------------------------
-      }
+				for (int i = 0; i < bcc.length; i++) {
+					addressBcc[i] = new InternetAddress(bcc[i]);
+				}
 
-      // subject do email
-      msg.setSubject(this.getSubject());
+				msg.setRecipients(MimeMessage.RecipientType.BCC, addressBcc);
+				// -----------------------------------------------------------------------
+			}
 
-      // data de envio do email
-      msg.setSentDate(new Date());
+			// subject do email
+			msg.setSubject(this.getSubject());
 
-      // setup message body
-      BodyPart messageBodyPart = new MimeBodyPart();
+			// data de envio do email
+			msg.setSentDate(new Date());
 
-      // adiciona o corpo do email
-      messageBodyPart.setText(this.getBody());
+			// setup message body
+			BodyPart messageBodyPart = new MimeBodyPart();
 
-      multipart.addBodyPart(messageBodyPart);
+			// adiciona o corpo do email
+			messageBodyPart.setText(this.getBody());
 
-      // Put parts in message
-      msg.setContent(multipart);
+			multipart.addBodyPart(messageBodyPart);
 
-      addAttachment(getFilename());
-      //addAttachment("/mnt/sdcard/Pictures/config.txt");
+			// Put parts in message
+			msg.setContent(multipart);
 
-      // send email
-      //Transport.send(msg);
-      new MyAsyncTask().execute(msg);
-      
-      return true;
+			addAttachment(getFilename());
+			// addAttachment("/mnt/sdcard/Pictures/config.txt");
 
-    } else {
+			// send email
+			// Transport.send(msg);
 
-      return false;
+			// new MyAsyncTask().execute(msg);
+			MyAsyncTask my = new MyAsyncTask();
+			my.execute(msg);
 
-    }
+			// Waits if necessary for the computation to complete, and then retrieves
+			// its result.
+			Boolean bb = my.get();
 
-  }
+			return bb;
 
-  /**
-   * Envia um email usando os parâmetros.
-   * 
-   * @param to
-   *          Endereço do destinatário
-   * @param bcc
-   *          Endereço do bcc
-   * @param from
-   *          Endereço do remetente
-   * @param subject
-   *          Assunto do email
-   * @param body
-   *          Corpo do email
-   * @param foto
-   *          Foto
-   * 
-   * @return true email enviado com sucesso ou false caso contrário
-   * 
-   * @throws Exception
-   *           Lançada em caso de erros.
-   * 
-   */
-  public boolean send(String to, String bcc, String from, String subject, String body, String foto) throws Exception {
+		} else {
 
-    Properties props = setProperties();
+			return false;
 
-    if (!user.equals("") && !pass.equals("") && (!to.equals("")) && (!bcc.equals("")) && (!foto.equals("")) && !from.equals("")
-        && !subject.equals("") && !body.equals("")) {
+		}
 
-      Session session = Session.getInstance(props, this);
-      // Session session = Session.getInstance(props, null);
+	}
 
-      // TODO inserido pelo mauro
-      session.setDebug(true);
+	/**
+	 * Envia um email usando os parâmetros.
+	 * 
+	 * @param to
+	 *          Endereço do destinatário
+	 * @param bcc
+	 *          Endereço do bcc
+	 * @param from
+	 *          Endereço do remetente
+	 * @param subject
+	 *          Assunto do email
+	 * @param body
+	 *          Corpo do email
+	 * @param foto
+	 *          Foto
+	 * 
+	 * @return true email enviado com sucesso ou false caso contrário
+	 * 
+	 * @throws Exception
+	 *           Lançada em caso de erros.
+	 * 
+	 */
+	public boolean send(String to, String bcc, String from, String subject, String body, String foto) throws Exception {
 
-      MimeMessage msg = new MimeMessage(session);
+		Properties props = setProperties();
 
-      msg.setFrom(new InternetAddress(from));
+		if (!user.equals("") && !pass.equals("") && (!to.equals("")) && (!bcc.equals("")) && (!foto.equals("")) && !from.equals("")
+				&& !subject.equals("") && !body.equals("")) {
 
-      // -----------------------------------------------------------------------
-      // To:
-      // -----------------------------------------------------------------------
-      InternetAddress[] addressTo = { new InternetAddress(to) };
+			Session session = Session.getInstance(props, this);
+			// Session session = Session.getInstance(props, null);
 
-      msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
+			// TODO inserido pelo mauro
+			session.setDebug(true);
 
-      // -----------------------------------------------------------------------
-      // Bcc:
-      // -----------------------------------------------------------------------
-      InternetAddress[] addressBcc = { new InternetAddress(bcc) };
+			MimeMessage msg = new MimeMessage(session);
 
-      msg.setRecipients(MimeMessage.RecipientType.BCC, addressBcc);
+			msg.setFrom(new InternetAddress(from));
 
-      // -----------------------------------------------------------------------
-      // subject do email
-      msg.setSubject(subject);
+			// -----------------------------------------------------------------------
+			// To:
+			// -----------------------------------------------------------------------
+			InternetAddress[] addressTo = { new InternetAddress(to) };
 
-      // data de envio do email
-      msg.setSentDate(new Date());
+			msg.setRecipients(MimeMessage.RecipientType.TO, addressTo);
 
-      // setup message body
-      BodyPart messageBodyPart = new MimeBodyPart();
+			// -----------------------------------------------------------------------
+			// Bcc:
+			// -----------------------------------------------------------------------
+			InternetAddress[] addressBcc = { new InternetAddress(bcc) };
 
-      // adiciona o corpo do email
-      messageBodyPart.setText(body);
+			msg.setRecipients(MimeMessage.RecipientType.BCC, addressBcc);
 
-      multipart.addBodyPart(messageBodyPart);
+			// -----------------------------------------------------------------------
+			// subject do email
+			msg.setSubject(subject);
 
-      // Put parts in message
-      msg.setContent(multipart);
+			// data de envio do email
+			msg.setSentDate(new Date());
 
-      // anexa a foto
-      File f = new File(foto);
-      addAttachment(f.getAbsolutePath());
+			// setup message body
+			BodyPart messageBodyPart = new MimeBodyPart();
 
-      // não sei se é necessário
-      msg.saveChanges();
+			// adiciona o corpo do email
+			messageBodyPart.setText(body);
 
-      // send email
-      Transport.send(msg);
+			multipart.addBodyPart(messageBodyPart);
 
-      return true;
+			// Put parts in message
+			msg.setContent(multipart);
 
-    } else {
+			// anexa a foto
+			File f = new File(foto);
+			addAttachment(f.getAbsolutePath());
 
-      Log.w(TAG, "send() - falha no envio do email");
+			// não sei se é necessário
+			msg.saveChanges();
 
-      return false;
+			// send email
+			Transport.send(msg);
 
-    }
+			return true;
 
-  }
+		} else {
 
-  /**
-   * Adiciona um arquivo como anexo ao email.
-   * 
-   * @param filename
-   *          Nome do arquivo anexado
-   * 
-   * @throws Exception
-   *           lançada em caso de erro
-   * 
-   */
-  public void addAttachment(String filename) throws Exception {
+			Log.w(TAG, "send() - falha no envio do email");
 
-    // Cria um BodyPart.
-    BodyPart messageBodyPart = new MimeBodyPart();
+			return false;
 
-    // Cria um DataSource associado ao arquivo de anexo.
-    DataSource source = new FileDataSource(filename);
+		}
 
-    // Estabelece o handler para o arquivo.
-    messageBodyPart.setDataHandler(new DataHandler(source));
+	}
 
-    // Associa o arquivo
-    // lança MessagingException
-    messageBodyPart.setFileName(filename);
+	/**
+	 * Adiciona um arquivo como anexo ao email.
+	 * 
+	 * @param filename
+	 *          Nome do arquivo anexado
+	 * 
+	 * @throws Exception
+	 *           lançada em caso de erro
+	 * 
+	 */
+	public void addAttachment(String filename) throws Exception {
 
-    // Adiciona o BodyPart ao multipart.
-    multipart.addBodyPart(messageBodyPart);
+		// Cria um BodyPart.
+		BodyPart messageBodyPart = new MimeBodyPart();
 
-  }
+		// Cria um DataSource associado ao arquivo de anexo.
+		DataSource source = new FileDataSource(filename);
 
-  /**
-   * Called when password authentication is needed. Subclasses should override
-   * the default implementation, which returns null.<br>
-   * 
-   * Note that if this method uses a dialog to prompt the user for this
-   * information, the dialog needs to block until the user supplies the
-   * information.<br>
-   * 
-   * This method can not simply return after showing the dialog.<br>
-   * 
-   * Returns: The PasswordAuthentication collected from the user, or null if
-   * none is provided.<br>
-   * 
-   */
-  @Override
-  public PasswordAuthentication getPasswordAuthentication() {
+		// Estabelece o handler para o arquivo.
+		messageBodyPart.setDataHandler(new DataHandler(source));
 
-    return new PasswordAuthentication(user, pass);
+		// Associa o arquivo
+		// lança MessagingException
+		messageBodyPart.setFileName(filename);
 
-  }
+		// Adiciona o BodyPart ao multipart.
+		multipart.addBodyPart(messageBodyPart);
 
-  /**
-   * Estabelece as propriedades do email.
-   * 
-   * @return uma instância de Properties.
-   * 
-   */
-  private Properties setProperties() {
+	}
 
-    Properties props = new Properties();
+	/**
+	 * Called when password authentication is needed. Subclasses should override
+	 * the default implementation, which returns null.<br>
+	 * 
+	 * Note that if this method uses a dialog to prompt the user for this
+	 * information, the dialog needs to block until the user supplies the
+	 * information.<br>
+	 * 
+	 * This method can not simply return after showing the dialog.<br>
+	 * 
+	 * Returns: The PasswordAuthentication collected from the user, or null if
+	 * none is provided.<br>
+	 * 
+	 */
+	@Override
+	public PasswordAuthentication getPasswordAuthentication() {
 
-    if (this.isDebuggable()) {
-      props.setProperty("mail.debug", this.isDebuggable() ? "true" : "false");
-    }
+		return new PasswordAuthentication(user, pass);
 
-    if (this.isAuth()) {
-      props.setProperty("mail.smtp.auth", this.isAuth() ? "true" : "false");
-    }
+	}
 
-    props.setProperty("mail.transport.protocol", "smtp");
+	/**
+	 * Estabelece as propriedades do email.
+	 * 
+	 * @return uma instância de Properties.
+	 * 
+	 */
+	private Properties setProperties() {
 
-    props.setProperty("mail.smtp.host", this.getHost());
+		Properties props = new Properties();
 
-    props.setProperty("mail.smtp.port", this.getPort());
+		if (this.isDebuggable()) {
+			props.setProperty("mail.debug", this.isDebuggable() ? "true" : "false");
+		}
 
-    if (this.isSsl()) {
+		if (this.isAuth()) {
+			props.setProperty("mail.smtp.auth", this.isAuth() ? "true" : "false");
+		}
 
-      props.setProperty("mail.smtp.socketFactory.port", this.getSport());
+		props.setProperty("mail.transport.protocol", "smtp");
 
-      props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		props.setProperty("mail.smtp.host", this.getHost());
 
-    }
+		props.setProperty("mail.smtp.port", this.getPort());
 
-    props.setProperty("mail.smtp.socketFactory.fallback", "false");
+		if (this.isSsl()) {
 
-    props.setProperty("mail.smtp.quitwait", "false");
+			props.setProperty("mail.smtp.socketFactory.port", this.getSport());
 
-    Enumeration<Object> e = props.elements();
+			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
-    while (e.hasMoreElements()) {
-      Log.d(TAG, "setProperties(): " + e.nextElement());
+		}
 
-    }
+		props.setProperty("mail.smtp.socketFactory.fallback", "false");
 
-    // retorna as propriedades
-    return props;
+		props.setProperty("mail.smtp.quitwait", "false");
 
-  }
+		Enumeration<Object> e = props.elements();
 
-  // ---------------------------------------------------------------------------
-  // the getters and setters
-  // ---------------------------------------------------------------------------
+		while (e.hasMoreElements()) {
+			Log.d(TAG, "setProperties(): " + e.nextElement());
 
-  /**
-   * Retorna o corpo da mensagem como uma string
-   * 
-   * @return
-   */
-  public String getBody() {
+		}
 
-    return body;
-  }
+		// retorna as propriedades
+		return props;
 
-  /**
-   * Atribui um valor ao corpo da mensagem
-   * 
-   * @param body
-   */
-  public void setBody(String body) {
+	}
 
-    this.body = body;
-  }
+	// ---------------------------------------------------------------------------
+	// the getters and setters
+	// ---------------------------------------------------------------------------
 
-  // ---------------------------------------------------------------------------
-  // more of the getters and setters ...
-  // ---------------------------------------------------------------------------
+	/**
+	 * Retorna o corpo da mensagem como uma string
+	 * 
+	 * @return
+	 */
+	public String getBody() {
 
-  /**
-   * Atribui uma lista de endereços
-   * 
-   * @param toArr
-   */
-  public void setTo(String[] toArr) {
+		return body;
+	}
 
-    this.to = toArr;
-  }
+	/**
+	 * Atribui um valor ao corpo da mensagem
+	 * 
+	 * @param body
+	 */
+	public void setBody(String body) {
 
-  /**
-   * Atribui a origem dos emails, isto é, o remetente do email
-   * 
-   * @param string
-   * 
-   */
-  public void setFrom(String string) {
+		this.body = body;
+	}
 
-    this.from = string;
-  }
+	// ---------------------------------------------------------------------------
+	// more of the getters and setters ...
+	// ---------------------------------------------------------------------------
 
-  /**
-   * Atribui o subject da mensagem
-   * 
-   * @param string
-   *          assunto da mensagem
-   */
-  public void setSubject(String string) {
+	/**
+	 * Atribui uma lista de endereços
+	 * 
+	 * @param toArr
+	 */
+	public void setTo(String[] toArr) {
 
-    this.subject = string;
+		this.to = toArr;
+	}
 
-  }
+	/**
+	 * Atribui a origem dos emails, isto é, o remetente do email
+	 * 
+	 * @param string
+	 * 
+	 */
+	public void setFrom(String string) {
 
-  /**
-   * Obtem o usuário da conta de email responsável pelo envio do email
-   * 
-   * @return o usuário usado para acessar a conta do email
-   */
-  public String getUser() {
+		this.from = string;
+	}
 
-    return user;
-  }
+	/**
+	 * Atribui o subject da mensagem
+	 * 
+	 * @param string
+	 *          assunto da mensagem
+	 */
+	public void setSubject(String string) {
 
-  /**
-   * Estabelece um usuário da conta de email
-   * 
-   * @param user
-   *          usuário da conta de email
-   */
-  public void setUser(String user) {
+		this.subject = string;
 
-    this.user = user;
-  }
+	}
 
-  /**
-   * Obtém o password do usuário
-   * 
-   * @return o password associado a conta de email do usuário
-   */
-  public String getPass() {
+	/**
+	 * Obtem o usuário da conta de email responsável pelo envio do email
+	 * 
+	 * @return o usuário usado para acessar a conta do email
+	 */
+	public String getUser() {
 
-    return pass;
-  }
+		return user;
+	}
 
-  /**
-   * Atribui o password do usuário
-   * 
-   * @param pass
-   *          password associado a conta de email do usuário
-   * 
-   */
-  public void setPass(String pass) {
+	/**
+	 * Estabelece um usuário da conta de email
+	 * 
+	 * @param user
+	 *          usuário da conta de email
+	 */
+	public void setUser(String user) {
 
-    this.pass = pass;
-  }
+		this.user = user;
+	}
 
-  /**
-   * obtem a porta do servidor SMTP
-   * 
-   * @return
-   */
-  public String getPort() {
+	/**
+	 * Obtém o password do usuário
+	 * 
+	 * @return o password associado a conta de email do usuário
+	 */
+	public String getPass() {
 
-    return port;
-  }
+		return pass;
+	}
 
-  /**
-   * Atribui a porta do servidor SMTP
-   * 
-   * @param port
-   *          Nº da porta
-   */
-  public void setPort(String port) {
+	/**
+	 * Atribui o password do usuário
+	 * 
+	 * @param pass
+	 *          password associado a conta de email do usuário
+	 * 
+	 */
+	public void setPass(String pass) {
 
-    this.port = port;
-  }
+		this.pass = pass;
+	}
 
-  /**
-   * Obtém o nº da porta segura.
-   * 
-   * @return O n º da porta segura.
-   */
-  public String getSport() {
+	/**
+	 * obtem a porta do servidor SMTP
+	 * 
+	 * @return
+	 */
+	public String getPort() {
 
-    return sport;
-  }
+		return port;
+	}
 
-  /**
-   * Atribui o nº da porta segura;
-   * 
-   * @param sport
-   *          O nº da porta segura.
-   * 
-   */
-  public void setSport(String sport) {
+	/**
+	 * Atribui a porta do servidor SMTP
+	 * 
+	 * @param port
+	 *          Nº da porta
+	 */
+	public void setPort(String port) {
 
-    this.sport = sport;
-  }
+		this.port = port;
+	}
 
-  /**
-   * Retorna o host onde o servidor SMTP está executando
-   * 
-   * @return O endereço do servidor SMTP usado.
-   */
-  public String getHost() {
-
-    return host;
-
-  }
-
-  /**
-   * Atribui o nome do host SMTP
-   * 
-   * @param host
-   *          nome do host SMTP
-   */
-  public void setHost(String host) {
-
-    this.host = host;
-
-  }
-
-  /**
-   * Indica se o usuário está autenticado.
-   * 
-   * @return true se o usuário estiver autenticado ou false caso contrário.
-   * 
-   */
-  public boolean isAuth() {
-
-    return auth;
-  }
-
-  /**
-   * Altera a situação de autenticação do usuário
-   * 
-   * @param auth
-   *          true ou false
-   */
-  public void setAuth(boolean auth) {
-
-    this.auth = auth;
-  }
-
-  /**
-   * Verifica se a rotina é debugável.
-   * 
-   * @return true rotina debugável ou false caso contrário
-   * 
-   */
-  public boolean isDebuggable() {
-
-    return debuggable;
-  }
-
-  /**
-   * Atribui o use de debug.
-   * 
-   * @param debuggable
-   *          true se debugavel ou false caso contrário.
-   */
-  public void setDebuggable(boolean debuggable) {
-
-    this.debuggable = debuggable;
-  }
-
-  /**
-   * Obtém um Multipart.
-   * 
-   * @return Um multipart.
-   * 
-   */
-  public Multipart getMultipart() {
-
-    return multipart;
-  }
-
-  /**
-   * Atribui um multipart
-   * 
-   * @param multipart
-   * 
-   */
-  public void setMultipart(Multipart multipart) {
-
-    this.multipart = multipart;
-  }
-
-  /**
-   * Obtém um array dos emails que serão enviados ao destinatário (to:)
-   * 
-   * @return um array com os email de cada destinatário
-   */
-  public String[] getTo() {
-
-    return to;
-  }
-
-  /**
-   * Obtém o email do remetente
-   * 
-   * @return o email do rementente
-   * 
-   */
-  public String getFrom() {
-
-    return from;
-  }
-
-  /**
-   * Obtém o subject do email.
-   * 
-   * @return o assunto do email
-   */
-  public String getSubject() {
-
-    return subject;
-  }
-
-  /**
-   * Obtém o array dos emails que serão enviado em cópia
-   * 
-   * @return
-   */
-  public String[] getCc() {
-
-    return cc;
-  }
-
-  /**
-   * Atribui o array dos emails que serão enviados em cópia oculta
-   * 
-   * @param cc
-   *          array de strings onde cada elemento é um endereço de email que
-   *          será enviado em CC.
-   * 
-   */
-  public void setCc(String[] cc) {
-
-    this.cc = cc;
-  }
-
-  /**
-   * Obtém o array dos emails que serão enviados em cópia oculta
-   * 
-   * @return um
-   */
-  public String[] getBcc() {
-
-    return bcc;
-  }
-
-  /**
-   * Atribui o endereço de email de retorno.
-   * 
-   * @return o endereço de email que deverá ser usado para retornar a mensagem.
-   * 
-   */
-  public String getReplyTo() {
-
-    return replyTo;
-  }
-
-  /**
-   * Atribui o endereço de email de retorno
-   * 
-   * @param replyTo
-   *          o endereço de email de retorno.
-   * 
-   */
-  public void setReplyTo(String replyTo) {
-
-    this.replyTo = replyTo;
-  }
-
-  /**
-   * Seta o array dos emails que serão enviados em cópia oculta
-   * 
-   * @param bcc
-   *          um array de email dos destinatários em cópia oculta.
-   */
-  public void setBcc(String[] bcc) {
-
-    this.bcc = bcc;
-  }
-
-  /**
-   * Obtem o uso do SSL (Secure Socket Layer).
-   * 
-   * @return true se estiver usando SSL ou false caso contrário.
-   */
-  public boolean isSsl() {
-
-    return ssl;
-  }
-
-  /**
-   * Estabelece o uso do SSL (Secure Socket Layer).
-   * 
-   * @param ssl
-   *          true para usar SSL ou false caso contrário.
-   * 
-   */
-  public void setSsl(boolean ssl) {
-
-    this.ssl = ssl;
-  }
-
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Carrega o arquivo de propriedades localizado no arquivo fornecido.
-   * 
-   * @param filename
-   *          Nome do arquivo de propriedades
-   * 
-   * @throws FileNotFoundException
-   * 
-   * @throws IOException
-   * 
-   * @return Uma instância de properties.
-   * 
-   */
-  private Properties loadPropertiesFile(String filename) throws FileNotFoundException, IOException {
-
-    // o arquivo encontra-se no mesmo diretório
-    File file = new File(filename);
-
-    Properties emailProperties = new Properties();
-
-    FileInputStream inputStream = new FileInputStream(file);
-
-    // lê os dados que estão no arquivo
-    emailProperties.load(inputStream);
-
-    inputStream.close();
-
-    return emailProperties;
-
-  }
-
-  /**
-   * Grava o arquivo de propriedades.<br>
-   * 
-   * O arquivo padrão de gravação é dado por: "mail2.properties".
-   * 
-   * @throws FileNotFoundException
-   *           Arquivo não encontrado
-   * @throws IOException
-   *           Erro de I/O
-   * 
-   */
-  private void savePropertiesFile(Properties emailProperties) throws FileNotFoundException, IOException {
-
-    if (emailProperties == null) {
-      throw new IllegalArgumentException("Properties é nula.");
-    }
-
-    File file = new File("/mnt/sdcard/Pictures/mail2.properties");
-
-    FileOutputStream fos = null;
-
-    fos = new FileOutputStream(file);
-
-    // grava os dados no arquivo
-    emailProperties.store(fos, "Configurações do arquivo mail.properties");
-
-    fos.close();
-
-  }
-
-  /**
-   * Exibe detalhes sobre uma exceção gerada.
-   * 
-   * @param e
-   *          Exception
-   * 
-   */
-  public void showException(Exception e) {
-
-    Log.w(TAG, "showException() - getMessage(): " + e.getMessage());
-    Log.w(TAG, "showException() - getLocalizedMessage(): " + e.getLocalizedMessage());
-    Log.w(TAG, "showException() - getCause(): " + e.getCause());
-    Log.w(TAG, "showException() - Exception - ", e);
-  }
-
-  @Override
-  public String toString() {
-
-    return "Mail [user=" + user + ", pass=" + pass + ", to=" + Arrays.toString(to) + ", cc=" + Arrays.toString(cc) + ", bcc="
-        + Arrays.toString(bcc) + ", from=" + from + ", replyTo=" + replyTo + ", port=" + port + ", sport=" + sport + ", host="
-        + host + ", subject=" + subject + ", body=" + body + ", auth=" + auth + ", debuggable=" + debuggable + ", ssl=" + ssl
-        + ", multipart=" + multipart + "]";
-  }
-
-  
-  
-  /**
-   * 
-   * @return
-   */
-  public String getFilename() {
-  
-    return filename;
-  }
-  
-  /**
-   * 
-   * @param filename
-   */
-
-  
-  public void setFilename(String filename) {
-  
-    this.filename = filename;
-  }
-
-  private class MyAsyncTask extends AsyncTask<MimeMessage, Void, Boolean>
-  {
-
-    Boolean b;
-    
-      ProgressDialog mProgressDialog;
-      
-      @Override
-      protected void onPostExecute(Boolean result) {
-        if(mProgressDialog!=null) {
-          mProgressDialog.dismiss();
-        }
-        
-    
-        
-      }
-
-      @Override
-      protected void onPreExecute() {
-         // mProgressDialog = ProgressDialog.show(ActivityName.this, "Loading...", "Data is Loading...");
-      }
-
-      @Override
-      protected Boolean doInBackground(MimeMessage... params) {
-         // your network operation
-        
-        // send the message
-        //Transport.send(msg);
-        try {
-          Transport.send(params[0]);
-          b = true;
-        } catch (MessagingException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-          b=false;
-        }
-        
-          return b;
-      }
-  }
-  
-  
+	/**
+	 * Obtém o nº da porta segura.
+	 * 
+	 * @return O n º da porta segura.
+	 */
+	public String getSport() {
+
+		return sport;
+	}
+
+	/**
+	 * Atribui o nº da porta segura;
+	 * 
+	 * @param sport
+	 *          O nº da porta segura.
+	 * 
+	 */
+	public void setSport(String sport) {
+
+		this.sport = sport;
+	}
+
+	/**
+	 * Retorna o host onde o servidor SMTP está executando
+	 * 
+	 * @return O endereço do servidor SMTP usado.
+	 */
+	public String getHost() {
+
+		return host;
+
+	}
+
+	/**
+	 * Atribui o nome do host SMTP
+	 * 
+	 * @param host
+	 *          nome do host SMTP
+	 */
+	public void setHost(String host) {
+
+		this.host = host;
+
+	}
+
+	/**
+	 * Indica se o usuário está autenticado.
+	 * 
+	 * @return true se o usuário estiver autenticado ou false caso contrário.
+	 * 
+	 */
+	public boolean isAuth() {
+
+		return auth;
+	}
+
+	/**
+	 * Altera a situação de autenticação do usuário
+	 * 
+	 * @param auth
+	 *          true ou false
+	 */
+	public void setAuth(boolean auth) {
+
+		this.auth = auth;
+	}
+
+	/**
+	 * Verifica se a rotina é debugável.
+	 * 
+	 * @return true rotina debugável ou false caso contrário
+	 * 
+	 */
+	public boolean isDebuggable() {
+
+		return debuggable;
+	}
+
+	/**
+	 * Atribui o use de debug.
+	 * 
+	 * @param debuggable
+	 *          true se debugavel ou false caso contrário.
+	 */
+	public void setDebuggable(boolean debuggable) {
+
+		this.debuggable = debuggable;
+	}
+
+	/**
+	 * Obtém um Multipart.
+	 * 
+	 * @return Um multipart.
+	 * 
+	 */
+	public Multipart getMultipart() {
+
+		return multipart;
+	}
+
+	/**
+	 * Atribui um multipart
+	 * 
+	 * @param multipart
+	 * 
+	 */
+	public void setMultipart(Multipart multipart) {
+
+		this.multipart = multipart;
+	}
+
+	/**
+	 * Obtém um array dos emails que serão enviados ao destinatário (to:)
+	 * 
+	 * @return um array com os email de cada destinatário
+	 */
+	public String[] getTo() {
+
+		return to;
+	}
+
+	/**
+	 * Obtém o email do remetente
+	 * 
+	 * @return o email do rementente
+	 * 
+	 */
+	public String getFrom() {
+
+		return from;
+	}
+
+	/**
+	 * Obtém o subject do email.
+	 * 
+	 * @return o assunto do email
+	 */
+	public String getSubject() {
+
+		return subject;
+	}
+
+	/**
+	 * Obtém o array dos emails que serão enviado em cópia
+	 * 
+	 * @return
+	 */
+	public String[] getCc() {
+
+		return cc;
+	}
+
+	/**
+	 * Atribui o array dos emails que serão enviados em cópia oculta
+	 * 
+	 * @param cc
+	 *          array de strings onde cada elemento é um endereço de email que
+	 *          será enviado em CC.
+	 * 
+	 */
+	public void setCc(String[] cc) {
+
+		this.cc = cc;
+	}
+
+	/**
+	 * Obtém o array dos emails que serão enviados em cópia oculta
+	 * 
+	 * @return um
+	 */
+	public String[] getBcc() {
+
+		return bcc;
+	}
+
+	/**
+	 * Atribui o endereço de email de retorno.
+	 * 
+	 * @return o endereço de email que deverá ser usado para retornar a mensagem.
+	 * 
+	 */
+	public String getReplyTo() {
+
+		return replyTo;
+	}
+
+	/**
+	 * Atribui o endereço de email de retorno
+	 * 
+	 * @param replyTo
+	 *          o endereço de email de retorno.
+	 * 
+	 */
+	public void setReplyTo(String replyTo) {
+
+		this.replyTo = replyTo;
+	}
+
+	/**
+	 * Seta o array dos emails que serão enviados em cópia oculta
+	 * 
+	 * @param bcc
+	 *          um array de email dos destinatários em cópia oculta.
+	 */
+	public void setBcc(String[] bcc) {
+
+		this.bcc = bcc;
+	}
+
+	/**
+	 * Obtem o uso do SSL (Secure Socket Layer).
+	 * 
+	 * @return true se estiver usando SSL ou false caso contrário.
+	 */
+	public boolean isSsl() {
+
+		return ssl;
+	}
+
+	/**
+	 * Estabelece o uso do SSL (Secure Socket Layer).
+	 * 
+	 * @param ssl
+	 *          true para usar SSL ou false caso contrário.
+	 * 
+	 */
+	public void setSsl(boolean ssl) {
+
+		this.ssl = ssl;
+	}
+
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Carrega o arquivo de propriedades localizado no arquivo fornecido.
+	 * 
+	 * @param filename
+	 *          Nome do arquivo de propriedades
+	 * 
+	 * @throws FileNotFoundException
+	 * 
+	 * @throws IOException
+	 * 
+	 * @return Uma instância de properties.
+	 * 
+	 */
+	private Properties loadPropertiesFile(String filename) throws FileNotFoundException, IOException {
+
+		// o arquivo encontra-se no mesmo diretório
+		File file = new File(filename);
+
+		Properties emailProperties = new Properties();
+
+		FileInputStream inputStream = new FileInputStream(file);
+
+		// lê os dados que estão no arquivo
+		emailProperties.load(inputStream);
+
+		inputStream.close();
+
+		return emailProperties;
+
+	}
+
+	/**
+	 * Grava o arquivo de propriedades.<br>
+	 * 
+	 * O arquivo padrão de gravação é dado por: "mail2.properties".
+	 * 
+	 * @throws FileNotFoundException
+	 *           Arquivo não encontrado
+	 * @throws IOException
+	 *           Erro de I/O
+	 * 
+	 */
+	private void savePropertiesFile(Properties emailProperties) throws FileNotFoundException, IOException {
+
+		if (emailProperties == null) {
+			throw new IllegalArgumentException("Properties é nula.");
+		}
+
+		File file = new File("/mnt/sdcard/Pictures/mail2.properties");
+
+		FileOutputStream fos = null;
+
+		fos = new FileOutputStream(file);
+
+		// grava os dados no arquivo
+		emailProperties.store(fos, "Configurações do arquivo mail.properties");
+
+		fos.close();
+
+	}
+
+	/**
+	 * Exibe detalhes sobre uma exceção gerada.
+	 * 
+	 * @param e
+	 *          Exception
+	 * 
+	 */
+	public void showException(Exception e) {
+
+		Log.w(TAG, "showException() - getMessage(): " + e.getMessage());
+		Log.w(TAG, "showException() - getLocalizedMessage(): " + e.getLocalizedMessage());
+		Log.w(TAG, "showException() - getCause(): " + e.getCause());
+		Log.w(TAG, "showException() - Exception - ", e);
+	}
+
+	@Override
+	public String toString() {
+
+		return "Mail [user=" + user + ", pass=" + pass + ", to=" + Arrays.toString(to) + ", cc=" + Arrays.toString(cc) + ", bcc="
+				+ Arrays.toString(bcc) + ", from=" + from + ", replyTo=" + replyTo + ", port=" + port + ", sport=" + sport + ", host="
+				+ host + ", subject=" + subject + ", body=" + body + ", auth=" + auth + ", debuggable=" + debuggable + ", ssl=" + ssl
+				+ ", multipart=" + multipart + "]";
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getFilename() {
+
+		return filename;
+	}
+
+	/**
+	 * 
+	 * @param filename
+	 */
+	public void setFilename(String filename) {
+
+		this.filename = filename;
+	}
+
+	/**
+	 * Classe responsável pelo envio de um email
+	 * 
+	 * @author maurocl
+	 * 
+	 */
+	private class MyAsyncTask extends AsyncTask<MimeMessage, Void, Boolean> {
+
+		public static final String TAG = "MyAsyncTask";
+
+		Boolean b;
+
+		ProgressDialog mProgressDialog;
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if (mProgressDialog != null) {
+				mProgressDialog.dismiss();
+			}
+
+			Log.w(TAG, "onPostExecute() - result=" + result);
+
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// mProgressDialog = ProgressDialog.show(ActivityName.this, "Loading...",
+			// "Data is Loading...");
+		}
+
+		@Override
+		protected Boolean doInBackground(MimeMessage... params) {
+			// your network operation
+
+			// send the message
+			// Transport.send(msg);
+			try {
+				Transport.send(params[0]);
+				b = true;
+			} catch (MessagingException e) {
+				Log.w(TAG, "doInBackground() - ", e);
+				b = false;
+			}
+
+			return b;
+
+		}
+
+	}
+
 }
