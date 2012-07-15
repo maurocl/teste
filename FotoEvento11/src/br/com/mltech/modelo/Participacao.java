@@ -35,23 +35,26 @@ public class Participacao implements Serializable {
 		this.participante = null;
 	}
 
-	/** 
+	/**
 	 * Construtor
 	 * 
-	 * @param participante Objeto participante
-	 * @param tipoFoto Tipo da foto
-	 * @param efeitoFoto Tipo do efeito que será aplicado a foto 
-	 * @param nomeArqFoto Arquivo com a foto
+	 * @param participante
+	 *          Objeto participante
+	 * @param tipoFoto
+	 *          Tipo da foto
+	 * @param efeitoFoto
+	 *          Tipo do efeito que será aplicado a foto
+	 * @param nomeArqFoto
+	 *          Arquivo com a foto
 	 * 
 	 */
-	public Participacao(Participante participante, int tipoFoto,
-			int efeitoFoto, String nomeArqFoto) {
+	public Participacao(Participante participante, int tipoFoto, int efeitoFoto, String nomeArqFoto) {
 
 		this.participante = participante;
 		this.tipoFoto = tipoFoto;
 		this.efeitoFoto = efeitoFoto;
 		this.nomeArqFoto = nomeArqFoto;
-		
+
 	}
 
 	/**
@@ -64,9 +67,9 @@ public class Participacao implements Serializable {
 	}
 
 	/**
-   * Seta o participante do evento
+	 * Seta o participante do evento
 	 * 
-	 * @param participante 
+	 * @param participante
 	 */
 	public void setParticipante(Participante participante) {
 		this.participante = participante;
@@ -104,7 +107,7 @@ public class Participacao implements Serializable {
 
 	/**
 	 * Estabelece o efeito de cores que será usado.
-	 *  
+	 * 
 	 * @param efeitoFoto
 	 */
 	public void setEfeitoFoto(int efeitoFoto) {
@@ -124,18 +127,52 @@ public class Participacao implements Serializable {
 	/**
 	 * Atualiza o nome do arquivo onde a foto foi armazenada
 	 * 
-	 * @param nomeArqFoto Nome completo do arquivo
+	 * @param nomeArqFoto
+	 *          Nome completo do arquivo
 	 * 
 	 */
 	public void setNomeArqFoto(String nomeArqFoto) {
 		this.nomeArqFoto = nomeArqFoto;
 	}
 
+	/**
+	 * Retorna o tipo da foto selecionada
+	 * 
+	 * @return o tipo da foto
+	 */
+	public String getStrTipoFoto() {
+		String sTipoFoto = null;
+		if (getTipoFoto() == 1) {
+			sTipoFoto = "Polaroid";
+		} else if (getTipoFoto() == 2) {
+			sTipoFoto = "Cabine";
+		} else {
+			sTipoFoto = "Indefinido";
+		}
+		return sTipoFoto;
+	}
+
+	/**
+	 * Retorna o nome do efeito de cores aplicado a foto
+	 * 
+	 * @return o nome do efeito de cores aplicado a foto
+	 */
+	public String getStrEfeitoFoto() {
+		String sEfeitoFoto = null;
+		if (getTipoFoto() == 11) {
+			sEfeitoFoto = "Cores";
+		} else if (getTipoFoto() == 12) {
+			sEfeitoFoto = "P&B";
+		} else {
+			sEfeitoFoto = "Indefinido";
+		}
+		return sEfeitoFoto;
+	}
+
 	@Override
 	public String toString() {
-		return "Participacao [participante=" + participante + ", tipoFoto="
-				+ tipoFoto + ", efeitoFoto=" + efeitoFoto + ", nomeArqFoto="
-				+ nomeArqFoto + "]";
+		return "Participacao [participante=" + participante + ", tipoFoto=" + tipoFoto + ", efeitoFoto=" + efeitoFoto
+				+ ", nomeArqFoto=" + nomeArqFoto + "]";
 	}
 
 }
