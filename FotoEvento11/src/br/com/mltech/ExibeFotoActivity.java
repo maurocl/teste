@@ -14,8 +14,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 
-/**
- * 
+/** 
  * O objetivo dessa activity é a exibição de uma foto.
  * 
  * @author maurocl
@@ -29,9 +28,10 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
   // 0 - desligado; 1 - ligado
   public static int DEBUG = 0;
 
+  // usado para testes da activity (para retornar uma imagem padrão).
   public static int IMAGEM_DUMMY = 0;
 
-  // botão confirma
+  // botão confirma (confirma a visualização da foto)
   private static Button btnConfirmar;
 
   // botão cancela
@@ -50,14 +50,20 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
     setContentView(R.layout.exibefoto);
 
     /**
-     * Trata o evento de disparar o botão
+     * Trata o evento do botão Confirmar
      */
     btnConfirmar = (Button) findViewById(R.id.btnConfirmar);
     btnConfirmar.setOnClickListener(this);
 
+    /**
+     * Trata o evento do botão Cancelar
+     */
     btnCancelar = (Button) findViewById(R.id.btnCancelar);
     btnCancelar.setOnClickListener(this);
 
+    /**
+     * objeto onde a imagem será exibida.
+     */
     ImageView imageView = (ImageView) findViewById(R.id.imageView1);
 
     // Obtém a intent que iniciou a activity
@@ -83,7 +89,7 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
         imageView.setImageURI(data);
       }
       else {
-        Log.d(TAG, "data é nula");
+        Log.d(TAG, "onCreate() - data é nula");
       }
 
     }
@@ -98,20 +104,23 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 
   /**
    * onClick(View view)
+   * 
+   * Trata o evento de click de botão.
    */
   public void onClick(View view) {
 
-    Intent i = new Intent();
+  	// obtém informações sobre a intent chamadora
+    Intent intent = new Intent();
 
     if (view == btnConfirmar) {
       Log.d(TAG, "botão confirmar");
 
-      setResult(RESULT_OK, i);
+      setResult(RESULT_OK, intent);
 
     } else if (view == btnCancelar) {
       Log.d(TAG, "botão cancelar");
 
-      setResult(RESULT_CANCELED, i);
+      setResult(RESULT_CANCELED, intent);
 
     }
 
@@ -121,7 +130,7 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
   }
 
   /**
-   * getBitmapTest()
+   * Cria um bitmap de tamanho 100 x 100 pixels
    * 
    * @return um bitmap de teste
    * 

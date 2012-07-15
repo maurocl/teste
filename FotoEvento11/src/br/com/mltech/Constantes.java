@@ -134,5 +134,10 @@ public interface Constantes {
   public static final String PREFERENCIAS_EMAIL_AUTH = "preferencias_email_auth";
 
   public static final String PREFERENCIAS_EMAIL_SSL = "preferencias_email_ssl";
+  
+  //
+  // Localização do arquivo de Log da aplicação
+  //
+  public static final String APP_LOG="/mnt/sdcard/Pictures/logger2.log";
 
 }
