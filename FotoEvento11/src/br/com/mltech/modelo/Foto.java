@@ -16,7 +16,7 @@ import android.util.Log;
 import br.com.mltech.utils.ManipulaImagem;
 
 /**
- * Representa uma foto
+ * Representação uma foto armazenada em memória externa.
  * 
  * <br>
  * Permite ler e gravar uma foto.
@@ -65,9 +65,9 @@ public class Foto implements Serializable {
 
     this.arquivo = arquivo; // arquivo
     this.dimensao = null; // dimensão da foto
-    imagem = null;
-    dados = null;
-    formatoGravacao = CompressFormat.PNG;
+    this.imagem = null;
+    this.dados = null;
+    this.formatoGravacao = CompressFormat.PNG;
 
   }
 
@@ -76,8 +76,9 @@ public class Foto implements Serializable {
    * 
    * @param arquivo
    *          onde a foto está armazenada
+   * 
    * @param bitmap
-   *          bitmap
+   *          bitmap contendo a foto
    * 
    */
   public Foto(String arquivo, Bitmap bitmap) {
@@ -90,7 +91,7 @@ public class Foto implements Serializable {
     this.arquivo = arquivo;
     this.imagem = bitmap;
     this.dados = null;
-    formatoGravacao = CompressFormat.PNG;
+    this.formatoGravacao = CompressFormat.PNG;
 
     if (this.getImagem() != null) {
       dimensao = new Dimensao(getImagem().getWidth(), getImagem().getHeight());
@@ -136,13 +137,11 @@ public class Foto implements Serializable {
   }
 
   /**
-   * gravar(CompressFormat formato, int quality)
-   * 
-   * <p>
    * Grava uma foto em um arquivo com um dado padrão de qualidade.
    * 
    * @param formato
-   *          Bitmap.CompressFormat.JPEG,
+   *          Bitmap.CompressFormat.JPEG
+   * 
    * @param quality
    *          valor de 0 (pior qualidade) a 100 (melhor qualidade)
    * 
@@ -150,6 +149,7 @@ public class Foto implements Serializable {
    * 
    * @throws FileNotFoundException
    *           se o arquivo não for encontrado
+   * 
    * @throws IOException
    * 
    */
@@ -191,124 +191,7 @@ public class Foto implements Serializable {
   }
 
   /**
-   * getUri()
-   * 
-   * Retorna a Uri da foto
-   * 
-   * @return Uri da foto
-   */
-  public Uri getUri() {
-
-    Uri uri = Uri.fromFile(this.getFilename());
-
-    return uri;
-
-  }
-
-  /**
-   * isLandscape()
-   * 
-   * Quando a razão entre a largura e a algura for > 0
-   * 
-   * @return true se landscape ou false caso contrário
-   */
-  public boolean isLandscape() {
-
-    if (getDimensao() != null) {
-      return (getDimensao().getLargura() > getDimensao().getAltura());
-    } else {
-      return false;
-    }
-
-  }
-
-  /**
-   * isPortrait()
-   * 
-   * Quando a razão entre a largura e a algura for <= 0
-   * 
-   * @return true se Portrait e false caso contrário
-   */
-  public boolean isPortrait() {
-
-    if (getDimensao() != null) {
-      return (getDimensao().getLargura() <= getDimensao().getAltura());
-    } else {
-      return false;
-    }
-
-  }
-
-  /**
-   * redimensiona(int largura, int altura)
-   * 
-   * Cria uma nova foto redimensionada para nova largura e altura.
-   * 
-   * @param largura
-   *          nova largura da foto (em pixels)
-   * @param altura
-   *          nova altura da foto (em pixels)
-   * 
-   * @return a foto redimensionada ou null em caso de erro
-   * 
-   */
-  public Foto redimensiona(String nomeArquivo, int largura, int altura) {
-
-    // TODO avaliar a semântica desse método
-    // vale a pena criar uma nova foto ?
-
-    if (nomeArquivo == null) {
-      Log.w(TAG, "redimensiona() - nome do arquivo onde a foto será salva não foi informado.");
-      return null;
-    }
-
-    if (getImagem() == null) {
-      Log.w(TAG, "redimensiona() - foto não possui imagem associada");
-      return null;
-    }
-
-    // Creates a new bitmap, scaled from an existing bitmap
-    Bitmap bitmap = Bitmap.createScaledBitmap(getImagem(), largura, altura, true);
-
-    Foto f = new Foto(nomeArquivo, bitmap);
-
-    // 
-    Dimensao d = new Dimensao(largura, altura);
-
-    // altera a dimensão da foto
-    f.setDimensao(d);
-
-    boolean gravou = false;
-
-    try {
-
-      // grava a foto
-      gravou = f.gravar();
-
-    } catch (FileNotFoundException e) {
-      Log.w(TAG, "redimensiona() - arquivo não foi encontrado.", e);
-
-    } catch (IOException e) {
-      Log.w(TAG, "redimensiona() - erro de I/O.", e);
-
-    }
-
-    if (gravou) {
-      // uma instância da foto redimensionada
-      return f;
-    }
-    else {
-
-      Log.w(TAG, "redimensiona() - erro na gravação da foto");
-      return null;
-    }
-
-  }
-
-  /**
-   * ler()
-   * 
-   * Lê foto armazenada.
+   * Lê o bitmap contendo a foto.
    * 
    * @return true se a foto pode ser lida ou false em caso de erro
    * 
@@ -350,16 +233,129 @@ public class Foto implements Serializable {
 
   }
 
+  /**
+   * Retorna a Uri da foto a partir do nome completo do arquivo onde o bitmap
+   * está armazenado.
+   * 
+   * @return Uri da foto
+   */
+  public Uri getUri() {
+
+    Uri uri = Uri.fromFile(this.getFilename());
+
+    return uri;
+
+  }
+
+  /**
+   * Verifica se a largura da foto é maior que sua altura.<br>
+   * 
+   * Verifica se razão entre a largura e a algura da foto for > 0
+   * 
+   * @return true se landscape ou false caso contrário
+   */
+  public boolean isLandscape() {
+
+    if (getDimensao() != null) {
+      return (getDimensao().getLargura() > getDimensao().getAltura());
+    } else {
+      return false;
+    }
+
+  }
+
+  /**
+   * Verifica se a altura da foto é maior que sua largura.<br>
+   * 
+   * Quando a razão entre a largura e a algura for <= 0
+   * 
+   * @return true se Portrait e false caso contrário
+   */
+  public boolean isPortrait() {
+
+    if (getDimensao() != null) {
+      return (getDimensao().getLargura() <= getDimensao().getAltura());
+    } else {
+      return false;
+    }
+
+  }
+
+  /**
+   * Cria uma nova foto como redimensionada para nova dimensão (largura e
+   * altura).
+   * 
+   * @param largura
+   *          nova largura da foto (em pixels)
+   * 
+   * @param altura
+   *          nova altura da foto (em pixels)
+   * 
+   * @return a foto redimensionada ou null em caso de erro.
+   * 
+   */
+  public Foto redimensiona(String nomeArquivo, int largura, int altura) {
+
+    // TODO avaliar a semântica desse método
+    // vale a pena criar uma nova foto ?
+
+    if (nomeArquivo == null) {
+      Log.w(TAG, "redimensiona() - nome do arquivo onde a foto será salva não foi informado.");
+      return null;
+    }
+
+    if (getImagem() == null) {
+      Log.w(TAG, "redimensiona() - foto não possui imagem associada");
+      return null;
+    }
+
+    // Creates a new bitmap, scaled from an existing bitmap
+    Bitmap bitmap = Bitmap.createScaledBitmap(getImagem(), largura, altura, true);
+
+    // Cria uma nova foto
+    Foto f = new Foto(nomeArquivo, bitmap);
+
+    // Cria uma nova domensão
+    Dimensao d = new Dimensao(largura, altura);
+
+    // altera a dimensão da foto
+    f.setDimensao(d);
+
+    boolean gravou = false;
+
+    try {
+
+      // grava a foto
+      gravou = f.gravar();
+
+    } catch (FileNotFoundException e) {
+      Log.w(TAG, "redimensiona() - arquivo não foi encontrado.", e);
+
+    } catch (IOException e) {
+      Log.w(TAG, "redimensiona() - erro de I/O.", e);
+
+    }
+
+    if (gravou) {
+      // uma instância da foto redimensionada
+      return f;
+    }
+    else {
+
+      Log.w(TAG, "redimensiona() - erro na gravação da foto");
+      return null;
+    }
+
+  }
+
   //--------------------------------------------------------
   // Métodos getters e setters
   //--------------------------------------------------------
 
   /**
-   * getArquivo()
+   * Obtém o nome do arquivo onde a foto está gravada.
    * 
-   * Obtém o nome do arquivo onde uma foto está gravada
-   * 
-   * @return uma string contendo o nome do arquivo
+   * @return Uma string contendo o nome do arquivo.
    * 
    */
   public String getArquivo() {
@@ -368,8 +364,6 @@ public class Foto implements Serializable {
   }
 
   /**
-   * setArquivo(String arquivo)
-   * 
    * Estabelece o nome do arquivo e cria um objeto File (filename) associado ao
    * arquivo.
    * 
@@ -385,7 +379,7 @@ public class Foto implements Serializable {
   }
 
   /**
-   * getDados()
+   * Retorna um array de bytes.
    * 
    * @return um array de bytes de uma imagem
    */
@@ -407,7 +401,7 @@ public class Foto implements Serializable {
   }
 
   /**
-   * setDados(byte[] dados)
+   * 
    * 
    * @param dados
    * 
@@ -418,8 +412,6 @@ public class Foto implements Serializable {
   }
 
   /**
-   * getDimensao()
-   * 
    * Retorna a dimensão de uma foto: sua largura e altura
    * 
    * @return um objeto da classe Dimensao com a largura e altura da foto
@@ -430,8 +422,6 @@ public class Foto implements Serializable {
   }
 
   /**
-   * setDimensao(Dimensao dimensao)
-   * 
    * Atualiza as dimensões da foto
    * 
    * @param dimensao
@@ -442,7 +432,7 @@ public class Foto implements Serializable {
   }
 
   /**
-   * getFilename()
+   * Obtém o nome do arquivo.
    * 
    * @return uma instância da classe File
    */
@@ -457,9 +447,10 @@ public class Foto implements Serializable {
   }
 
   /**
-   * setFilename(File filename)
+   * Seta o nome do arquivo
    * 
    * @param filename
+   *          nome completo do arquivo
    * 
    */
   public void setFilename(File filename) {
@@ -468,8 +459,6 @@ public class Foto implements Serializable {
   }
 
   /**
-   * getFormato()
-   * 
    * Retorna o formato de gravação da foto.
    * 
    * @return o formato de gravação da foto (imagem)
@@ -482,14 +471,13 @@ public class Foto implements Serializable {
   }
 
   /**
-   * setFormato(Bitmap.CompressFormat formato)
-   * 
    * Estabelece o formato de gravação da foto
    * 
    * @param formato
    *          formato de gravação da foto
    * 
-   *          Bitmap.CompressFormat.JPEG Bitmap.CompressFormat.PNG
+   *          Bitmap.CompressFormat.JPEG<br>
+   *          Bitmap.CompressFormat.PNG<br>
    * 
    */
   public void setFormato(Bitmap.CompressFormat formato) {
@@ -498,7 +486,7 @@ public class Foto implements Serializable {
   }
 
   /**
-   * getImagem()
+   * Retorna o bitmap contendo a foto.
    * 
    * @return o bitmap da foto ou null
    * 
@@ -509,9 +497,7 @@ public class Foto implements Serializable {
   }
 
   /**
-   * setImagem(Bitmap imagem)
-   * 
-   * Atualiza a imagem da foto e sua dimensão
+   * Atualiza o bitmap da foto e sua dimensão.
    * 
    * @param imagem
    *          o bitmap da foto
