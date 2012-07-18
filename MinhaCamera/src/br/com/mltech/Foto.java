@@ -14,12 +14,13 @@ public class Foto implements Serializable {
   private Bitmap foto;
 
   private String arquivo;
-
+  
   public Foto(Bitmap foto, String arquivo) {
 
     super();
     this.foto = foto;
     this.arquivo = arquivo;
+
   }
 
   @Override

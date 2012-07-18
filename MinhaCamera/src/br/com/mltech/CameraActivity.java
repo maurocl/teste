@@ -2,7 +2,6 @@ package br.com.mltech;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
@@ -13,12 +12,10 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -32,7 +29,9 @@ import br.com.mltech.utils.camera.CameraTools;
  * CameraActivity
  * 
  * Activity responsável por controlar (implementar) as funcionalidades de uma
- * uma câmera fotográfica.
+ * uma câmera fotográfica.<br>
+ * 
+ * Retorna um array contendo as fotos.
  * 
  * @author maurocl
  * 
@@ -48,11 +47,10 @@ public class CameraActivity extends Activity {
 
   // intervalo entre uma foto e outra
   private static int intervalo = 3;
-  
+
   // número de fotos que serão tiradas
   private static int NUM_FOTOS = 3;
 
-  
   // instância da câmera
   private Camera mCamera;
 
@@ -60,7 +58,7 @@ public class CameraActivity extends Activity {
   private CameraPreview mPreview;
 
   // flag usado para controle da aplicação
-  private static int flag = 0;
+  private static int flag = 1;
 
   // Variável usada para desenhar a imagem da câmera na tela
   private FrameLayout layoutPreview;
@@ -81,7 +79,7 @@ public class CameraActivity extends Activity {
   private Handler handler = new TestHandler();
 
   // controla o tipo de disparo da câmera
-  private int tipoDisparo = AUTOMATICO;
+  private int tipoDisparo = 2;
 
   // controla o nº de vezes que a activity foi reinicializada.
   private static int numRestarts = 0;
@@ -91,20 +89,10 @@ public class CameraActivity extends Activity {
 
   // nº de fotos tiradas
   private int contador = 0;
-  
-  
+
   // estrutura para guardar as fotos
-  Foto[] fotos = new Foto[NUM_FOTOS];
-
-  /**
-   * Bitmap
-   */
-  private static Bitmap mImageBitmap;
-
-  /**
-   * Uri onde está localizada a foto
-   */
-  private static Uri mUri;
+  //private Foto[] fotos = new Foto[NUM_FOTOS];
+  private String[] fotos = new String[NUM_FOTOS];
 
   /**
    * identificador da câmera do dispositivo
@@ -115,6 +103,14 @@ public class CameraActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
+
+    // Obtém as informações da intent chamadora.
+    Intent i = getIntent();
+
+    // a intent poderia solicitar:
+    // - nº de fotos
+    // tipo do disparo: manual ou automático
+    //
 
     Log.d(TAG, "*** onCreate() ***");
 
@@ -135,6 +131,7 @@ public class CameraActivity extends Activity {
 
     if (tipoDisparo == MANUAL) {
 
+      // inicialmente exibe apenas o botão capturar
       btnCapture.setVisibility(android.view.View.VISIBLE);
       btnOk.setVisibility(android.view.View.GONE);
       btnNovo.setVisibility(android.view.View.GONE);
@@ -142,6 +139,7 @@ public class CameraActivity extends Activity {
 
     } else if (tipoDisparo == AUTOMATICO) {
 
+      // não exibe botões
       btnCapture.setVisibility(android.view.View.GONE);
       btnOk.setVisibility(android.view.View.GONE);
       btnNovo.setVisibility(android.view.View.GONE);
@@ -156,18 +154,18 @@ public class CameraActivity extends Activity {
 
       public void onClick(View view) {
 
-        if (mCamera == null) {
-          Log.e(TAG, "onClick(btnCapture) - botão Capturar - mCamera is null na hora de acionar o dispatador !!!");
-          return;
-        }
-
         // botão de captura foi pressionado
         Log.i(TAG, "---------------------------------");
         Log.i(TAG, "botão de captura foi pressionado");
         Log.i(TAG, "---------------------------------");
 
-        // dispara uma foto
-        mCamera.takePicture(shutter, null, jpeg);
+        if (mCamera != null) {
+          // dispara uma foto
+          mCamera.takePicture(shutter, null, jpeg);
+        }
+        else {
+          Log.e(TAG, "onClick(btnCapture) - botão Capturar - mCamera is null na hora de acionar o dispatador !!!");
+        }
 
       }
     });
@@ -181,6 +179,9 @@ public class CameraActivity extends Activity {
 
         Log.d(TAG, "onClick(btnNovo) - botão nova foto");
 
+        // reinicia o contador.
+        contador = 0;
+
         // desabilita os botões não usados
         btnOk.setVisibility(android.view.View.GONE);
         btnNovo.setVisibility(android.view.View.GONE);
@@ -189,7 +190,8 @@ public class CameraActivity extends Activity {
         // torna visível o botão capturar
         btnCapture.setVisibility(android.view.View.VISIBLE);
 
-        reiniciaCamera();
+        //reiniciaCamera();
+        startPreview();
 
       }
     });
@@ -208,30 +210,10 @@ public class CameraActivity extends Activity {
 
         Log.d(TAG, "onClick(btnOk) - botão Ok - Confirma a foto");
 
-        CameraInfo cameraInfo = new CameraInfo();
-
-        // obtém informações sobre a câmera
-        Camera.getCameraInfo(cameraId, cameraInfo);
-
-        // The direction that the camera faces
-        Log.i(TAG, "onClick(btnOk) - cameraInfo.facing=" + getStrFacing(cameraInfo.facing));
-
-        // The orientation of the camera image.
-        Log.i(TAG, "onClick(btnOk) - cameraInfo.orientation=" + cameraInfo.orientation);
-
-        if (mImageBitmap == null) {
-          Log.w(TAG, "onClick(btnOk) - mImageBitmap é nulo");
-        }
-
-        // exibe informações sobre a foto
-        ManipulaImagem.showBitmapInfo2(mImageBitmap);
-
-        Log.i(TAG, "onClick(btnOk) - mUri: [" + mUri + "]");
-
         // cria uma intent de resposta
         Intent intent = new Intent();
 
-        intent.setData(mUri);
+        //intent.setData(mUri);
 
         // estabelece o resultado da execução da activity
         setResult(RESULT_OK, intent);
@@ -265,13 +247,15 @@ public class CameraActivity extends Activity {
 
     public void onShutter() {
 
-      Log.d(TAG, "----------------------------------");
-      Log.d(TAG, "onShutter() callback disparado !!!");
-      Log.d(TAG, "----------------------------------");
+      Log.v(TAG, "----------------------------------");
+      Log.v(TAG, "onShutter() callback disparado !!!");
+      Log.v(TAG, "----------------------------------");
+
     }
 
   };
 
+  // Cria nova instância da classe PictureCallback
   final PictureCallback jpeg = new PictureCallback() {
 
     /**
@@ -287,7 +271,6 @@ public class CameraActivity extends Activity {
       // Cria um nome para o arquivo onde será gravado a foto
       File f = FileUtils.obtemNomeArquivo(".jpg");
       String nomeArquivo = f.getAbsolutePath();
-      mUri = Uri.fromFile(f);
 
       try {
 
@@ -301,152 +284,55 @@ public class CameraActivity extends Activity {
       }
 
       // cria o bitmap a partir do array de bytes capturados
-      mImageBitmap = ManipulaImagem.getBitmapFromByteArray(data);
-      
+      Bitmap mImageBitmap = ManipulaImagem.getBitmapFromByteArray(data);
+
       if (mImageBitmap == null) {
         Log.w(TAG, "mImageBitmap é nulo");
       }
+
+      //Foto foto = new Foto(mImageBitmap, nomeArquivo);
+
+      //fotos[contador] = foto;
       
-      Foto foto = new Foto(mImageBitmap,nomeArquivo);
-      
-      fotos[contador] = foto;
+      fotos[contador] = nomeArquivo;
 
       // atualiza o nº de fotos disparadas
       contador++;
 
+      mCamera.startPreview();
+
+      // Atualiza as funcionalidades dos botões
       atualizaBotoes();
 
       // TODO qual é a situação nesse momento ?
       // o que é necessário fazer para ter a visualização da câmera novamente ?
       // pelo que eu entendo, após tirar uma foto a situação da c^maera é stopped, correto ?
 
-      mCamera.startPreview();
-
       // TODO verificar o disparo automático da câmera
       if (tipoDisparo == AUTOMATICO) {
+
         if (contador < NUM_FOTOS) {
           Log.d(TAG, "==>");
           Log.d(TAG, "==> Contador: " + contador);
           Log.d(TAG, "==>");
-          setDisparoAutomatico(3);
+          setDisparoAutomatico(intervalo);
         }
+
         else {
-          
-          confirmaFoto2();
-          
-          exibeFotos();
-          
-          
-          
+
+          confirmaFoto();
+
+          exibeFotos(fotos);
+
         }
       } else if (tipoDisparo == MANUAL) {
-        // não faz nada
-      }
-
-      boolean x = true;
-
-      if (!x) {
-        if (mCamera != null) {
-
-          mCamera.stopPreview();
-
-          mCamera.release();
-
-          mCamera = null;
-
-        }
-
-        mPreview = null;
-        mCamera = CameraTools.getCameraInstance(cameraId);
-
-        // cria uma instância da "tela" de preview
-        mPreview = new CameraPreview(CameraActivity.this, mCamera);
-
-        // TODO verificar o layout da câmera
-        layoutPreview.addView(mPreview);
-
-        // reinicia a visualização
-        startPreview();
-
-        //reiniciaCamera();
-
+        // não faz nada        
+        exibeFotos(fotos);
       }
 
     }
-
 
   };
-
-
-  /**
-   * Exibe informações sobre as fotos.
-   */
-  private void exibeFotos() {
-
-    int i = 0;
-    for(Foto a: fotos) {
-      Log.d(TAG,"Foto: "+i+" - "+a);
-      i++;
-    }
-  }
-  
-  
-  /**
-   * Grava a foto obtida pela câmera
-   * 
-   * @param data
-   * 
-   * @throws Exception
-   * 
-   */
-  private void gravaFoto(String nomeArquivo, byte[] data) throws Exception {
-
-    if (nomeArquivo == null || nomeArquivo.equals("")) {
-      throw new IllegalArgumentException("O nome do arquivo está vazio");
-    }
-
-    if (data == null) {
-      throw new IllegalArgumentException("O array de bytes está vazio");
-    }
-
-    Log.d(TAG, "onPictureTaken() - data: " + fmtFloat((float) (data.length / 1024.0)) + " KBytes");
-
-    FileOutputStream fos = new FileOutputStream(new File(nomeArquivo));
-    fos.write(data);
-    fos.close();
-
-  }
-
-  /**
-   * Atualiza os botões de acordo com o modo de disparo da câmera.
-   */
-  private void atualizaBotoes() {
-
-    if (tipoDisparo == MANUAL) {
-
-      // habilita os botões de Ok, Novo, Cancelar.
-      // permite que a foto seja aprovada (Ok), que seja tirada uma nova foto
-      // (Novo) ou que a operação seja cancelada sem retornar a foto.
-      btnOk.setVisibility(android.view.View.VISIBLE);
-      btnNovo.setVisibility(android.view.View.VISIBLE);
-      btnCancelar.setVisibility(android.view.View.VISIBLE);
-      // torna invisível o botão capturar
-      //btnCapture.setVisibility(android.view.View.GONE);
-      btnCapture.setVisibility(android.view.View.VISIBLE);
-
-    } else if (tipoDisparo == AUTOMATICO) {
-
-      // desabilita botões
-      // TODO aqui deveremos habilitar a opção de aprovação da foto (Ok), Novo
-      // e Cancelar
-      btnOk.setVisibility(android.view.View.GONE);
-      btnNovo.setVisibility(android.view.View.GONE);
-      btnCancelar.setVisibility(android.view.View.GONE);
-      btnCapture.setVisibility(android.view.View.GONE);
-
-    }
-
-  }
 
   @Override
   protected void onStart() {
@@ -454,6 +340,15 @@ public class CameraActivity extends Activity {
     super.onStart();
 
     Log.d(TAG, "*** onStart() ***");
+
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+    super.onRestoreInstanceState(savedInstanceState);
+
+    Log.d(TAG, "*** onRestoreInstanceState() ***");
 
   }
 
@@ -467,23 +362,9 @@ public class CameraActivity extends Activity {
     // obtém uma instância da câmera
     mCamera = CameraTools.getCameraInstance(cameraId);
 
-    Camera.Parameters params = mCamera.getParameters();
-
-    List<String> focusModes = params.getSupportedFocusModes();
-
-    if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-      // auto focus mode is supported
-      Log.d(TAG, "n# focus modes supported: " + focusModes.size());
-      for (String modes : focusModes) {
-        Log.d(TAG, "focus mode: " + modes);
-      }
-    }
+    configParametrosCamera();
 
     Log.i(TAG, "onResume() - ==> mCamera=" + mCamera);
-
-    // --------------------------------------------------------
-    // configura os parâmetros de configuração da câmera
-    // --------------------------------------------------------
 
     if (mPreview == null) {
 
@@ -510,9 +391,8 @@ public class CameraActivity extends Activity {
 
     startPreview();
 
-    // TODO verificar o disparo automático da câmera
     if (tipoDisparo == AUTOMATICO) {
-      setDisparoAutomatico(3);
+      setDisparoAutomatico(intervalo);
     } else if (tipoDisparo == MANUAL) {
       // não faz nada
     }
@@ -552,6 +432,41 @@ public class CameraActivity extends Activity {
 
   }
 
+  /**
+   * Configura os parâmetros de uso da câmera
+   */
+  private void configParametrosCamera() {
+
+    Camera.Parameters params = mCamera.getParameters();
+
+    List<String> focusModes = params.getSupportedFocusModes();
+
+    // --------------------------------------------------------
+    // configura os parâmetros de configuração da câmera
+    // --------------------------------------------------------
+    if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+      // auto focus mode is supported
+      Log.d(TAG, "n# focus modes supported: " + focusModes.size());
+      for (String modes : focusModes) {
+        Log.d(TAG, "focus mode: " + modes);
+      }
+
+    }
+
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+
+    super.onSaveInstanceState(outState);
+
+    Log.d(TAG, "*** onSaveInstanceState() ***");
+
+  }
+
+  /**
+   * Método chamado quando a activity é pausada.
+   */
   @Override
   protected void onPause() {
 
@@ -560,7 +475,6 @@ public class CameraActivity extends Activity {
     if (inPreview) {
       // para a visualização da câmera
       mCamera.stopPreview();
-
     }
 
     // libera a câmera
@@ -590,9 +504,9 @@ public class CameraActivity extends Activity {
     // incrementa o nº de vezes que a activity foi reinicializada.
     numRestarts++;
 
-    Log.d(TAG, "*");
-    Log.d(TAG, "*** onRestart(" + numRestarts + ") ***");
-    Log.d(TAG, "*");
+    Log.w(TAG, "*");
+    Log.w(TAG, "*** onRestart(" + numRestarts + ") ***");
+    Log.w(TAG, "*");
 
   }
 
@@ -621,94 +535,132 @@ public class CameraActivity extends Activity {
 
   }
 
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
+  /**
+   * Exibe informações sobre as fotos.
+   * 
+   * @param fotos
+   *          Array de fotos.
+   * 
+   */
+  private void exibeFotos(Foto[] fotos) {
 
-    super.onSaveInstanceState(outState);
+    if (fotos == null) {
+      Log.d(TAG, "Fotos está vazio");
+      return;
+    }
 
-    Log.d(TAG, "*** onSaveInstanceState() ***");
-
+    int i = 0;
+    for (Foto foto : fotos) {
+      Log.d(TAG, "exibeFotos() - Foto: " + i + " - " + foto);
+      i++;
+    }
   }
 
-  @Override
-  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+  /**
+   * Exibe informações sobre as fotos.
+   * 
+   * @param fotos
+   *          Array de fotos.
+   * 
+   */
+  private void exibeFotos(String[] fotos) {
 
-    super.onRestoreInstanceState(savedInstanceState);
+    if (fotos == null) {
+      Log.d(TAG, "Fotos está vazio");
+      return;
+    }
 
-    Log.d(TAG, "*** onRestoreInstanceState() ***");
+    int i = 0;
+    for (String foto : fotos) {
+      Log.d(TAG, "exibeFotos() - Foto: " + i + " - " + foto);
+      i++;
+    }
+  }
+  
+  /**
+   * Grava a foto obtida pela câmera
+   * 
+   * @param nomeArquivo
+   *          Nome completo do arquivo onde a foto será armazenada
+   * @param data
+   *          Array de bytes contendo a foto (no formato jpeg).
+   * 
+   * @throws Exception
+   *           Caso haja algum problema na gravação da foto.
+   * 
+   */
+  private void gravaFoto(String nomeArquivo, byte[] data) throws Exception {
+
+    if (nomeArquivo == null || nomeArquivo.equals("")) {
+      throw new IllegalArgumentException("O nome do arquivo está vazio");
+    }
+
+    if (data == null) {
+      throw new IllegalArgumentException("O array de bytes está vazio");
+    }
+
+    Log.d(TAG, "onPictureTaken() - data: " + fmtFloat((float) (data.length / 1024.0)) + " KBytes");
+
+    FileOutputStream fos = new FileOutputStream(new File(nomeArquivo));
+    fos.write(data);
+    fos.close();
 
   }
 
   /**
-   * Reinicia a câmera (o preview da câmera).<br>
-   * Usa a variável mCamera.<br>
-   * 
+   * Atualiza os botões de acordo com o modo de disparo da câmera.
    */
-  private void reiniciaCamera() {
+  private void atualizaBotoes() {
 
-    SurfaceHolder surfaceHolder = null;
+    if (tipoDisparo == MANUAL) {
 
-    Log.d(TAG, "reiniciaCamera()");
+      // habilita os botões de Ok, Novo, Cancelar.
+      // permite que a foto seja aprovada (Ok), que seja tirada uma nova foto
+      // (Novo) ou que a operação seja cancelada sem retornar a foto.
+      btnOk.setVisibility(android.view.View.VISIBLE);
+      btnNovo.setVisibility(android.view.View.VISIBLE);
+      btnCancelar.setVisibility(android.view.View.VISIBLE);
+      // torna invisível o botão capturar
+      btnCapture.setVisibility(android.view.View.GONE);
+      //btnCapture.setVisibility(android.view.View.VISIBLE);
+
+    } else if (tipoDisparo == AUTOMATICO) {
+
+      // desabilita botões
+      // TODO aqui deveremos habilitar a opção de aprovação da foto (Ok), Novo
+      // e Cancelar
+      btnOk.setVisibility(android.view.View.GONE);
+      btnNovo.setVisibility(android.view.View.GONE);
+      btnCancelar.setVisibility(android.view.View.GONE);
+      btnCapture.setVisibility(android.view.View.GONE);
+
+    }
+
+  }
+
+  /**
+   * Inicia o preview da câmera (se a câmera não for nula).
+   */
+  private void startPreview() {
 
     if (mCamera != null) {
 
-      // cria uma nova instância de CameraPreview
-      mPreview = new CameraPreview(this, mCamera);
-
-      // adiciona o "tela" de preview ao layout
-      layoutPreview.addView(mPreview);
-
-      mCamera.stopPreview();
-
       mCamera.startPreview();
 
-    } else {
+      inPreview = true;
 
-      Log.w(TAG, "reiniciaCamera() - câmera não pode ser reinicializada pois é nula");
-
-    }
-
-    /*
-     * if (mPreview != null) { surfaceHolder = mPreview.getHolder(); } else {
-     * Log.w(TAG, "reiniciaCamera() - mPreview está nulo"); }
-     */
-
-    try {
-
-      //mCamera.setPreviewDisplay(surfaceHolder);
-      mCamera.setPreviewDisplay(null);
-
-      mCamera.startPreview();
-
-    } catch (IOException e) {
-      Log.w(TAG, "reiniciaCamera() - IOException", e);
     }
 
   }
 
   /**
-   * Retorna uma string com um número formatado usando duas casas decimais
-   * 
-   * @param args
-   *          Número que será formatado
-   * 
-   * @return Uma string com um número formatado.
-   */
-  private static String fmtFloat(float args) {
-
-    java.util.Formatter fmt = new java.util.Formatter();
-
-    String formattedString = fmt.format("%.2f", args).toString();
-
-    return formattedString;
-
-  }
-
-  /**
+   * Prepara a câmera para disparar a captura de uma foto.
    * 
    * @param segundos
+   *          Nº de segundos que serão esperados
    * 
    * @throws IllegalArgumentException
+   *           se o nº de segundos não for válido
    * 
    */
   private void setDisparoAutomatico(int segundos) throws IllegalArgumentException {
@@ -723,10 +675,11 @@ public class CameraActivity extends Activity {
     }
 
     // Exibe o aviso de disparo automático
-    Toast.makeText(getBaseContext(), "disparo automático em " + segundos + " segundos.", Toast.LENGTH_SHORT).show();
+    Toast.makeText(getBaseContext(), "Disparo automático em " + segundos + " segundos.", Toast.LENGTH_SHORT).show();
 
     // cria uma nova mensagem (identificador 1)
     Message msg = new Message();
+    // identificador da mensagem
     msg.what = 1;
     // envia a mensagem
     handler.sendMessageDelayed(msg, segundos * 1000);
@@ -737,45 +690,12 @@ public class CameraActivity extends Activity {
 
   }
 
-  private class TestHandler extends Handler {
-
-    @Override
-    public void handleMessage(Message msg) {
-
-      super.handleMessage(msg);
-
-      // o atributo msg.what permite identificar a mensagem
-      if (msg.what == 1) {
-
-        Toast.makeText(getBaseContext(), "Disparando a captura ...", Toast.LENGTH_SHORT).show();
-
-        // tira uma foto (dispara o obturador da máquina).
-        mCamera.takePicture(shutter, null, jpeg);
-
-      }
-    }
-
-  }
-
   /**
-   * Configura os botões da tela de captura de foto.<br>
+   * Configura os parâmetros da câmera.
    * 
-   * O botão captura somente estará disponível no modo manual.
-   * 
+   * @param efeitoFoto
    * 
    */
-  private void configurarBotoes() {
-
-    // btnOk --> confirma e grava a foto
-
-    // btnNovo --> tira uma nova foto
-
-    // btnCancelar; --> retorna sem uma foto
-
-    // btnCapture; --> captura a foto de forma manual
-
-  }
-
   private void configuraParamCamera(int efeitoFoto) {
 
     // Set the clockwise rotation of preview display in degrees.
@@ -799,12 +719,6 @@ public class CameraActivity extends Activity {
     // Obtém os parâmetros de configuração da câmera
     // Obtém a configuração corrente para esse serviço de câmera.
     Camera.Parameters params = mCamera.getParameters();
-
-    // HashMap<String, List<String>> hash =
-    // CameraTools.getParametersDetail(mCamera);
-
-    // exibe todos os parâmetros de configuração da câmera.
-    //CameraTools.showParametersDetail(mCamera);
 
     // altera o tamanho da foto
     params.setPictureSize(640, 480);
@@ -839,9 +753,7 @@ public class CameraActivity extends Activity {
   }
 
   /**
-   * Confirma a foto tirada, isto é, a foto que foi disparada automaticamente
-   * pelo temporizador.
-   * 
+   * Finaliza a captura das fotos.
    */
   private void confirmaFoto() {
 
@@ -849,42 +761,7 @@ public class CameraActivity extends Activity {
     Log.i(TAG, " => confirmaFoto()");
     Log.i(TAG, "---------------------------------------------------------");
 
-    CameraInfo cameraInfo = new CameraInfo();
-
-    // obtém informações sobre a câmera
-    Camera.getCameraInfo(cameraId, cameraInfo);
-
-    // The direction that the camera faces
-    Log.i(TAG, "confirmaFoto() - cameraInfo.facing=" + cameraInfo.facing);
-
-    // The orientation of the camera image.
-    Log.i(TAG, "confirmaFoto() - cameraInfo.orientation=" + cameraInfo.orientation);
-
-    if (mImageBitmap == null) {
-      Log.w(TAG, "confirmaFoto() - mImageBitmap é nulo");
-    }
-
-    // exibe informações sobre a foto
-    //ManipulaImagem.showBitmapInfo2(mImageBitmap);
-
-    Log.i(TAG, "confirmaFoto() - mUri: [" + mUri + "]");
-
-    Log.d(TAG, "confirmaFoto() - retorno");
-
-    // Finaliza activity com sucesso
-    finalizaActivityResultOk();
-
-  }
-
-  private void confirmaFoto2() {
-
-    Log.i(TAG, "---------------------------------------------------------");
-    Log.i(TAG, " => confirmaFoto2()");
-    Log.i(TAG, "---------------------------------------------------------");
-
-    Log.d(TAG, "Numero de fotos tiradas: " + contador);
-
-    Log.d(TAG, "confirmaFoto() - retorno");
+    Log.d(TAG, "Número de fotos tiradas: " + contador);
 
     // Finaliza activity com sucesso
     finalizaActivityResultOk();
@@ -904,7 +781,18 @@ public class CameraActivity extends Activity {
 
     // Set the data this intent is operating on.
     // A intent retorna a endereço (Uri) onde a foto está armazenada.
-    intent.setData(mUri);
+    //intent.setData(mUri);
+
+    /*
+    String[] xxx = new String[fotos.length];
+    for (int i = 0; i < fotos.length; i++) {
+      xxx[i] = fotos[i].getArquivo();
+      Log.d(TAG,"Foto "+i+": "+xxx[i]);
+    }
+*/
+    
+    //intent.putExtra("br.com.mltech.xxx", xxx);
+    intent.putExtra("br.com.mltech.xxx", fotos);
 
     // estabelece o resultado da execução da activity
     setResult(RESULT_OK, intent);
@@ -922,7 +810,7 @@ public class CameraActivity extends Activity {
 
     Intent intent = new Intent();
 
-    // intent.setData(null);
+    intent.setData(null);
 
     // estabelece o resultado da execução da activity
     setResult(RESULT_CANCELED, intent);
@@ -944,6 +832,13 @@ public class CameraActivity extends Activity {
     finish();
   }
 
+  /**
+   * Exibe parâmetros de configuração da câmera.
+   * 
+   * @param c
+   *          Instância da câmera
+   * 
+   */
   public static void showCameraParameters(Camera c) {
 
     if (c == null) {
@@ -967,6 +862,16 @@ public class CameraActivity extends Activity {
 
   }
 
+  /**
+   * Obtém uma string indicando a face para onde a câmera está apontando (face
+   * traseira ou face frontal)
+   * 
+   * @param facing
+   *          Código do facing.
+   * 
+   * @return Um string indicando se a câmera está virada para traz ou para
+   *         frente.
+   */
   public static String getStrFacing(int facing) {
 
     if (facing == CameraInfo.CAMERA_FACING_BACK) {
@@ -978,21 +883,50 @@ public class CameraActivity extends Activity {
     return null;
   }
 
-  private void initPreview() {
+  /**
+   * Método utilitário que retorna uma string com um número formatado usando
+   * duas casas decimais.
+   * 
+   * @param args
+   *          Número que será formatado
+   * 
+   * @return Uma string com um número formatado.
+   */
+  private static String fmtFloat(float args) {
 
-    Log.i(TAG, "intitPreview()");
+    java.util.Formatter fmt = new java.util.Formatter();
+
+    String formattedString = fmt.format("%.2f", args).toString();
+
+    return formattedString;
+
   }
 
   /**
-   * Inicia o preview da câmera (se a câmera não for nula).
+   * Responsável pelo disparo da captura de uma foto.
+   * 
+   * @author maurocl
+   * 
    */
-  private void startPreview() {
+  private class TestHandler extends Handler {
 
-    if (mCamera != null) {
+    /**
+     * Lida com as mensagens
+     */
+    @Override
+    public void handleMessage(Message msg) {
 
-      mCamera.startPreview();
+      super.handleMessage(msg);
 
-      inPreview = true;
+      // o atributo msg.what permite identificar a mensagem
+      if (msg.what == 1) {
+
+        Toast.makeText(getBaseContext(), "Disparando a captura ...", Toast.LENGTH_SHORT).show();
+
+        // tira uma foto (dispara o obturador da máquina).
+        mCamera.takePicture(shutter, null, jpeg);
+
+      }
 
     }
 
