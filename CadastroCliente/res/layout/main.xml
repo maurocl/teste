@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:height="50sp"
+        android:text="@string/hello"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btTelaCadastro"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/add"
+            android:text="@string/btTelaCadastro" >
+        </Button>
+
+        <Button
+            android:id="@+id/btTelaListagem"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/scroll_view"
+            android:text="@string/btTelaListagem" >
+        </Button>
+        
+        <Button
+            android:id="@+id/btTelaListagemQA"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/scroll_view"
+            android:text="@string/btTelaListagemQA" >
+        </Button>
+
+        <Button
+            android:id="@+id/btTelaGPS"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/signpost"
+            android:text="@string/btTelaGPS" />
+
+        <Button
+            android:id="@+id/btTelaFoto"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/camera"
+            android:text="@string/btTelaFoto" />
+
+        <Button
+            android:id="@+id/btTelaTransmitir"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/transmicao"
+            android:text="@string/btTelaTransmissao" />
+        
+        <Button
+            android:id="@+id/btTelaMapa"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/mapa"
+            android:text="@string/btTelaMapa" />
+
+        <Button
+            android:id="@+id/btTelaSlideShow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/photo_portrait"
+            android:text="@string/btTelaSlideShow" />
+        
+    </LinearLayout>
+
+</LinearLayout>

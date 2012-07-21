@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="fundo_tela">#075155</color>
+	<color name="titulo_janela">#a1b2c3</color>
+	<color name="VERMELHO">#ff0000</color>
+	<color name="AMARELO">#00ffff</color>
+	<color name="VERDE">#00ff00</color>
+	<color name="texto_campo">#FFFF00</color>
+</resources>
