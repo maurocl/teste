@@ -122,7 +122,7 @@ public class Mail extends javax.mail.Authenticator {
 	private Multipart multipart;
 
 	/**
-   * 
+   * Nome do arquivo
    */
 	private String filename;
 
@@ -237,11 +237,11 @@ public class Mail extends javax.mail.Authenticator {
 			// -------------------------------------
 			msg.setFrom(new InternetAddress(from));
 
-			InternetAddress[] xx = new InternetAddress[] { new InternetAddress() };
+			InternetAddress[] inetAddress = new InternetAddress[] { new InternetAddress() };
 
-			xx[0] = new InternetAddress(from);
+			inetAddress[0] = new InternetAddress(from);
 
-			msg.setReplyTo(xx);
+			msg.setReplyTo(inetAddress);
 
 			InternetAddress[] replyTo = new InternetAddress[1];
 
@@ -919,6 +919,7 @@ public class Mail extends javax.mail.Authenticator {
 	 * 
 	 * @throws FileNotFoundException
 	 *           Arquivo não encontrado
+	 *           
 	 * @throws IOException
 	 *           Erro de I/O
 	 * 
@@ -967,8 +968,9 @@ public class Mail extends javax.mail.Authenticator {
 	}
 
 	/**
+	 * O nome do arquivo
 	 * 
-	 * @return
+	 * @return O nome completo do arquivo
 	 */
 	public String getFilename() {
 
@@ -976,8 +978,10 @@ public class Mail extends javax.mail.Authenticator {
 	}
 
 	/**
+	 * Seta o nome do arquivo
 	 * 
-	 * @param filename
+	 * @param filename O nome completo do arquivo.
+	 * 
 	 */
 	public void setFilename(String filename) {
 
@@ -1000,6 +1004,7 @@ public class Mail extends javax.mail.Authenticator {
 
 		@Override
 		protected void onPostExecute(Boolean result) {
+		  
 			if (mProgressDialog != null) {
 				mProgressDialog.dismiss();
 			}
