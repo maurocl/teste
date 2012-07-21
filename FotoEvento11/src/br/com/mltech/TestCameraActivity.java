@@ -51,7 +51,7 @@ public class TestCameraActivity extends Activity {
         Log.d(TAG, "btnOk - botão ok");
 
         // cria uma intent para execução da CameraActivity
-        Intent i = new Intent(getBaseContext(), CameraActivity.class);
+        Intent i = new Intent(getBaseContext(), CameraActivity2.class);
 
         // inicia a activity
         startActivityForResult(i, 100);

@@ -93,6 +93,16 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+         <!-- configura esta activity para usar orientacao landscape -->
+        
+        <activity
+            android:name=".CameraActivity2"
+            android:label="Câmera"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".CameraSimples"
             android:label="Câmera Simples fornecida pelo Android" >

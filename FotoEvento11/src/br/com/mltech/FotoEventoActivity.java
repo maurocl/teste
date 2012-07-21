@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -59,7 +60,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   // Estabelece a classe responsável por tirar as fotos
   private static Class<DummyActivity3> CLASS_FOTOS = DummyActivity3.class;
 
-  //
+  // Arquivo de preferências da aplicação
   private SharedPreferences mPreferences;
 
   // Definição do contrante, evento e participações
@@ -77,7 +78,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   // Nº de participantes até o momento
   private int mNumParticipantes = 0;
 
-  // Indica se o usuário se encontra loggado a aplicação
+  // Indica se o usuário se encontra loggado na aplicação
   private boolean mLogged;
 
   // indica a necessidade do uso de conta de administrador para acesso ao menu
@@ -97,6 +98,13 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     setContentView(R.layout.main);
 
+    Log.d(TAG,"DEVICE="+Build.DEVICE);
+    Log.d(TAG,"ID="+Build.ID);
+    Log.d(TAG,"MANUFACTURER="+Build.MANUFACTURER);
+    Log.d(TAG,"MODEL="+Build.MODEL);
+    Log.d(TAG,"USER="+Build.USER);
+    
+    
     if (savedInstanceState != null) {
       // obtém as informações salvas (se existirem)
     }
@@ -409,13 +417,15 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * Called when an activity you launched exits.
+   * Método de callback chamado após execução de uma Activity.<br>
+   * 
+   * Called when an activity you launched exits.<br>
    * 
    * @param requestCode
    *          código da requisição (da execução da activity)
    * 
    * @param resultCode
-   *          código do resultado da execução da activity
+   *          resultado da execução da activity
    * 
    * @param data
    *          intent de retorno
@@ -487,6 +497,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * 
    * @param resultCode
    *          Resultado da execução da Activity
+   * 
    * @param data
    *          Intent de retorno
    * 
@@ -548,7 +559,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * <p>
    * Processa o resultado da execução da activity responsável por executar um
    * ciclo completo da aplicação que é:
    * <ul>
@@ -589,8 +599,13 @@ public class FotoEventoActivity extends Activity implements Constantes {
       mParticipante = (Participante) data.getSerializableExtra(Constantes.PARTICIPANTE);
       mParticipacao = (Participacao) data.getSerializableExtra(Constantes.PARTICIPACAO);
 
+      int numFotosPolaroid = data.getIntExtra("br.com.mltech.numFotosPolaroid", 0);
+      int numFotosCabine = data.getIntExtra("br.com.mltech.numFotosCabine", 0);
+
       // exibe o resultado da execução da activity
       Log.i(TAG, "resultActivityDummy3() - resultado=" + resultado);
+      Log.i(TAG, "resultActivityDummy3() - numFotosPolaroid=" + numFotosPolaroid);
+      Log.i(TAG, "resultActivityDummy3() - numFotosCabine=" + numFotosCabine);
 
     }
 
@@ -615,6 +630,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * 
    * @param resultCode
    *          Resultado da execução da Activity
+   * 
    * @param data
    *          Intent contendo os dados de retorno (se houverem)
    * 
@@ -789,9 +805,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * <p>
    * Lê as configurações gravadas em um arquivo de preferência e inicializa os
-   * atributos contratante e evento<br />
+   * atributos contratante e evento.<br>
    * 
    * @param name
    *          Identificador do sistema de preferências compartilhadas
@@ -874,6 +889,10 @@ public class FotoEventoActivity extends Activity implements Constantes {
    */
   private void updateListaParticipacao() {
 
+    // TODO como persistir os dados da lista de participação entre uma execução e outra ???
+    // quando a lista deverá ser reiniciada ? 
+    // devemos reinicar a lista quando dermos um 'reset' na aplicação ?
+
     Log.v(TAG, "--------------------------------");
     Log.v(TAG, " updateListaParticipação        ");
     Log.v(TAG, "--------------------------------");
@@ -897,15 +916,14 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     Log.v(TAG, "updateListaParticipação() - nº de participantes até o momento: " + mNumParticipantes);
 
-    Toast.makeText(this, "Obrigado pela participação !", Toast.LENGTH_SHORT).show();
+    //Toast.makeText(this, "Obrigado pela participação !", Toast.LENGTH_SHORT).show();
+    Toast.makeText(this, mParticipacao.getParticipante().getNome() + ", obrigado pela participação !", Toast.LENGTH_SHORT).show();
 
   }
 
   /**
-   * <p>
    * Obtem um bitmap que será exibido na tela inicial da aplicação. Caso nenhum
    * bitmap seja configurado será usado um bitmap padrão.
-   * </p>
    * 
    * @return uma instância do objeto Bitmap contendo a imagem da tela inicial se
    *         configurada ou null caso haja algum erro.
@@ -995,7 +1013,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * 
    * @param requestCode
    *          inteiro originalmente fornecido na chamada ao método
-   *          startActivityForResult() permitindo quye seja identificado quem
+   *          startActivityForResult() permitindo que seja identificado quem
    *          recebeu o resultado.
    * 
    * @return o nome associado ao código usado na execução da Activity.

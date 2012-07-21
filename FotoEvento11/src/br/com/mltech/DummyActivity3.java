@@ -40,19 +40,18 @@ import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
-import br.com.mltech.utils.Transaction;
 import br.com.mltech.utils.camera.CameraTools;
 
 /**
  * DummyActivity3
  * 
- * Activity responsável pela sequencia de passos para obtenção das informações
- * de um participante, tirar uma ou mais fotos e enviar um email.
+ * Activity responsável pela obtenção das informações de um participante, tirar
+ * fotos e enviar email.
  * 
  * @author maurocl
  * 
  */
-public class DummyActivity3 extends Activity implements Constantes, Transaction {
+public class DummyActivity3 extends Activity implements Constantes {
 
   // ------------------
   // constantes
@@ -104,9 +103,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
   private static SharedPreferences mPreferences;
 
-  // Uri da última foto
-  // private static Uri xUri;
-
   // Estado atual da máquina de estado da aplicação
   private static int mEstado = -1;
 
@@ -149,9 +145,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   // nº de fotos efetivamente tiradas
   public static int numFotosTiradas = 0;
 
-  // nº de fotos tiradas
-  private static int indiceFoto = 0;
-
   // nº de fotos tiradas no formato Polaroid
   private static int numFotosPolaroid = 0;
 
@@ -164,12 +157,15 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   // modo da tela (portrait / landscape)
   private static int modoTela;
 
-  // instância do Logger
-  // private static br.com.mltech.utils.Logger logger;
-
   // instância do Logger 2
   private static Logger logger2 = Logger.getLogger("br.com.mltech");
 
+  // Indica o tipo do disparo da câmera (1=Manual,2=Automático)
+  private int tipoDisparo = 2;
+
+  // nº de fotos tiradas
+  //private static int indiceFoto = 0;
+  
   // ---------------------------------------------
   // área de inicialização de variáveis estáticas
   // ---------------------------------------------
@@ -426,11 +422,12 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     // associa um FileHandler ao logger.
     logger2.addHandler(fh);
 
-    Handler[] xxx = logger2.getHandlers();
-    if (xxx != null) {
-      Log.d(TAG, "iniciarLogger() - nº de handlers: " + xxx.length);
-      for (int i = 0; i < xxx.length; i++) {
-        Handler h = xxx[i];
+    Handler[] handlers = logger2.getHandlers();
+    
+    if (handlers != null) {
+      Log.d(TAG, "iniciarLogger() - nº de handlers: " + handlers.length);
+      for (int i = 0; i < handlers.length; i++) {
+        Handler h = handlers[i];        
         Log.d(TAG, "iniciarLogger() - i=" + i + ", h=" + h);
       }
     }
@@ -444,6 +441,8 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
   /**
    * Inicializa as variáveis (da classe) que vão conter o bitmap das molduras:<br>
+   * 
+   * Carrega as molduras configuradas no arquivo de configuração.
    * 
    * mBitmapMolduraPolaroid.<br>
    * mBitmapMolduraCabine.<br>
@@ -510,11 +509,11 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   }
 
   /**
-   * Verifica se existe uma configuração explicita para usar um determinado
-   * identificador de câmera (se o sistema possuir mais de uma câmera). Esse
-   * recurso é usado quando existe mais de uma câmera suportada pelo
-   * dispositivo, como, por exemplo, uma câmera frontal que se deseja usar ao
-   * invés da câmera traseira.
+   * Verifica se existe uma configuração explícita para usar um determinado
+   * identificador de câmera (se o sistema possuir mais de uma câmera).<br>
+   * Esse recurso é usado quando existe mais de uma câmera suportada pelo
+   * dispositivo e desejamos, por exemplo,usar câmera frontal ao invés da câmera
+   * traseira.
    * 
    * @return o identificador da câmera frontal ou 0 caso esse parâmetro não
    *         esteja cadastrado
@@ -550,6 +549,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
   /**
    * Lê as configurações para envio de email usando uma conta externa.<br>
+   * 
    * <br>
    * <u>IMPORTANTE</u>: Usa a variável membro: <b>mailServer.</b><br>
    * <br>
@@ -699,6 +699,8 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * Inicia a Activity Participante. Passa como parâmetro as informações sobre o
    * Evento.<br>
    * 
+   * Inicia a activity para obter as informações a respeito de um participante.
+   * 
    * Aguarda as informações sobre o participante do evento.
    * 
    */
@@ -734,7 +736,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     if (resultCode == RESULT_CANCELED) {
 
       // operação cancelada
-      Log.d(TAG, "resultCode=RESULT_CANCELED - Participante cancelou sua participação");
+      Log.d(TAG, "resultActivityParticipante() - resultCode=RESULT_CANCELED - Participante cancelou sua participação");
 
       // Limpa as informações do participante
       mParticipante = null;
@@ -769,8 +771,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     // inicia a activity Participação
     startActivityParticipacao();
-
-    // obs: nesse ponto já sabemos qual será o tipo da foto
 
     // Atualiza o estado da máquina de estados
     setEstado(1);
@@ -1010,6 +1010,9 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     // obtém a intent responsável pela obtenção da foto
     Intent intent = getIntentTirarFoto();
 
+    intent.putExtra("NUM_FOTOS", 1);
+    intent.putExtra("TIPO_DISPARO", tipoDisparo);
+
     // inicia a activity selecionada
     startActivityForResult(intent, TIRA_FOTO_POLAROID);
 
@@ -1061,11 +1064,21 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
       Log.d(TAG, "processaActivityResultPolaroid() - data.getData()= " + data.getData());
 
-      outputFileUri = data.getData();
+      String[] fotoPolaroid = null;
 
-      Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
+      if (data.hasExtra("br.com.mltech.fotos")) {
+        fotoPolaroid = (String[]) data.getSerializableExtra("br.com.mltech.fotos");
+      }
 
-      logger2.info("processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
+      if (fotoPolaroid != null) {
+        File temp1 = new File(fotoPolaroid[0]);
+        outputFileUri = Uri.fromFile(temp1);
+      }
+      else {
+        Log.w(TAG, "processaActivityResultPolaroid() - nenhum dado retornou");
+      }
+
+      Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri= " + outputFileUri);
 
     } else {
 
@@ -1140,17 +1153,15 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   }
 
   /**
-   * executaActivityTiraFotoCabine()
-   * 
    * Activity responsável por obter as três fotos que irão compor a foto no
    * formato cabine.
    * 
    */
   private void executaActivityTiraFotoCabine() {
 
-    Log.i(TAG, "==>");
-    Log.i(TAG, "==> executaActivityTiraFotoCabine() - indiceFoto: " + indiceFoto);
-    Log.i(TAG, "==>");
+
+    Log.i(TAG, "executaActivityTiraFotoCabine()");
+
 
     // TODO melhorar a construção abaixo
     // gera o nome de um arquivo onde será armazenada a foto
@@ -1169,9 +1180,13 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     // cria uma intent para "tirar a foto"
     Intent intent = getIntentTirarFoto();
 
+    intent.putExtra("NUM_FOTOS", 3);
+    intent.putExtra("TIPO_DISPARO", tipoDisparo);
+
     // exibe informações sobre a intent criada
     Log.d(TAG, "executaActivityTiraFotoCabine() - intent: " + intent);
 
+    // TODO - verificar a linha abaixo
     Log.d(TAG, "executaActivityTiraFotoCabine() - " + intent.getParcelableExtra("br.com.mltech.outputFileUri"));
 
     // inicia a activity responsável por obter a foto usando a intent criada.
@@ -1198,73 +1213,44 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     if (resultCode == RESULT_OK) {
 
-      // activity executada com sucesso
-      Log.i(TAG, "processaActivityResultCabine() -------------------");
-      Log.i(TAG, "processaActivityResultCabine() - indiceFoto=" + indiceFoto);
-      Log.i(TAG, "processaActivityResultCabine() -------------------");
-
       if (data != null) {
 
         outputFileUri = data.getData();
 
-        Log.i(TAG, "processaActivityResultCabine() - outputFileUri: " + outputFileUri);
+        Log.d(TAG, "processaActivityResultPolaroid() - data.getData()= " + data.getData());
 
-        // gera o bitmap com a foto
-        Bitmap b = ManipulaImagem.criaBitmap(outputFileUri);
+        String[] fotosCabine = null;
 
-        // cria uma instância da classe Foto
-        // fornecendo o nome do arquivo onde a foto
-        // deve ser armazenada e o bitmap contendo a foto
-        Foto foto = new Foto(file.getAbsolutePath(), b);
-
-        try {
-
-          // grava a foto
-          foto.gravar();
-
-          Log.v(TAG, "processaActivityResultCabine() - Foto: " + file.getAbsolutePath() + " gravada com sucesso");
-          Log.d(TAG, "processaActivityResultCabine() - Foto: " + file.getPath() + " gravada com sucesso");
-          Log.d(TAG, "processaActivityResultCabine() - Foto: " + file.getName() + " gravada com sucesso");
-
-        } catch (FileNotFoundException e) {
-          Log.w(TAG, "processaActivityResultCabine() - Arquivo não encontrado", e);
-
-        } catch (IOException e) {
-          Log.w(TAG, "processaActivityResultCabine() - Exceção de I/O lançada: ", e);
-
+        if (data.hasExtra("br.com.mltech.fotos")) {
+          fotosCabine = (String[]) data.getSerializableExtra("br.com.mltech.fotos");
         }
 
-        // armazena a foto no índice dado pela variável indiceFoto no array de
-        // fotos do objeto FotoCabine
-        fotoCabine.setFoto(indiceFoto, foto);
+        for (int i = 0; i < fotosCabine.length; i++) {
+
+          // gera o bitmap com a foto
+          Bitmap b = ManipulaImagem.criaBitmap(fotosCabine[i]);
+
+          Foto foto = new Foto(file.getAbsolutePath(), b);
+
+          // armazena a foto no índice dado pela variável indiceFoto no array de
+          // fotos do objeto FotoCabine
+          fotoCabine.setFoto(i, foto);
+
+        }
 
       }
 
-      // incrementa o índice usado para armazenar a foto obtida no array de
-      // fotos
-      indiceFoto++;
+      // monta uma foto do tipo cabine
+      meuBitmap = montaFotoCabine(fotoCabine);
 
-      if (indiceFoto < 3) {
-
-        // obtem uma outra foto
-        executaActivityTiraFotoCabine();
-
-      } else {
-
-        // três foto já foram obtidas (tiradas)
-        // obtém um bitmap composto pelas três fotos
-        meuBitmap = fimExecucaoActivityTiraFotoCabine();
-
-        if (meuBitmap == null) {
-          Log.w(TAG, "processaActivityResultCabine() - bitmap retornado é nulo");
-        }
-
+      if (meuBitmap == null) {
+        Log.w(TAG, "processaActivityResultCabine() - bitmap retornado é nulo");
       }
 
     } else if (resultCode == RESULT_CANCELED) {
 
       // operação cancelada
-      Log.w(TAG, "processaActivityResultCabine() - Operação cancelada pelo usuário na foto: " + indiceFoto);
+      Log.w(TAG, "processaActivityResultCabine() - Operação cancelada pelo usuário.");
       // TODO aqui deveremos "cancelar" a fotoCabine fazendo-a null (entre
       // outras coisas)
       meuBitmap = null;
@@ -1275,95 +1261,40 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     }
 
-    if (indiceFoto >= 3) {
+    // cria um novo arquivo para guardar a foto processada
+    String arquivo = (FileUtils.obtemNomeArquivo(".png")).getAbsolutePath();
 
-      if (meuBitmap == null) {
-        Log.w(TAG, "processaActivityResultCabine() - não foi possível criar o bitmap");
-        return null;
+    // cria uma instância de Foto para guardar a foto processada, isto é, a foto no formato cabine já com a moldura.
+    Foto fotoProcessada = new Foto(arquivo, meuBitmap);
+
+    boolean gravouFotoProcessada = false;
+
+    try {
+
+      // grava a foto
+      gravouFotoProcessada = fotoProcessada.gravar();
+
+      if (gravouFotoProcessada == false) {
+        Log.w(TAG, "processaActivityResultCabine() - fotoProcessada não foi gravada !!!");
       }
 
-      // cria um novo arquivo para guardar a foto processada
-      String arquivo = (FileUtils.obtemNomeArquivo(".png")).getAbsolutePath();
+    } catch (FileNotFoundException e) {
+      Log.w(TAG, "processaActivityResultCabine() - arquivo não foi encontrado", e);
 
-      // cria uma instância de Foto para guardar a foto processada, isto é, a foto no formato cabine já com a moldura.
-      Foto fotoProcessada = new Foto(arquivo, meuBitmap);
+    } catch (IOException e) {
+      Log.w(TAG, "processaActivityResultCabine() - erro de I/O", e);
 
-      boolean gravouFotoProcessada = false;
-
-      try {
-
-        // grava a foto
-        gravouFotoProcessada = fotoProcessada.gravar();
-
-        if (gravouFotoProcessada == false) {
-          Log.w(TAG, "processaActivityResultCabine() - fotoProcessada não foi gravada !!!");
-        }
-
-      } catch (FileNotFoundException e) {
-        Log.w(TAG, "processaActivityResultCabine() - arquivo não foi encontrado", e);
-
-      } catch (IOException e) {
-        Log.w(TAG, "processaActivityResultCabine() - erro de I/O", e);
-
-      }
-
-      String s = null;
-
-      // retorna o nome do arquivo onde a foto foi armazenada
-      if ((fotoProcessada != null) && (gravouFotoProcessada == true)) {
-        s = fotoProcessada.getArquivo();
-      }
-
-      // retorna o nome do arquivo contendo a foto processada ou null em caso de erro.
-      return s;
-      
-    }
-    else {
-      return null;
     }
 
-  
+    String s = null;
 
-  }
-
-  /**
-   * Processa as três foto tiradas para montar uma foto formato cabine.<br>
-   * Cada foto é convertida para o tamanho 3x4.<br>
-   * 
-   * Usa a variável fotoCabine
-   * 
-   * @return uma instância de Foto ou null em caso de algum problema.
-   */
-  private Bitmap fimExecucaoActivityTiraFotoCabine() {
-
-    // Após tirar as três fotos é necessário:
-    // - converter as foto para o formato 3x4
-    // - montar a foto formato cabine juntando as fotos 3x4 e a moldura
-    //
-    // fotoCabine.getFoto[0] --> Foto
-    // fotoCabine.getFoto[1] --> Foto
-    // fotoCabine.getFoto[2] --> Foto
-
-    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - inicio");
-
-    if (fotoCabine == null) {
-      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - fotoCabine é nula");
-      return null;
+    // retorna o nome do arquivo onde a foto foi armazenada
+    if ((fotoProcessada != null) && (gravouFotoProcessada == true)) {
+      s = fotoProcessada.getArquivo();
     }
 
-    // Exibe o estado da instância da classe FotoCabine
-    Log.d(TAG, fotoCabine.toString());
-
-    Log.d(TAG, "fimExecucaoActivityTiraFotoCabine() - agora é montar a foto cabine ...");
-
-    // monta uma foto do tipo cabine
-    Bitmap meuBitmap = montaFotoCabine(fotoCabine);
-
-    if (meuBitmap == null) {
-      Log.w(TAG, "fimExecucaoActivityTiraFotoCabine() - bitmap retornado é nulo");
-    }
-
-    return meuBitmap;
+    // retorna o nome do arquivo contendo a foto processada ou null em caso de erro.
+    return s;
 
   }
 
@@ -1374,7 +1305,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * @param fotoCabine
    *          Instância da classe FotoCabine
    * 
-   * @return Bitmap contendo a foto formatada ou null em caso de erro
+   * @return Bitmap contendo a foto formatada ou null em caso de erro.
    * 
    * @throws IOException
    * 
@@ -1389,7 +1320,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
       return null;
     }
 
-    // cria um array contendo referências a três instâncias de Bitmap
+    // cria um array contendo referências a três imagens (três fotos que serão combinadas).
     Bitmap[] fotosRedimesionadas = new Bitmap[3];
 
     // o array fotos possui uma posição para cada foto
@@ -1398,15 +1329,15 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     //
     // processa cada uma das fotos e faz o redimensionamento
-    // para o tamanho 3x4
+    // para o tamanho 3cm x 4cm.
     //
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < fotos.length; i++) {
 
-      Log.i(TAG, "montaFotoCabine() - foto[" + i + "] = " + fotos[i]);
+      Log.i(TAG, "montaFotoCabine() - Processando foto[" + i + "] = " + fotos[i]);
 
       // transforma cada foto em 3x4
       // gera um bitmap com a imagem redimensionada em 3x4
-      fotosRedimesionadas[i] = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 113, 151);
+      fotosRedimesionadas[i] = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 151, 131);
 
     }
 
@@ -1447,7 +1378,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     if (meuArquivo != null) {
       Log.d(TAG, "meuMetodo() - meuArquivo=" + meuArquivo);
-      // logger.println("meuMetodo() - meuArquivo=" + meuArquivo);
       logger2.info("meuMetodo() - meuArquivo=" + meuArquivo);
     } else {
       Log.d(TAG, "meuMetodo() - meuArquivo retornou nulo");
@@ -1462,6 +1392,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     // --------------------------------------------------------------
 
+    /*
     String msg = null;
 
     // executa ação baseada no requestCode
@@ -1482,11 +1413,13 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
         break;
 
     }
+    */
 
     // TODO aqui é necessário a criação de uma thread pois a proxima operação é
     // muito demorada !!!
     // showAlert(msg);
-    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+
+    //Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
     File fileMeuArquivoPadrao = null;
 
@@ -1512,12 +1445,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     logger2.info("meuMetodo() - Enviando email com foto em: " + Uri.fromFile(fileMeuArquivoPadrao));
 
     try {
-
-      // Transaction transacao = null;
-
-      // TransactionTask task = new TransactionTask(this, transacao, 0);
-
-      // task.execute();
 
       // Envia o email com a foto
       enviaEmail(Uri.fromFile(fileMeuArquivoPadrao));
@@ -1618,13 +1545,13 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   }
 
   /**
-   * Valida se existe informações suficientes para envio do email.<br>
+   * Valida se existe informações suficientes para envio do email.<br><br>
    * 
-   * As condições necessário verificadas são:<br>
+   * As seguintes condições são verificadas :<br>
    * <ul>
-   * <li>contratante
-   * <li>participante
-   * <li>foto
+   * <li>Existência de um Contratante;
+   * <li>Existência de um Participante;
+   * <li>Existência de uma Foto;
    * </ul>
    * 
    * @param lastUri
@@ -1642,7 +1569,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
     Log.d(TAG, "validaDadosEmail() - lastUri=" + lastUri);
 
     if (getEstado() < 2) {
-      Log.d(TAG, "validaDadosEmail() - Foto não foi tirada");
+      Log.w(TAG, "validaDadosEmail() - Foto não foi tirada");
       erro = true;
     }
 
@@ -1856,12 +1783,16 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * 
    * @param emailParticipante
    *          Email do participante do evento
+   * 
    * @param emailContratante
    *          Email do contratante do evento
+   * 
    * @param subject
    *          Assunto do Email
+   * 
    * @param text
    *          Corpo do Email
+   * 
    * @param imageUri
    *          Uri onde se encontra a foto
    * 
@@ -2037,7 +1968,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
 
     Log.d(TAG, "aposEnviarEmail() - email enviado com sucesso");
 
-    // logger.println("aposEnviarEmail() - email enviado com sucesso");
     logger2.info("aposEnviarEmail() - email enviado com sucesso");
 
     // mensagem exibida após envio de email
@@ -2096,10 +2026,11 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
       // estado final atingido com sucesso
       Log.i(TAG, "estadoFinal() - final do processamento");
 
-      // retorna as informações sobre o participante e sobre sua
-      // participação
+      // retorna as informações sobre o participante e sobre sua participação
       intent.putExtra(PARTICIPANTE, mParticipante);
       intent.putExtra(PARTICIPACAO, mParticipacao);
+      intent.putExtra("br.com.mltech.numFotosPolaroid", numFotosPolaroid);
+      intent.putExtra("br.com.mltech.numFotosCabine", numFotosCabine);
 
       intent.putExtra("br.com.mltech.result", "OK");
 
@@ -2248,17 +2179,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
         break;
 
     }
-
-    // TODO avaliar se o código abaixo deve ser removido.
-    /*
-     * 
-     * // se a aplicação estiver executando em Landscape a questão abaixo não
-     * deve ser alterada if (requestCode == TIRA_FOTO_POLAROID) { Log.d(TAG,
-     * "onActivityResult() - >>> alterando a orientação da tela (se necessário) - requestCode="
-     * + requestCode); logger2.info("onActivityResult() - requestCode=" +
-     * requestCode); //atualizaModoTela(Configuration.ORIENTATION_PORTRAIT);
-     * atualizaModoTela(modoTela); }
-     */
 
   }
 
@@ -2427,7 +2347,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * Formata uma foto no formato Polaroid.<br>
    * 
    * Recebe o endereço de uma foto;<br>
-   * redimensiona a foto;<br>
+   * Redimensiona a foto;<br>
    * Insere a moldura e transforma a foto no tamanho 9x11<br>
    * 
    * @param uriFotoOriginal
@@ -2517,7 +2437,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * colocadas na vertical, isto é, uma embaixo da outra.
    * 
    * <pre>
-   * 
    * |--------|
    * |        |
    * | foto1  |
@@ -2534,8 +2453,6 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * |        |
    * |        |
    * |--------|
-   * 
-   * 
    * </pre>
    * 
    * 
@@ -2589,11 +2506,9 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * Cria uma nova foto (bitmap) a partir de três fotos recebidas.<br>
    * 
    * <pre>
-   * 
    * |foto1|
    * |foto2|
    * |foto3|
-   * 
    * </pre>
    * 
    * @param bmFoto1
@@ -2748,12 +2663,16 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
    * 
    * @param mEmail
    *          identificador da conta de email
+   * 
    * @param mSenha
    *          senha da conta de email
+   * 
    * @param mHost
    *          endereço do servidor SMTP
+   * 
    * @param mPort
    *          porta do servidor SMTP
+   * 
    * @param mRemetente
    *          remetente do email
    * 
@@ -2817,25 +2736,7 @@ public class DummyActivity3 extends Activity implements Constantes, Transaction 
   }
 
   /**
-   * 
-   */
-  public void execute() throws Exception {
-
-    // TODO Auto-generated method stub
-
-  }
-
-  /**
-   * 
-   */
-  public void updateView() {
-
-    // TODO Auto-generated method stub
-
-  }
-
-  /**
-   * Atualiza a orientação atual da tela para outro modo (se necessário). <br>
+   * Atualiza a orientação atual da tela para outro modo (se necessário).<br>
    * 
    * Configuration.ORIENTATION_LANDSCAPE ou Configuration.ORIENTATION_PORTRAIT
    * 

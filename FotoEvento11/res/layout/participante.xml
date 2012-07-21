@@ -28,6 +28,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
             android:text="Email:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -52,7 +53,7 @@
             android:layout_height="wrap_content"
             android:hint="Telefone"
             android:inputType="phone" />
-     
+
         <!-- Parâmetro Opcional 1 -->
 
         <TextView
@@ -156,9 +157,7 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="Cancelar" />
-            
         </LinearLayout>
-        
     </LinearLayout>
 
 </ScrollView>
