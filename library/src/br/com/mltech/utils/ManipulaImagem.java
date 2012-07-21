@@ -488,7 +488,7 @@ public class ManipulaImagem {
       bmOverlay = overlay3(bmFoto, bmMoldura);
     }
 
-    Log.d(TAG, "aplicaMolduraFoto() - bmOverlay=" + getStringBitmapSize(bmOverlay));
+    Log.v(TAG, "aplicaMolduraFoto() - bmOverlay=" + getStringBitmapSize(bmOverlay));
 
     return bmOverlay;
 
@@ -510,15 +510,13 @@ public class ManipulaImagem {
       bmOverlay = overlay4(bmFoto, bmMoldura);
     }
 
-    Log.d(TAG, "aplicaMolduraFoto() - bmOverlay=" + getStringBitmapSize(bmOverlay));
+    Log.v(TAG, "aplicaMolduraFoto() - bmOverlay=" + getStringBitmapSize(bmOverlay));
 
     return bmOverlay;
 
   }
 
   /**
-   * carregaFoto(String foto)
-   * 
    * Obtém um bitmap a partir de um arquivo
    * 
    * @param foto
@@ -544,8 +542,6 @@ public class ManipulaImagem {
   }
 
   /**
-   * criaBitmap(Uri uri)
-   * 
    * Tenta criar um bitmap a partir do um arquivo identificado pela Uri
    * fornecida.
    * 
@@ -559,7 +555,7 @@ public class ManipulaImagem {
 
     if (uri == null) {
       // Uri vazia
-      Log.d(TAG, "criaBitmap() - não foi possível criar o bitmap pois a Uri fornecida está vazia");
+      Log.v(TAG, "criaBitmap() - não foi possível criar o bitmap pois a Uri fornecida está vazia");
       return null;
     }
 
@@ -588,7 +584,7 @@ public class ManipulaImagem {
 
     if (arquivo == null) {
       // arquivo é nulo
-      Log.d(TAG, "criaBitmap() - não foi possível cria o bitmap pois o nome de arquivo fornecido está vazio");
+      Log.v(TAG, "criaBitmap() - não foi possível cria o bitmap pois o nome de arquivo fornecido está vazio");
       return null;
     }
 
@@ -615,7 +611,7 @@ public class ManipulaImagem {
   public static Bitmap criaBitmap(File file) {
 
     if (file == null) {
-      Log.d(TAG, "criaBitmap() - não foi possível criar o bitmap pois arquivo possui referencia nula");
+      Log.v(TAG, "criaBitmap() - não foi possível criar o bitmap pois arquivo possui referencia nula");
       return null;
     }
 
@@ -666,7 +662,7 @@ public class ManipulaImagem {
     // cria o novo bitmap com as medidas calculadas anteriormnete
     cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
-    // Obtem um cancas para poder desenhar no bitmap
+    // Obtem um canvas para poder desenhar no bitmap
     Canvas comboImage = new Canvas(cs);
 
     // desenha o bitmap c
@@ -701,68 +697,62 @@ public class ManipulaImagem {
   }
 
   /**
-   * exibeBitmap(ImageView imageView, Bitmap bitmap)
-   * 
    * Exibe um bitmap em um imageView.
    * 
    * @param imageView
    *          Componente onde o bitmap será exibido
+   * 
    * @param bitmap
    *          Bitmap contendo a imagem
    */
   public static void exibeBitmap(ImageView imageView, Bitmap bitmap) {
 
     if ((imageView != null) && (bitmap != null)) {
-      // imageView.setImageBitmap(bitmap);
       updateBitmap(bitmap, imageView);
     }
 
   }
 
   /**
-   * extractAlpha(Bitmap bm)
-   * 
-   * <p>
    * Extrai o compoente alpha de um bitmap. <br>
+   * 
    * Returns a new bitmap that captures the alpha values of the original. <br>
    * Retorna um bitmap que captura os valores alpha do bitmap original. Esse
    * bitmap pode ser desenhado com Canvas.drawBitmap, onde as cores serão pegas
    * pela paint e passadas a chamada draw <br>
+   * 
    * This may be drawn with Canvas.drawBitmap(), where the color(s) will be
    * taken from the paint that is passed to the draw call.
    * 
-   * @param bm
+   * @param bitmap
    *          Bitmap original
    * 
-   * @return u um novo bitmap contendo o canal alpha do bitmap original ma copia
-   *         do bitmap sem o componente alpha
+   * @return Um novo bitmap contendo apenas canal alpha do bitmap original na
+   *         cópia do bitmap sem o componente alpha
    */
-  public static Bitmap extractAlpha(Bitmap bm) {
+  public static Bitmap extractAlpha(Bitmap bitmap) {
 
-    if (bm.hasAlpha()) {
+    if (bitmap.hasAlpha()) {
 
-      Log.d(TAG, "Bitmap has alpha()");
+      Log.v(TAG, "Bitmap has alpha()");
 
     } else {
 
-      Log.d(TAG, "Bitmap hasn't alpha()");
+      Log.v(TAG, "Bitmap hasn't alpha()");
 
     }
 
-    Bitmap b = bm.extractAlpha();
+    Bitmap novoBitmap = bitmap.extractAlpha();
 
-    return b;
+    return novoBitmap;
 
   }
 
   /**
-   * getBitmapFromFile(String filename)
-   * 
-   * <p>
    * Lê um bitmap armazenado em um arquivo do sistema de arquivos.
    * 
    * @param filename
-   *          Nome do arquivo (fullname)
+   *          Nome completo do arquivo (fullname)
    * 
    * @return o bitmap decodificado ou null caso o bitmap não possa ser
    *         decodificado.
@@ -795,8 +785,6 @@ public class ManipulaImagem {
   }
 
   /**
-   * getBitmapFromFile(File f)
-   * 
    * Lê um bitmap armazenado em um arquivo localizado no SDCARD
    * 
    * @param f
@@ -837,12 +825,6 @@ public class ManipulaImagem {
   }
 
   /**
-   * getBitmapFromByteArray(byte[] data)
-   * 
-   * <p>
-   * Parameters: <br>
-   * <br>
-   * 
    * data byte array of compressed image data <br>
    * offset into imageData for where the decoder should begin parsing. <br>
    * length the number of bytes, beginning at offset, to parse
@@ -854,7 +836,7 @@ public class ManipulaImagem {
    */
   public static Bitmap getBitmapFromByteArray(byte[] data) {
 
-    Bitmap bm = null;
+    Bitmap bitmap = null;
 
     if (data != null) {
 
@@ -866,19 +848,17 @@ public class ManipulaImagem {
 
       // Decode an immutable bitmap from the specified byte array.
       // decodifica um bitmap imutável a partir de um array de bytes
-      bm = BitmapFactory.decodeByteArray(data, offset, length);
+      bitmap = BitmapFactory.decodeByteArray(data, offset, length);
 
     }
 
     // retorna o bitmap ou null em caso de erro
-    return bm;
+    return bitmap;
 
   }
 
   /**
-   * getBitmapFromResource(Resources res, int id)
-   * 
-   * <p>Obtém um bitmap armazenado em um recurso.<br>
+   * Obtém um bitmap armazenado em um recurso.<br>
    * 
    * Exemplo de uso: getBitmapFromResource(getResources(), R.drawable.foto1)
    * 
@@ -901,46 +881,49 @@ public class ManipulaImagem {
   }
 
   /**
-   * getScaledBitmap(Bitmap bm, int factor)
+   * Cria um novo bitmap, redimensionado a partir do bitmap já existente.<br><br>
    * 
-   * Cria um novo bitmap, escalado (scaled) a partir do bitmap já existente.
+   * Se o fator for 100 então o bitmap não terá seu tamanho alterado.<br>
+   * Se o fator for 90 então o bitmap terá seu tamanho reduzido pelo fator 90/100, isto é,
+   * terá uma redução de 10% de seu tamanho original.
    * 
-   * @param bm
+   * @param bitmap
    *          Bitmap
+   * 
    * @param factor
    *          fator de redução (0 a 100)
    * 
-   * @return um Bitmap de tamanho escalado
+   * @return um Bitmap de tamanho reduzido
    */
-  public static Bitmap getScaledBitmap(Bitmap bm, int factor) {
+  public static Bitmap getScaledBitmap(Bitmap bitmap, int factor) {
 
-    // largura final
-    int dstWidth = bm.getWidth() * factor / 100;
+    if(factor>100) {
+      throw new IllegalArgumentException("Fator de redução maior que 100");
+    }
     
+    // largura final
+    int dstWidth = bitmap.getWidth() * factor / 100;
+
     // altura final
-    int dstHeight = bm.getHeight() * factor / 100;
+    int dstHeight = bitmap.getHeight() * factor / 100;
 
     boolean filter = true;
 
     // Creates a new bitmap, scaled from an existing bitmap
-    Bitmap bitmap = Bitmap.createScaledBitmap(bm, dstWidth, dstHeight, filter);
+    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, dstWidth, dstHeight, filter);
 
-    //showBitmapInfo(bitmap);
-
-    return bitmap;
+    return scaledBitmap;
 
   }
-
+  
   /**
-   * getScaledBitmap2(Bitmap bm, int newWidth, int newHeight)
-   * 
    * Esse método retorna um novo bitmap redimensionado pela largura e altura
-   * fornecida
+   * fornecida.<br>
    * 
    * Observe que não é feito nenhuma verificacao quanto ao aspect ratio do
-   * bitmap que fica por conta do usuário do método
+   * bitmap que fica por conta do usuário do método.<br>
    * 
-   * @param bm
+   * @param bitmap
    *          Bitmap original
    * 
    * @param newWidth
@@ -950,37 +933,41 @@ public class ManipulaImagem {
    *          nova altura (solicitada)
    * 
    * @return um bitmap com seu tamanho alterado segundo as informações
-   *         fornecidas
+   *         fornecidas ou null em caso de algum erro.
    * 
    */
-  public static Bitmap getScaledBitmap2(Bitmap bm, int newWidth, int newHeight) {
+  public static Bitmap getScaledBitmap2(Bitmap bitmap, int newWidth, int newHeight) {
 
-    if (bm == null) {
+    if (bitmap == null) {
       Log.w(TAG, "getScaledBitmap2() - não é possível redimensionar um bitmap nulo");
       return null;
     }
 
-    Log.v(TAG, "getScaledBitmap2() - tamanho do bitmap original : " + getStringBitmapSize(bm));
+    Log.v(TAG, "getScaledBitmap2() - tamanho do bitmap original : " + getStringBitmapSize(bitmap));
 
-    Log.d(TAG, "getScaledBitmap2() - tamanho redimensionado:  largura=" + newWidth + ", altura=" + newHeight);
+    Log.v(TAG, "getScaledBitmap2() - tamanho redimensionado:  largura=" + newWidth + ", altura=" + newHeight);
 
     boolean filter = true;
 
     // Creates a new bitmap, scaled from an existing bitmap
-    // Cria um novo bitmap redimensionado a partir de um bitmap existente
-    Bitmap bitmap = Bitmap.createScaledBitmap(bm, newWidth, newHeight, filter);
+    // Cria um novo bitmap redimensionado a partir de um bitmap existente.
+    Bitmap bitmapRedimensionado = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, filter);
 
     // retorna o novo bitmap
-    return bitmap;
+    return bitmapRedimensionado;
 
   }
 
   /**
    * getBitmapRegion(String filename, Rect rect, Options options)
    * 
-   * @param filename nome do arquivo
-   * @param rect The rectangle that specified the region to be decode. 
-   * @param options null-ok; Options that control downsampling. inPurgeable is not supported.
+   * @param filename
+   *          nome do arquivo
+   * @param rect
+   *          The rectangle that specified the region to be decode.
+   * @param options
+   *          null-ok; Options that control downsampling. inPurgeable is not
+   *          supported.
    * 
    * @return The decoded bitmap, or null if the image data could not be decoded.
    * 
@@ -1024,9 +1011,12 @@ public class ManipulaImagem {
   /**
    * getRotatedBitmap(Resources res, int id, int angle)
    * 
-   * @param res Resource
-   * @param id identificador do recurso
-   * @param angle ângulo de rotação
+   * @param res
+   *          Resource
+   * @param id
+   *          identificador do recurso
+   * @param angle
+   *          ângulo de rotação
    * 
    * @return Um bitmap rotacionado
    */
@@ -1049,9 +1039,10 @@ public class ManipulaImagem {
   /**
    * getRoundedCornerBitmap(Bitmap bitmap)
    * 
-   * @param bitmap Bitmap de origem
+   * @param bitmap
+   *          Bitmap de origem
    * 
-   * @return um bitmap 
+   * @return um bitmap
    */
   public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
 
@@ -1126,13 +1117,11 @@ public class ManipulaImagem {
   }
 
   /**
-   * gravaBitmapArquivo(Bitmap bm, String filename)
-   * 
-   * <p>Grava o bitmap (bm) em um arquivo (filename).<br>
+   * Grava o bitmap (bm) em um arquivo (filename).<br>
    * 
    * Por padrão, o bitmap será gravado no formato .png e sem compressão.
    * 
-   * @param bm
+   * @param bitmap
    *          Bitmap contendo a imagem
    * 
    * @param filename
@@ -1140,11 +1129,11 @@ public class ManipulaImagem {
    * 
    * @return true se o arquivo for gravado com sucesso ou false caso contrário.
    */
-  public static boolean gravaBitmapArquivo(Bitmap bm, String filename) {
+  public static boolean gravaBitmapArquivo(Bitmap bitmap, String filename) {
 
     boolean salvou = false;
 
-    if (bm == null) {
+    if (bitmap == null) {
       // bitmap não pode ser vazio
       Log.w(TAG, "gravaBitmapArquivo() - arquivo não pode ser gravado pois bitmap é nulo");
       return false;
@@ -1163,7 +1152,7 @@ public class ManipulaImagem {
       // cria o outputstream para gravar os dados
       out = new FileOutputStream(filename);
 
-      salvou = bm.compress(Bitmap.CompressFormat.PNG, 100, out);
+      salvou = bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
 
       if (salvou) {
         // dados foram comprimidos com sucesso ao stream especificado
@@ -1199,18 +1188,21 @@ public class ManipulaImagem {
   }
 
   /**
-   * gravaBitmapArquivo3(Bitmap bm, String filename)
+   * Grava bitmap no formato JPEG com qualidade 75 (0-100).
    * 
-   * @param bm bitmap
-   * @param filename arquivo onde o bitmap será gravado
+   * @param bitmap
+   *          bitmap
+   * @param filename
+   *          arquivo onde o bitmap será gravado
    * 
-   * @return
+   * @return true se o arquivo foi gravado com sucesso ou false caso haja algum
+   *         erro
    */
-  public static boolean gravaBitmapArquivo2(Bitmap bm, String filename) {
+  public static boolean gravaBitmapArquivo2(Bitmap bitmap, String filename) {
 
     boolean salvou = false;
 
-    if (bm == null) {
+    if (bitmap == null) {
       // bitmap não pode ser vazio
       return false;
     }
@@ -1233,7 +1225,7 @@ public class ManipulaImagem {
 
       out = new FileOutputStream(filename);
 
-      salvou = bm.compress(Bitmap.CompressFormat.JPEG, 75, out);
+      salvou = bitmap.compress(Bitmap.CompressFormat.JPEG, 75, out);
       Log.i(TAG, "gravaBitmapArquivo() - sucess code from bitmap.compress: " + salvou);
       out.close();
 
@@ -1248,8 +1240,6 @@ public class ManipulaImagem {
   }
 
   /**
-   * gravaBitmapArquivo3(Uri uri)
-   * 
    * Grava um bitmap localizado na URI uri tendo a localização do dados que
    * serão decodificados em um bitmap e salvos em um arquivo
    * 
@@ -1305,10 +1295,9 @@ public class ManipulaImagem {
   }
 
   /**
-   * gravaBitmapArquivo4(Bitmap bitmap, String filename)
-   * 
    * @param bitmap
    *          bitmap que será gravado
+   * 
    * @param filename
    *          nome do arquivo
    * 
@@ -1331,7 +1320,7 @@ public class ManipulaImagem {
 
     File completePath = new File(dir + "/" + file);
 
-    Log.d(TAG, "Gravando o bitmap em: " + completePath.getAbsolutePath());
+    Log.v(TAG, "Gravando o bitmap em: " + completePath.getAbsolutePath());
 
     try {
       fos = new FileOutputStream(completePath);
@@ -1366,10 +1355,9 @@ public class ManipulaImagem {
   }
 
   /**
-   * gravaBitmapArquivo5(Bitmap bmp)
-   * 
-   * Cria uma string com o número que indica a data e hora atual em milisegundos
-   * Obtém o diretório padrão onde são criados as figuras (pictures)
+   * Cria uma string com o número que indica a data e hora atual em
+   * milisegundos.<br>
+   * Obtém o diretório padrão onde são criados as figuras (pictures).<br>
    * 
    * @param bmp
    * 
@@ -1416,26 +1404,28 @@ public class ManipulaImagem {
   }
 
   /**
-   * getStringBitmapSize(Bitmap bm)
+   * Retorna uma string formatada contendo o tamanho (largura x altura) do
+   * bitmap.
    * 
-   * Retorna uma string contendo o tamanho (largura x altura) do bitmap.
-   * 
-   * @param bm
+   * @param bitmap
    *          Bitmap
    * 
    * @return o tamanho (largura x altura) do bitmap ou null caso o bitmap seja
    *         nulo
    * 
    */
-  public static String getStringBitmapSize(Bitmap bm) {
+  public static String getStringBitmapSize(Bitmap bitmap) {
 
     String s = null;
 
-    if (bm != null) {
+    if (bitmap != null) {
 
-      s = bm.getWidth() + "x" + bm.getHeight();
+      s = bitmap.getWidth() + "x" + bitmap.getHeight();
+
     } else {
+
       Log.w(TAG, "getStringBitmapSize() - Bitmap é nulo");
+
     }
 
     return s;
@@ -1443,64 +1433,62 @@ public class ManipulaImagem {
   }
 
   /**
-   * isLandscape(Bitmap bm)
-   * 
    * Verifica se o bitmap possui uma imagem cuja largura é MAIOR que a altura.
    * 
-   * @param bm
+   * @param bitmap
    *          Bitmap
    * 
    * @return true se o bitmap contiver uma imagem formato landscape
    * 
    */
-  public static boolean isLandscape(Bitmap bm) {
+  public static boolean isLandscape(Bitmap bitmap) {
 
     boolean ret = false;
-    
-    if (bm != null) {
-      ret = bm.getWidth() > bm.getHeight();
+
+    if (bitmap != null) {
+      ret = bitmap.getWidth() > bitmap.getHeight();
     }
-    
+
     return ret;
-    
+
   }
 
   /**
-   * isPortrait(Bitmap bm)
-   * 
    * Verifica se o bitmap possui uma imagem cuja largura é MENOR que a altura.
    * 
-   * @param bm
+   * @param bitmap
    *          Bitmap
    * 
    * @return true se o bitmap contiver uma imagem formato portrait
    * 
    */
-  public static boolean isPortrait(Bitmap bm) {
+  public static boolean isPortrait(Bitmap bitmap) {
 
     boolean ret = false;
-    
-    if (bm != null) {
-      ret = bm.getHeight() > bm.getWidth();
+
+    if (bitmap != null) {
+      ret = bitmap.getHeight() > bitmap.getWidth();
     }
-    
+
     return ret;
-    
+
   }
 
   /**
-   * overlay
+   * Faz a sobreposição do bitmap2 em cima do bitmap1.<br>
    * 
-   * Desenha o bitmap 1 e depois o bitmap 2.
+   * Desenha o bitmap 1 e depois o bitmap 2.<br>
    * 
-   * Na prática, o bitmap2 irá sobrepor o bitmap 1
+   * Na prática, o bitmap2 irá sobrepor o bitmap 1.
    * 
    * @param bmp1
    *          Bitmap de fundo (background)
    * @param bmp2
    *          Bitmap de frente (foreground)
    * 
-   * @return um Bitmap com overlay
+   * @return um Bitmap feito através da sobreposição (overlay) do bitmap2
+   *         (foregroud) em cima do bitmap1 (backgroud) ou null caso haja algum
+   *         erro.
    * 
    */
   public static Bitmap overlay(Bitmap bmp1, Bitmap bmp2) {
@@ -1509,21 +1497,21 @@ public class ManipulaImagem {
       return null;
     }
 
-    // cria um novo bitmap com as dimensões e configuração do do bitmap1
-    Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth(), bmp1.getHeight(), bmp1.getConfig());
+    // TODO aqui seria interessante verificar se os bitmaps possuem o mesmo tamanho.
 
-    Canvas canvas = new Canvas(bmOverlay);
+    // cria um novo bitmap com as dimensões e configuração do do bitmap1
+    Bitmap bitmapOverlay = Bitmap.createBitmap(bmp1.getWidth(), bmp1.getHeight(), bmp1.getConfig());
+
+    Canvas canvas = new Canvas(bitmapOverlay);
 
     canvas.drawBitmap(bmp1, new Matrix(), null);
     canvas.drawBitmap(bmp2, new Matrix(), null);
 
-    return bmOverlay;
+    return bitmapOverlay;
 
   }
 
   /**
-   * overlay2(Bitmap bmp1, Bitmap bmp2)
-   * 
    * @param bmp1
    * @param bmp2
    * 
@@ -1538,7 +1526,7 @@ public class ManipulaImagem {
 
     Bitmap.Config bmConfig = bmp1.getConfig();
 
-    Log.d(TAG, "bitmap config: " + bmConfig.name());
+    Log.v(TAG, "bitmap config: " + bmConfig.name());
 
     Canvas canvas = new Canvas(bmOverlay);
 
@@ -1564,10 +1552,9 @@ public class ManipulaImagem {
   }
 
   /**
-   * overlay3(Bitmap bmp1, Bitmap bmp2)
-   * 
    * @param bmp1
    *          Imagem de fundo (representa a foto)
+   * 
    * @param bmp2
    *          Imagem de frente (representa a moldura)
    * 
@@ -1576,15 +1563,17 @@ public class ManipulaImagem {
    */
   public static Bitmap overlay3(Bitmap bmp1, Bitmap bmp2) {
 
-    int w = 0;
-    int h = 0;
+    int w = 0; // largura
+    int h = 0; // altura
 
+    // obtém a largura do novo bitmap
     if (bmp1.getWidth() > bmp2.getWidth()) {
       w = bmp1.getWidth();
     } else {
       w = bmp2.getWidth();
     }
 
+    // obtém a altura do novo bitmap
     if (bmp1.getHeight() > bmp2.getHeight()) {
       h = bmp1.getHeight();
     } else {
@@ -1607,8 +1596,13 @@ public class ManipulaImagem {
      * should be used whenever possible.
      */
 
-    // cria um novo bitmap onde será feito o overlay
-    Bitmap bmOverlay = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+    Bitmap bitmapOverlay = null;
+    try {
+      // cria um novo bitmap onde será feito o overlay
+      bitmapOverlay = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+    } catch (IllegalArgumentException e) {
+
+    }
 
     Log.v(TAG, "overlay3() - nova imagem criada: " + w + " x " + h);
 
@@ -1616,24 +1610,30 @@ public class ManipulaImagem {
 
     Log.v(TAG, "overlay3() - bitmap config: " + bmConfig.name());
 
-    Canvas canvas = new Canvas(bmOverlay);
+    // Cria um canvas para que se possa desenhar no bitmap
+    Canvas canvas = new Canvas(bitmapOverlay);
 
+    // Desenha um fundo cinza
     canvas.drawColor(Color.GRAY);
 
     Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
+    // Define uma matriz de transformação
     Matrix m = new Matrix();
 
+    // 
     m.setTranslate(10, 10);
 
     // desenha a imagem de fundo (backgroud) - foto
     canvas.drawBitmap(bmp1, m, paint);
+
     // canvas.drawBitmap(bmp2, new Matrix(), paint);
 
     // canvas.drawColor(Color.argb(160, 21, 140, 21));
 
     // canvas.drawColor(Color.argb(30, 0, 21, 21));
 
+    // Atualiza o componente alpha da cor corrente
     paint.setAlpha(255);
 
     m.setTranslate(0, 0);
@@ -1643,7 +1643,7 @@ public class ManipulaImagem {
 
     // canvas.drawCircle(250, 250, 200, paint);
 
-    return bmOverlay;
+    return bitmapOverlay;
 
   }
 
@@ -1718,11 +1718,10 @@ public class ManipulaImagem {
   }
 
   /**
-   * showImageViewInfo(final ImageView image)
+   * Exibe informações no log sobre o objeto ImageView.<br>
    * 
-   * <p>Exibe informações no log  sobre o objeto ImageView.
-   * 
-   * @param imageView Componente ImageView.
+   * @param imageView
+   *          Componente ImageView.
    * 
    */
   public static void showImageViewInfo(final ImageView imageView) {
@@ -1732,7 +1731,7 @@ public class ManipulaImagem {
     int left = imageView.getLeft();
     int right = imageView.getRight();
 
-    Log.v(TAG, "bottom=" + bottom + ", top=" + top + ", left=" + left + ", right=" + right);
+    Log.v(TAG, "showImageViewInfo() - bottom=" + bottom + ", top=" + top + ", left=" + left + ", right=" + right);
 
     // Obtem informações sobre o fundo do ImagemView
     Drawable d = imageView.getBackground();
@@ -1750,40 +1749,40 @@ public class ManipulaImagem {
    * 
    * Exibe informações detalhadas sobre um bitmap.
    * 
-   * @param bm
+   * @param bitmap
    *          Instância de um bitmap
    * 
    */
-  public static void showBitmapInfo2(Bitmap bm) {
+  public static void showBitmapInfo2(Bitmap bitmap) {
 
-    // TODO transformar ...
-    if (bm == null) {
-      Log.w(TAG, "showBitmapInfo2() - Bitmap não pode ser nulo");
-      return;
+    if (bitmap == null) {
+      throw new IllegalArgumentException("Bitmap é nulo");
     }
 
-    Config config = bm.getConfig();
+    Config config = bitmap.getConfig();
+
     // int density = bm.getDensity();
-    int h = bm.getHeight();
-    int w = bm.getWidth();
+    int h = bitmap.getHeight();
+    int w = bitmap.getWidth();
+
     // boolean hasAlpha = bm.hasAlpha();
     // boolean isMutable = bm.isMutable();
     // boolean isRecycled = bm.isRecycled();
     // String s = bm.toString();
 
-    Log.d(TAG, "Bitmap: ");
-    Log.v(TAG, "  getConfig()= " + bm.getConfig());
-    Log.v(TAG, "  getDensity()= " + bm.getDensity());
-    Log.v(TAG, "  getHeight()= " + bm.getHeight());
-    Log.v(TAG, "  getWidth()= " + bm.getWidth());
-    Log.v(TAG, "  hasAlpha()= " + bm.hasAlpha());
-    Log.v(TAG, "  isMutable()= " + bm.isMutable());
-    Log.v(TAG, "  isRecycled()= " + bm.isRecycled());
-    Log.v(TAG, "  toString()= " + bm.toString());
+    Log.v(TAG, "Bitmap: ");
+    Log.v(TAG, "  getConfig()= " + bitmap.getConfig());
+    Log.v(TAG, "  getDensity()= " + bitmap.getDensity());
+    Log.v(TAG, "  getHeight()= " + bitmap.getHeight());
+    Log.v(TAG, "  getWidth()= " + bitmap.getWidth());
+    Log.v(TAG, "  hasAlpha()= " + bitmap.hasAlpha());
+    Log.v(TAG, "  isMutable()= " + bitmap.isMutable());
+    Log.v(TAG, "  isRecycled()= " + bitmap.isRecycled());
+    Log.v(TAG, "  toString()= " + bitmap.toString());
 
     Log.v(TAG, "  Size=" + w + "x" + h);
     Log.v(TAG, "  config=" + config);
-    Log.v(TAG, "  getRowBytes()=" + bm.getRowBytes());
+    Log.v(TAG, "  getRowBytes()=" + bitmap.getRowBytes());
   }
 
   /**
@@ -1815,11 +1814,10 @@ public class ManipulaImagem {
   }
 
   /**
-   * showBitmapOptions(Options options)
+   * Exibe as informações de BitmapFactory.Options
    * 
-   * <p>Exibe as informações de Options
-   * 
-   * @param options Instância de Options
+   * @param options
+   *          Instância de BitmapFactory.Options
    * 
    */
   public void showBitmapOptions(Options options) {
@@ -1835,9 +1833,7 @@ public class ManipulaImagem {
   }
 
   /**
-   * showUri(Uri uri)
-   * 
-   * Exibe informações sobre uma Uri
+   * Exibe informações sobre uma Uri.
    * 
    * @param uri
    *          Uri
@@ -1866,26 +1862,24 @@ public class ManipulaImagem {
   }
 
   /**
-   * verticlJoin(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3)
-   * 
-   * <p>Faz a concatenação entre três arquivos bitmap na vertical, isto é, as fotos
-   * são colocadas uma abaixo da outra. As imagem ficam maiores na vertical.
+   * Faz a concatenação entre três fotos (arquivos bitmap) na vertical, isto é,
+   * as fotos são colocadas uma abaixo da outra. As imagem ficam maiores na
+   * vertical<br>
    * 
    * @param bmp1
    *          Foto 1
-   *          
+   * 
    * @param bmp2
    *          Foto 2
-   *          
+   * 
    * @param bmp3
    *          Foto 3
-   *          
    * 
-   * @return Um bitmap contendo as "junção" entre os três bitmaps (na vertica,
-   *         isto é), um bitmap será posicionado abaixo do outro na vertical (a
-   *         figura irá manter a largura e terá como altura a soma das alturas
-   *         de cada uma das figuras) É importante notar que todas as imagem
-   *         deverão ter a mesma largura.
+   * @return Um bitmap contendo a concatenação entre os três bitmaps (na
+   *         vertical, isto é), um bitmap será posicionado abaixo do outro na
+   *         vertical (a figura irá manter a largura e terá como altura a soma
+   *         das alturas de cada uma das figuras) É importante notar que todas
+   *         as imagem deverão ter a mesma largura.
    */
   public static Bitmap verticalJoin(Bitmap bmp1, Bitmap bmp2, Bitmap bmp3) {
 
@@ -1895,10 +1889,10 @@ public class ManipulaImagem {
     }
 
     if (!((bmp1.getWidth() == bmp2.getWidth()) && (bmp2.getWidth() == bmp3.getWidth()))) {
-      Log.w(TAG, "bmp1=" + bmp1.getWidth());
-      Log.w(TAG, "bmp2=" + bmp2.getWidth());
-      Log.w(TAG, "bmp3=" + bmp3.getWidth());
-      Log.w(TAG, "As imagens não possuem a mesma largura");
+      Log.w(TAG, "verticalJoin() - bmp1= - largura=" + bmp1.getWidth());
+      Log.w(TAG, "verticalJoin() - bmp2= - largura=" + bmp2.getWidth());
+      Log.w(TAG, "verticalJoin() - bmp3= - largura=" + bmp3.getWidth());
+      Log.w(TAG, "verticalJoin() - As imagens não possuem a mesma largura");
       return null;
     }
 
@@ -1958,37 +1952,37 @@ public class ManipulaImagem {
   }
 
   /**
-   * updateBitmap(Bitmap bm, ImageView image)
+   * Atualiza um ImageView com um bitmap.
    * 
-   * Atualiza um ImageView com um bitmap
+   * @param bitmap
+   *          Bitmap que será exibido no componente ImageView.
    * 
-   * @param bm
-   *          Bitmap Bitmap que será exibido no componente ImageView.
-   *          
    * @param image
    *          imageView Instância do componente ImageView.
    * 
    */
-  public static void updateBitmap(Bitmap bm, ImageView image) {
+  public static void updateBitmap(Bitmap bitmap, ImageView image) {
 
-    if ((bm != null) && (image != null)) {
+    if ((bitmap != null) && (image != null)) {
 
-      image.setImageBitmap(bm);
+      image.setImageBitmap(bitmap);
 
-      showBitmapInfo(bm);
+      showBitmapInfo(bitmap);
 
     } else {
 
-      Log.d(TAG, "updateBitmap() - Bitmap is null");
+      Log.w(TAG, "updateBitmap() - Bitmap is null");
 
     }
 
   }
 
   /**
-   * msgDialog(String msg, String sim, String nao)
+   * Exibe um message dialog, isto é, uma janela de diálogo onde será exibida
+   * uma mensagem.
    * 
    * @param msg
+   *          Mensagem que será exibida.
    * @param sim
    * @param nao
    * 
@@ -2033,13 +2027,19 @@ public class ManipulaImagem {
   }
 
   /**
-   * scaleDownBitmap(Bitmap photo, int newHeight, Context context)
+   * Cria um novo bitmap redimensionado
    * 
-   * @param photo Bitmap contendo a foto
-   * @param newHeight Nova altura selecionada
-   * @param context Contexto da aplicação
+   * @param photo
+   *          Bitmap contendo a foto
    * 
-   * @return um novo bitmap redimensionado de acordo com as características da tela do dispositivo.
+   * @param newHeight
+   *          Nova altura selecionada
+   * 
+   * @param context
+   *          Contexto da aplicação
+   * 
+   * @return um novo bitmap redimensionado de acordo com as características da
+   *         tela do dispositivo.
    */
   public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
 
@@ -2053,7 +2053,7 @@ public class ManipulaImagem {
     photo = Bitmap.createScaledBitmap(photo, w, h, true);
 
     return photo;
-    
+
   }
 
 }
