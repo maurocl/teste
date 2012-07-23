@@ -1,5 +1,11 @@
 package br.com.mltech.modelo;
 
+/**
+ * Categoria
+ * 
+ * @author maurocl
+ *
+ */
 public class Categoria {
 
 	private Long codCategoria;
@@ -28,6 +34,7 @@ public class Categoria {
 	}
 
 	/**
+	 * Obtém o código da categoria
 	 * 
 	 * @return
 	 */
@@ -36,6 +43,7 @@ public class Categoria {
 	}
 
 	/**
+	 * Atualiza o código da categoria
 	 * 
 	 * @param codCategoria
 	 */
@@ -44,6 +52,7 @@ public class Categoria {
 	}
 
 	/**
+	 * Obtém a descrição da categoria
 	 * 
 	 * @return
 	 */
@@ -52,6 +61,7 @@ public class Categoria {
 	}
 
 	/**
+	 * Atualiza a descrição da Categoria
 	 * 
 	 * @param descricao
 	 */
@@ -60,7 +70,7 @@ public class Categoria {
 	}
 
 	/**
-	 * 
+	 * Retorna a código da categoria e sua descrição
 	 */
 	public String toString() {
 		return codCategoria + "-" + descricao;

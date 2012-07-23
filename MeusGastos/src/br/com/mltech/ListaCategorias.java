@@ -22,7 +22,7 @@ import br.com.mltech.modelo.Categoria;
  * 
  * @author maurocl
  * 
- * Exibe uma lista de categorias de gastos.
+ *         Exibe uma lista de categorias de gastos.
  * 
  */
 public class ListaCategorias extends Activity {
@@ -51,9 +51,12 @@ public class ListaCategorias extends Activity {
 		// -------------------------------------------
 		lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-			public void onItemClick(AdapterView<?> adapter, View view, int posicao, long idDoObjeto) {
+			public void onItemClick(AdapterView<?> adapter, View view,
+					int posicao, long idDoObjeto) {
 
-				Toast.makeText(ListaCategorias.this, "Você clicou no item " + posicao, Toast.LENGTH_LONG).show();
+				Toast.makeText(ListaCategorias.this,
+						"Você clicou no item " + posicao, Toast.LENGTH_LONG)
+						.show();
 
 			}
 
@@ -64,10 +67,13 @@ public class ListaCategorias extends Activity {
 		// -----------------------------------------------
 		lista.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-			public boolean onItemLongClick(AdapterView<?> adapter, View view, int posicao, long id) {
+			public boolean onItemLongClick(AdapterView<?> adapter, View view,
+					int posicao, long id) {
 
-				Toast.makeText(ListaCategorias.this, "Você clicou longamente no item " + posicao, Toast.LENGTH_LONG).show();
-				
+				Toast.makeText(ListaCategorias.this,
+						"Você clicou longamente no item " + posicao,
+						Toast.LENGTH_LONG).show();
+
 				return false;
 			}
 
@@ -93,7 +99,8 @@ public class ListaCategorias extends Activity {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-				Toast.makeText(ListaCategorias.this, "Novo", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ListaCategorias.this, "Novo", Toast.LENGTH_SHORT)
+						.show();
 				return false;
 			}
 
@@ -123,7 +130,8 @@ public class ListaCategorias extends Activity {
 		categorias = dao.getLista();
 		dao.close();
 
-		ArrayAdapter<Categoria> adapter = new ArrayAdapter<Categoria>(this, android.R.layout.simple_list_item_1, categorias);
+		ArrayAdapter<Categoria> adapter = new ArrayAdapter<Categoria>(this,
+				android.R.layout.simple_list_item_1, categorias);
 
 		lista.setAdapter(adapter);
 

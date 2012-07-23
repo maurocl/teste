@@ -42,7 +42,7 @@ public class MeusGastosActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+
 				Log.i("MeusGastosActivity", "botão Categorias");
 				texto.setText("Categorias");
 			}
@@ -56,7 +56,7 @@ public class MeusGastosActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+
 				Log.i("MeusGastosActivity", "botão Gastos");
 				texto.setText("Gastos");
 			}
@@ -70,7 +70,7 @@ public class MeusGastosActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+
 				Log.i("MeusGastosActivity", "botão Relatórios");
 				texto.setText("Relatórios");
 			}
@@ -81,21 +81,21 @@ public class MeusGastosActivity extends Activity {
 
 	@Override
 	protected void onRestart() {
-		// TODO Auto-generated method stub
+
 		super.onRestart();
 		Log.i("MeusGastosActivity", "onRestart()");
 	}
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
+
 		super.onResume();
 		Log.i("MeusGastosActivity", "onResume()");
 	}
 
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
+
 		super.onDestroy();
 		Log.i("MeusGastosActivity", "onDestroy()");
 	}
@@ -105,7 +105,6 @@ public class MeusGastosActivity extends Activity {
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
 
 		// ---------------------
 		// MenuItem: Categorias
@@ -119,7 +118,8 @@ public class MeusGastosActivity extends Activity {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-				Toast.makeText(MeusGastosActivity.this, "Categorias", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MeusGastosActivity.this, "Categorias",
+						Toast.LENGTH_SHORT).show();
 				return false;
 			}
 
@@ -135,7 +135,8 @@ public class MeusGastosActivity extends Activity {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-				Toast.makeText(MeusGastosActivity.this, "Gastos", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MeusGastosActivity.this, "Gastos",
+						Toast.LENGTH_SHORT).show();
 				return false;
 			}
 
@@ -152,7 +153,8 @@ public class MeusGastosActivity extends Activity {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-				Toast.makeText(MeusGastosActivity.this, "Relatórios", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MeusGastosActivity.this, "Relatórios",
+						Toast.LENGTH_SHORT).show();
 				return false;
 			}
 
@@ -169,7 +171,8 @@ public class MeusGastosActivity extends Activity {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-				Toast.makeText(MeusGastosActivity.this, "Login", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MeusGastosActivity.this, "Login",
+						Toast.LENGTH_SHORT).show();
 				return false;
 			}
 

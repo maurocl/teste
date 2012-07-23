@@ -25,7 +25,7 @@ import br.com.mltech.modelo.Gasto;
  * 
  * @author maurocl
  * 
- * Activity responsável pela listagem de todos os gastos
+ *         Activity responsável pela listagem de todos os gastos
  * 
  */
 public class ListaGastos extends Activity {
@@ -33,19 +33,19 @@ public class ListaGastos extends Activity {
 	private List<Gasto> gastos;
 
 	private ListView lista;
-	
+
 	private Gasto gastoSelecionado;
-	
+
 	/**
 	 * 
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// 
+		//
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.listagastos);
-		
+
 		lista = (ListView) findViewById(R.id.lista);
 
 		// Inicializa a lista de categorias de gasto
@@ -56,9 +56,12 @@ public class ListaGastos extends Activity {
 		// -------------------------------------------
 		lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-			public void onItemClick(AdapterView<?> adapter, View view, int posicao, long idDoObjeto) {
+			public void onItemClick(AdapterView<?> adapter, View view,
+					int posicao, long idDoObjeto) {
 
-				Toast.makeText(ListaGastos.this, "Você clicou no item " + posicao, Toast.LENGTH_LONG).show();
+				Toast.makeText(ListaGastos.this,
+						"Você clicou no item " + posicao, Toast.LENGTH_LONG)
+						.show();
 
 			}
 
@@ -69,15 +72,18 @@ public class ListaGastos extends Activity {
 		// -----------------------------------------------
 		lista.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-			public boolean onItemLongClick(AdapterView<?> adapter, View view, int posicao, long id) {
+			public boolean onItemLongClick(AdapterView<?> adapter, View view,
+					int posicao, long id) {
 
 				gastoSelecionado = (Gasto) adapter.getItemAtPosition(posicao);
-				
+
 				// Lista de gasto
 				registerForContextMenu(lista);
-				
-				//Toast.makeText(ListaGastos.this, "Você clicou longamente no item " + posicao, Toast.LENGTH_LONG).show();
-				
+
+				// Toast.makeText(ListaGastos.this,
+				// "Você clicou longamente no item " + posicao,
+				// Toast.LENGTH_LONG).show();
+
 				return false;
 			}
 
@@ -103,7 +109,8 @@ public class ListaGastos extends Activity {
 
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
-				Toast.makeText(ListaGastos.this, "Novo", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ListaGastos.this, "Novo", Toast.LENGTH_SHORT)
+						.show();
 				return false;
 			}
 
@@ -113,50 +120,47 @@ public class ListaGastos extends Activity {
 
 	}
 
-	//------------------------------
+	// ------------------------------
 	// Definição do Menu de Contexto
-	//------------------------------
+	// ------------------------------
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
 		// TODO Auto-generated method stub
 		super.onCreateContextMenu(menu, v, menuInfo);
-		
-		menu.add(0,0,0,"Deletar");
-		menu.add(0,1,0,"Duplicar");
-		
+
+		menu.add(0, 0, 0, "Deletar");
+		menu.add(0, 1, 0, "Duplicar");
+
 	}
 
-	//-----------------------------
+	// -----------------------------
 	// seleção de item do contexto
-	//-----------------------------
+	// -----------------------------
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
-		
+
 		switch (item.getItemId()) {
-			case 0:
-				
-				GastoDAO dao = new GastoDAO(ListaGastos.this);
-				dao.deletar(gastoSelecionado);
+		case 0:
 
-				Log.i("ListaGastos.java",
-						"Removendo o gasto id: " + gastoSelecionado.getData() );
+			GastoDAO dao = new GastoDAO(ListaGastos.this);
+			dao.deletar(gastoSelecionado);
 
-				dao.close();
+			Log.i("ListaGastos.java", "Removendo o gasto id: "
+					+ gastoSelecionado.getData());
 
-				carregaLista();
+			dao.close();
 
-				
-				break;
+			carregaLista();
+
+			break;
 		}
-		
-		
+
 		return super.onContextItemSelected(item);
-		
-		
-		
+
 	}
-	
+
 	/**
 	 * o onResume é executado quando a Activity anterior é fechada
 	 * 
@@ -178,7 +182,8 @@ public class ListaGastos extends Activity {
 		gastos = dao.getLista();
 		dao.close();
 
-		ArrayAdapter<Gasto> adapter = new ArrayAdapter<Gasto>(this, android.R.layout.simple_list_item_1, gastos);
+		ArrayAdapter<Gasto> adapter = new ArrayAdapter<Gasto>(this,
+				android.R.layout.simple_list_item_1, gastos);
 
 		lista.setAdapter(adapter);
 

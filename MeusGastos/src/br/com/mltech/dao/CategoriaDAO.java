@@ -25,7 +25,7 @@ public class CategoriaDAO extends SQLiteOpenHelper {
 	 * CategoriaDAO
 	 * 
 	 * @param ctx
-	 *            Contexto da aplicaÃ§Ã£o
+	 *            Contexto da aplicação
 	 * 
 	 */
 	public CategoriaDAO(Context ctx) {
@@ -70,9 +70,9 @@ public class CategoriaDAO extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * inserir
+	 * Insere uma categoria
 	 * 
-	 * @param c
+	 * @param c Categoria
 	 */
 	public void inserir(Categoria c) {
 
@@ -88,9 +88,9 @@ public class CategoriaDAO extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * deletar
+	 * Remove uma categoria
 	 * 
-	 * @param c
+	 * @param c Categoria
 	 */
 	public void deletar(Categoria c) {
 		// tabela, where clause, ...
@@ -103,8 +103,9 @@ public class CategoriaDAO extends SQLiteOpenHelper {
 	}
 
 	/**
+	 * Atualiza Categotria
 	 * 
-	 * @param c
+	 * @param c Categoria
 	 */
 	public void alterar(Categoria c) {
 
@@ -119,7 +120,7 @@ public class CategoriaDAO extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * getLista()
+	 * Retorna a lista de Categorias
 	 * 
 	 * @return
 	 */
@@ -147,8 +148,10 @@ public class CategoriaDAO extends SQLiteOpenHelper {
 	}
 
 	/**
+	 * Salva ou atualiza uma categoria
 	 * 
-	 * @param c
+	 * @param c Categoria
+	 * 
 	 */
 	public void saveOrUpdate(Categoria c) {
 

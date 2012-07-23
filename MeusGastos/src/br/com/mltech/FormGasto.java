@@ -1,4 +1,3 @@
-
 package br.com.mltech;
 
 import android.app.Activity;
@@ -17,25 +16,24 @@ import br.com.mltech.modelo.Gasto;
  * FormGasto.java
  * 
  * @author maurocl
- *
- * Formulário de entrada de gastos
+ * 
+ *         Formulário de entrada de gastos
  * 
  */
 public class FormGasto extends Activity {
-	
+
 	private Gasto gasto = new Gasto();
-	
-	
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
 
-  	super.onCreate(savedInstanceState);
-  	
-  	setContentView(R.layout.formgasto);
-  	
-  	Button botao = (Button) findViewById(R.id.inserir);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 
-  	// Ação associada ao botão Inserir
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.formgasto);
+
+		Button botao = (Button) findViewById(R.id.inserir);
+
+		// Ação associada ao botão Inserir
 		botao.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -43,32 +41,32 @@ public class FormGasto extends Activity {
 				// TODO Auto-generated method stub
 				Log.i("FormGasto", v.toString());
 
-				Toast.makeText(FormGasto.this, "Voce clicou no item ", Toast.LENGTH_LONG).show();
-				
+				Toast.makeText(FormGasto.this, "Voce clicou no item ",
+						Toast.LENGTH_LONG).show();
 
 				EditText descricao = (EditText) findViewById(R.id.descricao);
 				EditText data = (EditText) findViewById(R.id.data);
 				EditText valor = (EditText) findViewById(R.id.valor);
 				EditText codigo = (EditText) findViewById(R.id.codigo);
-	
+
 				Categoria c = new Categoria();
-				
-				//gasto.setCodGasto(codGasto);
+
+				// gasto.setCodGasto(codGasto);
 				gasto.setData(data.toString());
 				gasto.setDescricao(descricao.toString());
 				gasto.setValor(Double.parseDouble(valor.getText().toString()));
 				gasto.setCategoria(c);
-				
-				//cat.setDescricao(descricao.getEditableText().toString());
-				
+
+				// cat.setDescricao(descricao.getEditableText().toString());
+
 				GastoDAO dao = new GastoDAO(FormGasto.this);
 				dao.inserir(gasto);
 				dao.close();
-				
+
 				finish();
 
 			}
 		});
-  	
-  }
+
+	}
 }
