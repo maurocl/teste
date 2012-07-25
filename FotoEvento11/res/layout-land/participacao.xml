@@ -1,73 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_margin="50dp" >
-
+
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:orientation="vertical" >
-
-        <!-- Nome -->
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nome:" />
-
-        <EditText
-            android:id="@+id/editNome"
+
+        <TableLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false" />
+            android:layout_height="wrap_content" >
 
-        <!-- Email -->
+            <!-- Nome -->
+
+            <TableRow
+                android:id="@+id/tbRowNome"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|fill_horizontal" >
+
+                <EditText
+                    android:id="@+id/editNome"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="30dp"
+                    android:enabled="false"
+                    android:hint="Nome do Participante" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Email:" />
+                    <requestFocus />
+                </EditText>
+
+                <EditText
+                    android:id="@+id/editEmail"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="30dp"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:hint="Email do Participante"
+                    android:inputType="textEmailAddress" />
+
+                <EditText
+                    android:id="@+id/editTelefone"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="30dp"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:hint="Contato do Participante" />
 
-        <EditText
-            android:id="@+id/editEmail"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="textEmailAddress" />
+            </TableRow>
 
-        <!-- Telefone -->
+            <!-- Email -->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Telefone:" />
-
-        <EditText
-            android:id="@+id/editTelefone"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false" />
+            <!-- Telefone -->
+        </TableLayout>
 
         <!-- Tipo de Foto -->
-
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tipo de Foto:"
-             />
-
+            android:layout_marginTop="20dp"
+            android:text="Selecione o formato da foto:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
         <RadioGroup
             android:id="@+id/group1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
             <RadioButton
                 android:id="@+id/radioOp1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"
                 android:checked="false"
                 android:hint="Formato Polaroid (9 por 11 cm)"
                 android:text="Polaroid (9x11)" />
@@ -79,26 +90,29 @@
                 android:checked="false"
                 android:hint="Formato Cabine (4 por 15 cm)"
                 android:text="Cabine (4x15)" />
-
         </RadioGroup>
 
         <!-- Agrupa efeitos da foto -->
-
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tipo de Efeito:"
+            android:layout_marginTop="20dp"
+            android:text="Selecione o tipo de efeito aplicado a foto:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
         <RadioGroup
             android:id="@+id/group2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
             <RadioButton
                 android:id="@+id/radioCor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"
                 android:checked="false"
                 android:hint="Foto tirada a cores"
                 android:text="Cores" />
@@ -111,10 +125,11 @@
                 android:hint="Foto tirada em preto e branco"
                 android:text="Preto e Branco" />
         </RadioGroup>
-
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
             android:orientation="horizontal" >
 
             <!-- Botão Enviar -->
@@ -125,7 +140,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:text="Enviar" />
+                android:text="Enviar"
+                android:textSize="20dp" />
 
             <!-- Botão Cancelar -->
 
@@ -135,7 +151,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:text="Cancelar" />
+                android:text="Cancelar"
+                android:textSize="20dp" />
         </LinearLayout>
     </LinearLayout>
 

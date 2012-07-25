@@ -8,134 +8,233 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <!-- Nome -->
-
         <TextView
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nome:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_marginBottom="20dp"
+            android:text="Informações do Participante:"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <EditText
-            android:id="@+id/editNome"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nome Completo"
-            android:inputType="textCapWords" />
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-        <!-- Email -->
+            <!-- Nome -->
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nome:"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editNome"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Entre com seu nome"
+                    android:inputType="textCapWords" >
+
+                    <requestFocus />
+                </EditText>
+            </TableRow>
+
+            <!-- Email -->
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:text="Email:"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Digite seu email"
+                    android:inputType="textEmailAddress" />
+
+            </TableRow>
+
+            <!-- Telefone -->
+
+            <TableRow
+                android:id="@+id/tableRow3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Telefone:"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editTelefone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Entre com seu telefone de contato"
+                    android:inputType="phone" />
+
+            </TableRow>
+        </TableLayout>
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:text="Email:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Dados adicionais:"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <EditText
-            android:id="@+id/editEmail"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress" />
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-        <!-- Telefone -->
+            <TableRow
+                android:id="@+id/tableRow4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Telefone:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+                <TextView
+                    android:id="@+id/tvParam1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Parâmetro1:"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editParam1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Parâmetro opcional 1"
+                    android:inputType="text" />
 
-        <EditText
-            android:id="@+id/editTelefone"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Telefone"
-            android:inputType="phone" />
+            </TableRow>
 
-        <!-- Parâmetro Opcional 1 -->
+            <!-- Parâmetro Opcional 1 -->
 
-        <TextView
-            android:id="@+id/tvParam1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Parâmetro1:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <EditText
-            android:id="@+id/editParam1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Parâmetro opcional 1" />
+            <!-- Parâmetro Opcional 2 -->
 
-        <!-- Parâmetro Opcional 2 -->
+            <TableRow
+                android:id="@+id/tableRow5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/tvParam2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Parâmetro2:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+                <TextView
+                    android:id="@+id/tvParam2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Parâmetro2:"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editParam2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Parâmetro opcional 2"
+                    android:inputType="text" />
 
-        <EditText
-            android:id="@+id/editParam2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Parâmetro opcional 2" />
+            </TableRow>
 
-        <!-- Parâmetro Opcional 3 -->
+            <!-- Parâmetro Opcional 3 -->
 
-        <TextView
-            android:id="@+id/tvParam3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Parâmetro3:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            <TableRow
+                android:id="@+id/tableRow6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-        <EditText
-            android:id="@+id/editParam3"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Parâmetro opcional 3" />
+                <TextView
+                    android:id="@+id/tvParam3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Parâmetro3:"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editParam3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Parâmetro opcional 3"
+                    android:inputType="text" />
 
-        <!-- Parâmetro Opcional 4 -->
+            </TableRow>
 
-        <TextView
-            android:id="@+id/tvParam4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Parâmetro4:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:visibility="gone" />
+            <!-- Parâmetro Opcional 4 -->
 
-        <EditText
-            android:id="@+id/editParam4"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Parâmetro opcional 4"
-            android:visibility="gone" />
+            <TableRow
+                android:id="@+id/tableRow7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-        <!-- Parâmetro Opcional 5 -->
+                <TextView
+                    android:id="@+id/tvParam4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Parâmetro4:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/editParam4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Parâmetro opcional 4"
+                    android:inputType="text"
+                    android:visibility="visible" />
 
-        <TextView
-            android:id="@+id/tvParam5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Parâmetro5:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:visibility="gone" />
+            </TableRow>
 
-        <EditText
-            android:id="@+id/editParam5"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Parâmetro opcional 5"
-            android:visibility="gone" />
+            <!-- Parâmetro Opcional 5 -->
+
+            <TableRow
+                android:id="@+id/tableRow8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvParam5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Parâmetro5:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/editParam5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Parâmetro opcional 5"
+                    android:inputType="text"
+                    android:visibility="visible" />
+
+            </TableRow>
+        </TableLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal" >
 
             <!-- Botão Enviar -->
