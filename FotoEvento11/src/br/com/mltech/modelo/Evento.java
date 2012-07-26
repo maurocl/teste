@@ -61,21 +61,24 @@ public class Evento implements Serializable {
    */
   public Evento() {
 
+    this.contratante = null;
     this.parametros = new Parametros();
     this.participantes = new ArrayList<Participacao>();
+    
   }
 
   /**
-   * Evento(Contratante c)
+   * Cria um evento com seu Contratante
    * 
    * @param c
-   *          Instância de um contratante
+   *          Instancia de um contratante
    * 
    */
   public Evento(Contratante c) {
-
+    
+    this();
     this.contratante = c;
-    this.parametros = new Parametros();
+    
   }
 
   /**

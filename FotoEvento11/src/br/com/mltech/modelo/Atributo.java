@@ -36,34 +36,66 @@ public class Atributo implements Serializable {
     this.obrigatorio = obrigatorio;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getNome() {
     return nome;
   }
 
+  /**
+   * 
+   * @param nome
+   */
   public void setNome(String nome) {
     this.nome = nome;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getTipo() {
     return tipo;
   }
 
+  /**
+   * 
+   * @param tipo
+   */
   public void setTipo(String tipo) {
     this.tipo = tipo;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getValor() {
     return valor;
   }
 
+  /**
+   * 
+   * @param valor
+   */
   public void setValor(String valor) {
     this.valor = valor;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isObrigatorio() {
     return obrigatorio;
   }
 
+  /**
+   * 
+   * @param obrigatorio
+   */
   public void setObrigatorio(boolean obrigatorio) {
     this.obrigatorio = obrigatorio;
   }

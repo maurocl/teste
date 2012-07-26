@@ -36,8 +36,6 @@ public class FotoBitmap {
   private Bitmap.CompressFormat formatoGravacao;
 
   /**
-   * FotoBitmap(String arquivo, Bitmap bitmap)
-   * 
    * Construtor
    * 
    */
@@ -48,8 +46,6 @@ public class FotoBitmap {
   }
 
   /**
-   * load()
-   * 
    * Lê um bitmap de um arquivo
    * 
    * @return
@@ -89,8 +85,6 @@ public class FotoBitmap {
   }
 
   /**
-   * save()
-   * 
    * Grava uma imagem um arquivo
    * 
    * @return true caso a foto seja salva ou false em caso de erro
@@ -114,9 +108,7 @@ public class FotoBitmap {
 
   }
 
-  /**
-   * gravar(CompressFormat formato, int quality)
-   * 
+  /** 
    * @param formato
    *          Bitmap.CompressFormat.JPEG,
    * @param quality
@@ -157,8 +149,6 @@ public class FotoBitmap {
   }
 
   /**
-   * getUri() 
-   * 
    * @return retorna uma URI identificando o bitmap
    * 
    */
@@ -172,8 +162,6 @@ public class FotoBitmap {
   }
 
   /**
-   * redimensiona(int largura, int altura)
-   * 
    * @param largura
    * @param altura
    * 
@@ -199,8 +187,6 @@ public class FotoBitmap {
   // ---------------------------------------------------------------------------------------
 
   /**
-   * getArquivo()
-   * 
    * @return
    */
   public String getArquivo() {
@@ -208,8 +194,6 @@ public class FotoBitmap {
   }
 
   /**
-   * setArquivo(String arquivo)
-   * 
    * @param arquivo
    */
   public void setArquivo(String arquivo) {
@@ -217,8 +201,6 @@ public class FotoBitmap {
   }
 
   /**
-   * getBitmap()
-   * 
    * @return
    */
   public Bitmap getBitmap() {
@@ -226,8 +208,6 @@ public class FotoBitmap {
   }
 
   /**
-   * setBitmap(Bitmap bitmap) 
-   * 
    * @param bitmap
    */
   public void setBitmap(Bitmap bitmap) {
@@ -235,8 +215,6 @@ public class FotoBitmap {
   }
 
   /**
-   * getDados()
-   * 
    * @return
    */
   public byte[] getDados() {
@@ -257,8 +235,6 @@ public class FotoBitmap {
   }
 
   /**
-   * setDados(byte[] dados)
-   * 
    * @param dados
    * 
    */
@@ -267,8 +243,6 @@ public class FotoBitmap {
   }
 
   /**
-   * getFormatoGravacao()
-   * 
    * @return
    */
   public Bitmap.CompressFormat getFormatoGravacao() {
@@ -276,8 +250,6 @@ public class FotoBitmap {
   }
 
   /**
-   * setFormatoGravacao(Bitmap.CompressFormat formatoGravacao)
-   *  
    * @param formatoGravacao
    */
   public void setFormatoGravacao(Bitmap.CompressFormat formatoGravacao) {

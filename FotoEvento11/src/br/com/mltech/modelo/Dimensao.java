@@ -1,17 +1,24 @@
 package br.com.mltech.modelo;
 
+/**
+ * 
+ * @author maurocl
+ *
+ */
 public class Dimensao {
-
-  // largura da dimensão
+ 
+  /**
+   * largura da dimensão
+   */
   private int largura;
-  
-  // altura da dimensão
+   
+  /**
+   * altura da dimensão
+   */
   private int altura;
 
   /**
-   * Dimensao()
-   * 
-   * Construtor
+   * Construtor de dimensão nula.
    * 
    */
   public Dimensao() {
@@ -19,23 +26,21 @@ public class Dimensao {
   }
 
   /**
-   * Dimensao(int w, int h)
+   * Constroi uma dimensão dada sua laegura e altura
    * 
-   * Construtor
-   * 
-   * @param w
+   * @param largura
    *          largura
-   * @param h
+   * @param altura
    *          altura
    * 
    */
-  public Dimensao(int w, int h) {
-    largura = w;
-    altura = h;
+  public Dimensao(int largura, int altura) {
+    this.largura = largura;
+    this.altura = altura;
   }
 
   /**
-   * aspectRatio()
+   * Calcula o aspect ratio da dimensão
    * 
    * @return a relação entre largura e altura
    * 
@@ -51,7 +56,7 @@ public class Dimensao {
   }
 
   /**
-   * getLargura()
+   * Obtém a largura da dimensão
    * 
    * @return
    */
@@ -60,7 +65,7 @@ public class Dimensao {
   }
 
   /**
-   * setLargura(int largura)
+   * Atribui a largura da dimensão
    * 
    * @param largura
    */
@@ -69,7 +74,7 @@ public class Dimensao {
   }
 
   /**
-   * getAltura()
+   * Obtém a altura da dimensão
    * 
    * @return
    */
@@ -78,7 +83,7 @@ public class Dimensao {
   }
 
   /**
-   * setAltura(int altura)
+   * Obtém a altura da dimensão
    * 
    * @param altura
    */
@@ -95,10 +100,10 @@ public class Dimensao {
   }
 
   /**
-   * getMaiorLargura(Dimensao dim1, Dimensao dim2)
+   * Obtem a maior largura dado duas dimensões
    * 
-   * @param dim1
-   * @param dim2
+   * @param dim1 Instância de Dimensão
+   * @param dim2 Instância de Dimensão
    * 
    * @return
    */
@@ -120,10 +125,12 @@ public class Dimensao {
   }
 
   /**
-   * getMaiorLarguraAltura(Dimensao dim2)
+   * Obtem uma nova dimensão a partir da maior altura e largura das dimensões fornecidas.
    * 
+   * @param dim1
    * @param dim2
-   * @return
+   * 
+   * @return Uma nova dimensão formada pela maior altura e largura entre duas dimensões
    */
   public static Dimensao getMaiorLarguraAltura(Dimensao dim1, Dimensao dim2) {
     
@@ -137,6 +144,7 @@ public class Dimensao {
     Dimensao d = new Dimensao(maiorLargura, maiorAltura);
 
     return d;
+    
   }
 
 }

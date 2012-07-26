@@ -1,3 +1,4 @@
+
 package br.com.mltech.modelo;
 
 import java.io.File;
@@ -27,58 +28,60 @@ public class Moldura extends Foto {
   /**
    * Moldura(String arquivo)
    * 
-   * @param arquivo nome do arquivo onde onde está o bitmap da moldura
+   * @param arquivo
+   *          nome do arquivo onde onde está o bitmap da moldura
    */
   public Moldura(String arquivo) {
+
     super(arquivo);
 
   }
 
   /**
-   * Moldura(String arquivo, String descricao)
-   * 
    * Cria uma moldura com uma descrição
    * 
-   * @param arquivo nome do arquivo onde onde está o bitmap da moldura
-   * @param descricao texto com a descrição da moldura
+   * @param arquivo
+   *          nome do arquivo onde onde está o bitmap da moldura
+   * @param descricao
+   *          texto com a descrição da moldura
    * 
    */
   public Moldura(String arquivo, String descricao) {
+
     super(arquivo);
     this.descricao = descricao;
 
   }
 
   /**
-   * Moldura(String arquivo, Bitmap imagem) 
-   * 
-   * @param arquivo nome do arquivo onde onde está o bitmap da moldura
-   * @param imagem bitmap da moldura
+   * @param arquivo
+   *          nome do arquivo onde onde está o bitmap da moldura
+   * @param imagem
+   *          bitmap da moldura
    * 
    */
   public Moldura(String arquivo, Bitmap imagem) {
+
     super(arquivo);
     this.setImagem(imagem);
     this.descricao = null;
   }
-  
+
   /**
-   * getDescricao()
-   * 
    * @return descrição da moldura
    * 
    */
   public String getDescricao() {
+
     return descricao;
   }
 
   /**
-   * setDescricao(String descricao)
-   * 
    * @param descricao
    * 
    */
   public void setDescricao(String descricao) {
+
     this.descricao = descricao;
   }
 
@@ -87,13 +90,12 @@ public class Moldura extends Foto {
    */
   @Override
   public String toString() {
+
     return "Moldura [largura=" + this.getDimensao().getLargura() + ", altura=" + this.getDimensao().getAltura() + ", descricao="
         + descricao + "]";
   }
 
   /**
-   * leArquivoMoldura(String arquivoMoldura)
-   * 
    * Lê um arquivo que possui um bitmap com uma moldura.
    * 
    * @param arquivoMoldura
@@ -117,11 +119,11 @@ public class Moldura extends Foto {
 
     if (bmMoldura == null) {
 
-      Log.w(TAG, "leArquivoMoldura() - arquivo "+arquivoMoldura+" não pode ser lido.");
+      Log.w(TAG, "leArquivoMoldura() - arquivo " + arquivoMoldura + " não pode ser lido.");
 
       // garante que o bitmap associado a moldura está vazio
       this.setImagem(null);
-      
+
       return null;
 
     } else {
