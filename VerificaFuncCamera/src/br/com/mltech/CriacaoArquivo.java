@@ -10,6 +10,11 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+/**
+ * 
+ * 
+ *
+ */
 public class CriacaoArquivo extends Activity {
 
   private static final String TAG = "CriacaoArquivo";
@@ -25,6 +30,9 @@ public class CriacaoArquivo extends Activity {
 
   }
 
+  /**
+   * 
+   */
   private void pqp() {
     String mFilename = null;
 
@@ -78,9 +86,13 @@ public class CriacaoArquivo extends Activity {
     }
   };
 
+  /**
+   * 
+   */
   private void teste() {
 
     String arquivo = Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".jpg";
+    
     File file = new File(arquivo);
 
     if (file.exists()) {

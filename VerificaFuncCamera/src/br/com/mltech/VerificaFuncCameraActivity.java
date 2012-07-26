@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import java.io.DataOutputStream;
@@ -6,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.app.Activity;
 import android.hardware.Camera;
@@ -16,8 +19,6 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 import br.com.mltech.utils.camera.CameraTools;
-
-
 
 /**
  * VerificaFuncCameraActivity
@@ -30,202 +31,334 @@ import br.com.mltech.utils.camera.CameraTools;
  */
 public class VerificaFuncCameraActivity extends Activity {
 
-	public static final String TAG = "VerificaFuncCameraActivity";
+  public static final String TAG = "VerificaFuncCameraActivity";
 
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
+  /** Called when the activity is first created. */
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
 
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.main);
 
-		Log.d(TAG, "*** onCreate() ***");
+    Log.d(TAG, "*** onCreate() ***");
 
-		boolean isCameraAvailable = CameraTools.checkCameraHardware(this);
+    boolean isCameraAvailable = CameraTools.checkCameraHardware(this);
 
-		if (!isCameraAvailable) {
-			Log.w(TAG, "hardware não está disponvel");
-			return;
-		}
+    if (!isCameraAvailable) {
+      Log.w(TAG, "hardware não está disponvel");
+      return;
+    }
 
-		EditText edit = (EditText) findViewById(R.id.editText1);
+    EditText edit = (EditText) findViewById(R.id.editText1);
 
-		CameraTools.checkCameraFeatures(this);
+    CameraTools.checkCameraFeatures(this);
 
-		Log.i(TAG, "Nº de câmeras: " + CameraTools.getNumCameras());
+    Log.i(TAG, "Nº de câmeras: " + CameraTools.getNumCameras());
 
-		Camera c = CameraTools.getCameraInstance();
+    for (int i = 0; i < CameraTools.getNumCameras(); i++) {
 
-		HashMap<String, List<String>> hash = CameraTools.getParametersDetail(c);
+      Camera c = CameraTools.getCameraInstance(i);
 
-		exibeParametrosCamera(edit, hash);
-		exibeGravaParametrosCamera(edit, hash);
+      Log.i(TAG, "==> ");
+      Log.i(TAG, "==> Processando câmera: " + i);
+      Log.i(TAG, "==> ");
 
-		if (c != null) {
-			// Disconnects and releases the Camera object resources.
-			c.release();
-		}
+      HashMap<String, List<String>> hash = CameraTools.getParametersDetail(c);
 
-	}
+      edit.append("\n");
+      edit.append("==> Câmera: " + i);
+      edit.append("\n");
 
-	/**
-	 * exibeParametrosCamera(EditText edit, HashMap<String, List<String>> hash)
-	 * 
-	 * Lê todos os parâmetros de configuração da câmera e exibe em um campo de
-	 * texto
-	 * 
-	 * @param edit
-	 *          componente onde as informações serão exibidas
-	 * @param hash
-	 *          HashMap contendo a lista de parâmetros e seus respectivos valores
-	 *          válidos
-	 */
-	private void exibeParametrosCamera(EditText edit, HashMap<String, List<String>> hash) {
+      exibeParametrosCamera(edit, hash);
 
-		int num = 0;
+      exibeGravaParametrosCamera(edit, hash);
 
-		for (String chave : hash.keySet()) {
+      if (c != null) {
+        // Disconnects and releases the Camera object resources.
+        c.release();
+      }
 
-			num++;
+    }
 
-			List<String> listaValues = hash.get(chave);
+    //
+    obtemAtributoCameras();
 
-			Log.d(TAG, "chave(" + num + ")=" + chave);
-			edit.append("chave(" + num + ")=" + chave + "\n");
+  }
 
-			if (listaValues != null) {
 
-				for (String s2 : listaValues) {
-					Log.d(TAG, "  value=" + s2);
-					edit.append("  value=" + s2 + "\n");
-				}
+  private void obtemAtributoCameras() {
 
-			}
+    if (CameraTools.getNumCameras() < 2) {
+      return;
+    }
 
-		}
-	}
+    Log.i(TAG, "Nº de câmeras: " + CameraTools.getNumCameras());
 
-	/**
-	 * y(EditText edit, HashMap<String, List<String>> hash)
-	 * 
-	 * Lê todos os parâmetros de configuração da câmera e exibe em um campo de
-	 * texto e grava o resultado em um arquivo texto.
-	 * 
-	 * @param edit
-	 *          componente onde as informações serão exibidas
-	 * 
-	 * @param hash
-	 *          HashMap contendo a lista de parâmetros e seus respectivos valores
-	 *          válidos
-	 * 
-	 * 
-	 * @param hash
-	 */
-	private void exibeGravaParametrosCamera(EditText edit, HashMap<String, List<String>> hash) {
+    Camera c = null;
 
-		if (hash == null) {
-			Log.w(TAG, "lista de parâmetros está vazia");
-			return;
-		}
+    /*
+    HashMap[] x = new HashMap[2];
 
-		// percorre a lista de chaves
-		for (String chave : hash.keySet()) {
+    for (int i = 0; i < CameraTools.getNumCameras(); i++) {
+      
+      c = CameraTools.getCameraInstance(i);
 
-			StringBuilder sb = new StringBuilder();
+      x[i] = CameraTools.getParametersDetail(c);
 
-			sb.append(chave).append(";");
+    }
+    */
 
-			// adiciona a informação
-			edit.append(chave);
-			edit.append(";");
+    c = CameraTools.getCameraInstance(0);
 
-			// percorre a lista de valores
-			List<String> listaValues = hash.get(chave);
+    HashMap<String, List<String>> hash0 = CameraTools.getParametersDetail(c);
 
-			if (listaValues != null) {
+    if (c != null) {
+      // Disconnects and releases the Camera object resources.
+      c.release();
+    }
 
-				for (String valor : listaValues) {
+    c = CameraTools.getCameraInstance(1);
 
-					sb.append(valor + ";");
-					edit.append(valor + ";");
+    HashMap<String, List<String>> hash1 = CameraTools.getParametersDetail(c);
 
-				}
+    if (c != null) {
+      // Disconnects and releases the Camera object resources.
+      c.release();
+    }
 
-			}
+    // Compara os atributos de duas câmeras
+    comparaAtributosCamera(hash0, hash1);
 
-			// pula uma linha
-			edit.append("\n");
+  }
+  
+  
+  /**
+   * exibeParametrosCamera(EditText edit, HashMap<String, List<String>> hash)
+   * 
+   * Lê todos os parâmetros de configuração da câmera e exibe em um campo de
+   * texto
+   * 
+   * @param edit
+   *          componente onde as informações serão exibidas
+   * @param hash
+   *          HashMap contendo a lista de parâmetros e seus respectivos valores
+   *          válidos
+   */
+  private void exibeParametrosCamera(EditText edit, HashMap<String, List<String>> hash) {
 
-			// escreve a linha
-			Log.d(TAG, sb.toString());
+    int num = 0;
 
-		}
+    for (String chave : hash.keySet()) {
 
-		String s = edit.getText().toString();
+      num++;
 
-		gravaString(s, "data.txt");
+      List<String> listaValues = hash.get(chave);
 
-	}
+      Log.d(TAG, "\nchave(" + num + ")=" + chave);
+      edit.append("\nchave(" + num + ")=" + chave + "\n");
 
-	/**
-	 * gravaString(String s, String filename)
-	 * 
-	 * Grava a string no arquivo. O arquivo será armazenado no diretório dado por:
-	 * Environment.getExternalStorageDirectory()
-	 * 
-	 * @param s
-	 *          String
-	 * @param filename
-	 *          nome do arquivo
-	 */
-	private void gravaString(String s, String filename) {
+      if (listaValues != null) {
 
-		// diretório
-		// File dirs =
-		// Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-		File dirs = Environment.getExternalStorageDirectory();
+        for (String s2 : listaValues) {
+          Log.d(TAG, "  value=" + s2);
+          edit.append("  value=" + s2 + "\n");
+        }
 
-		// cria o arquivo no diretório especificado
-		File f = new File(dirs, filename);
+      }
 
-		if (dirs.mkdirs()) {
-			Log.d(TAG, "diretório " + dirs.getAbsolutePath() + " foi criado");
-		} else {
-			if (dirs.exists()) {
-				Log.d(TAG, "diretório " + dirs.getAbsolutePath() + " NÃO foi criado pois já existe");
-			} else {
-				Log.w(TAG, "diretório NÃO foi criado");
-			}
-		}
+    }
+  }
 
-		FileOutputStream stream = null;
+  /**
+   * Lê todos os parâmetros de configuração da câmera e exibe em um campo de
+   * texto e grava o resultado em um arquivo texto.
+   * 
+   * @param edit
+   *          componente onde as informações serão exibidas
+   * 
+   * @param hash
+   *          HashMap contendo a lista de parâmetros e seus respectivos valores
+   *          válidos
+   */
+  private void exibeGravaParametrosCamera(EditText edit, HashMap<String, List<String>> hash) {
 
-		try {
+    if (hash == null) {
+      Log.w(TAG, "lista de parâmetros está vazia");
+      return;
+    }
 
-			stream = new FileOutputStream(f);
+    // percorre a lista de chaves
+    for (String chave : hash.keySet()) {
 
-			DataOutputStream dos = new DataOutputStream(stream);
+      StringBuilder sb = new StringBuilder();
 
-			// grava o texto no arquivo
-			dos.write(s.getBytes());
+      sb.append(chave).append(";");
 
-			// fecha o strean
-			dos.close();
+      // adiciona a informação
+      edit.append(chave);
+      edit.append(";");
 
-			// exibe o nº de caracteres gravados
-			Log.d(TAG, s.getBytes().length + " caracteres gravados");
+      // percorre a lista de valores
+      List<String> listaValues = hash.get(chave);
 
-			Log.d(TAG, "Arquivo: " + f.getAbsolutePath() + " gravado com sucesso");
+      if (listaValues != null) {
 
-			Toast.makeText(this, "Arquivo: " + f.getAbsolutePath() + " gravado com sucesso", Toast.LENGTH_SHORT).show();
+        for (String valor : listaValues) {
 
-		} catch (FileNotFoundException e) {
-			Log.w(TAG, "Arquivo: " + f.getAbsolutePath() + " não foi encontrado", e);
+          sb.append(valor + ";");
+          edit.append(valor + ";");
 
-		} catch (IOException e) {
-			Log.w(TAG, "Erro na gravação do arquivo: " + f.getAbsolutePath(), e);
-		}
+        }
 
-	}
+      }
+
+      // pula uma linha
+      edit.append("\n");
+
+      // escreve a linha
+      Log.d(TAG, sb.toString());
+
+    }
+
+    String s = edit.getText().toString();
+
+    // grava a string no arquivo
+    gravaString(s, "data.txt");
+
+  }
+
+  /**
+   * Grava uma string em um arquivo.<br>
+   * O arquivo será armazenado no diretório dado por:
+   * Environment.getExternalStorageDirectory()
+   * 
+   * @param s
+   *          String
+   * 
+   * @param filename
+   *          nome do arquivo
+   */
+  private void gravaString(String s, String filename) {
+
+    File dirs = Environment.getExternalStorageDirectory();
+
+    // cria o arquivo no diretório especificado
+    File f = new File(dirs, filename);
+
+    if (dirs.mkdirs()) {
+
+      Log.d(TAG, "diretório " + dirs.getAbsolutePath() + " foi criado");
+
+    } else {
+
+      if (dirs.exists()) {
+        Log.d(TAG, "diretório " + dirs.getAbsolutePath() + " NÃO foi criado pois já existe");
+      } else {
+        Log.w(TAG, "diretório NÃO foi criado");
+      }
+
+    }
+
+    FileOutputStream stream = null;
+
+    try {
+
+      stream = new FileOutputStream(f);
+
+      DataOutputStream dos = new DataOutputStream(stream);
+
+      // grava o texto no arquivo
+      dos.write(s.getBytes());
+
+      // fecha o strean
+      dos.close();
+
+      // exibe o nº de caracteres gravados
+      Log.d(TAG, s.getBytes().length + " caracteres gravados");
+
+      Log.d(TAG, "Arquivo: " + f.getAbsolutePath() + " gravado com sucesso");
+
+      Toast.makeText(this, "Arquivo: " + f.getAbsolutePath() + " gravado com sucesso", Toast.LENGTH_SHORT).show();
+
+    } catch (FileNotFoundException e) {
+      Log.w(TAG, "Arquivo: " + f.getAbsolutePath() + " não foi encontrado", e);
+
+    } catch (IOException e) {
+      Log.w(TAG, "Erro na gravação do arquivo: " + f.getAbsolutePath(), e);
+    }
+
+  }
+
+  /**
+   * Compara as propriedades das câmeras 0 e 1 e exibe seus valores e
+   * diferenças.
+   * 
+   * @param hash0
+   *          Propriedades da câmera 0
+   *          
+   * @param hash1
+   *          Propriedades da câmera 1
+   * 
+   */
+  private void comparaAtributosCamera(HashMap<String, List<String>> hash0, HashMap<String, List<String>> hash1) {
+
+    if ((hash0 == null) || (hash1 == null)) {
+      Log.w(TAG, "lista de parâmetros está vazia");
+      return;
+    }
+
+    // Cria um conjunto para armazenar as propriedades
+    Set<String> set = new HashSet<String>();
+
+    // insere as chaves no conjunto
+    Log.d(TAG, "Num elem 1: " + hash1.size());
+    for (String chave : hash1.keySet()) {
+      boolean b = set.add(chave);
+      if (!b) {
+        Log.v(TAG, "chave: " + chave + " duplicada.");
+      }
+    }
+
+    // insere as chaves no conjunto
+    Log.d(TAG, "Num elem 0: " + hash0.size());
+    for (String chave : hash0.keySet()) {
+      boolean b = set.add(chave);
+      if (!b) {
+        //Log.v(TAG, "chave: " + chave + " duplicada.");
+      }
+      else {
+        Log.v(TAG, "chave: " + chave + " inserida com sucesso.");
+      }
+    }
+
+    // Exibe o nº de elementos do cojunto
+    Log.d(TAG, "Num elem set: " + set.size());
+
+    int i = 0;
+
+    for (String chave : set) {
+
+      Log.d(TAG, i + " - Chave: " + chave);
+
+      // exibe os valores associados as chaves da câmera 0
+      if (hash0.containsKey(chave)) {
+        Log.d(TAG, "  0: " + hash0.get(chave));
+      }
+      else {
+        Log.w(TAG, "  1: " + chave + " inexistente");
+      }
+
+      // exibe os valores associados as chaves da câmera 1      
+      if (hash1.containsKey(chave)) {
+        Log.d(TAG, "  1: " + hash1.get(chave));
+      } else {
+        Log.w(TAG, "  1: " + chave + " inexistente");
+      }
+
+      i++;
+
+    }
+
+  }
 
 }

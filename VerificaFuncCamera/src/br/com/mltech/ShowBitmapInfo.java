@@ -25,7 +25,7 @@ public class ShowBitmapInfo extends Activity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    // TODO Auto-generated method stub
+
     super.onCreate(savedInstanceState);
     setContentView(R.layout.tela);
 
@@ -64,20 +64,24 @@ public class ShowBitmapInfo extends Activity {
    */
   public Bitmap getBitmapFromFile(String filename) {
 
-    Bitmap bm = BitmapFactory.decodeFile(filename);
+    Bitmap bitmap = BitmapFactory.decodeFile(filename);
 
-    if (bm == null) {
+    if (bitmap == null) {
       Log.d(TAG, "getBitmapFromFile() - arquivo: " + filename + " não foi encontrado.");
     }
 
-    showBitmapInfo(bm);
+    showBitmapInfo(bitmap);
 
-    return bm;
+    return bitmap;
 
   }
 
+  /**
+   * 
+   * @param bm
+   */
   public void showBitmapInfo(Bitmap bm) {
-    // TODO transformar ...
+
     if (bm == null) {
       Log.w(TAG, "Bitmap não pode ser nulo");
       return;
