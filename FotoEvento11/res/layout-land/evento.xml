@@ -20,25 +20,29 @@
 
         <TableLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp" >
 
             <TableRow
                 android:id="@+id/tableRow1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Nome do contratante do evento"
-                    android:text="Contratante:" />
-
-                <EditText
-                    android:id="@+evento/editCliente"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:hint="Nome do contratante do evento"
+                    android:text="Contratante:"
+                    android:textSize="@dimen/Fonte20" />
+
+                <EditText
+                    android:id="@+evento/editCliente"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Nome do contratante do evento" />
+                    android:hint="Nome do contratante do evento"
+                    android:textColor="@color/DarkGreen" />
+
             </TableRow>
 
             <!-- Nome do Evento -->
@@ -47,18 +51,20 @@
                 android:id="@+id/tableRow2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nome do Evento" />
+                    android:text="Nome do Evento"
+                    android:textSize="@dimen/Fonte20" />
 
                 <EditText
                     android:id="@+evento/editNome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Nome do Evento" />
+                    android:hint="Nome do Evento" >
+                </EditText>
             </TableRow>
 
             <!-- Checkbox para envio de fotos as redes sociais -->
@@ -76,7 +82,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Endereço"
-                    android:text="Endereço" />
+                    android:text="Endereço" 
+                    android:textSize="@dimen/Fonte20" />
 
                 <EditText
                     android:id="@+evento/endereco"
@@ -97,7 +104,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Cidade onde ocorre o evento"
-                    android:text="Cidade" />
+                    android:text="Cidade"
+                    android:textSize="@dimen/Fonte20" />
 
                 <EditText
                     android:id="@+id/cidade"
@@ -119,7 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Estado"
-                    android:text="Estado" />
+                    android:text="Estado" android:textSize="@dimen/Fonte20" />
 
                 <EditText
                     android:id="@+id/estado"
@@ -132,7 +140,6 @@
                     android:id="@+id/spinner1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                
             </TableRow>
 
             <!-- CEP -->
@@ -147,7 +154,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="CEP"
-                    android:text="CEP" />
+                    android:text="CEP" android:textSize="@dimen/Fonte20"/>
 
                 <EditText
                     android:id="@+id/cep"
@@ -170,14 +177,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Telefone de contato"
-                    android:text="Telefone" />
-
+                    android:text="Telefone" android:textSize="@dimen/Fonte20"/>
+
                 <EditText
                     android:id="@+id/telefone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Telefone de contato" />
+                    android:hint="Telefone de contato"
+                    android:inputType="phone" />
+
             </TableRow>
 
             <!-- Data do Evento -->
@@ -192,7 +201,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Data do evento"
-                    android:text="Data do Evento" />
+                    android:text="Data do Evento" android:textSize="@dimen/Fonte20"/>
 
                 <EditText
                     android:id="@+id/data"
@@ -201,20 +210,16 @@
                     android:ems="10"
                     android:hint="Data do evento"
                     android:inputType="date" />
-
-                <DatePicker
-                    android:id="@+id/datePicker1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
             </TableRow>
         </TableLayout>
 
         <!-- Quais redes sociais participantes -->
-
+
         <TextView
             android:id="@+id/textViewRedesSociais"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:hint="Quais redes sociais receberam postagens do evento"
             android:text="Redes Sociais"
             android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -224,13 +229,13 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#d0d0d0"
             android:orientation="horizontal" >
 
             <CheckBox
                 android:id="@+evento/chkTwitter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
                 android:hint="Posta uma mensagem no Twitter do Evento"
                 android:text="Twitter" />
 
@@ -249,33 +254,35 @@
 
 
         <!-- Borda Polaroid -->
-
+
         <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp" >
 
             <TableRow
                 android:id="@+id/tableRow9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     style="@style/texto14"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="Borda usada no formato de borda Polaroid"
-                    android:text="Borda Polaroid" />
-
+                    android:text="Borda Polaroid"
+                    android:textSize="18sp" />
+
                 <EditText
                     android:id="@+evento/editBordaPolaroid"
-                    android:layout_width="wrap_content"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:ems="10"
                     android:hint="URL do arquivo com a borda Polaroid"
-                    android:inputType="text" >
+                    android:inputType="text" />
 
-                    <requestFocus />
-                </EditText>
             </TableRow>
 
             <!-- Borda Cabine -->
@@ -284,21 +291,28 @@
                 android:id="@+id/tableRow10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     style="@style/texto14"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="Borda usada no formato de borda Cabine"
-                    android:text="Borda Cabine" />
-
+                    android:text="Borda Cabine"
+                    android:textSize="18sp" />
+
                 <EditText
                     android:id="@+evento/editBordaCabine"
-                    android:layout_width="wrap_content"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:ems="10"
                     android:hint="URL do arquivo com a borda Cabine"
-                    android:inputType="text" />
+                    android:inputType="text" >
+
+                    <requestFocus />
+
+                </EditText>
+
             </TableRow>
         </TableLayout>
 
@@ -316,10 +330,12 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <!-- Param 1 -->
-
+
         <TableLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp" >
 
             <TableRow
                 android:id="@+id/tableRow11"

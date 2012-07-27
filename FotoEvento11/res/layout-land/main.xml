@@ -3,19 +3,20 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/fundo"
+        android:drawableTop="@drawable/shape_rectangle_linear_gradient"
         android:gravity="center_horizontal"
         android:text="Foto Evento Participações"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/vermelho"
         android:textSize="@dimen/Fonte30"
         android:textStyle="bold" />
-
+
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
@@ -27,7 +28,7 @@
         android:minHeight="600dp"
         android:minWidth="800dp"
         android:src="@drawable/ic_launcher" />
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,7 +58,13 @@
             android:layout_height="wrap_content"
             android:text="Sair"
             android:width="200dp" />
-
     </LinearLayout>
+
+    <TextView
+        style="@style/FooterText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Copyright 2012 by MLTech" />
 
 </LinearLayout>

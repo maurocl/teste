@@ -7,18 +7,21 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
+
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            android:background="@color/White"
             android:text="Informações do Participante:"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/azul" />
+
         <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp" >
 
             <!-- Nome -->
 
@@ -85,28 +88,30 @@
                     android:id="@+id/editTelefone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ems="10"
                     android:hint="Entre com seu telefone de contato"
                     android:inputType="phone" />
 
             </TableRow>
         </TableLayout>
-
+
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tvDadosAdicionais"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
+            android:background="@color/White"
             android:text="Dados adicionais:"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/azul" />
+
         <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp" >
+
             <TableRow
-                android:id="@+id/tableRow4"
+                android:id="@+id/tbRowParam1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -116,10 +121,10 @@
                     android:layout_height="wrap_content"
                     android:text="Parâmetro1:"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
                 <EditText
                     android:id="@+id/editParam1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="500dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="Parâmetro opcional 1"
@@ -131,9 +136,9 @@
 
 
             <!-- Parâmetro Opcional 2 -->
-
+
             <TableRow
-                android:id="@+id/tableRow5"
+                android:id="@+id/tbRowParam2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -155,9 +160,9 @@
             </TableRow>
 
             <!-- Parâmetro Opcional 3 -->
-
+
             <TableRow
-                android:id="@+id/tableRow6"
+                android:id="@+id/tbRowParam3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -179,9 +184,9 @@
             </TableRow>
 
             <!-- Parâmetro Opcional 4 -->
-
+
             <TableRow
-                android:id="@+id/tableRow7"
+                android:id="@+id/tbRowParam4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -205,9 +210,9 @@
             </TableRow>
 
             <!-- Parâmetro Opcional 5 -->
-
+
             <TableRow
-                android:id="@+id/tableRow8"
+                android:id="@+id/tbRowParam5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -238,9 +243,10 @@
             android:orientation="horizontal" >
 
             <!-- Botão Enviar -->
-
+
             <Button
                 android:id="@+id/button1"
+                style="@style/btnConfirmaStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -248,14 +254,16 @@
                 android:text="Enviar" />
 
             <!-- Botão Cancelar -->
-
+
             <Button
                 android:id="@+id/button2"
+                style="@style/btnCancelarStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="Cancelar" />
+
         </LinearLayout>
     </LinearLayout>
 

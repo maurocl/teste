@@ -14,8 +14,12 @@
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
+        <!-- Header -->
+
+        <include layout="@layout/include_header" />
+
         <!-- Relatórios -->
-
+
         <TextView
             android:id="@+id/textView1"
             style="@style/texto18"
@@ -33,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nº de Participantes Cadastrados" />
-
+
         <EditText
             android:id="@+id/numParticipantes"
             android:layout_width="wrap_content"
@@ -42,7 +46,6 @@
             android:focusable="false"
             android:hint="Exibe o nº de participantes"
             android:inputType="number" >
-            
         </EditText>
 
         <!--  -->
@@ -52,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nº de Fotos Polaroid" />
-
+
         <EditText
             android:id="@+id/numFotosPolaroid"
             android:layout_width="wrap_content"
@@ -61,7 +64,6 @@
             android:focusable="false"
             android:hint="Exibe o nº de fotos Polaroid"
             android:inputType="number" >
-
         </EditText>
 
         <TextView
@@ -69,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nº de Fotos Cabine" />
-
+
         <EditText
             android:id="@+id/numFotosCabine"
             android:layout_width="wrap_content"
@@ -78,7 +80,6 @@
             android:focusable="false"
             android:hint="Exibe o nº de fotos cabine"
             android:inputType="number" >
-
         </EditText>
 
         <TextView
@@ -86,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nº de Fotos Coloridas" />
-
+
         <EditText
             android:id="@+id/numFotosColoridas"
             android:layout_width="wrap_content"
@@ -95,7 +96,6 @@
             android:focusable="false"
             android:hint="Exibe o nº de fotos coloridas"
             android:inputType="number" >
-
         </EditText>
 
         <TextView
@@ -103,7 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nº de Fotos PB" />
-
+
         <EditText
             android:id="@+id/numFotosPB"
             android:layout_width="wrap_content"
@@ -112,7 +112,6 @@
             android:focusable="false"
             android:hint="Exibe o nº de fotos em P&amp;B"
             android:inputType="number" >
-
         </EditText>
 
         <!-- É um textView dummy -->
@@ -126,7 +125,7 @@
             android:text="" />
 
         <!-- Botões -->
-
+
         <Button
             android:id="@+id/btn1"
             style="@style/btnConfirmaStyle"
@@ -150,9 +149,13 @@
         android:id="@+id/btn4"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Botão4" />
+        android:text="Botão4" />
         -->
 
+
+        <!-- Footer -->
+
+        <include layout="@layout/include_footer" />
     </LinearLayout>
 
 </ScrollView>
