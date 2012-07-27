@@ -34,7 +34,7 @@ import br.com.mltech.utils.FileUtils;
 /**
  * ManutencaoActivity
  * 
- * Esta activity é responsável pela Manutenção do Sistema.
+ * Esta activity é responsável pela Manutenção do Sistema.<br>
  * 
  * É a partir dela que podemos fazer a manutenção do Contratante, Evento,
  * Configurações, Relatórios, Backup e Restore de configuração do sistema a

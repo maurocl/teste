@@ -361,7 +361,7 @@ public class CameraActivity extends Activity implements Constantes {
       mCamera.startPreview();
 
       // Atualiza as funcionalidades dos botões
-      atualizaBotoes();
+      atualizaBotoesDeControle();
 
       // TODO qual é a situação nesse momento ?
       // o que é necessário fazer para ter a visualização da câmera novamente ?
@@ -435,7 +435,10 @@ public class CameraActivity extends Activity implements Constantes {
       // Configura os parâmetros da câmera
       //configuraParamCamera(11);
 
+      // obtem o tipo do efeito de cores que deve ser aplicado
       int tipoEfeito = mParticipacao.getEfeitoFoto();
+      
+      // Configura a câmera
       configuraParamCamera2(tipoEfeito);
 
     } else {
@@ -507,6 +510,7 @@ public class CameraActivity extends Activity implements Constantes {
     // configura os parâmetros de configuração da câmera
     // --------------------------------------------------------
     if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+      
       // auto focus mode is supported
       Log.d(TAG, "n# focus modes supported: " + focusModes.size());
       for (String modes : focusModes) {
@@ -517,6 +521,12 @@ public class CameraActivity extends Activity implements Constantes {
 
   }
 
+  /**
+   * Configura os parâmetros da câmera
+   * 
+   * @param efeitoFoto
+   * 
+   */
   private void configuraParamCamera2(int efeitoFoto) {
 
     // Set the clockwise rotation of preview display in degrees.
@@ -565,7 +575,7 @@ public class CameraActivity extends Activity implements Constantes {
     CameraTools.showParametersDetail(mCamera);
 
     // altera o tamanho da foto
-    params.setPictureSize(640, 480);
+    params.setPictureSize(800, 600);
 
     /*
      * EFFECT_AQUA EFFECT_BLACKBOARD EFFECT_MONO EFFECT_NEGATIVE EFFECT_NONE
@@ -735,7 +745,7 @@ public class CameraActivity extends Activity implements Constantes {
   /**
    * Atualiza os botões de acordo com o modo de disparo da câmera.
    */
-  private void atualizaBotoes() {
+  private void atualizaBotoesDeControle() {
 
     if (tipoDisparo == MANUAL) {
 
@@ -980,6 +990,7 @@ public class CameraActivity extends Activity implements Constantes {
     // obtém o tamanho da imagem
     Size size = parameters.getPictureSize();
 
+    Log.v(TAG, "showCameraParameters() - size: " + size.width + " x "+size.height);
     Log.v(TAG, "showCameraParameters() - getHorizontalViewAngle: " + parameters.getHorizontalViewAngle());
     Log.v(TAG, "showCameraParameters() - getJpegThumbnailQuality: " + parameters.getJpegThumbnailQuality());
 

@@ -2375,7 +2375,7 @@ public class DummyActivity3 extends Activity implements Constantes {
       return null;
     }
 
-    Log.d(TAG, "formatarPolaroid() - w=" + bmFotoOriginal.getWidth() + ", h=" + bmFotoOriginal.getHeight());
+    Log.d(TAG, "formatarPolaroid() -  tamanho da foto original - w=" + bmFotoOriginal.getWidth() + ", h=" + bmFotoOriginal.getHeight());
 
     if (ManipulaImagem.isLandscape(bmFotoOriginal)) {
       // foto possui a largura maior que a altura
