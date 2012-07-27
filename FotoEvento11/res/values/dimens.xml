@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <dimen name="Fonte20">20sp</dimen>
     <dimen name="Fonte30">30sp</dimen>
+    <dimen name="titleListItem">20sp</dimen>
+    <dimen name="descListItem">14sp</dimen>
+    <dimen name="generalText">16sp</dimen>
+    <dimen name="TitleText">20sp</dimen>
+    <dimen name="headerSize">70dp</dimen>
+    <dimen name="footerSize">50dp</dimen>
+    <dimen name="Fonte40">40sp</dimen>
+
 </resources>
