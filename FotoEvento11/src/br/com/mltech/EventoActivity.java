@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import android.app.Activity;
@@ -10,30 +11,34 @@ import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 import br.com.mltech.modelo.Contratante;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Parametros;
 
 /**
- * EventoActivity.java
+ * EventoActivity.java<br>
  * 
- * Obtém informações sobre um evento.
- * 
- * @author maurocl
- * 
- *         Activity para criação de um evento
+ * Esta activity é responsável pela manutenação de um Evento.
  * 
  */
 // public class EventoActivity extends Activity implements OnClickListener {
 public class EventoActivity extends Activity implements Constantes {
 
   public static final String TAG = "EventoActivity";
+
+  public static final int MY_ACTION_PICK = 255;
+
+  private String[] estados = new String[] { "SP", "MG", "RS", "ES", "DF", "RJ" };
 
   private Contratante mContratante;
 
@@ -48,6 +53,8 @@ public class EventoActivity extends Activity implements Constantes {
   private EditText cidade;
 
   private EditText estado;
+
+  private Spinner estado1;
 
   private EditText cep;
 
@@ -105,6 +112,49 @@ public class EventoActivity extends Activity implements Constantes {
     // configura os identificadores dos componentes da tela
     atualizaIdentificadoresTela();
 
+    //------------------------------
+    ArrayAdapter<String> adaptador = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, estados);
+
+    adaptador.setDropDownViewResource(android.R.layout.simple_spinner_item);
+
+    estado1.setAdapter(adaptador);
+
+    estado1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+      public void onItemSelected(AdapterView<?> parent, View view, int posicao, long id) {
+
+        Toast.makeText(EventoActivity.this, "Item " + posicao + " selecionado", Toast.LENGTH_LONG).show();
+
+        Log.d(TAG, "onCreate() - Item " + posicao + " selecionado");
+
+        estado.setText((String) estado1.getSelectedItem());
+
+      }
+
+      public void onNothingSelected(AdapterView<?> parent) {
+
+        Toast.makeText(EventoActivity.this, "Nenhum item foi selecionado", Toast.LENGTH_LONG).show();
+      }
+
+    });
+
+    cep.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+      public void onFocusChange(View v, boolean hasFocus) {
+
+        EditText x = (EditText) v;
+        
+        if(x.getText().length()<8 || x.getText().length()>9) {
+          Toast.makeText(EventoActivity.this, "O Cep não está correto !", Toast.LENGTH_LONG).show();
+        }
+        
+        
+
+      }
+    });
+
+    //------------------------------
+
     // Atualiza os componentes da interface gráfica com os valores do objeto
     // mEvento
     atualizaValorComponentes();
@@ -118,7 +168,7 @@ public class EventoActivity extends Activity implements Constantes {
           boolean isChecked) {
 
         Log.d(TAG, "checkFacebook: " + isChecked);
-        
+
       }
 
     });
@@ -143,7 +193,7 @@ public class EventoActivity extends Activity implements Constantes {
 
         Log.d(TAG, "btnGravar");
         processaBtnGravar();
-        
+
       }
 
     });
@@ -193,7 +243,7 @@ public class EventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * testaIntentNula(Intent intent)
+   * Testa se as informações sobre o Contratante e o Evento são válidas.
    * 
    * se a intent não for nula então lê as informações sobre o Contratante e o
    * Evento e guarda essas informações nos objetos correspondentes
@@ -213,12 +263,10 @@ public class EventoActivity extends Activity implements Constantes {
 
     if (intent.getSerializableExtra(CONTRATANTE) != null) {
       // recebe informações sobre o contratante
-      mContratante = (Contratante) intent
-          .getSerializableExtra(CONTRATANTE);
+      mContratante = (Contratante) intent.getSerializableExtra(CONTRATANTE);
     } else {
       // parâmetro não encontrado
-      Log.d(TAG,
-          "testaIntentNula() - Parâmetro br.com.mltech.contratante não encontrado");
+      Log.d(TAG, "testaIntentNula() - Parâmetro br.com.mltech.contratante não encontrado");
     }
 
     if (intent.getSerializableExtra(EVENTO) != null) {
@@ -226,18 +274,18 @@ public class EventoActivity extends Activity implements Constantes {
       mEvento = (Evento) intent.getSerializableExtra(EVENTO);
     } else {
       // parâmetro não encontrado
-      Log.d(TAG,
-          "testaIntentNula() - Parâmetro br.com.mltech.evento não encontrado");
+      Log.d(TAG, "testaIntentNula() - Parâmetro br.com.mltech.evento não encontrado");
     }
 
   }
 
   /**
-   * testaContratanteNulo()
+   * Verifica se o contratante já foi definido.
    * 
-   * se o contratante for nulo então o evento não poderá ser preenchido dessa
-   * forma envia uma mensagem ao usuário indicando que o contratante não deve
-   * ser nulo. É criada uma Intent indicando o resultado da execução da activity
+   * Se o contratante for nulo então o evento não poderá ser preenchido.<br>
+   * Dessa forma envia uma mensagem ao usuário indicando que o contratante não
+   * deve ser nulo.<br>
+   * É criada uma Intent indicando o resultado da execução da activity.
    * 
    */
   private void testaContratanteNulo() {
@@ -260,10 +308,6 @@ public class EventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * testaEventoNulo()
-   * 
-   * testa se o evento é nulo
-   * 
    * Testa se já existe algum evento cadastrado. Se ainda não houver um evento,
    * então cria-o.
    * 
@@ -271,26 +315,26 @@ public class EventoActivity extends Activity implements Constantes {
   private void testaEventoNulo() {
 
     if (mEvento == null) {
+
       // nenhum evento foi encontrado
       // cria um objeto Evento
       mEvento = new Evento();
+
       Log.d(TAG, "testaEventoNulo() - cria um novo evento");
+
       // e atribui o contratante
       mEvento.setContratante(mContratante);
 
     } else {
 
       // exibe as informações a respeito do evento
-      Log.d(TAG, "testaEventoNulo() - Evento carregado com sucesso: "
-          + mEvento);
+      Log.d(TAG, "testaEventoNulo() - Evento carregado com sucesso: " + mEvento);
 
     }
 
   }
 
   /**
-   * atualizaIdentificadoresTela()
-   * 
    * Obtem o identificador de cada componente gráfico da tela
    * 
    */
@@ -304,6 +348,7 @@ public class EventoActivity extends Activity implements Constantes {
     endereco = (EditText) findViewById(R.evento.endereco);
     cidade = (EditText) findViewById(R.id.cidade);
     estado = (EditText) findViewById(R.id.estado);
+    estado1 = (Spinner) findViewById(R.id.spinner1);
     cep = (EditText) findViewById(R.id.cep);
     data = (EditText) findViewById(R.id.data);
     telefone = (EditText) findViewById(R.id.telefone);
@@ -332,18 +377,15 @@ public class EventoActivity extends Activity implements Constantes {
 
   }
 
-  /** 
+  /**
    * Preenche os componentes visuais com os dados do objeto Evento. Usa os
-   * objetos mContratante e mEvento para preencher os dados nos elementos
-   * de UI.
-   * 
+   * objetos mContratante e mEvento para preencher os dados nos elementos de UI.
    */
   private void atualizaValorComponentes() {
 
     if (mEvento == null) {
 
-      Log.d(TAG,
-          "atualizaValorComponentes() - mEvento é nulo");
+      Log.d(TAG, "atualizaValorComponentes() - mEvento é nulo");
 
     } else {
 
@@ -353,8 +395,7 @@ public class EventoActivity extends Activity implements Constantes {
 
       cliente.setText(mContratante.getNome());
 
-      // estabelece que o componente não será focável
-      // ele será apenas exibido porém não poderá ser
+      // estabelece que o componente não será focável ele será apenas exibido porém não poderá ser
       // modificado
       cliente.setFocusable(false);
       cliente.setBackgroundColor(Color.LTGRAY);
@@ -367,7 +408,14 @@ public class EventoActivity extends Activity implements Constantes {
 
       endereco.setText(mEvento.getEndereco());
       cidade.setText(mEvento.getCidade());
+
       estado.setText(mEvento.getEstado());
+
+      int indice = busca(mEvento.getEstado());
+      if (indice != -1) {
+        estado1.setSelection(indice);
+      }
+
       cep.setText(mEvento.getCep());
       data.setText(mEvento.getData());
       telefone.setText(mEvento.getTelefone());
@@ -405,9 +453,8 @@ public class EventoActivity extends Activity implements Constantes {
 
   }
 
-  /** 
+  /**
    * Executa o processo de gravação dos elementos de UI no objeto Evento.
-   * 
    */
   void processaBtnGravar() {
 
@@ -420,34 +467,91 @@ public class EventoActivity extends Activity implements Constantes {
 
     if (nome != null) {
       mEvento.setNome(nome.getText().toString());
+      
+      
+      if(nome.getText().toString().equals("")) {
+        // nome não pode ser vazio
+        showToast("Nome não pode ser nulo");
+        return;
+      }
+      
     }
 
     if (email != null) {
       mEvento.setEmail(email.getText().toString());
+      
+      if(email.getText().toString().equals("")) {
+        // email não pode ser vazio
+        showToast("Email não pode ser nulo");
+        return;
+      }
+      
+      
     }
 
     if (endereco != null) {
       mEvento.setEndereco(endereco.getText().toString());
+      
+      if(endereco.getText().toString().equals("")) {
+        // email não pode ser vazio
+        showToast("Endereço não pode ser nulo");
+        return;
+      }
+      
     }
 
     if (cidade != null) {
       mEvento.setCidade(cidade.getText().toString());
+      if(cidade.getText().toString().equals("")) {
+        // email não pode ser vazio
+        showToast("Cidade não pode ser nulo");
+        return;
+      }
     }
 
     if (estado != null) {
       mEvento.setEstado(estado.getText().toString());
+      
+      if(estado.getText().toString().equals("")) {
+        // email não pode ser vazio
+        showToast("Estado não pode ser nulo");
+        return;
+      }
+      
     }
 
     if (cep != null) {
       mEvento.setCep(cep.getText().toString());
+      
+      if(cep.getText().toString().equals("")) {
+        // email não pode ser vazio
+        showToast("Cep não pode ser nulo");
+        return;
+      }
+      
+      
     }
 
     if (data != null) {
       mEvento.setData(data.getText().toString());
+      
+      if(data.getText().toString().equals("")) {
+        // email não pode ser vazio
+        showToast("Data não pode ser nulo");
+        return;
+      }
+      
     }
 
     if (telefone != null) {
       mEvento.setTelefone(telefone.getText().toString());
+      
+      if(telefone.getText().toString().equals("")) {
+        // email não pode ser vazio
+        showToast("Telefone não pode ser nulo");
+        return;
+      }
+      
     }
 
     //
@@ -463,10 +567,24 @@ public class EventoActivity extends Activity implements Constantes {
     // ---
     if (bordaPolaroid != null) {
       mEvento.setBordaPolaroid(bordaPolaroid.getText().toString());
+      
+      if(bordaPolaroid.getText().toString().equals("")) {
+        // email não pode ser vazio
+        showToast("Borda Polaroid não pode ser nula");
+        return;
+      }
+      
     }
 
     if (bordaCabine != null) {
       mEvento.setBordaCabine(bordaCabine.getText().toString());
+      
+      if(bordaCabine.getText().toString().equals("")) {
+        // email não pode ser vazio
+        showToast("Borda Cabine não pode ser nulo");
+        return;
+      }
+      
     }
 
     // Vetor de Strings para armazenamento do nome dos elementos opcionais
@@ -503,26 +621,63 @@ public class EventoActivity extends Activity implements Constantes {
 
     // Retorna os valores da intent
     Intent intent = new Intent();
+
     intent.putExtra(EVENTO, mEvento);
+
     setResult(RESULT_OK, intent);
+
+    // Finaliza a Activity
     finish();
+
+  }
+  
+  
+  /**
+   * 
+   * @param msg
+   */
+  public void showToast(String msg) {
+    Toast.makeText(EventoActivity.this, msg, Toast.LENGTH_LONG).show();
+  }
+
+  /**
+   * onActivityResult(int requestCode, int resultCode, Intent data)
+   * 
+   * Trata o resultado da chamada das Activities
+   * 
+   */
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    super.onActivityResult(requestCode, resultCode, data);
+
+    Log.i(TAG, "onActivityResult(request " + requestCode + ", result=" + resultCode + ", data " + data + ") ...");
+
+    if (requestCode == MY_ACTION_PICK) {
+
+      Intent i = getIntent();
+
+      if (data != null) {
+        Log.d(TAG, "data=" + data);
+      }
+
+    }
 
   }
 
   /**
-   * 
    * Executa o processo de cancelamento de modificações e retorno da activity.
    */
   void processaBtnCancelar() {
 
     Log.d(TAG, "processaBtnCancelar() - Botão cancelar selecionado");
-    
+
     // cria uma intent de resposta indicando o resultado de execução da activity.
     Intent intent = new Intent();
-    
+
     // seta o resultado
     setResult(RESULT_CANCELED, intent);
-    
+
     // finaliza a activity
     finish();
   }
@@ -535,20 +690,46 @@ public class EventoActivity extends Activity implements Constantes {
 
     // Menu Item: Upload (executa o upload das bordas do evento)
     MenuItem upload = menu.add(0, 0, 0, "Upload");
+
     upload.setIcon(R.drawable.ic_launcher);
+
     upload.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
       public boolean onMenuItemClick(MenuItem item) {
 
-        // TODO Auto-generated method stub
-        Toast.makeText(EventoActivity.this, "Upload de Bordas",
-            Toast.LENGTH_SHORT).show();
+        Intent y = new Intent(Intent.ACTION_PICK);
+
+        y.setType("image/*");
+
+        startActivityForResult(y, MY_ACTION_PICK);
+
         return false;
       }
+
     });
 
     return super.onCreateOptionsMenu(menu);
 
+  }
+
+  /**
+   * Busca por uma string em um array de strings não ordenado.<br>
+   * Retorna o índice da string no array ou -1 caso a string não seja encontrada.
+   * 
+   * @param s String procurada
+   * 
+   * @return O indice do array onde a string se localiza ou -1 caso a string não seja encontrada.
+   */
+  public int busca(String s) {
+
+    int achei = -1;
+    for (int i = 0; i < estados.length; i++) {
+      if (s.equals(estados[i])) {
+        achei = i;
+        break;
+      }
+    }
+    return achei;
   }
 
 }

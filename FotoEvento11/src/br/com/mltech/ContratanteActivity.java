@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import android.app.Activity;
@@ -42,15 +43,22 @@ public class ContratanteActivity extends Activity implements Constantes {
       mContratante = (Contratante) intent.getSerializableExtra(Constantes.CONTRATANTE);
 
       if (mContratante == null) {
+
         mContratante = new Contratante(null, null, null);
+
         Log.d(TAG, "onCreate() - Criando contratante null");
+
       } else {
+
         Log.d(TAG, "onCreate() - Contratante carregado com sucesso: " + mContratante);
+
       }
 
     }
 
+    //
     // identifica os elementos de UI da tela
+    //
     final EditText nome = (EditText) findViewById(R.id.nome);
     final EditText email = (EditText) findViewById(R.id.email);
     final EditText telefone = (EditText) findViewById(R.id.telefone);
@@ -73,7 +81,9 @@ public class ContratanteActivity extends Activity implements Constantes {
     final Button btnEnviar = (Button) findViewById(R.id.btnEnviar);
     final Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
 
-    // Tratamento de evento do botão Enviar
+    /**
+     * Tratamento de evento do botão Enviar
+     */
     btnEnviar.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
@@ -81,14 +91,30 @@ public class ContratanteActivity extends Activity implements Constantes {
         Log.d(TAG, "Botão enviar selecionado");
 
         // Lê os valores dos campos da UI
-        String nome1 = nome.getText().toString();
-        String email1 = email.getText().toString();
-        String telefone1 = telefone.getText().toString();
-
         // atualiza o objeto contratante com os valores obtidos da tela.
-        mContratante.setNome(nome1);
-        mContratante.setEmail(email1);
-        mContratante.setTelefone(telefone1);
+        mContratante.setNome(nome.getText().toString());
+        
+        if(nome.getText().toString().equals("")) {
+          // email não pode ser vazio
+          showToast("Nome não pode ser nulo");
+          return;
+        }
+        
+        mContratante.setEmail(email.getText().toString());
+        
+        if(email.getText().toString().equals("")) {
+          // email não pode ser vazio
+          showToast("Email não pode ser nulo");
+          return;
+        }
+        
+        mContratante.setTelefone(telefone.getText().toString());
+        
+        if(telefone.getText().toString().equals("")) {
+          // email não pode ser vazio
+          showToast("Telefone não pode ser nulo");
+          return;
+        }
 
         if (checkCamposObrigatorios(nome, email, telefone) == true) {
 
@@ -171,6 +197,15 @@ public class ContratanteActivity extends Activity implements Constantes {
 
     return validado;
 
+  }
+
+  /**
+   * 
+   * @param msg
+   */
+  public void showToast(String msg) {
+
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
   }
 
 }
