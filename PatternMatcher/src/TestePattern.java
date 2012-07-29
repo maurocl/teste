@@ -161,8 +161,17 @@ public class TestePattern {
 
 	}
 
-	private static boolean validaData(String data) {
+	/**
+	 * 
+	 * @param data
+	 * @return
+	 */
+	public static boolean validaData(String data) {
 
+	  if(data==null) {
+	    return false;
+	  }
+	  
 		boolean dataValida = false;
 		
 		try {
