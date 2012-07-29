@@ -132,12 +132,14 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Exportar arquivo para Excel" />
-
+
         <Button
             android:id="@+id/btn2"
+            style="@style/btnConfirmaStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Botão2" />
+
         <!--
     <Button
         android:id="@+id/btn3"
