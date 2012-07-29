@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
+import br.com.mltech.modelo.RepositorioParticipacao;
 
 /**
  * RelatorioActivity<br>
@@ -43,13 +43,15 @@ public class RelatorioActivity extends Activity implements Constantes {
 
 	private List<Participacao> lista = null;
 
+	private RepositorioParticipacao repositorio;
+
 	// nome do arquivo onde será gerado o arquivo .csv
 	private static final String CSVFILE = "/mnt/sdcard/Pictures/fotoevento/lista.csv";
 
-	private int numFotosPolaroid=0;
-	private int numFotosCabine=0;
-	private int numFotosCores=0;
-	private int numFotosPB=0;
+	private int numFotosPolaroid = 0;
+	private int numFotosCabine = 0;
+	private int numFotosCores = 0;
+	private int numFotosPB = 0;
 
 	/**
 	 * onCreate()
@@ -57,9 +59,9 @@ public class RelatorioActivity extends Activity implements Constantes {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
-				
+
 		if (savedInstanceState != null) {
 			numFotosPolaroid = savedInstanceState.getInt("numFotosPolaroid");
 			numFotosPB = savedInstanceState.getInt("numFotosPB");
@@ -115,8 +117,11 @@ public class RelatorioActivity extends Activity implements Constantes {
 		EditText numParticipantes = (EditText) findViewById(R.id.numParticipantes);
 
 		Button btnExportExcel = (Button) findViewById(R.id.btn1);
+		Button btnExibe = (Button) findViewById(R.id.btn2);
 
 		btnExportExcel.setText("Exportar arquivo para Excel");
+
+		btnExibe.setText("Exibe participantes");
 
 		// TODO Obter o número de participantes
 		numParticipantes.setText(num);
@@ -157,14 +162,48 @@ public class RelatorioActivity extends Activity implements Constantes {
 		});
 
 		// Tratamento do evento do botão 2
-		/*
-		 * btn2.setOnClickListener(new OnClickListener() {
-		 * 
-		 * public void onClick(View v) { // TODO Auto-generated method stub
-		 * Log.d(TAG, "Botão 2 foi pressionado"); }
-		 * 
-		 * });
-		 */
+
+		btnExibe.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) { // TODO Auto-generated method stub
+
+				Log.d(TAG, "Botão 2 foi pressionado");
+
+				xxx();
+
+			}
+
+		});
+
+	}
+
+	/**
+	 * 
+	 */
+	public void xxx() {
+
+		repositorio = new RepositorioParticipacao(this);
+
+		if (repositorio != null) {
+			
+			List<Participacao> participacoes = repositorio.listarParticipacoes();
+
+			if((participacoes==null)) {
+				Log.d(TAG,"Repositório está vazio");
+			}
+			
+			int i = 0;
+			for (Participacao p : participacoes) {
+				i++;
+				Log.d(TAG, i + ": participacao ==> " + p.toString());
+			}
+
+			repositorio.fechar();
+
+		}
+		else {
+			Log.w(TAG,"Repositório está vazio");
+		}
 
 	}
 
