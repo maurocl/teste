@@ -10,35 +10,63 @@ import java.io.Serializable;
  */
 public class Participante implements Serializable {
 
+	public static final String NOME = "nome";
+	public static final String EMAIL = "email";
+	public static final String TELEFONE = "telefone";
+
+	public static final String PARAM1 = "param1";
+	public static final String PARAM2 = "param2";
+	public static final String PARAM3 = "param3";
+	public static final String PARAM4 = "param4";
+	public static final String PARAM5 = "param5";
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3719854749249823592L;
 
 	private String nome; // Nome do participante do evento
-	private String email; // email do participante do evento
-	private String telefone; 
+	private String email; // Email do participante do evento
+	private String telefone; // Telefone do participante do evento
 	private Parametros parametros; // Parâmetros opcionais (se houver)
 
 	/**
-	 * Participante()
+	 * Cria um participante nulo
+	 * 
 	 */
 	public Participante() {
 		// construtor vazio
+		this(null, null, null, null);
 	}
 
 	/**
-	 * Participante(String nome, String email, String telefone)
+	 * Constroi um novo participante (sem parâmetros adicionais)
+	 * 
+	 * @param nome
+	 *          Nome do participante
+	 * @param email
+	 *          Email do participante
+	 * @param telefone
+	 *          Telefone do participante
+	 * 
+	 */
+	public Participante(String nome, String email, String telefone) {
+		this(nome, email, telefone, null);
+	}
+
+	/**
+	 * Constroi um novo participante
 	 * 
 	 * @param nome
 	 * @param email
 	 * @param telefone
+	 * @param parametros
 	 */
-	public Participante(String nome, String email, String telefone) {
+	public Participante(String nome, String email, String telefone, Parametros parametros) {
 		this.nome = nome;
 		this.email = email;
 		this.telefone = telefone;
-		this.parametros = null;
+		this.parametros = parametros;
 	}
 
 	/**
@@ -50,7 +78,7 @@ public class Participante implements Serializable {
 
 	/**
 	 * @param nome
-	 *            the nome to set
+	 *          the nome to set
 	 */
 	public void setNome(String nome) {
 		this.nome = nome;
@@ -65,7 +93,7 @@ public class Participante implements Serializable {
 
 	/**
 	 * @param email
-	 *            the email to set
+	 *          the email to set
 	 */
 	public void setEmail(String email) {
 		this.email = email;
@@ -80,7 +108,7 @@ public class Participante implements Serializable {
 
 	/**
 	 * @param telefone
-	 *            the telefone to set
+	 *          the telefone to set
 	 */
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
@@ -95,7 +123,7 @@ public class Participante implements Serializable {
 
 	/**
 	 * @param parametros
-	 *            the parametros to set
+	 *          the parametros to set
 	 */
 	public void setParametros(Parametros parametros) {
 		this.parametros = parametros;
@@ -108,16 +136,21 @@ public class Participante implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "Participante [nome=" + nome + ", email=" + email
-				+ ", telefone=" + telefone + "]";
+		return "Participante [nome=" + nome + ", email=" + email + ", telefone=" + telefone + "]";
 	}
 
 	/**
+	 * Verifica se o participante preencheu todos os campos obrigatórios.
 	 * 
-	 * @return
+	 * @return Retorna true se o participante preencheu todos os campos
+	 *         obrigatórios e false caso contrário.
 	 */
 	public boolean isValido() {
-		return true;
+		if (((nome != null) && (!nome.equals(""))) && ((email != null) && (!email.equals("")))
+				&& ((telefone != null) && (!telefone.equals("")))) {
+			return true;
+		}
+		return false;
 	}
-	
+
 }

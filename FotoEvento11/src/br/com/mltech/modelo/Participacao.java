@@ -15,6 +15,14 @@ public class Participacao implements Serializable {
 	 */
 	private static final long serialVersionUID = 3182925558872819278L;
 
+	public static final String _ID = "_ID";
+	public static final String TIPO = "tipoFoto";
+	public static final String EFEITO = "tipoEfeito";
+	public static final String ARQUIVO = "nomeArqFoto";
+	
+	// identificador da participação
+	private long id;
+
 	// informações sobre um participante do evento
 	private Participante participante;
 
@@ -29,7 +37,7 @@ public class Participacao implements Serializable {
 	private String nomeArqFoto;
 
 	/**
-	 * Construtor
+	 * Cria uma participação nula
 	 */
 	public Participacao() {
 		this.participante = null;
@@ -55,6 +63,26 @@ public class Participacao implements Serializable {
 		this.efeitoFoto = efeitoFoto;
 		this.nomeArqFoto = nomeArqFoto;
 
+	}
+
+	/**
+	 * Obtém o identificador da participacao
+	 * 
+	 * @return
+	 */
+	public long getId() {
+		return id;
+	}
+
+	/**
+	 * Seta o id da participacao
+	 * 
+	 * @param id
+	 *          Identificador da participacao
+	 * 
+	 */
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	/**
