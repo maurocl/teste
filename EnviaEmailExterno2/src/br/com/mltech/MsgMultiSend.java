@@ -1,4 +1,6 @@
+
 package br.com.mltech;
+
 import java.util.Date;
 import java.util.Properties;
 
@@ -199,8 +201,6 @@ public class MsgMultiSend extends javax.mail.Authenticator {
     }
   }
 
- 
-
   /**
    * 
    * @param to
@@ -219,31 +219,31 @@ public class MsgMultiSend extends javax.mail.Authenticator {
     // create some properties and get the default Session
     Properties props = new Properties();
 
-    if(debug) {
-    props.put("mail.debug", "true");
+    if (debug) {
+      props.put("mail.debug", "true");
     } else {
       props.put("mail.debug", "false");
     }
-    
+
     props.put("mail.smtp.host", "smtp.mltech.com.br");
     props.put("mail.smtp.port", "587");
     props.put("mail.smtp.auth", "true");
-    
+
     props.put("mail.smtp.socketFactory.fallback", "false");
     props.put("mail.smtp.quitwait", "false");
-    
+
     //props.put("mail.protocol", "smtp.mltech.com.br");
     props.put("mail.protocol", "smtp");
     props.put("mail.protocol.user", to);
-    
+
     props.put("mail.user", "maurocl@mltech.com.br");
-    props.put("mail.from", "maurocl@mltech.com.br");    
-    
+    props.put("mail.from", "maurocl@mltech.com.br");
+
     props.put("mail.transport.protocol", "smtp");
-    
+
     // cria uma sessão com autenticação
     Session session = Session.getInstance(props, this);
-    
+
     //session.setDebug(false);
 
     System.out.println("\n==> Session");
@@ -262,9 +262,9 @@ public class MsgMultiSend extends javax.mail.Authenticator {
 
       InternetAddress[] addressBcc = { new InternetAddress(to) };
       msg.setRecipients(Message.RecipientType.BCC, addressBcc);
-      
+
       Date date = new Date();
-      msg.setSubject(subject + " - "+date);
+      msg.setSubject(subject + " - " + date);
       msg.setSentDate(date);
 
       // create and fill the first message part
@@ -275,12 +275,11 @@ public class MsgMultiSend extends javax.mail.Authenticator {
 
       // create and fill the second message part
 
-      
       // Cria um BodyPart.
       MimeBodyPart mbp2 = new MimeBodyPart();
 
       mbp2.setText(msgText2, "us-ascii");
-      
+
       // Cria um DataSource associado ao arquivo de anexo.
       DataSource source = new FileDataSource(filename);
 
@@ -290,11 +289,10 @@ public class MsgMultiSend extends javax.mail.Authenticator {
       // Associa o arquivo
       // lança MessagingException
       mbp2.setFileName(filename);
-      
-      
+
       System.out.println("\n==> MimeBodyPart 2");
       Utils.showBodyPart(mbp2);
-      
+
       // create the Multipart and its parts to it      
       Multipart mp = new MimeMultipart();
       mp.addBodyPart(mbp1);
@@ -311,9 +309,8 @@ public class MsgMultiSend extends javax.mail.Authenticator {
 
       // send the message
       //Transport.send(msg);
-      
+
       new MyAsyncTask().execute(msg);
-      
 
     } catch (MessagingException mex) {
 
@@ -329,45 +326,53 @@ public class MsgMultiSend extends javax.mail.Authenticator {
     }
   }
 
+  /**
+   * 
+   * 
+   *
+   */
   private class MyAsyncTask extends AsyncTask<MimeMessage, Void, Boolean>
   {
 
     Boolean b;
-    
-      ProgressDialog mProgressDialog;
+
+    ProgressDialog mProgressDialog;
+
+    @Override
+    protected void onPostExecute(Boolean result) {
+
+      if (mProgressDialog != null) {
+        mProgressDialog.dismiss();
+      }
+
+    }
+
+    @Override
+    protected void onPreExecute() {
+
+      // mProgressDialog = ProgressDialog.show(ActivityName.this, "Loading...", "Data is Loading...");
+    }
+
+    @Override
+    protected Boolean doInBackground(MimeMessage... params) {
+
+      // your network operation
+
+      // send the message
+      //Transport.send(msg);
+      try {
+        Transport.send(params[0]);
+        b = true;
+      } catch (MessagingException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        b = false;
+      }
+
+      return b;
       
-      @Override
-      protected void onPostExecute(Boolean result) {
-        if(mProgressDialog!=null) {
-          mProgressDialog.dismiss();
-        }
-        
+    }
     
-        
-      }
-
-      @Override
-      protected void onPreExecute() {
-         // mProgressDialog = ProgressDialog.show(ActivityName.this, "Loading...", "Data is Loading...");
-      }
-
-      @Override
-      protected Boolean doInBackground(MimeMessage... params) {
-         // your network operation
-        
-        // send the message
-        //Transport.send(msg);
-        try {
-          Transport.send(params[0]);
-          b = true;
-        } catch (MessagingException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-          b=false;
-        }
-        
-          return b;
-      }
   }
-  
+
 }

@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import java.io.IOException;
@@ -23,14 +24,15 @@ import javax.mail.internet.MimeMultipart;
 import android.util.Log;
 
 /**
+ * Classe de métodos utilitários
  * 
  * @author maurocl
- *
+ * 
  */
 public class Utils {
 
   public static final String TAG = "Utils";
-  
+
   /**
    * Exibe as informações sobre Session.
    * 
@@ -54,13 +56,14 @@ public class Utils {
     Set<Entry<Object, Object>> conjunto = p.entrySet();
 
     for (Entry elem : conjunto) {
-      Log.d(TAG,"showSession(): " + i + " - Key=" + elem.getKey() + ", Value=" + elem.getValue());
+      Log.d(TAG, "showSession(): " + i + " - Key=" + elem.getKey() + ", Value=" + elem.getValue());
       i++;
     }
 
   }
 
   /**
+   * Exibe no log um array de endereços IP
    * 
    * @param enderecos
    *          Array de endereços de email.
@@ -69,7 +72,7 @@ public class Utils {
 
     int i = 0;
     for (Address emailAddress : enderecos) {
-      Log.d(TAG,"showAddress(" + i + ") - " + emailAddress.toString());
+      Log.d(TAG, "showAddress(" + i + ") - " + emailAddress.toString());
     }
 
   }
@@ -77,6 +80,7 @@ public class Utils {
   /**
    * 
    * @param enderecos
+   * 
    * @return
    */
   public static String toAddress(Address[] enderecos) {
@@ -94,6 +98,7 @@ public class Utils {
   /**
    * 
    * @param mp
+   * 
    * @throws IOException
    */
   public static void showMultipart(Multipart mp) throws IOException {
@@ -104,20 +109,20 @@ public class Utils {
 
       mmp = (MimeMultipart) mp;
 
-      Log.d(TAG,"showMultipart() - toString: " + mmp.toString());
-      Log.d(TAG,"showMultipart() - getContentType: " + mmp.getContentType());
+      Log.d(TAG, "showMultipart() - toString: " + mmp.toString());
+      Log.d(TAG, "showMultipart() - getContentType: " + mmp.getContentType());
 
       try {
 
-        Log.d(TAG,"showMultipart() - getCount():  " + mp.getCount());
+        Log.d(TAG, "showMultipart() - getCount():  " + mp.getCount());
 
         mmp.getCount();
 
         for (int i = 0; i < mmp.getCount(); i++) {
 
-          Log.d(TAG," ==> showMultipart(): showBodyPart ==> " + i);
+          Log.d(TAG, " ==> showMultipart(): showBodyPart ==> " + i);
 
-          Log.d(TAG,"");
+          Log.d(TAG, "");
           showBodyPart(mmp.getBodyPart(i));
 
         }
@@ -147,18 +152,18 @@ public class Utils {
 
       mbp = (MimeBodyPart) bp;
 
-      Log.d(TAG,"showBodyPart(): getContentType: " + mbp.getContentType());
-      Log.d(TAG,"showBodyPart(): getContent: " + mbp.getContent());
+      Log.d(TAG, "showBodyPart(): getContentType: " + mbp.getContentType());
+      Log.d(TAG, "showBodyPart(): getContent: " + mbp.getContent());
 
-      Log.d(TAG,"showBodyPart(): toString(): " + mbp.toString());
-      Log.d(TAG,"showBodyPart(): getContentID: " + mbp.getContentID());
-      Log.d(TAG,"showBodyPart(): getDescription: " + mbp.getDescription());
-      Log.d(TAG,"showBodyPart(): getFileName: " + mbp.getFileName());
+      Log.d(TAG, "showBodyPart(): toString(): " + mbp.toString());
+      Log.d(TAG, "showBodyPart(): getContentID: " + mbp.getContentID());
+      Log.d(TAG, "showBodyPart(): getDescription: " + mbp.getDescription());
+      Log.d(TAG, "showBodyPart(): getFileName: " + mbp.getFileName());
 
-      Log.d(TAG,"showBodyPart(): getLineCount: " + mbp.getLineCount());
+      Log.d(TAG, "showBodyPart(): getLineCount: " + mbp.getLineCount());
 
-      Log.d(TAG,"showBodyPart(): getEncoding: " + mbp.getEncoding());
-      Log.d(TAG,"showBodyPart(): getSize: " + mbp.getSize());
+      Log.d(TAG, "showBodyPart(): getEncoding: " + mbp.getEncoding());
+      Log.d(TAG, "showBodyPart(): getSize: " + mbp.getSize());
 
     }
 
@@ -176,31 +181,31 @@ public class Utils {
 
       MimeMessage mm = (MimeMessage) msg;
 
-      Log.d(TAG,"showMessage() - MimeMessage.getFrom: " + mm.getFrom() + " - " + toAddress(mm.getFrom()));
-      Log.d(TAG,"showMessage() - MimeMessage.getRecipients(TO): " + mm.getRecipients(RecipientType.TO) + " - "
+      Log.d(TAG, "showMessage() - MimeMessage.getFrom: " + mm.getFrom() + " - " + toAddress(mm.getFrom()));
+      Log.d(TAG, "showMessage() - MimeMessage.getRecipients(TO): " + mm.getRecipients(RecipientType.TO) + " - "
           + toAddress(mm.getRecipients(RecipientType.TO)));
-      Log.d(TAG,"showMessage() - MimeMessage.getSubject(): " + mm.getSubject());
-      Log.d(TAG,"showMessage() - MimeMessage.getSentDate: " + mm.getSentDate());
+      Log.d(TAG, "showMessage() - MimeMessage.getSubject(): " + mm.getSubject());
+      Log.d(TAG, "showMessage() - MimeMessage.getSentDate: " + mm.getSentDate());
 
-      Log.d(TAG,"showMessage() - MimeMessage.getMessageNumber: " + mm.getMessageNumber());
-      Log.d(TAG,"showMessage() - MimeMessage.getContentType: " + mm.getContentType());
-      Log.d(TAG,"showMessage() - MimeMessage.getSender: " + mm.getSender());
-      Log.d(TAG,"showMessage() - MimeMessage.getEncoding: " + mm.getEncoding());
+      Log.d(TAG, "showMessage() - MimeMessage.getMessageNumber: " + mm.getMessageNumber());
+      Log.d(TAG, "showMessage() - MimeMessage.getContentType: " + mm.getContentType());
+      Log.d(TAG, "showMessage() - MimeMessage.getSender: " + mm.getSender());
+      Log.d(TAG, "showMessage() - MimeMessage.getEncoding: " + mm.getEncoding());
 
       int i = 0;
       Enumeration e = mm.getAllHeaderLines();
       for (; e.hasMoreElements();) {
-        Log.d(TAG,"showMessage() - enum - " + i + " - " + e.nextElement());
+        Log.d(TAG, "showMessage() - enum - " + i + " - " + e.nextElement());
         i++;
       }
 
-      Log.d(TAG,"");
+      Log.d(TAG, "");
 
       i = 0;
       Enumeration e2 = msg.getAllHeaders();
       while (e2.hasMoreElements()) {
         Header h = (Header) e2.nextElement();
-        Log.d(TAG,"showMessage() - enum - " + i + " - " + h + " - " + showHeader(h));
+        Log.d(TAG, "showMessage() - enum - " + i + " - " + h + " - " + showHeader(h));
         i++;
       }
 
@@ -208,34 +213,34 @@ public class Utils {
 
     try {
 
-      Log.d(TAG,"showMessage() - getContentType: " + msg.getContentType());
-      Log.d(TAG,"showMessage() - getContent: " + msg.getContent());
-      Log.d(TAG,"showMessage() - getSubject: " + msg.getSubject());
+      Log.d(TAG, "showMessage() - getContentType: " + msg.getContentType());
+      Log.d(TAG, "showMessage() - getContent: " + msg.getContent());
+      Log.d(TAG, "showMessage() - getSubject: " + msg.getSubject());
 
-      Log.d(TAG,"showMessage() - getDescription: " + msg.getDescription());
-      Log.d(TAG,"showMessage() - getFileName: " + msg.getFileName());
-      Log.d(TAG,"showMessage() - getLineCount: " + msg.getLineCount());
+      Log.d(TAG, "showMessage() - getDescription: " + msg.getDescription());
+      Log.d(TAG, "showMessage() - getFileName: " + msg.getFileName());
+      Log.d(TAG, "showMessage() - getLineCount: " + msg.getLineCount());
 
-      Log.d(TAG,"showMessage() - getLineCount: " + msg.getLineCount());
-      Log.d(TAG,"showMessage() - getMessageNumber: " + msg.getMessageNumber());
+      Log.d(TAG, "showMessage() - getLineCount: " + msg.getLineCount());
+      Log.d(TAG, "showMessage() - getMessageNumber: " + msg.getMessageNumber());
 
-      Log.d(TAG,"showMessage() - getSentDate: " + msg.getSentDate());
+      Log.d(TAG, "showMessage() - getSentDate: " + msg.getSentDate());
 
-      Log.d(TAG,"showMessage() - getFrom: ");
+      Log.d(TAG, "showMessage() - getFrom: ");
       showAddress(msg.getFrom());
 
-      Log.d(TAG,"showMessage() - getReplyTo: ");
+      Log.d(TAG, "showMessage() - getReplyTo: ");
       showAddress(msg.getReplyTo());
 
-      Log.d(TAG,"showMessage() - getSize: " + msg.getSize());
+      Log.d(TAG, "showMessage() - getSize: " + msg.getSize());
 
     } catch (IOException e) {
-      Log.d(TAG,"showMessage() - " + e);
+      Log.d(TAG, "showMessage() - " + e);
     } catch (MessagingException e) {
-      Log.d(TAG,"showMessage() - " + e);
+      Log.d(TAG, "showMessage() - " + e);
     }
 
-    Log.d(TAG,"");
+    Log.d(TAG, "");
 
   }
 
