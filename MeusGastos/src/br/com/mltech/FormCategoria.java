@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import android.app.Activity;
@@ -21,43 +22,73 @@ import br.com.mltech.modelo.Categoria;
  */
 public class FormCategoria extends Activity {
 
-	private Categoria cat = new Categoria();
+  private static final String TAG = "FormCategoria";
 
-	/**
+  CategoriaDAO dao;
+
+  //  private Categoria categoria = new Categoria();
+
+  /**
 	 * 
 	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
 
-		super.onCreate(savedInstanceState);
+    super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.formcategoria);
+    setContentView(R.layout.formcategoria);
 
-		Button botao = (Button) findViewById(R.id.inserir);
+    Button botao = (Button) findViewById(R.id.inserir);
 
-		botao.setOnClickListener(new OnClickListener() {
+    botao.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Log.i("Categoria", v.toString());
+      @Override
+      public void onClick(View v) {
 
-				Toast.makeText(FormCategoria.this, "Voce clicou no item ",
-						Toast.LENGTH_LONG).show();
+        Log.i("Categoria", v.toString());
 
-				EditText descricao = (EditText) findViewById(R.id.descricao);
+        //Toast.makeText(FormCategoria.this, "Você clicou no item ", Toast.LENGTH_LONG).show();
 
-				cat.setDescricao(descricao.getEditableText().toString());
+        EditText descricao = (EditText) findViewById(R.id.descricao);
 
-				CategoriaDAO dao = new CategoriaDAO(FormCategoria.this);
-				dao.inserir(cat);
-				dao.close();
+        if (descricao.getEditableText().toString().equalsIgnoreCase("")) {
+          Toast.makeText(FormCategoria.this, "Descrição não pode ser nula", Toast.LENGTH_SHORT).show();
+          return;
+        }
 
-				finish();
+        // Cria uma nova categoria
+        Categoria categoria = new Categoria(descricao.getEditableText().toString());
 
-			}
-		});
+        //CategoriaDAO dao = new CategoriaDAO(FormCategoria.this);
+        dao.inserir(categoria);
+        //dao.close();
 
-	}
+        Log.d(TAG, categoria + " inserida com sucesso");
+
+        //finish();
+
+      }
+    });
+
+  }
+
+  @Override
+  protected void onResume() {
+
+    super.onResume();
+
+    dao = new CategoriaDAO(FormCategoria.this);
+
+  }
+
+  @Override
+  protected void onPause() {
+
+    if (dao != null) {
+      dao.close();
+    }
+
+    super.onPause();
+  }
 
 }

@@ -33,6 +33,13 @@
 
         <!-- Toda activity tem que ser declarada no manifest -->
         <activity android:name=".Login" />
+
+        <!-- Toda activity tem que ser declarada no manifest -->
+        <activity android:name=".FormDatas" >
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

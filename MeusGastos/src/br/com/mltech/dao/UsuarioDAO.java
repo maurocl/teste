@@ -190,7 +190,7 @@ public class UsuarioDAO extends SQLiteOpenHelper {
   }
 
   /**
-   * Preenche um ContentValues com informações de um usuário
+   * Preenche um ContentValues com informações de um usuário.<br>
    * 
    * @param usuario
    *          Usuario

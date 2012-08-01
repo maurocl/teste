@@ -1,3 +1,4 @@
+
 package br.com.mltech.dao;
 
 import java.util.ArrayList;
@@ -18,149 +19,201 @@ import br.com.mltech.modelo.Categoria;
  */
 public class CategoriaDAO extends SQLiteOpenHelper {
 
-	private static final String TABELA = "Categoria";
-	private static final int VERSAO = 1; // a versao tem que iniciar com 1
+  private static final String TAG = "CategoriaDAO";
 
-	/**
-	 * CategoriaDAO
-	 * 
-	 * @param ctx
-	 *            Contexto da aplicação
-	 * 
-	 */
-	public CategoriaDAO(Context ctx) {
-		// contexto, nome da base de dados, fabrica de cursores, versÃ£o da base
-		// de dados
-		super(ctx, TABELA, null, VERSAO);
+  private static final String TABELA = "Categoria";
 
-	}
+  private static final int VERSAO = 4; // a versao tem que iniciar com 1
 
-	//---------------------------------------------------
-	// esse método é executado quando a tabela for criada
-	//---------------------------------------------------
-	@Override
-	/**
-	 * 
-	 */
-	public void onCreate(SQLiteDatabase db) {
-		// TODO Auto-generated method stub
+  /**
+   * CategoriaDAO
+   * 
+   * @param ctx
+   *          Contexto da aplicação
+   * 
+   */
+  public CategoriaDAO(Context ctx) {
 
-		String ddl = "Create table " + TABELA + " (id integer primary key, "
-				+ " descricao text unique not null);";
+    // contexto, nome da base de dados, fabrica de cursores, versÃ£o da base
+    // de dados
+    super(ctx, TABELA, null, VERSAO);
 
-		db.execSQL(ddl);
+  }
 
-	}
+  //---------------------------------------------------
+  // esse método é executado quando a tabela for criada
+  //---------------------------------------------------
+  @Override
+  /**
+   * 
+   */
+  public void onCreate(SQLiteDatabase db) {
 
-	// esse método é chamado quando houver uma alteração da versão da tabela
-	// por exemplo, quando alteramos a estrutura de uma tabela de uma versão
-	// para outra da aplicação
-	@Override
-	/**
-	 * 
-	 */
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
+    String ddl = "Create table " + TABELA + " (id integer primary key, "
+        + " descricao text unique not null, xxx text);";
 
-		String sql = "DROP TABLE IF EXISTS " + TABELA;
-		db.execSQL(sql);
-		// Cria-se a tabela novamente
-		onCreate(db);
+    Log.d(TAG, "criando a tabela: " + TABELA);
 
-	}
+    db.execSQL(ddl);
 
-	/**
-	 * Insere uma categoria
-	 * 
-	 * @param c Categoria
-	 */
-	public void inserir(Categoria c) {
+    Log.d(TAG, TABELA + " criada com sucesso");
 
-		ContentValues valores = new ContentValues();
+  }
 
-		valores.put("id", c.getCodCategoria());
-		valores.put("descricao", c.getDescricao());
+  // esse método é chamado quando houver uma alteração da versão da tabela
+  // por exemplo, quando alteramos a estrutura de uma tabela de uma versão
+  // para outra da aplicação
+  @Override
+  /**
+   * 
+   */
+  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-		// nome da tabela, valor inserido quando o valor nÃ£o foi fornecido,
-		// valores
-		getWritableDatabase().insert(TABELA, null, valores);
+    // TODO Auto-generated method stub
 
-	}
+    String sql = "DROP TABLE IF EXISTS " + TABELA;
 
-	/**
-	 * Remove uma categoria
-	 * 
-	 * @param c Categoria
-	 */
-	public void deletar(Categoria c) {
-		// tabela, where clause, ...
+    Log.d(TAG, "Removendo a tabela: " + TABELA + " - versão: " + oldVersion + " - nova versão: " + newVersion);
 
-		int numLinhasRemovidas = getWritableDatabase().delete(TABELA, "id=?",
-				new String[] { c.getCodCategoria().toString() });
+    db.execSQL(sql);
 
-		 Log.i("Categoria", numLinhasRemovidas + " foram removidas");
+    Log.d(TAG, "Tabela " + TABELA + " removida com sucesso");
 
-	}
+    // Cria-se a tabela novamente
+    onCreate(db);
 
-	/**
-	 * Atualiza Categotria
-	 * 
-	 * @param c Categoria
-	 */
-	public void alterar(Categoria c) {
+  }
 
-		ContentValues values = new ContentValues();
+  @Override
+  public void onOpen(SQLiteDatabase db) {
 
-		values.put("id", c.getCodCategoria());
-		values.put("descricao", c.getDescricao());
+    super.onOpen(db);
 
-		getWritableDatabase().update(TABELA, values, "id=?",
-				new String[] { c.getCodCategoria().toString() });
+    Log.d(TAG, "onOpen() path(): " + db.getPath());
+    Log.d(TAG, "onOpen() version(): " + db.getVersion());
 
-	}
+  }
 
-	/**
-	 * Retorna a lista de Categorias
-	 * 
-	 * @return
-	 */
-	public List<Categoria> getLista() {
+  /**
+   * Insere uma categoria
+   * 
+   * @param c
+   *          Categoria
+   */
+  public void inserir(Categoria c) {
 
-		List<Categoria> categorias = new ArrayList<Categoria>();
+    ContentValues valores = toContentValues(c);
 
-		// TABELA, null, selection (clÃ¡usula), selectionArgs, groupBy, having,
-		// orderBy
-		Cursor c = getWritableDatabase().query(TABELA, null, null, null, null,
-				null, "descricao");
+    // nome da tabela, valor inserido quando o valor não foi fornecido,
+    // valores
+    long id = getWritableDatabase().insert(TABELA, null, valores);
 
-		while (c.moveToNext()) {
+    Log.d(TAG, "inserir() - id: " + id);
 
-			Categoria cat = new Categoria(c.getLong(0), c.getString(1));
+    c.setId(id);
 
-			categorias.add(cat);
+  }
 
-		}
+  /**
+   * @param c
+   * @return
+   */
+  private ContentValues toContentValues(Categoria c) {
 
-		c.close();
-		
-		return categorias;
+    ContentValues valores = new ContentValues();
 
-	}
+    //valores.put("id", c.getCodCategoria());
+    valores.put("descricao", c.getDescricao());
 
-	/**
-	 * Salva ou atualiza uma categoria
-	 * 
-	 * @param c Categoria
-	 * 
-	 */
-	public void saveOrUpdate(Categoria c) {
+    return valores;
 
-		if (c.getCodCategoria() != null) {
-			this.alterar(c);
-		} else {
-			this.inserir(c);
-		}
+  }
 
-	}
+  /**
+   * Remove uma categoria
+   * 
+   * @param c
+   *          Categoria
+   */
+  public void deletar(Categoria c) {
+
+    // tabela, where clause, ...
+
+    int numLinhasRemovidas = getWritableDatabase().delete(TABELA, "id=?",
+        new String[] { c.getId().toString() });
+
+    Log.i("Categoria", numLinhasRemovidas + " foram removidas");
+
+  }
+
+  /**
+   * Atualiza Categotria
+   * 
+   * @param c
+   *          Categoria
+   */
+  public void alterar(Categoria c) {
+
+    ContentValues values = toContentValues(c);
+
+    getWritableDatabase().update(TABELA, values, "id=?",
+        new String[] { c.getId().toString() });
+
+  }
+
+  /**
+   * Retorna a lista de Categorias
+   * 
+   * @return
+   */
+  public List<Categoria> getLista() {
+
+    List<Categoria> categorias = new ArrayList<Categoria>();
+
+    // TABELA, null, selection (clÃ¡usula), selectionArgs, groupBy, having,
+    // orderBy
+    Cursor c = getWritableDatabase().query(TABELA, null, null, null, null,
+        null, "descricao");
+
+    while (c.moveToNext()) {
+
+      Categoria cat = new Categoria(c.getLong(0), c.getString(1));
+
+      categorias.add(cat);
+
+    }
+
+    c.close();
+
+    return categorias;
+
+  }
+
+  /**
+   * Salva ou atualiza uma categoria
+   * 
+   * @param c
+   *          Categoria
+   * 
+   */
+  public void saveOrUpdate(Categoria c) {
+
+    if (c.getId() != null) {
+      this.alterar(c);
+    } else {
+      this.inserir(c);
+    }
+
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public SQLiteDatabase getDb() {
+
+    return getWritableDatabase();
+
+  }
 
 }

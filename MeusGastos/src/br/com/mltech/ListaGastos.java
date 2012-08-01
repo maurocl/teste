@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import java.util.List;
@@ -30,163 +31,170 @@ import br.com.mltech.modelo.Gasto;
  */
 public class ListaGastos extends Activity {
 
-	private List<Gasto> gastos;
+  private static final String TAG = "ListaGastos";
 
-	private ListView lista;
+  private List<Gasto> gastos;
 
-	private Gasto gastoSelecionado;
+  private ListView lista;
 
-	/**
+  private Gasto gastoSelecionado;
+
+  /**
 	 * 
 	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		//
-		super.onCreate(savedInstanceState);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
 
-		setContentView(R.layout.listagastos);
+    //
+    super.onCreate(savedInstanceState);
 
-		lista = (ListView) findViewById(R.id.lista);
+    setContentView(R.layout.listagastos);
 
-		// Inicializa a lista de categorias de gasto
-		carregaLista();
+    lista = (ListView) findViewById(R.id.lista);
 
-		// -------------------------------------------
-		// Tratamento de eventos para click na lista
-		// -------------------------------------------
-		lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    // Inicializa a lista de categorias de gasto
+    carregaLista();
 
-			public void onItemClick(AdapterView<?> adapter, View view,
-					int posicao, long idDoObjeto) {
+    // -------------------------------------------
+    // Tratamento de eventos para click na lista
+    // -------------------------------------------
+    lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-				Toast.makeText(ListaGastos.this,
-						"Você clicou no item " + posicao, Toast.LENGTH_LONG)
-						.show();
+      public void onItemClick(AdapterView<?> adapter, View view,
+          int posicao, long idDoObjeto) {
 
-			}
+        Toast.makeText(ListaGastos.this,
+            "Você clicou no item " + posicao, Toast.LENGTH_LONG)
+            .show();
 
-		});
+      }
 
-		// -----------------------------------------------
-		// Tratamento de evento para click longo na lista
-		// -----------------------------------------------
-		lista.setOnItemLongClickListener(new OnItemLongClickListener() {
+    });
 
-			public boolean onItemLongClick(AdapterView<?> adapter, View view,
-					int posicao, long id) {
+    // -----------------------------------------------
+    // Tratamento de evento para click longo na lista
+    // -----------------------------------------------
+    lista.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-				gastoSelecionado = (Gasto) adapter.getItemAtPosition(posicao);
+      public boolean onItemLongClick(AdapterView<?> adapter, View view,
+          int posicao, long id) {
 
-				// Lista de gasto
-				registerForContextMenu(lista);
+        gastoSelecionado = (Gasto) adapter.getItemAtPosition(posicao);
 
-				// Toast.makeText(ListaGastos.this,
-				// "Você clicou longamente no item " + posicao,
-				// Toast.LENGTH_LONG).show();
+        // Lista de gasto
+        registerForContextMenu(lista);
 
-				return false;
-			}
+        // Toast.makeText(ListaGastos.this,
+        // "Você clicou longamente no item " + posicao,
+        // Toast.LENGTH_LONG).show();
 
-		});
-	}
+        return false;
+      }
 
-	/**
-	 * Menu de Opções
-	 * 
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+    });
+  }
 
-		MenuItem gastos = menu.add(0, 0, 0, "Novo");
-		gastos.setIcon(R.drawable.ic_launcher);
+  /**
+   * Menu de Opções
+   * 
+   */
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
 
-		gastos.setIntent(new Intent(this, FormGasto.class));
+    MenuItem gastos = menu.add(0, 0, 0, "Novo");
+    gastos.setIcon(R.drawable.ic_launcher);
 
-		// -----------------
-		// Menu Item: Novo
-		// -----------------
-		gastos.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+    gastos.setIntent(new Intent(this, FormGasto.class));
 
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				Toast.makeText(ListaGastos.this, "Novo", Toast.LENGTH_SHORT)
-						.show();
-				return false;
-			}
+    // -----------------
+    // Menu Item: Novo
+    // -----------------
+    gastos.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 
-		});
+      @Override
+      public boolean onMenuItemClick(MenuItem item) {
 
-		return super.onCreateOptionsMenu(menu);
+        Toast.makeText(ListaGastos.this, "Novo", Toast.LENGTH_SHORT)
+            .show();
+        return false;
+      }
 
-	}
+    });
 
-	// ------------------------------
-	// Definição do Menu de Contexto
-	// ------------------------------
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-		// TODO Auto-generated method stub
-		super.onCreateContextMenu(menu, v, menuInfo);
+    return super.onCreateOptionsMenu(menu);
 
-		menu.add(0, 0, 0, "Deletar");
-		menu.add(0, 1, 0, "Duplicar");
+  }
 
-	}
+  // ------------------------------
+  // Definição do Menu de Contexto
+  // ------------------------------
+  @Override
+  public void onCreateContextMenu(ContextMenu menu, View v,
+      ContextMenuInfo menuInfo) {
 
-	// -----------------------------
-	// seleção de item do contexto
-	// -----------------------------
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
+    // TODO Auto-generated method stub
+    super.onCreateContextMenu(menu, v, menuInfo);
 
-		switch (item.getItemId()) {
-		case 0:
+    menu.add(0, 0, 0, "Deletar");
+    menu.add(0, 1, 0, "Duplicar");
 
-			GastoDAO dao = new GastoDAO(ListaGastos.this);
-			dao.deletar(gastoSelecionado);
+  }
 
-			Log.i("ListaGastos.java", "Removendo o gasto id: "
-					+ gastoSelecionado.getData());
+  // -----------------------------
+  // seleção de item do contexto
+  // -----------------------------
+  @Override
+  public boolean onContextItemSelected(MenuItem item) {
 
-			dao.close();
+    // TODO Auto-generated method stub
 
-			carregaLista();
+    switch (item.getItemId()) {
+      case 0:
 
-			break;
-		}
+        GastoDAO dao = new GastoDAO(ListaGastos.this);
+        dao.deletar(gastoSelecionado);
 
-		return super.onContextItemSelected(item);
+        Log.i("ListaGastos.java", "Removendo o gasto id: "
+            + gastoSelecionado.getData());
 
-	}
+        dao.close();
 
-	/**
-	 * o onResume é executado quando a Activity anterior é fechada
-	 * 
-	 */
-	@Override
-	protected void onResume() {
-		super.onResume();
-		carregaLista();
-	}
+        carregaLista();
 
-	/**
-	 * carregaLista()
-	 * 
-	 * Carrega a lista de Gasto
-	 */
-	private void carregaLista() {
+        break;
+    }
 
-		GastoDAO dao = new GastoDAO(this);
-		gastos = dao.getLista();
-		dao.close();
+    return super.onContextItemSelected(item);
 
-		ArrayAdapter<Gasto> adapter = new ArrayAdapter<Gasto>(this,
-				android.R.layout.simple_list_item_1, gastos);
+  }
 
-		lista.setAdapter(adapter);
+  /**
+   * o onResume é executado quando a Activity anterior é fechada
+   * 
+   */
+  @Override
+  protected void onResume() {
 
-	}
+    super.onResume();
+    carregaLista();
+  }
+
+  /**
+   * carregaLista()
+   * 
+   * Carrega a lista de Gasto
+   */
+  private void carregaLista() {
+
+    GastoDAO dao = new GastoDAO(this);
+    gastos = dao.getLista();
+    dao.close();
+
+    ArrayAdapter<Gasto> adapter = new ArrayAdapter<Gasto>(this,
+        android.R.layout.simple_list_item_1, gastos);
+
+    lista.setAdapter(adapter);
+
+  }
 
 }

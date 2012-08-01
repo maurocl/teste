@@ -8,50 +8,65 @@
 package br.com.mltech;
 
 public final class R {
+    public static final class array {
+        public static final int categorias_array=0x7f040000;
+    }
     public static final class attr {
     }
     public static final class color {
-        public static final int black=0x7f040003;
-        public static final int blue=0x7f040001;
-        public static final int green=0x7f040002;
-        public static final int red=0x7f040000;
-        public static final int white=0x7f040004;
+        public static final int black=0x7f050003;
+        public static final int blue=0x7f050001;
+        public static final int green=0x7f050002;
+        public static final int red=0x7f050000;
+        public static final int white=0x7f050004;
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int categoria=0x7f060005;
-        public static final int categorias=0x7f060007;
-        public static final int codigo=0x7f060002;
-        public static final int data=0x7f060003;
-        public static final int descricao=0x7f060000;
-        public static final int gastos=0x7f060008;
-        public static final int inserir=0x7f060001;
-        public static final int lista=0x7f060006;
-        public static final int relatorios=0x7f060009;
-        public static final int textView1=0x7f06000a;
-        public static final int valor=0x7f060004;
+        public static final int categoria=0x7f07000e;
+        public static final int categorias=0x7f070013;
+        public static final int codigo=0x7f070007;
+        public static final int data=0x7f070009;
+        public static final int descricao=0x7f070000;
+        public static final int dtFinal=0x7f070005;
+        public static final int dtInicial=0x7f070003;
+        public static final int gastos=0x7f070014;
+        public static final int inserir=0x7f070001;
+        public static final int lista=0x7f070012;
+        public static final int relatorios=0x7f070015;
+        public static final int spinCategoria=0x7f070011;
+        public static final int tableRow1=0x7f070006;
+        public static final int tableRow2=0x7f070008;
+        public static final int tableRow3=0x7f07000a;
+        public static final int tableRow4=0x7f07000b;
+        public static final int tableRow5=0x7f07000d;
+        public static final int tableRow6=0x7f07000f;
+        public static final int tblDataFinal=0x7f070004;
+        public static final int tblRowDataInicial=0x7f070002;
+        public static final int textView1=0x7f070010;
+        public static final int valor=0x7f07000c;
     }
     public static final class layout {
         public static final int formcategoria=0x7f030000;
-        public static final int formgasto=0x7f030001;
-        public static final int listacat=0x7f030002;
-        public static final int listagastos=0x7f030003;
-        public static final int login=0x7f030004;
-        public static final int main=0x7f030005;
+        public static final int formdatas=0x7f030001;
+        public static final int formgasto=0x7f030002;
+        public static final int listacat=0x7f030003;
+        public static final int listagastos=0x7f030004;
+        public static final int login=0x7f030005;
+        public static final int main=0x7f030006;
     }
     public static final class login {
-        public static final int btnCancelar=0x7f070005;
-        public static final int btnLogin=0x7f070006;
-        public static final int editSenha=0x7f070004;
-        public static final int editText2=0x7f070002;
-        public static final int editUsuario=0x7f070003;
-        public static final int linearLayout1=0x7f070000;
-        public static final int textView1=0x7f070001;
+        public static final int btnCancelar=0x7f080005;
+        public static final int btnLogin=0x7f080006;
+        public static final int editSenha=0x7f080004;
+        public static final int editText2=0x7f080002;
+        public static final int editUsuario=0x7f080003;
+        public static final int linearLayout1=0x7f080000;
+        public static final int textView1=0x7f080001;
     }
     public static final class string {
-        public static final int app_name=0x7f050001;
-        public static final int hello=0x7f050000;
+        public static final int app_name=0x7f060001;
+        public static final int hello=0x7f060000;
     }
 }

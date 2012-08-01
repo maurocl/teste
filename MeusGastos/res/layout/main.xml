@@ -25,10 +25,4 @@
         android:hint="Relatórios"
         android:text="Relatorios" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="isso é uma mensagem" />
-
 </LinearLayout>

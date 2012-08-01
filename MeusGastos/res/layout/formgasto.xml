@@ -3,78 +3,155 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="Código do Gasto"
-        android:text="Gasto"
-        android:textSize="18dp" />
 
-    <EditText
-        android:id="@+id/codigo"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="Código do Gasto" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="Código do Gasto"
+                android:text="Gasto"
+                android:textSize="18dp" />
+
+            <EditText
+                android:id="@+id/codigo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Código do Gasto"
+                android:inputType="number"
+                android:text="1" >
+
+                <requestFocus />
+            </EditText>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Data"
+                android:textSize="18dp" />
+
+            <EditText
+                android:id="@+id/data"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Data do Gasto"
+                android:inputType="date"
+                android:text="31/07/2012" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Descricao"
+                android:textSize="18dp" />
+
+            <EditText
+                android:id="@+id/descricao"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Descrição do Gasto"
+                android:inputType="textMultiLine"
+                android:text="Estacionamento" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Valor"
+                android:textSize="18dp" />
+
+            <EditText
+                android:id="@+id/valor"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Valor do Gasto"
+                android:inputType="numberDecimal"
+                android:text="10" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Categoria"
+                android:textSize="18dp" />
+
+            <EditText
+                android:id="@+id/categoria"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Categoria do Gasto"
+                android:text="teste" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Categoria" />
+
+            <Spinner
+                android:id="@+id/spinCategoria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left" />
+
+        </TableRow>
+
+    </TableLayout>
 
     <!-- Data -->
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Data"
-        android:textSize="18dp" />
-
-    <EditText
-        android:id="@+id/data"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="Data do Gasto" />
 
     <!-- Descrição -->
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Descricao"
-        android:textSize="18dp" />
-
-    <EditText
-        android:id="@+id/descricao"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="Descrição do Gasto" />
 
     <!-- Valor -->
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Valor"
-        android:textSize="18dp" />
-
-    <EditText
-        android:id="@+id/valor"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="Valor do Gasto" />
 
     <!-- Categoria -->
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Categoria"
-        android:textSize="18dp" />
-
-    <EditText
-        android:id="@+id/categoria"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="Categoria do Gasto" />
 
     <!-- Botão de Inserção -->
-
+
     <Button
         android:id="@+id/inserir"
         android:layout_width="fill_parent"
