@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <!-- Preferências -->
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            stype="@style/texto14"
+            android:paddingBottom="20dp"
+            android:text="Preferências"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#0000FF"
+            android:textSize="30dp" />
+
+        <!-- Preferências de email -->
+
+        <TextView
+            android:id="@+id/textView4"
+            style="@style/texto18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:text="Preferências de email:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TableRow
+                android:id="@+id/tbRowAssunto"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvAssunto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Assunto:"
+                    android:textSize="@dimen/Fonte30" />
+
+                <EditText
+                    android:id="@+id/editAssunto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:ems="10"
+                    android:hint="Assunto (subject) no envio de email"
+                    android:inputType="textEmailSubject" >
+
+                    <requestFocus />
+                </EditText>
+            </TableRow>
+
+            <!-- Assunto tratado pelo email -->
+
+
+            <!-- Descrição do corpo do email -->
+
+            <TableRow
+                android:id="@+id/tbRowDescricao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvDescricao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Descrição:"
+                    android:textSize="@dimen/Fonte30" />
+
+                <EditText
+                    android:id="@+id/editDescricao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:ems="10"
+                    android:hint="Descrição do evento" />
+            </TableRow>
+
+            <!-- Usuário da conta do email -->
+
+            <TableRow
+                android:id="@+id/tbRowUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Usuário da conta de email:" />
+
+                <EditText
+                    android:id="@+id/editUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:ems="10"
+                    android:hint="Nome do usuário da conta de email" />
+            </TableRow>
+
+            <!-- Senha da conta do email -->
+
+            <TableRow
+                android:id="@+id/tbRowContaEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvSenha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Senha da conta de email:" />
+
+                <EditText
+                    android:id="@+id/editSenha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:ems="10"
+                    android:hint="Senha do usuário da conta de email"
+                    android:inputType="textPassword" />
+            </TableRow>
+
+            <!-- Servidor SMTP -->
+
+            <TableRow
+                android:id="@+id/tbRowServidorSMTP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvServidorSMTP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Servidor SMTP:" />
+
+                <EditText
+                    android:id="@+id/editServidorSMTP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:ems="10"
+                    android:hint="Endereço do servidor SMTP" />
+            </TableRow>
+
+            <!-- porta do Servidor SMTP -->
+
+            <TableRow
+                android:id="@+id/tbRowPortaServidorSMTP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvServidorSMTPPorta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Porta Servidor SMTP:" />
+
+                <EditText
+                    android:id="@+id/editServidorSMTPPorta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:ems="10"
+                    android:hint="Nº da porta do servidor SMTP"
+                    android:inputType="number" />
+            </TableRow>
+
+            <!-- Email do Remetente -->
+
+            <TableRow
+                android:id="@+id/tbRowEmailRemetente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvRemetente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Email do Remetente:" />
+
+                <EditText
+                    android:id="@+id/editRemetente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:hint="Email do Remetente"
+                    android:inputType="textEmailAddress"
+                    android:paddingBottom="5dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tbRowDebugavel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvDebugavel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal|center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Debugável:" />
+
+                <CheckBox
+                    android:id="@+id/chkDebugavel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:text="Permite debug do email" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tbSolicitaAutorizacao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvAuthorization"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Solicita Autorização:" />
+
+                <CheckBox
+                    android:id="@+id/chkAuth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:text="Solicita Autorização" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tbRowUsaSsl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvSsl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Usa SSL:" />
+
+                <CheckBox
+                    android:id="@+id/chkSsl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:text="Usa SSL (Secure Socket Layer)" />
+
+            </TableRow>
+
+        </TableLayout>
+
+        <!-- Email é debugável -->
+
+        <!-- Email solicita autorização -->
+
+        <!-- Email usa SSL -->
+
+        <!-- Configuração de redes sociais -->
+
+        <TextView
+            android:id="@+id/textRedesSociais"
+            style="@style/texto18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="20dp"
+            android:text="Redes Sociais"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvFacebook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Texto Facebook:" />
+
+                <EditText
+                    android:id="@+id/editTextoFacebook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Texto mensagem Facebook"
+                    android:paddingBottom="20dp" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvTwitter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Texto Twitter:" />
+
+                <EditText
+                    android:id="@+id/editTextoTwitter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Texto mensagem Twitter" />
+
+            </TableRow>
+        </TableLayout>
+
+        <!-- Facebook -->
+
+        <!-- Twitter -->
+
+        <!--  -->
+
+
+        <!-- Outras configurações importantes -->
+
+        <TextView
+            android:id="@+id/textOutros"
+            style="@style/texto18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="20dp"
+            android:text="Outros:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <!-- URL da imagem da tela inicial da aplicação -->
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TableRow
+                android:id="@+id/tableRow3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvImagemTelaInicial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:paddingTop="5dp"
+                    android:text="Imagem da tela inicial" />
+
+                <EditText
+                    android:id="@+id/editUrlImagem"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:hint="URL da Imagem da tela inicial"
+                    android:width="400dp" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvNumCameraFrontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Nº da câmera frontal:" />
+
+                <EditText
+                    android:id="@+id/editNumCameraFrontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Nº da câmera frontal"
+                    android:inputType="number"
+                    android:width="200dp" />
+
+            </TableRow>
+        </TableLayout>
+
+        <!-- Nº da Câmera Frontal -->
+
+        <!-- Botões -->
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:paddingTop="20dp" >
+
+            <!-- Botão Gravar -->
+
+            <Button
+                android:id="@+id/btnGravarPreferencias"
+                style="@style/btnConfirmaStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Salvar" />
+
+            <!-- Botão Cancelar -->
+
+            <Button
+                android:id="@+id/btnCancelar"
+                style="@style/btnCancelarStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cancelar" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

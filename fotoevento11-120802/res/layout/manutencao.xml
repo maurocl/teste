@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Manutenção do Sistema"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/btnContratante"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Contratante" />
+
+        <Button
+            android:id="@+id/btnEvento"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Evento" />
+
+        <Button
+            android:id="@+id/btnRelatorios"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Relatórios" />
+
+        <Button
+            android:id="@+id/btnPrefencias"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Preferências" />
+
+        <Button
+            android:id="@+id/btnBackup"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Backup" />
+
+        <Button
+            android:id="@+id/btnRestauracao"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Restauração" />
+
+        <Button
+            android:id="@+id/btnConfiguracaoInicial"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Configuração Inicial" />
+
+        <!--
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:text="Ok" />
+
+        <Button
+            android:id="@+id/btnVoltar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:text="Voltar" />
+    </LinearLayout>
+        -->
+
+    </LinearLayout>
+
+</ScrollView>
