@@ -17,6 +17,9 @@
 
     <!-- Permissão do uso da Rede (Internet) -->
     <uses-permission android:name="android.permission.INTERNET" />
+    
+    <!-- Permissão de acesso ao estado da rede -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <!-- Declaração de features requeridas pela aplicação -->
     <uses-feature android:name="android.hardware.camera" />

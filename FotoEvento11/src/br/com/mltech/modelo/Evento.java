@@ -70,14 +70,15 @@ public class Evento implements Serializable {
   /**
    * Cria um evento com seu Contratante
    * 
-   * @param c
+   * @param contratante
    *          Instancia de um contratante
    * 
    */
-  public Evento(Contratante c) {
+  public Evento(Contratante contratante) {
     
     this();
-    this.contratante = c;
+    
+    this.contratante = contratante;
     
   }
 

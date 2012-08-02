@@ -38,6 +38,7 @@ import br.com.mltech.modelo.FotoCabine;
 import br.com.mltech.modelo.Moldura;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
+import br.com.mltech.utils.AndroidUtils;
 import br.com.mltech.utils.FileUtils;
 import br.com.mltech.utils.ManipulaImagem;
 import br.com.mltech.utils.camera.CameraTools;
@@ -1526,11 +1527,25 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       Log.d(TAG, "to: " + to + ", bcc=" + bcc + ", subject=" + subject + ", body=" + body + ", lastUri=" + lastUri);
 
-      boolean enviadoComSucesso = sendEmailExternal(to, bcc, subject, body, lastUri);
-      // boolean enviadoComSucesso = sendEmailExternal2(to, bcc, subject, body,
-      // lastUri);
+      boolean enviadoComSucesso = false;
+      
+      // Verifica se existe rede disponível no momento
+      if (AndroidUtils.isNetworkingAvailable(this)) {
 
-      Log.w(TAG, "enviaEmail() - EMAIL ENVIADO COM SUCESSO: " + enviadoComSucesso);
+        enviadoComSucesso = sendEmailExternal(to, bcc, subject, body, lastUri);
+        // boolean enviadoComSucesso = sendEmailExternal2(to, bcc, subject, body,
+        // lastUri);
+
+        Log.w(TAG, "enviaEmail() - EMAIL ENVIADO COM SUCESSO: " + enviadoComSucesso);
+
+        
+      }
+      else {
+        
+        Log.w(TAG, "enviaEmail() - Não há rede disponível no momento !!!");
+        
+      }
+      
 
       if (enviadoComSucesso) {
         // processa o resultado do envio do email com sucesso
@@ -2434,7 +2449,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
   /**
    * Cria uma foto a partir da combição de três outras fotos. As fotos são
-   * colocadas na vertical, isto é, uma embaixo da outra.
+   * colocadas na vertical, isto é, uma abaixo da outra.
    * 
    * <pre>
    * |--------|

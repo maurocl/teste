@@ -1,51 +1,60 @@
+
 package br.com.mltech.modelo;
 
 import android.content.Context;
 
+/**
+ * 
+ * 
+ *
+ */
 public class RepositorioParticipacaoScript extends RepositorioParticipacao {
 
-	private static final String SCRIPT_DATABASE_DELETE = "DROP TABLE IF EXISTS participacao";
+  // Script para execução de um drop na tabela
+  private static final String SCRIPT_DATABASE_DELETE = "DROP TABLE IF EXISTS "+NOME_TABELA;
 
-	private static final String[] SCRIPT_DATABASE_CREATE = new String[] {
+  // Script de comandos SQL
+  private static final String[] SCRIPT_DATABASE_CREATE = new String[] {
 
-	"CREATE TABLE participacao ( _id INTEGER PRIMARY KEY, nome text, email text, telefone text, tipoFoto text, tipoEfeito text, nomeArqFoto text, param1 TEXT, param2 TEXT, param3 TEXT, param4 TEXT, param5 TEXT);"
+      "CREATE TABLE participacao ( _id INTEGER PRIMARY KEY, nome text, email text, telefone text, tipoFoto text, tipoEfeito text, nomeArqFoto text, param1 TEXT, param2 TEXT, param3 TEXT, param4 TEXT, param5 TEXT);"
 
-	};
+  };
 
-	// nome do banco
-	private static final String NOME_BANCO = "fotoevento";
+  // controle de versão
+  private static final int VERSAO_BANCO = 6;
 
-	// controle de versão
-	private static final int VERSAO_BANCO = 5;
+  // Classe utilitária para abrir, criar, e atualizar o banco de dados
+  private SQLiteHelper dbHelper;
 
-	// nome da tabela
-	// private static final String TABELA_PARTICIPACAO = "participacao";
+ 
+  /**
+   * Cria o banco de dados com um script SQL
+   * 
+   * @param ctx Contexto da aplicação
+   * 
+   */
+  public RepositorioParticipacaoScript(Context ctx) {
 
-	// Classe utilitária para abrir, criar, e atualizar o banco de dados
-	private SQLiteHelper dbHelper;
+    // Criar usando um script SQL
+    dbHelper = new SQLiteHelper(ctx, NOME_BANCO, VERSAO_BANCO, SCRIPT_DATABASE_CREATE, SCRIPT_DATABASE_DELETE);
 
-	// Cria o banco de dados com um script SQL
-	public RepositorioParticipacaoScript(Context ctx) {
+    // Abre o banco no modo escrita para poder ler e alterá-lo
+    db = dbHelper.getWritableDatabase();
 
-		// Criar usando um script SQL
-		dbHelper = new SQLiteHelper(ctx, RepositorioParticipacaoScript.NOME_BANCO, RepositorioParticipacaoScript.VERSAO_BANCO,
-				RepositorioParticipacaoScript.SCRIPT_DATABASE_CREATE, RepositorioParticipacaoScript.SCRIPT_DATABASE_DELETE);
+  }
+ 
+  /**
+   * Fecha o banco
+   */
+  @Override
+  public void fechar() {
 
-		// Abre o banco no modo escrita para poder alterar também
-		db = dbHelper.getWritableDatabase();
+    super.fechar();
 
-	}
+    if (dbHelper != null) {
+      dbHelper.close();
+    }
 
-	// Fecha o banco
-	@Override
-	public void fechar() {
-
-		super.fechar();
-
-		if (dbHelper != null) {
-			dbHelper.close();
-		}
-
-	}
+  }
 
 }

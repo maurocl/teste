@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import java.io.BufferedReader;
@@ -29,6 +30,8 @@ import br.com.mltech.modelo.Contratante;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Parametros;
 import br.com.mltech.modelo.Participacao;
+import br.com.mltech.modelo.RepositorioParticipacaoScript;
+import br.com.mltech.modelo.SQLiteHelper;
 import br.com.mltech.utils.FileUtils;
 
 /**
@@ -357,7 +360,9 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
               public void onClick(DialogInterface dialog, int id) {
 
-                boolean b = limpaConfiguracoes();
+                boolean b = clearConfigurations();
+
+                boolean b2 = clearDatabase();
 
                 if (b) {
                   Toast.makeText(ManutencaoActivity.this, "Configuração inicial restaurada com sucesso", Toast.LENGTH_SHORT).show();
@@ -805,7 +810,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
    *         Usa a variável membro mPreferences.
    * 
    */
-  private boolean limpaConfiguracoes() {
+  private boolean clearConfigurations() {
 
     mPreferences = getSharedPreferences("preferencias", MODE_PRIVATE);
 
@@ -827,6 +832,39 @@ public class ManutencaoActivity extends Activity implements Constantes {
     }
 
     return commitDone;
+
+  }
+
+  /**
+   * Reinicia a base de dados. Limpa o conteúdo da tabelas. 
+   */
+  private boolean clearDatabase() {
+
+    Log.d(TAG, "clearDatabase() - Removendo os participantes da base de dados ...");
+    
+    RepositorioParticipacaoScript repositorio = new RepositorioParticipacaoScript(ManutencaoActivity.this);
+
+    boolean sucesso=false;
+    
+    if(repositorio!=null) {
+      
+      // repositorio.deletar(where, whereArgs);
+      int resultado = repositorio.deletar(null, null);
+      
+      if(resultado!=-1) {
+        Log.d(TAG,"clearDatabase() - "+resultado+" participantes foram removidos da base de dados");
+        sucesso = true;
+      }
+      else {
+        Log.w(TAG,"clearDatabase() - Falha na remoção dos participantes da base de dados");
+        sucesso = false;
+      }
+      
+      repositorio.fechar();
+      
+    }
+
+    return sucesso;
 
   }
 

@@ -129,17 +129,14 @@ public class Participante implements Serializable {
 		this.parametros = parametros;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Participante [nome=" + nome + ", email=" + email + ", telefone=" + telefone + "]";
-	}
 
-	/**
+	@Override
+  public String toString() {
+
+    return "Participante [nome=" + nome + ", email=" + email + ", telefone=" + telefone + ", parametros=" + parametros + "]";
+  }
+
+  /**
 	 * Verifica se o participante preencheu todos os campos obrigatórios.
 	 * 
 	 * @return Retorna true se o participante preencheu todos os campos

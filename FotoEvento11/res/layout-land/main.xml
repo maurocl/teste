@@ -16,22 +16,21 @@
         android:textColor="@color/vermelho"
         android:textSize="@dimen/Fonte30"
         android:textStyle="bold" />
-
+
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:maxHeight="600pt"
-        android:maxWidth="800pt"
-        android:minHeight="600dp"
-        android:minWidth="800dp"
+        android:minHeight="480dp"
+        android:minWidth="640dp"
         android:src="@drawable/ic_launcher" />
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:background="@color/branco"
         android:gravity="center_horizontal" >
 
@@ -59,12 +58,13 @@
             android:text="Sair"
             android:width="200dp" />
     </LinearLayout>
-
+
     <TextView
         style="@style/FooterText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="10dp"
         android:text="Copyright 2012 by MLTech" />
 
 </LinearLayout>

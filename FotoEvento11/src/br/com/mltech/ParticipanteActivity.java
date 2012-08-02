@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import android.app.Activity;
@@ -115,25 +116,24 @@ public class ParticipanteActivity extends Activity implements Constantes {
 
         Log.d(TAG, "onCreate(btnEnviar) - *** Botão Enviar do Participante foi selecionado ***");
 
-        if(editNome.getText().toString().equals("")) {
+        if (editNome.getText().toString().equals("")) {
           // email não pode ser vazio
           showToast("Nome não pode ser nulo");
           return;
         }
-        
-        if(editEmail.getText().toString().equals("")) {
+
+        if (editEmail.getText().toString().equals("")) {
           // email não pode ser vazio
           showToast("Email não pode ser nulo");
           return;
         }
-        
-        if(editTelefone.getText().toString().equals("")) {
+
+        if (editTelefone.getText().toString().equals("")) {
           // email não pode ser vazio
           showToast("Telefone não pode ser nulo");
           return;
         }
-        
-        
+
         // cria uma nova instância da classe Participante
         Participante novoParticipante = new Participante(editNome.getText().toString(), editEmail.getText().toString(),
             editTelefone.getText().toString());
@@ -246,7 +246,7 @@ public class ParticipanteActivity extends Activity implements Constantes {
   private void exibeBotoesOpcionais(int[] params) {
 
     boolean exibeDadosAdicionais = false;
-    
+
     /*
      * for(int i =0; i<5;i++) {
      * 
@@ -259,7 +259,7 @@ public class ParticipanteActivity extends Activity implements Constantes {
     // Parâmetro 1
     if (mEvento.getParametros().getParametro(0) != null) {
       params[0] = android.view.View.VISIBLE;
-      exibeDadosAdicionais=true;
+      exibeDadosAdicionais = true;
     } else {
       params[0] = android.view.View.GONE;
     }
@@ -267,7 +267,7 @@ public class ParticipanteActivity extends Activity implements Constantes {
     // Parâmetro 2
     if (mEvento.getParametros().getParametro(1) != null) {
       params[1] = android.view.View.VISIBLE;
-      exibeDadosAdicionais=true;
+      exibeDadosAdicionais = true;
     } else {
       params[1] = android.view.View.GONE;
     }
@@ -275,7 +275,7 @@ public class ParticipanteActivity extends Activity implements Constantes {
     // Parâmetro 3
     if (mEvento.getParametros().getParametro(2) != null) {
       params[2] = android.view.View.VISIBLE;
-      exibeDadosAdicionais=true;
+      exibeDadosAdicionais = true;
     } else {
       params[2] = android.view.View.GONE;
     }
@@ -283,7 +283,7 @@ public class ParticipanteActivity extends Activity implements Constantes {
     // Parâmetro 4
     if (mEvento.getParametros().getParametro(3) != null) {
       params[3] = android.view.View.VISIBLE;
-      exibeDadosAdicionais=true;
+      exibeDadosAdicionais = true;
     } else {
       params[3] = android.view.View.GONE;
     }
@@ -291,25 +291,23 @@ public class ParticipanteActivity extends Activity implements Constantes {
     // Parâmetro 5
     if (mEvento.getParametros().getParametro(4) != null) {
       params[4] = android.view.View.VISIBLE;
-      exibeDadosAdicionais=true;
+      exibeDadosAdicionais = true;
     } else {
       params[4] = android.view.View.GONE;
     }
-    
-    
+
     TextView tvDadosAdicionais = (TextView) findViewById(R.id.tvDadosAdicionais);
-    
+
     // se pelo menos um parâmetro estiver presente então exibe o label de "dados adicionais"
-    if(tvDadosAdicionais!=null) {
-      if(exibeDadosAdicionais) { 
-      tvDadosAdicionais.setVisibility(View.VISIBLE);
+    if (tvDadosAdicionais != null) {
+      if (exibeDadosAdicionais) {
+        tvDadosAdicionais.setVisibility(View.VISIBLE);
       }
       else {
         tvDadosAdicionais.setVisibility(View.GONE);
       }
     }
-    
-    
+
   }
 
   /**
@@ -430,11 +428,13 @@ public class ParticipanteActivity extends Activity implements Constantes {
   /**
    * Exibe um Toast com uma mensagem
    * 
-   * @param msg Mensagem que será exibida
+   * @param msg
+   *          Mensagem que será exibida
    * 
    */
   public void showToast(String msg) {
+
     Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
   }
-  
+
 }
