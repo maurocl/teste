@@ -9,6 +9,6 @@
         style="@style/FooterText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="footer Text" />
+        android:text="Copyright (c) 2012 - MLTech" />
 
 </LinearLayout>

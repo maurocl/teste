@@ -1,75 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_margin="50dp" >
+    android:layout_height="fill_parent" >
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginLeft="10dp"
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
+        
+    <!-- Header -->
+
+    <include layout="@layout/include_header" />
+        
         <TableLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp" >
-
-            <!-- Nome -->
+            android:layout_height="wrap_content" >
 
             <TableRow
                 android:id="@+id/tbRowInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="left"
                 android:background="@color/azul01" >
-
+
+                <!-- Nome -->
+
                 <EditText
                     android:id="@+id/editNome"
-                    android:layout_width="300dp"
+                    style="@style/texto18azul"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="30dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
                     android:clickable="false"
                     android:ems="10"
                     android:enabled="false"
+                    android:gravity="left"
                     android:hint="Nome do Participante"
-                    android:textSize="@dimen/Fonte30" >
-                  
+                    android:textSize="24sp" >
                 </EditText>
+
+                <!-- Email -->
 
                 <EditText
                     android:id="@+id/editEmail"
-                    android:layout_width="300dp"
+                    style="@style/texto18azul"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="30dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
                     android:clickable="false"
                     android:ems="10"
                     android:enabled="false"
-                    android:hint="Email do Participante" />
+                    android:gravity="center_horizontal"
+                    android:hint="Email do Participante"
+                    android:textSize="24sp" />
+
+                <!-- Telefone -->
 
                 <EditText
                     android:id="@+id/editTelefone"
-                    android:layout_width="300dp"
+                    style="@style/texto18azul"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="30dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
                     android:clickable="false"
                     android:ems="10"
                     android:enabled="false"
-                    android:hint="Contato do Participante" />
+                    android:gravity="right"
+                    android:hint="Contato do Participante"
+                    android:textSize="24sp" />
             </TableRow>
-
-            <!-- Email -->
-
-
-            <!-- Telefone -->
         </TableLayout>
 
         <!-- Tipo de Foto -->
-
+
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -85,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="horizontal" >
-
+
             <RadioButton
                 android:id="@+id/radioOp1"
                 android:layout_width="400dp"
@@ -93,11 +104,10 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="10dp"
                 android:checked="false"
-                android:gravity="left|center_vertical|center_horizontal|fill"
                 android:hint="Formato Polaroid (9 por 11 cm)"
                 android:text="Polaroid (9x11)"
                 android:textSize="@dimen/Fonte30" />
-
+
             <RadioButton
                 android:id="@+id/radioOp2"
                 android:layout_width="400dp"
@@ -108,11 +118,10 @@
                 android:hint="Formato Cabine (4 por 15 cm)"
                 android:text="Cabine (4x15)"
                 android:textSize="@dimen/Fonte30" />
-
         </RadioGroup>
 
         <!-- Agrupa efeitos da foto -->
-
+
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -121,7 +130,7 @@
             android:text="Selecione o tipo de efeito aplicado a foto:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="@dimen/Fonte40" />
-
+
         <RadioGroup
             android:id="@+id/group2"
             android:layout_width="wrap_content"
@@ -129,7 +138,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:orientation="horizontal" >
-
+
             <RadioButton
                 android:id="@+id/radioCor"
                 android:layout_width="400dp"
@@ -140,7 +149,7 @@
                 android:hint="Foto tirada a cores"
                 android:text="Cores"
                 android:textSize="@dimen/Fonte30" />
-
+
             <RadioButton
                 android:id="@+id/radioPB"
                 android:layout_width="400dp"
@@ -151,18 +160,17 @@
                 android:hint="Foto tirada em preto e branco"
                 android:text="Preto e Branco"
                 android:textSize="@dimen/Fonte30" />
-
         </RadioGroup>
-
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="150dp"
+            android:layout_weight="1"
             android:orientation="horizontal" >
 
             <!-- Botão Enviar -->
-
+
             <Button
                 android:id="@+id/button1"
                 style="@style/btnConfirmaStyle"
@@ -173,10 +181,10 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="Enviar"
-                android:textSize="20dp" />
+                android:textSize="30sp" />
 
             <!-- Botão Cancelar -->
-
+
             <Button
                 android:id="@+id/button2"
                 style="@style/btnCancelarStyle"
@@ -187,9 +195,12 @@
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="Cancelar"
-                android:textSize="20dp" />
-
+                android:textSize="30sp" />
         </LinearLayout>
+
+        <!-- Footer -->
+
+        <include layout="@layout/include_footer" />
     </LinearLayout>
 
 </ScrollView>

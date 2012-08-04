@@ -9,6 +9,10 @@
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
+        <!-- Header -->
+
+        <include layout="@layout/include_header" />
+
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
@@ -27,14 +31,14 @@
                 android:id="@+id/tableRow1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Nome do contratante do evento"
                     android:text="Contratante:"
                     android:textSize="@dimen/Fonte20" />
-
+
                 <EditText
                     android:id="@+evento/editCliente"
                     android:layout_width="300dp"
@@ -42,7 +46,6 @@
                     android:ems="10"
                     android:hint="Nome do contratante do evento"
                     android:textColor="@color/DarkGreen" />
-
             </TableRow>
 
             <!-- Nome do Evento -->
@@ -51,7 +54,7 @@
                 android:id="@+id/tableRow2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -82,7 +85,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Endereço"
-                    android:text="Endereço" 
+                    android:text="Endereço"
                     android:textSize="@dimen/Fonte20" />
 
                 <EditText
@@ -127,7 +130,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Estado"
-                    android:text="Estado" android:textSize="@dimen/Fonte20" />
+                    android:text="Estado"
+                    android:textSize="@dimen/Fonte20" />
 
                 <EditText
                     android:id="@+id/estado"
@@ -154,7 +158,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="CEP"
-                    android:text="CEP" android:textSize="@dimen/Fonte20"/>
+                    android:text="CEP"
+                    android:textSize="@dimen/Fonte20" />
 
                 <EditText
                     android:id="@+id/cep"
@@ -177,8 +182,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Telefone de contato"
-                    android:text="Telefone" android:textSize="@dimen/Fonte20"/>
-
+                    android:text="Telefone"
+                    android:textSize="@dimen/Fonte20" />
+
                 <EditText
                     android:id="@+id/telefone"
                     android:layout_width="wrap_content"
@@ -186,7 +192,6 @@
                     android:ems="10"
                     android:hint="Telefone de contato"
                     android:inputType="phone" />
-
             </TableRow>
 
             <!-- Data do Evento -->
@@ -201,7 +206,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Data do evento"
-                    android:text="Data do Evento" android:textSize="@dimen/Fonte20"/>
+                    android:text="Data do Evento"
+                    android:textSize="@dimen/Fonte20" />
 
                 <EditText
                     android:id="@+id/data"
@@ -214,7 +220,7 @@
         </TableLayout>
 
         <!-- Quais redes sociais participantes -->
-
+
         <TextView
             android:id="@+id/textViewRedesSociais"
             android:layout_width="wrap_content"
@@ -254,7 +260,7 @@
 
 
         <!-- Borda Polaroid -->
-
+
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -265,7 +271,7 @@
                 android:id="@+id/tableRow9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     style="@style/texto14"
                     android:layout_width="fill_parent"
@@ -273,7 +279,7 @@
                     android:hint="Borda usada no formato de borda Polaroid"
                     android:text="Borda Polaroid"
                     android:textSize="18sp" />
-
+
                 <EditText
                     android:id="@+evento/editBordaPolaroid"
                     android:layout_width="300dp"
@@ -282,7 +288,6 @@
                     android:ems="10"
                     android:hint="URL do arquivo com a borda Polaroid"
                     android:inputType="text" />
-
             </TableRow>
 
             <!-- Borda Cabine -->
@@ -291,7 +296,7 @@
                 android:id="@+id/tableRow10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     style="@style/texto14"
                     android:layout_width="fill_parent"
@@ -299,7 +304,7 @@
                     android:hint="Borda usada no formato de borda Cabine"
                     android:text="Borda Cabine"
                     android:textSize="18sp" />
-
+
                 <EditText
                     android:id="@+evento/editBordaCabine"
                     android:layout_width="300dp"
@@ -310,9 +315,7 @@
                     android:inputType="text" >
 
                     <requestFocus />
-
                 </EditText>
-
             </TableRow>
         </TableLayout>
 
@@ -330,7 +333,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <!-- Param 1 -->
-
+
         <TableLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -466,6 +469,10 @@
                 android:layout_weight="1"
                 android:text="Cancelar" />
         </LinearLayout>
+
+        <!-- Footer -->
+
+        <include layout="@layout/include_footer" />
     </LinearLayout>
 
 </ScrollView>

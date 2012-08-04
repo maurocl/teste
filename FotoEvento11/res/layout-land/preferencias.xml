@@ -7,7 +7,13 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical" >
+ <!-- Header -->
 
+    <include layout="@layout/include_header" />
+
+
+         
+        
         <!-- Preferências -->
 
         <TextView
@@ -21,73 +27,79 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#0000FF"
             android:textSize="30dp" />
-
-        <!-- Preferências de email -->
-
+
         <TextView
             android:id="@+id/textView4"
             style="@style/texto18"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="20dp"
             android:text="Preferências de email:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="30sp" />
+
+        <!-- Preferências de email -->
+
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
-
-            <TableRow
-                android:id="@+id/tbRowAssunto"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:id="@+id/tvAssunto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:text="Assunto:"
-                    android:textSize="@dimen/Fonte30" />
-
-                <EditText
-                    android:id="@+id/editAssunto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:ems="10"
-                    android:hint="Assunto (subject) no envio de email"
-                    android:inputType="textEmailSubject" >
-
-                    <requestFocus />
-                </EditText>
-            </TableRow>
 
             <!-- Assunto tratado pelo email -->
 
-
-            <!-- Descrição do corpo do email -->
-
             <TableRow
-                android:id="@+id/tbRowDescricao"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:id="@+id/tbRowAssunto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
 
                 <TextView
-                    android:id="@+id/tvDescricao"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvAssunto"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
+                    android:layout_weight="2"
+                    android:text="Assunto:"
+                    android:textSize="@dimen/Fonte30" />
+
+                <EditText
+                    android:id="@+id/editAssunto"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="7"
+                    android:ems="10"
+                    android:gravity="center_vertical|fill|fill_horizontal"
+                    android:hint="Assunto (subject) no envio de email"
+                    android:inputType="textEmailSubject" >
+
+                </EditText>
+            </TableRow>
+
+            <!-- Descrição do corpo do email -->
+
+            <TableRow
+                android:id="@+id/tbRowDescricao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/tvDescricao"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_weight="2"
                     android:text="Descrição:"
                     android:textSize="@dimen/Fonte30" />
-
+
                 <EditText
                     android:id="@+id/editDescricao"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="7"
                     android:ems="10"
                     android:hint="Descrição do evento" />
+
             </TableRow>
 
             <!-- Usuário da conta do email -->
@@ -96,21 +108,25 @@
                 android:id="@+id/tbRowUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:id="@+id/tvUsuario"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:text="Usuário da conta de email:" />
-
+                    android:layout_weight="3"
+                    android:text="Usuário da conta de email:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <EditText
                     android:id="@+id/editUsuario"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="7"
                     android:ems="10"
                     android:hint="Nome do usuário da conta de email" />
+
             </TableRow>
 
             <!-- Senha da conta do email -->
@@ -119,22 +135,26 @@
                 android:id="@+id/tbRowContaEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:id="@+id/tvSenha"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:text="Senha da conta de email:" />
-
+                    android:layout_weight="1"
+                    android:text="Senha da conta de email:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <EditText
                     android:id="@+id/editSenha"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="9"
                     android:ems="10"
                     android:hint="Senha do usuário da conta de email"
                     android:inputType="textPassword" />
+
             </TableRow>
 
             <!-- Servidor SMTP -->
@@ -143,21 +163,25 @@
                 android:id="@+id/tbRowServidorSMTP"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:id="@+id/tvServidorSMTP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:text="Servidor SMTP:" />
-
+                    android:layout_weight="1"
+                    android:text="Servidor SMTP:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <EditText
                     android:id="@+id/editServidorSMTP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="9"
                     android:ems="10"
                     android:hint="Endereço do servidor SMTP" />
+
             </TableRow>
 
             <!-- porta do Servidor SMTP -->
@@ -166,22 +190,26 @@
                 android:id="@+id/tbRowPortaServidorSMTP"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:id="@+id/tvServidorSMTPPorta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:text="Porta Servidor SMTP:" />
-
+                    android:layout_weight="1"
+                    android:text="Porta Servidor SMTP:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <EditText
                     android:id="@+id/editServidorSMTPPorta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="9"
                     android:ems="10"
                     android:hint="Nº da porta do servidor SMTP"
                     android:inputType="number" />
+
             </TableRow>
 
             <!-- Email do Remetente -->
@@ -190,67 +218,80 @@
                 android:id="@+id/tbRowEmailRemetente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:id="@+id/tvRemetente"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:text="Email do Remetente:" />
-
+                    android:layout_weight="1"
+                    android:text="Email do Remetente:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <EditText
                     android:id="@+id/editRemetente"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="9"
                     android:hint="Email do Remetente"
                     android:inputType="textEmailAddress"
                     android:paddingBottom="5dp" />
+
             </TableRow>
 
             <TableRow
                 android:id="@+id/tbRowDebugavel"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
-
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" >
+
                 <TextView
                     android:id="@+id/tvDebugavel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|center_horizontal|center"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Debugável:" />
-
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:text="Debugável:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <CheckBox
                     android:id="@+id/chkDebugavel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="7"
                     android:clickable="true"
-                    android:text="Permite debug do email" />
+                    android:text="Permite debug do email"
+                    android:textSize="@dimen/Fonte20" />
 
             </TableRow>
-
+
             <TableRow
                 android:id="@+id/tbSolicitaAutorizacao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:id="@+id/tvAuthorization"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:text="Solicita Autorização:" />
-
+                    android:layout_weight="1"
+                    android:text="Solicita Autorização:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <CheckBox
                     android:id="@+id/chkAuth"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="7"
                     android:clickable="true"
-                    android:text="Solicita Autorização" />
+                    android:text="Solicita Autorização"
+                    android:textSize="@dimen/Fonte20" />
+
             </TableRow>
-
+
             <TableRow
                 android:id="@+id/tbRowUsaSsl"
                 android:layout_width="wrap_content"
@@ -261,27 +302,33 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:text="Usa SSL:" />
-
+                    android:layout_weight="1"
+                    android:text="Usa SSL:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <CheckBox
                     android:id="@+id/chkSsl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="7"
                     android:clickable="true"
-                    android:text="Usa SSL (Secure Socket Layer)" />
+                    android:text="Usa SSL (Secure Socket Layer)"
+                    android:textSize="@dimen/Fonte20" />
 
             </TableRow>
-
         </TableLayout>
 
         <!-- Email é debugável -->
 
+
         <!-- Email solicita autorização -->
+
 
         <!-- Email usa SSL -->
 
+
         <!-- Configuração de redes sociais -->
-
+
         <TextView
             android:id="@+id/textRedesSociais"
             style="@style/texto18"
@@ -291,7 +338,8 @@
             android:paddingBottom="5dp"
             android:paddingTop="20dp"
             android:text="Redes Sociais"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="30sp" />
 
         <TableLayout
             android:layout_width="match_parent"
@@ -301,17 +349,22 @@
                 android:id="@+id/tableRow1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:id="@+id/tvFacebook"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Texto Facebook:" />
-
+                    android:layout_marginLeft="20dp"
+                    android:layout_weight="1"
+                    android:text="Texto Facebook:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <EditText
                     android:id="@+id/editTextoFacebook"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="10"
                     android:ems="10"
                     android:hint="Texto mensagem Facebook"
                     android:paddingBottom="20dp" />
@@ -322,17 +375,22 @@
                 android:id="@+id/tableRow2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:id="@+id/tvTwitter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Texto Twitter:" />
-
+                    android:layout_marginLeft="20dp"
+                    android:layout_weight="1"
+                    android:text="Texto Twitter:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <EditText
                     android:id="@+id/editTextoTwitter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="10"
                     android:ems="10"
                     android:hint="Texto mensagem Twitter" />
 
@@ -341,7 +399,9 @@
 
         <!-- Facebook -->
 
+
         <!-- Twitter -->
+
 
         <!--  -->
 
@@ -357,37 +417,42 @@
             android:paddingBottom="5dp"
             android:paddingTop="20dp"
             android:text="Outros:"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="30sp" />
 
         <!-- URL da imagem da tela inicial da aplicação -->
-
+
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
-
+
             <TableRow
                 android:id="@+id/tableRow3"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
-
+
                 <TextView
                     android:id="@+id/tvImagemTelaInicial"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
+                    android:layout_weight="1"
                     android:paddingTop="5dp"
-                    android:text="Imagem da tela inicial" />
-
+                    android:text="Imagem da tela inicial"
+                    android:textSize="@dimen/Fonte30" />
+
                 <EditText
                     android:id="@+id/editUrlImagem"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="7"
                     android:hint="URL da Imagem da tela inicial"
                     android:width="400dp" />
 
             </TableRow>
-
+
             <TableRow
                 android:id="@+id/tableRow4"
                 android:layout_width="wrap_content"
@@ -398,12 +463,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
-                    android:text="Nº da câmera frontal:" />
-
+                    android:layout_weight="1"
+                    android:text="Nº da câmera frontal:"
+                    android:textSize="@dimen/Fonte30" />
+
                 <EditText
                     android:id="@+id/editNumCameraFrontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="7"
                     android:hint="Nº da câmera frontal"
                     android:inputType="number"
                     android:width="200dp" />
@@ -412,6 +481,7 @@
         </TableLayout>
 
         <!-- Nº da Câmera Frontal -->
+
 
         <!-- Botões -->
 
@@ -441,6 +511,12 @@
                 android:layout_weight="1"
                 android:text="Cancelar" />
         </LinearLayout>
+        
+        <!-- Footer -->
+
+    <include layout="@layout/include_footer" />
+        
+        
     </LinearLayout>
 
 </ScrollView>

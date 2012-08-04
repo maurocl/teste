@@ -131,6 +131,7 @@ public class RelatorioActivity extends Activity implements Constantes {
     EditText editNumFotosPB = (EditText) findViewById(R.id.numFotosPB);
 
     numParticipantes.setText(String.valueOf(num));
+    
     editNumFotosPolaroid.setText(String.valueOf(numFotosPolaroid));
     editNumFotosCabine.setText(String.valueOf(numFotosCabine));
     editNumFotosColoridas.setText(String.valueOf(numFotosCores));
@@ -184,8 +185,6 @@ public class RelatorioActivity extends Activity implements Constantes {
     btnExibe.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
-
-        Log.d(TAG, "Botão 2 foi pressionado");
 
         List<Participacao> participacoes = getListParticipacoes();
 
@@ -243,6 +242,8 @@ public class RelatorioActivity extends Activity implements Constantes {
       return;
     }
 
+    Toast.makeText(this, "Número de participações: " + participacoes.size(), Toast.LENGTH_SHORT).show();
+    
     Log.d(TAG, "Número de participações: " + participacoes.size());
 
     int i = 0;

@@ -3,7 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
+
+     <!-- Header -->
+
+    <include layout="@layout/include_header" />
+
+
+ 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="match_parent"
@@ -26,11 +32,12 @@
         android:minHeight="480dp"
         android:minWidth="640dp"
         android:src="@drawable/ic_launcher" />
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_weight="1"
         android:background="@color/branco"
         android:gravity="center_horizontal" >
 
@@ -58,13 +65,10 @@
             android:text="Sair"
             android:width="200dp" />
     </LinearLayout>
-
-    <TextView
-        style="@style/FooterText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:text="Copyright 2012 by MLTech" />
 
+    <!-- Footer -->
+
+    <include layout="@layout/include_footer" />
+    
+    
 </LinearLayout>

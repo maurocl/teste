@@ -5,17 +5,17 @@
     android:background="@color/azul03"
     android:gravity="center_horizontal"
     android:orientation="horizontal" >
-
+
     <FrameLayout
         android:id="@+id/camera_preview"
-        android:layout_width="720px"
-        android:layout_height="576px"
+        android:layout_width="720dp"
+        android:layout_height="576dp"
         android:layout_marginTop="100dp"
         android:layout_weight="0"
         android:background="@color/cinza_d" >
 
     </FrameLayout>
-
+
     <LinearLayout
         android:id="@+id/linear"
         android:layout_width="wrap_content"

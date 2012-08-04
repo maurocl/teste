@@ -4,7 +4,9 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <!-- Nome -->
+    <!-- Header -->
+
+    <include layout="@layout/include_header" />
 
     <TextView
         android:id="@+id/textView4"
@@ -18,89 +20,100 @@
         android:typeface="normal" />
 
     <TableLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|left"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp" >
 
+        <!-- Nome -->
+
         <TableRow
             android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" >
 
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nome do Contratante"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/Fonte30" />
+
             <EditText
                 android:id="@+id/nome"
-                android:layout_width="300dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:ems="10"
                 android:hint="Nome do Contratante"
-                android:inputType="textCapWords" />
-
+                android:inputType="textCapWords"
+                android:textSize="@dimen/Fonte30" />
         </TableRow>
+
+        <!-- Email -->
 
         <TableRow
             android:id="@+id/tableRow2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" >
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Email do Contratante"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/Fonte30" />
 
             <EditText
                 android:id="@+id/email"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:ems="10"
                 android:hint="Email do Contratante"
-                android:inputType="textEmailAddress" >
-
-                <requestFocus />
+                android:inputType="textEmailAddress"
+                android:textSize="@dimen/Fonte30" >
             </EditText>
         </TableRow>
 
+        <!-- Telefone -->
+
         <TableRow
             android:id="@+id/tableRow3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" >
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Telefone do Contratante"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/Fonte30" />
 
             <EditText
                 android:id="@+id/telefone"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:ems="10"
                 android:hint="Telefone do Contratante"
-                android:inputType="phone" />
+                android:inputType="phone"
+                android:textSize="@dimen/Fonte30" />
         </TableRow>
     </TableLayout>
-
-    <!-- Email -->
-
-
-    <!-- Telefone -->
-
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="200dp"
+        android:layout_weight="1"
         android:orientation="horizontal" >
 
         <!-- Botão Enviar -->
@@ -123,5 +136,9 @@
             android:layout_weight="1"
             android:text="Cancelar" />
     </LinearLayout>
+
+    <!-- Footer -->
+
+    <include layout="@layout/include_footer" />
 
 </LinearLayout>

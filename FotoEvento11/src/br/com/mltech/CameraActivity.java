@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import java.io.File;
@@ -130,6 +131,7 @@ public class CameraActivity extends Activity implements Constantes {
 
     Log.d(TAG, "*** onCreate() ***");
 
+    // 
     setContentView(R.layout.cameraprev);
 
     if (!CameraTools.isCameraWorking(cameraId)) {
@@ -299,7 +301,7 @@ public class CameraActivity extends Activity implements Constantes {
       mParticipacao = new Participacao(null, Constantes.TIPO_FOTO_POLAROID, Constantes.CORES, null);
       Log.w(TAG, "obtemInfoParticipacao() - Usando um contratante null, formato de foto polaroid a cores, e nome do arquivo nulo");
     }
-    
+
   }
 
   final ShutterCallback shutter = new ShutterCallback() {
@@ -421,6 +423,7 @@ public class CameraActivity extends Activity implements Constantes {
     // obtém uma instância da câmera
     mCamera = CameraTools.getCameraInstance(cameraId);
 
+    // Configura os parâmetros da câmera
     configParametrosCamera();
 
     Log.i(TAG, "onResume() - ==> mCamera=" + mCamera);
@@ -437,7 +440,7 @@ public class CameraActivity extends Activity implements Constantes {
 
       // obtem o tipo do efeito de cores que deve ser aplicado
       int tipoEfeito = mParticipacao.getEfeitoFoto();
-      
+
       // Configura a câmera
       configuraParamCamera2(tipoEfeito);
 
@@ -502,15 +505,17 @@ public class CameraActivity extends Activity implements Constantes {
    */
   private void configParametrosCamera() {
 
+    // Obtem a lista de parâmetros suportados pela câmera
     Camera.Parameters params = mCamera.getParameters();
 
+    // Obtém a lista dos modos de foco
     List<String> focusModes = params.getSupportedFocusModes();
 
     // --------------------------------------------------------
     // configura os parâmetros de configuração da câmera
     // --------------------------------------------------------
     if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-      
+
       // auto focus mode is supported
       Log.d(TAG, "n# focus modes supported: " + focusModes.size());
       for (String modes : focusModes) {
@@ -525,6 +530,7 @@ public class CameraActivity extends Activity implements Constantes {
    * Configura os parâmetros da câmera
    * 
    * @param efeitoFoto
+   *          Efeito de cores aplicado nas fotos
    * 
    */
   private void configuraParamCamera2(int efeitoFoto) {
@@ -533,18 +539,17 @@ public class CameraActivity extends Activity implements Constantes {
     // This affects the preview frames and the picture displayed after snapshot.
     // This method is useful for portrait mode applications.
     // Note that preview display of front-facing cameras is flipped horizontally
-    // before the rotation,
-    // that is, the image is reflected along the central vertical axis of the
+    // before the rotation, that is, the image is reflected along the central vertical axis of the
     // camera sensor.
     // So the users can see themselves as looking into a mirror.
     int displayOrientation = 0;
 
-    Log.d(TAG, "configuraParamCamera() - início");
+    Log.d(TAG, "configuraParamCamera2() - início");
 
-    Log.d(TAG, "configuraParamCamera() - setDisplayOrientation(" + displayOrientation + ")");
+    Log.d(TAG, "configuraParamCamera2() - setDisplayOrientation(" + displayOrientation + ")");
     mCamera.setDisplayOrientation(displayOrientation);
 
-    Log.d(TAG, "configuraParamCamera() - setCameraDisplayOrientation");
+    Log.d(TAG, "configuraParamCamera2() - setCameraDisplayOrientation");
     CameraTools.setCameraDisplayOrientation(this, cameraId, mCamera);
 
     // Obtém os parâmetros de configuração da câmera
@@ -568,34 +573,51 @@ public class CameraActivity extends Activity implements Constantes {
     }
     //------------------------------------------------------    
 
-    // HashMap<String, List<String>> hash =
-    // CameraTools.getParametersDetail(mCamera);
+    // HashMap<String, List<String>> hash = CameraTools.getParametersDetail(mCamera);
 
     // exibe todos os parâmetros de configuração da câmera.
     CameraTools.showParametersDetail(mCamera);
 
     // altera o tamanho da foto
-    params.setPictureSize(800, 600);
+    params.setPictureSize(640, 480);
 
-    /*
-     * EFFECT_AQUA EFFECT_BLACKBOARD EFFECT_MONO EFFECT_NEGATIVE EFFECT_NONE
-     * EFFECT_POSTERIZE EFFECT_SEPIA EFFECT_SOLARIZE EFFECT_WHITEBOARD
-     */
+    
+    Log.i(TAG,"Configurações da Câmera:");
+    List<Camera.Size> previewSizes = params.getSupportedPreviewSizes();
+    
+    if(previewSizes!=null) {
+            
+      int i = 0;
+      for(Camera.Size size: previewSizes) {
+        Log.d(TAG," PreviewSize("+i+") = "+size.width+"x"+size.height);
+        i++;
+      }
+      
+      Camera.Size currentPreviewSize = params.getPreviewSize();
+      
+      Log.d(TAG,"Current Preview Size: "+ +currentPreviewSize.width+"x"+currentPreviewSize.height);
+      
+      
+    }
+    
+    params.setPreviewSize(720, 576);
+    
+    Camera.Size currentPreviewSize = params.getPreviewSize();
 
+    
+    Log.d(TAG,"Current Preview Size: "+ +currentPreviewSize.width+"x"+currentPreviewSize.height);
+    
     if (efeitoFoto == CORES) {
-      Log.d(TAG, "configuraParamCamera() - altera o color effect para cores");
+      Log.d(TAG, "configuraParamCamera2() - altera o color effect para cores");
       params.setColorEffect(Camera.Parameters.EFFECT_NONE);
     } else if (efeitoFoto == PB) {
-      Log.d(TAG, "configuraParamCamera() - altera o color effect para preto & branco");
+      Log.d(TAG, "configuraParamCamera2() - altera o color effect para preto & branco");
       params.setColorEffect(Camera.Parameters.EFFECT_MONO);
     } else {
       // o valor default é nenhum efeito
       params.setColorEffect(Camera.Parameters.EFFECT_NONE);
     }
 
-    // params.setColorEffect(Camera.Parameters.EFFECT_SEPIA);
-
-    // Atualiza os parametros
     // Atualiza a configuração para esse serviço de câmera.
     try {
       mCamera.setParameters(params);
@@ -610,6 +632,7 @@ public class CameraActivity extends Activity implements Constantes {
     Log.d(TAG, "configuraParamCamera() - fim");
 
   }
+
 
   @Override
   protected void onSaveInstanceState(Bundle outState) {
@@ -826,68 +849,6 @@ public class CameraActivity extends Activity implements Constantes {
   }
 
   /**
-   * Configura os parâmetros da câmera.
-   * 
-   * @param efeitoFoto
-   * 
-   */
-  private void configuraParamCamera(int efeitoFoto) {
-
-    // Set the clockwise rotation of preview display in degrees.
-    // This affects the preview frames and the picture displayed after snapshot.
-    // This method is useful for portrait mode applications.
-    // Note that preview display of front-facing cameras is flipped horizontally
-    // before the rotation,
-    // that is, the image is reflected along the central vertical axis of the
-    // camera sensor.
-    // So the users can see themselves as looking into a mirror.
-    int displayOrientation = 0;
-
-    Log.d(TAG, "configuraParamCamera() - início");
-
-    Log.d(TAG, "configuraParamCamera() - setDisplayOrientation(" + displayOrientation + ")");
-    mCamera.setDisplayOrientation(displayOrientation);
-
-    Log.d(TAG, "configuraParamCamera() - setCameraDisplayOrientation");
-    //CameraTools.setCameraDisplayOrientation(this, cameraId, mCamera);
-
-    // Obtém os parâmetros de configuração da câmera
-    // Obtém a configuração corrente para esse serviço de câmera.
-    Camera.Parameters params = mCamera.getParameters();
-
-    // altera o tamanho da foto
-    params.setPictureSize(640, 480);
-
-    if (efeitoFoto == 11) {
-      Log.d(TAG, "configuraParamCamera() - altera o color effect para cores");
-      params.setColorEffect(Camera.Parameters.EFFECT_NONE);
-    } else if (efeitoFoto == 12) {
-      Log.d(TAG, "configuraParamCamera() - altera o color effect para preto & branco");
-      params.setColorEffect(Camera.Parameters.EFFECT_MONO);
-    } else {
-      // o valor default é nenhum efeito
-      params.setColorEffect(Camera.Parameters.EFFECT_NONE);
-    }
-
-    // params.setColorEffect(Camera.Parameters.EFFECT_SEPIA);
-
-    // Atualiza os parametros
-    // Atualiza a configuração para esse serviço de câmera.
-    try {
-      mCamera.setParameters(params);
-      Log.d(TAG, "configuraParamCamera() -  parâmetros atualizados com sucesso");
-    } catch (RuntimeException e) {
-      Log.w(TAG, "configuraParamCamera() -  RuntimeException durante a configuração da câmera");
-    }
-
-    // Exibe alguns parametros da camera
-    // showCameraParameters(mCamera);
-
-    Log.d(TAG, "configuraParamCamera() - fim");
-
-  }
-
-  /**
    * Finaliza a captura das fotos.
    */
   private void confirmaFoto() {
@@ -990,7 +951,7 @@ public class CameraActivity extends Activity implements Constantes {
     // obtém o tamanho da imagem
     Size size = parameters.getPictureSize();
 
-    Log.v(TAG, "showCameraParameters() - size: " + size.width + " x "+size.height);
+    Log.v(TAG, "showCameraParameters() - size: " + size.width + " x " + size.height);
     Log.v(TAG, "showCameraParameters() - getHorizontalViewAngle: " + parameters.getHorizontalViewAngle());
     Log.v(TAG, "showCameraParameters() - getJpegThumbnailQuality: " + parameters.getJpegThumbnailQuality());
 
