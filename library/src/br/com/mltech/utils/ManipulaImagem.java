@@ -1285,6 +1285,7 @@ public class ManipulaImagem {
       out.close();
 
     } catch (FileNotFoundException e) {
+      
       Log.w(TAG, "gravaBitmapArquivo3() - Erro na criação do arquivo", e);
     } catch (IOException e) {
       Log.w(TAG, "gravaBitmapArquivo3() - Erro na criação do arquivo", e);
@@ -1357,6 +1358,7 @@ public class ManipulaImagem {
   /**
    * Cria uma string com o número que indica a data e hora atual em
    * milisegundos.<br>
+   * 
    * Obtém o diretório padrão onde são criados as figuras (pictures).<br>
    * 
    * @param bmp
@@ -1552,6 +1554,8 @@ public class ManipulaImagem {
   }
 
   /**
+   * Combina duas fotos (aplica uma moldura a uma foto)
+   * 
    * @param bmp1
    *          Imagem de fundo (representa a foto)
    * 
@@ -1597,6 +1601,7 @@ public class ManipulaImagem {
      */
 
     Bitmap bitmapOverlay = null;
+    
     try {
       // cria um novo bitmap onde será feito o overlay
       bitmapOverlay = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);

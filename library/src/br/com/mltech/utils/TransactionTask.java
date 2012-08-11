@@ -1,3 +1,4 @@
+
 package br.com.mltech.utils;
 
 import android.app.ProgressDialog;
@@ -13,126 +14,134 @@ import android.util.Log;
  */
 public class TransactionTask extends AsyncTask<Void, Void, Boolean> {
 
-	private static final String TAG = "TransactionTask";
+  private static final String TAG = "TransactionTask";
 
-	private final Context context;
-	private final Transaction transacao;
-	private ProgressDialog progresso;
-	private Throwable exceptionErro;
-	private int aguardeMsg;
+  private final Context context;
 
-	/**
-	 * Construtor
-	 * 
-	 * @param context Contexto da aplicação
-	 * @param transacao Uma transacao
-	 * @param aguardeMsg
-	 *  
-	 */
-	public TransactionTask(Context context, Transaction transacao, int aguardeMsg) {
-		super();
-		this.context = context;
-		this.transacao = transacao;
-		this.aguardeMsg = aguardeMsg;
-	}
+  private final Transaction transacao;
 
-	/**
-	 * Abre o diálogo de progresso
-	 */
-	@Override
-	protected void onPreExecute() {
+  private ProgressDialog progresso;
 
-		super.onPreExecute();
-		// inicia a janela de aguarde ...
-		openProgress();
-	}
+  private Throwable exceptionErro;
 
-	/**
-	 * executa transação em background.
-	 */
-	@Override
-	protected Boolean doInBackground(Void... params) {
+  private int aguardeMsg;
 
-		try {
-		 
-			// executa a transacao
-			transacao.execute();
-			 
-		} catch (Throwable e) {
+  /**
+   * Construtor
+   * 
+   * @param context
+   *          Contexto da aplicação
+   * @param transacao
+   *          Uma transacao
+   * @param aguardeMsg
+   * 
+   */
+  public TransactionTask(Context context, Transaction transacao, int aguardeMsg) {
 
-			Log.e(TAG, e.getMessage(), e);
-			
-			// salva o erro e retorna false
-			this.exceptionErro = e;
-			
-			return false;
-			
-		} finally {
-			try {
-				
-				// fecha a caixa de diálogo
-				closeProgress();
+    super();
+    this.context = context;
+    this.transacao = transacao;
+    this.aguardeMsg = aguardeMsg;
+  }
 
-			} catch (Exception e) {
+  /**
+   * Abre o diálogo de progresso
+   */
+  @Override
+  protected void onPreExecute() {
 
-				Log.e(TAG, e.getMessage(), e);
-			}
-		}
+    super.onPreExecute();
+    // inicia a janela de aguarde ...
+    openProgress();
+  }
 
-		// ok
-		return true;
+  /**
+   * executa transação em background.
+   */
+  @Override
+  protected Boolean doInBackground(Void... params) {
 
-	}
+    try {
 
-	/**
-	 * Atualiza o componente visual da transação.
-	 * 
-	 * @param result Resultado da transação
-	 * 
-	 */
-	@Override
-	protected void onPostExecute(Boolean result) {
-	  
-		if (result) {
-			transacao.updateView();
+      // executa a transacao
+      transacao.execute();
 
-		} else {
-			//
-			AndroidUtils.alertDialog(context, "TransactionTask", "Erro: " + exceptionErro.getMessage());
-		}
-		
-	}
+    } catch (Throwable e) {
 
-	/**
-	 * Abre a janela de diálogo de progresso
-	 */
-	public void openProgress() {
-	  
-		try {
-			progresso = ProgressDialog.show(context, "", "Aguarde ...");
-		} catch (Throwable e) {
-			Log.e(TAG, e.getMessage(), e);
-		}
-		
-	}
+      Log.e(TAG, e.getMessage(), e);
 
-	/**
-	 * Fecha a janela de diálogo de progresso
-	 */
-	public void closeProgress() {
-	  
-		try {
-		  
-			if (progresso != null) {
-				progresso.dismiss();
-			}
-			
-		} catch (Throwable e) {
+      // salva o erro e retorna false
+      this.exceptionErro = e;
 
-			Log.e(TAG, e.getMessage(), e);
-			
-		}
-		
-	}
+      return false;
+
+    } finally {
+      try {
+
+        // fecha a caixa de diálogo
+        closeProgress();
+
+      } catch (Exception e) {
+
+        Log.e(TAG, e.getMessage(), e);
+      }
+    }
+
+    // ok
+    return true;
+
+  }
+
+  /**
+   * Atualiza o componente visual da transação.
+   * 
+   * @param result
+   *          Resultado da transação
+   * 
+   */
+  @Override
+  protected void onPostExecute(Boolean result) {
+
+    if (result) {
+      transacao.updateView();
+
+    } else {
+      //
+      AndroidUtils.alertDialog(context, "TransactionTask", "Erro: " + exceptionErro.getMessage());
+    }
+
+  }
+
+  /**
+   * Abre a janela de diálogo de progresso
+   */
+  public void openProgress() {
+
+    try {
+      progresso = ProgressDialog.show(context, "", "Aguarde ...");
+    } catch (Throwable e) {
+      Log.e(TAG, e.getMessage(), e);
+    }
+
+  }
+
+  /**
+   * Fecha a janela de diálogo de progresso
+   */
+  public void closeProgress() {
+
+    try {
+
+      if (progresso != null) {
+        progresso.dismiss();
+      }
+
+    } catch (Throwable e) {
+
+      Log.e(TAG, e.getMessage(), e);
+
+    }
+
+  }
 
 }
