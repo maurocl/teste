@@ -32,243 +32,257 @@ import com.facebook.android.SessionEvents.LogoutListener;
 /**
  * LoginButton é um "controle" (botão usado para fazer login)
  * 
- *
+ * 
  */
 public class LoginButton extends ImageButton {
 
-    private Facebook mFb;
-    
-    private Handler mHandler;
-    
-    private SessionListener mSessionListener = new SessionListener();
-    
-    private String[] mPermissions;
-    
-    private Activity mActivity;
-    
-    private int mActivityCode;
+	private Facebook mFb;
 
-   /**
-    * Construtor
-    *  
-    * @param context contexto da aplicação
-    * 
-    */
-    public LoginButton(Context context) {
-        super(context);
-    }
+	private Handler mHandler;
 
-    /**
-     * Construtor
-     *  
-     * @param context contexto da aplicação
-     * @param attrs atributos
-     * 
-     */
-    public LoginButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+	private SessionListener mSessionListener = new SessionListener();
 
-    /**
-     * Construtor
-     * 
-     * @param context contexto da aplicação
-     * @param attrs atributos
-     * @param defStyle definição de estilo
-     * 
-     */
-    public LoginButton(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
+	private String[] mPermissions;
 
-    /**
-     * 
-     * @param activity
-     * @param activityCode
-     * @param fb
-     */
-    public void init(final Activity activity, final int activityCode, final Facebook fb) {
-    	
-        init(activity, activityCode, fb, new String[] {});
-        
-    }
+	private Activity mActivity;
 
-    /**
-     * 
-     * @param activity
-     * @param activityCode
-     * @param fb
-     * @param permissions
-     * 
-     */
-    public void init(final Activity activity, final int activityCode, final Facebook fb,  final String[] permissions) {
-       
-    	mActivity = activity;
-        mActivityCode = activityCode;
-        mFb = fb;
-        mPermissions = permissions;
-        mHandler = new Handler();
+	private int mActivityCode;
 
-        // estabelece a cor de fundo
-        setBackgroundColor(Color.TRANSPARENT);
-        
-        setImageResource(fb.isSessionValid() ? R.drawable.logout_button : R.drawable.login_button);
-        
-        drawableStateChanged();
+	/**
+	 * Construtor
+	 * 
+	 * @param context
+	 *          contexto da aplicação
+	 * 
+	 */
+	public LoginButton(Context context) {
+		super(context);
+	}
 
-        SessionEvents.addAuthListener(mSessionListener);
-        SessionEvents.addLogoutListener(mSessionListener);
-        
-        setOnClickListener(new ButtonOnClickListener());
-        
-    }
+	/**
+	 * Construtor
+	 * 
+	 * @param context
+	 *          contexto da aplicação
+	 * @param attrs
+	 *          atributos
+	 * 
+	 */
+	public LoginButton(Context context, AttributeSet attrs) {
+		super(context, attrs);
+	}
 
-    /**
-     * 
-     * 
-     *
-     */
-    private final class ButtonOnClickListener implements OnClickListener {
-        /*
-         * Source Tag: login_tag
-         */
-        
-        public void onClick(View arg0) {
-        	
-        	// verifica se a sessão do Facebook ainda é válida
-            if (mFb.isSessionValid()) {
-            
-            	// sessão é válida
-            	
-            	// "inicia o processo de logout"
-            	SessionEvents.onLogoutBegin();
-                
-            	AsyncFacebookRunner asyncRunner = new AsyncFacebookRunner(mFb);
-                
-            	// executa o logout
-            	asyncRunner.logout(getContext(), new LogoutRequestListener());
-            	
-            } else {
-            	
-            	// sessão não é válida
-            	
-            	// solicita autorização 
-                mFb.authorize(mActivity, mPermissions, mActivityCode, new LoginDialogListener());
-                
-            }
-            
-        }
-        
-    }
+	/**
+	 * Construtor
+	 * 
+	 * @param context
+	 *          contexto da aplicação
+	 * @param attrs
+	 *          atributos
+	 * @param defStyle
+	 *          definição de estilo
+	 * 
+	 */
+	public LoginButton(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+	}
 
-    /**
-     * 
-     * 
-     *
-     */
-    private final class LoginDialogListener implements DialogListener {
-       
-    	/**
-    	 * 
-    	 */
-        public void onComplete(Bundle values) {
-            SessionEvents.onLoginSuccess();
-        }
+	/**
+	 * Método de inicialização
+	 * 
+	 * @param activity
+	 * @param activityCode
+	 * @param fb
+	 */
+	public void init(final Activity activity, final int activityCode, final Facebook fb) {
 
-        
-        /**
-         * 
-         */
-        public void onFacebookError(FacebookError error) {
-            SessionEvents.onLoginError(error.getMessage());
-        }
+		init(activity, activityCode, fb, new String[] {});
 
-        /**
-         * 
-         */
-        public void onError(DialogError error) {
-            SessionEvents.onLoginError(error.getMessage());
-        }
+	}
 
-        /**
-         * 
-         */
-        public void onCancel() {
-            SessionEvents.onLoginError("Action Canceled");
-        }
-        
-    }
+	/**
+	 * Método de inicialização
+	 * 
+	 * @param activity
+	 * @param activityCode
+	 * @param fb
+	 * @param permissions
+	 * 
+	 */
+	public void init(final Activity activity, final int activityCode, final Facebook fb, final String[] permissions) {
 
-    /**
-     * 
-     * 
-     *
-     */
-    private class LogoutRequestListener extends BaseRequestListener {
-       
-    	/**
-    	 * 
-    	 */
-        public void onComplete(String response, final Object state) {
-            /*
-             * callback should be run in the original thread, not the background
-             * thread
-             */
-            mHandler.post(new Runnable() {
-                
-                public void run() {
-                    SessionEvents.onLogoutFinish();
-                }
-                
-            });
-            
-        }
-        
-    }
+		mActivity = activity;
+		mActivityCode = activityCode;
+		mFb = fb;
+		mPermissions = permissions;
 
-    /**
-     * 
-     * Listener de sessão
-     *
-     */
-    private class SessionListener implements AuthListener, LogoutListener {
+		mHandler = new Handler();
 
-        /**
-         * A autorização da sessão feita com sucesso
-         */
-        public void onAuthSucceed() {
-           
-        	setImageResource(R.drawable.logout_button);
-            
-        	SessionStore.save(mFb, getContext());
-        	
-        }
+		// estabelece a cor de fundo
+		setBackgroundColor(Color.TRANSPARENT);
 
-        
-        /**
-         * Falha na autorização da sessão
-         */
-        public void onAuthFail(String error) {
-        }
+		setImageResource(fb.isSessionValid() ? R.drawable.logout_button : R.drawable.login_button);
 
-        
-        /**
-         * 
-         */
-        public void onLogoutBegin() {
-        }
+		drawableStateChanged();
 
-        /** 
-         *  Chamado no termino da sessão
-         */
-        public void onLogoutFinish() {
-        	
-            SessionStore.clear(getContext());
-            
-            setImageResource(R.drawable.login_button);
-            
-        }
-        
-    }
+		// adiciona um listener para autorizações
+		SessionEvents.addAuthListener(mSessionListener);
+
+		// adiciona um listener para logout
+		SessionEvents.addLogoutListener(mSessionListener);
+
+		// estabele o listener para cuidar do click no botão
+		setOnClickListener(new ButtonOnClickListener());
+
+	}
+
+	/**
+	 * Classe usada para tratar o clique do botão de login.
+	 * 
+	 * 
+	 */
+	private final class ButtonOnClickListener implements OnClickListener {
+
+		/*
+		 * Source Tag: login_tag
+		 */
+
+		public void onClick(View arg0) {
+
+			// verifica se a sessão do Facebook ainda é válida
+			if (mFb.isSessionValid()) {
+
+				// sessão é válida
+
+				// "inicia o processo de logout"
+				SessionEvents.onLogoutBegin();
+
+				// cria um runner para ser executado assincronamente
+				AsyncFacebookRunner asyncRunner = new AsyncFacebookRunner(mFb);
+
+				// executa o logout
+				asyncRunner.logout(getContext(), new LogoutRequestListener());
+
+			} else {
+
+				// sessão não é válida
+
+				// solicita autorização
+				mFb.authorize(mActivity, mPermissions, mActivityCode, new LoginDialogListener());
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Listener para tratar do diálogo de login
+	 * 
+	 * 
+	 * 
+	 */
+	private final class LoginDialogListener implements DialogListener {
+
+		/**
+		 * login executado com sucesso
+		 */
+		public void onComplete(Bundle values) {
+			SessionEvents.onLoginSuccess();
+		}
+
+		/**
+		 * login executado com erro (do Facebook)
+		 */
+		public void onFacebookError(FacebookError error) {
+			SessionEvents.onLoginError(error.getMessage());
+		}
+
+		/**
+		 * login executado com erro
+		 */
+		public void onError(DialogError error) {
+			SessionEvents.onLoginError(error.getMessage());
+		}
+
+		public void onCancel() {
+			SessionEvents.onLoginError("Action Canceled");
+		}
+
+	}
+
+	/**
+	 * Listener para cuidadar do processo de logout
+	 *
+	 */
+	private class LogoutRequestListener extends BaseRequestListener {
+
+		/**
+		 * operação executada com sucesso
+		 */
+		public void onComplete(String response, final Object state) {
+			
+			/*
+			 * callback should be run in the original thread, not the background
+			 * thread
+			 */
+			mHandler.post(new Runnable() {
+
+				public void run() {
+					SessionEvents.onLogoutFinish();
+				}
+
+			});
+
+		}
+
+	}
+
+	/**
+	 * 
+	 * Listener de sessão
+	 * 
+	 */
+	private class SessionListener implements AuthListener, LogoutListener {
+
+		/**
+		 * A autorização da sessão feita com sucesso
+		 */
+		public void onAuthSucceed() {
+
+			// altera a imagem do botão para logout
+			setImageResource(R.drawable.logout_button);
+
+			// salva a sessão
+			SessionStore.save(mFb, getContext());
+
+		}
+
+		/**
+		 * Falha na autorização da sessão
+		 */
+		public void onAuthFail(String error) {
+		}
+
+		/**
+		 * 
+		 */
+		public void onLogoutBegin() {
+		}
+
+		/**
+		 * Chamado no termino da sessão
+		 */
+		public void onLogoutFinish() {
+
+			// limpa a sessão
+			SessionStore.clear(getContext());
+
+			// restabelece a imagem do botão de login
+			setImageResource(R.drawable.login_button);
+
+		}
+
+	}
 
 }

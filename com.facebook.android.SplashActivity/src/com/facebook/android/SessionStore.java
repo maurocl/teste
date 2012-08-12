@@ -22,6 +22,7 @@ import android.content.SharedPreferences.Editor;
 
 /**
  * Armazena a sessão:
+ * 
  * - access_token
  * - expires_in
  * 
@@ -32,10 +33,13 @@ public class SessionStore {
 	private static final String EXPIRES = "expires_in";
 	private static final String KEY = "facebook-session";
 
-	/*
+	/**
 	 * Save the access token and expiry date so you don't have to fetch it each time
+	 * 
+	 * @param session
+	 * @param context
+	 * @return
 	 */
-
 	public static boolean save(Facebook session, Context context) {
 	
 		// Abre o editor de sessão do facebook
@@ -52,8 +56,12 @@ public class SessionStore {
 		
 	}
 
-	/*
+	/**
 	 * Restore the access token and the expiry date from the shared preferences.
+	 * 
+	 * @param session
+	 * @param context
+	 * @return
 	 */
 	public static boolean restore(Facebook session, Context context) {
 		

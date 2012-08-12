@@ -19,155 +19,179 @@ package com.facebook.android;
 import java.util.LinkedList;
 
 /**
- * Eventos da Sessão 
+ * Eventos da Sessão
  * 
- *
+ * 
  */
 public class SessionEvents {
 
 	/**
-	 * Lista de autorizações
+	 * Lista contendo os listeners de autorização
 	 */
-    private static LinkedList<AuthListener> mAuthListeners = new LinkedList<AuthListener>();
-    
-    /**
-     * Lista de logouts
-     */
-    private static LinkedList<LogoutListener> mLogoutListeners = new LinkedList<LogoutListener>();
+	private static LinkedList<AuthListener> mAuthListeners = new LinkedList<AuthListener>();
 
-    /**
-     * Associate the given listener with this Facebook object. The listener's
-     * callback interface will be invoked when authentication events occur.
-     * 
-     * @param listener
-     *            The callback object for notifying the application when auth
-     *            events happen.
-     *            
-     */
-    public static void addAuthListener(AuthListener listener) {
-        mAuthListeners.add(listener);
-    }
+	/**
+	 * Lista contendo os listeners de logouts
+	 */
+	private static LinkedList<LogoutListener> mLogoutListeners = new LinkedList<LogoutListener>();
 
-    /**
-     * Remove the given listener from the list of those that will be notified
-     * when authentication events occur.
-     * 
-     * @param listener
-     *            The callback object for notifying the application when auth
-     *            events happen.
-     *            
-     */
-    public static void removeAuthListener(AuthListener listener) {
-        mAuthListeners.remove(listener);
-    }
+	/**
+	 * Associate the given listener with this Facebook object. The listener's
+	 * callback interface will be invoked when authentication events occur.
+	 * 
+	 * @param listener
+	 *          The callback object for notifying the application when auth events
+	 *          happen.
+	 * 
+	 */
+	public static void addAuthListener(AuthListener listener) {
+		
+		// adiciona o listener a lista
+		mAuthListeners.add(listener);
+		
+	}
 
-    /**
-     * Associate the given listener with this Facebook object. The listener's
-     * callback interface will be invoked when logout occurs.
-     * 
-     * @param listener
-     *            The callback object for notifying the application when log out
-     *            starts and finishes.
-     */
-    public static void addLogoutListener(LogoutListener listener) {
-        mLogoutListeners.add(listener);
-    }
+	/**
+	 * Remove the given listener from the list of those that will be notified when
+	 * authentication events occur.
+	 * 
+	 * @param listener
+	 *          The callback object for notifying the application when auth events
+	 *          happen.
+	 * 
+	 */
+	public static void removeAuthListener(AuthListener listener) {
 
-    /**
-     * Remove the given listener from the list of those that will be notified
-     * when logout occurs.
-     * 
-     * @param listener
-     *            The callback object for notifying the application when log out
-     *            starts and finishes.
-     */
-    public static void removeLogoutListener(LogoutListener listener) {
-        mLogoutListeners.remove(listener);
-    }
+		// remove o listener da lista
+		mAuthListeners.remove(listener);
+		
+	}
 
-    /**
-     * 
-     */
-    public static void onLoginSuccess() {
-        for (AuthListener listener : mAuthListeners) {
-            listener.onAuthSucceed();
-        }
-    }
+	/**
+	 * Associate the given listener with this Facebook object. The listener's
+	 * callback interface will be invoked when logout occurs.
+	 * 
+	 * @param listener
+	 *          The callback object for notifying the application when log out
+	 *          starts and finishes.
+	 */
+	public static void addLogoutListener(LogoutListener listener) {
+		
+		mLogoutListeners.add(listener);
+		
+	}
 
-    /**
-     * 
-     * @param error
-     */
-    public static void onLoginError(String error) {
-        for (AuthListener listener : mAuthListeners) {
-            listener.onAuthFail(error);
-        }
-    }
+	/**
+	 * Remove the given listener from the list of those that will be notified when
+	 * logout occurs.
+	 * 
+	 * @param listener
+	 *          The callback object for notifying the application when log out
+	 *          starts and finishes.
+	 */
+	public static void removeLogoutListener(LogoutListener listener) {
+		
+		mLogoutListeners.remove(listener);
+		
+	}
 
-    /**
-     * 
-     */
-    public static void onLogoutBegin() {
-        for (LogoutListener l : mLogoutListeners) {
-            l.onLogoutBegin();
-        }
-    }
+	/**
+	 * login executado com sucesso
+	 */
+	public static void onLoginSuccess() {
+		
+		// percorre a lista de autorizações
+		for (AuthListener listener : mAuthListeners) {
+			
+			// executa o método de autorização obtida com sucesso
+			listener.onAuthSucceed();
+			
+		}
+		
+	}
 
-    /**
-     * 
-     */
-    public static void onLogoutFinish() {
-        
-    	for (LogoutListener l : mLogoutListeners) {
-        
-    		// executa o método de logout para cada elemento da lista
-    		l.onLogoutFinish();
-        
-    	}
-    	
-    }
+	/**
+	 * erro no login
+	 * 
+	 * @param error
+	 * 
+	 */
+	public static void onLoginError(String error) {
+		
+		// notifica os interesados nesse evento
+		for (AuthListener listener : mAuthListeners) {
+			listener.onAuthFail(error);
+		}
+		
+	}
 
-    /**
-     * Callback interface for authorization events.
-     */
-    public static interface AuthListener {
+	/**
+	 * inicio de logout
+	 */
+	public static void onLogoutBegin() {
 
-        /**
-         * Called when a auth flow completes successfully and a valid OAuth
-         * Token was received. Executed by the thread that initiated the
-         * authentication. API requests can now be made.
-         */
-        public void onAuthSucceed();
+		// notifica os interessados nesse evento
+		for (LogoutListener l : mLogoutListeners) {
+			l.onLogoutBegin();
+		}
+		
+	}
 
-        /**
-         * Called when a login completes unsuccessfully with an error.
-         * 
-         * Executed by the thread that initiated the authentication.
-         */
-        public void onAuthFail(String error);
-        
-    }
+	/**
+	 * fim do logout
+	 */
+	public static void onLogoutFinish() {
 
-    /**
-     * Callback interface for logout events.
-     */
-    public static interface LogoutListener {
-        
-    	/**
-         * Called when logout begins, before session is invalidated. Last chance
-         * to make an API call. Executed by the thread that initiated the
-         * logout.
-         */
-        public void onLogoutBegin();
+		// notifica os interesados nesse evento
+		for (LogoutListener l : mLogoutListeners) {
 
-        /**
-         * Called when the session information has been cleared. UI should be
-         * updated to reflect logged-out state.
-         * 
-         * Executed by the thread that initiated the logout.
-         */
-        public void onLogoutFinish();
-        
-    }
+			// executa o método de logout para cada elemento da lista
+			l.onLogoutFinish();
+
+		}
+
+	}
+
+	/**
+	 * Callback interface for authorization events.
+	 */
+	public static interface AuthListener {
+
+		/**
+		 * Called when a auth flow completes successfully and a valid OAuth Token
+		 * was received. Executed by the thread that initiated the authentication.
+		 * API requests can now be made.
+		 */
+		public void onAuthSucceed();
+
+		/**
+		 * Called when a login completes unsuccessfully with an error.
+		 * 
+		 * Executed by the thread that initiated the authentication.
+		 */
+		public void onAuthFail(String error);
+
+	}
+
+	/**
+	 * Callback interface for logout events.
+	 */
+	public static interface LogoutListener {
+
+		/**
+		 * Called when logout begins, before session is invalidated. Last chance to
+		 * make an API call. Executed by the thread that initiated the logout.
+		 */
+		public void onLogoutBegin();
+
+		/**
+		 * Called when the session information has been cleared. UI should be
+		 * updated to reflect logged-out state.
+		 * 
+		 * Executed by the thread that initiated the logout.
+		 */
+		public void onLogoutFinish();
+
+	}
 
 }

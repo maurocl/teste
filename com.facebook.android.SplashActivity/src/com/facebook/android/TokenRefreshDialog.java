@@ -14,141 +14,173 @@ import android.widget.TextView;
 
 /**
  * 
+ * Executa um refresh (atualização) do token
  * 
- *
  */
 public class TokenRefreshDialog extends Dialog {
 
-    private EditText tokenEdit, tokenExpiresEdit;
-    
-    private TextView mUsefulTip;
-    
-    private Button mRefreshButton;
-    
-    private Activity activity;
+	/**
+	 * 
+	 */
+	private EditText tokenEdit, tokenExpiresEdit;
 
-    /**
-     * Construtor
-     * @param activity
-     */
-    public TokenRefreshDialog(Activity activity) {
-   
-    	super(activity);
-        
-    	this.activity = activity;
-        
-    	setTitle(R.string.refresh_token_title);
-    	
-    }
+	/**
+	 * 
+	 */
+	private TextView mUsefulTip;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        
-    	super.onCreate(savedInstanceState);
+	/**
+	 * botão de refresh
+	 */
+	private Button mRefreshButton;
 
-        setContentView(R.layout.token_refresh);
+	/**
+	 * 
+	 */
+	private Activity activity;
 
-        tokenEdit = (EditText) findViewById(R.id.tokenEdit);
-        tokenEdit.setText(Utility.mFacebook.getAccessToken());
+	/**
+	 * Construtor
+	 * 
+	 * @param activity
+	 *          activity
+	 */
+	public TokenRefreshDialog(Activity activity) {
 
-        tokenExpiresEdit = (EditText) findViewById(R.id.tokenExpiresEdit);
-        setExpiresAt(Utility.mFacebook.getAccessExpires());
+		super(activity);
 
-        mUsefulTip = (TextView) findViewById(R.id.usefulTip);
-        mUsefulTip.setMovementMethod(LinkMovementMethod.getInstance());
-        mRefreshButton = (Button) findViewById(R.id.refresh_button);
+		// guarda a instância da activity
+		this.activity = activity;
 
-        mRefreshButton.setOnClickListener(new View.OnClickListener() {
-    
-            public void onClick(View v) {
-        
-            	changeButtonState(false);
-                
-            	RefreshTokenListener listener = new RefreshTokenListener();
-                
-            	if (!Utility.mFacebook.extendAccessToken(activity, listener)) {
-                    listener.onError(new Error(
-                            activity.getString(R.string.refresh_token_binding_error)));
-                }
-            	
-            }
-            
-        });
-        
-    }
+		// estabelece o título
+		setTitle(R.string.refresh_token_title);
 
-    /**
-     * 
-     * 
-     *
-     */
-    private class RefreshTokenListener implements Facebook.ServiceListener {
+	}
 
-    
-    	/**
-    	 * 
-    	 */
-        public void onFacebookError(FacebookError e) {
-        	
-            changeButtonState(true);
-            
-            String title = String.format(activity.getString(R.string.facebook_error) + "%d", e.getErrorCode());
-            
-            Util.showAlert(activity, title, e.getMessage());
-            
-        }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 
-       
-        /**
-         * 
-         */
-        public void onError(Error e) {
-            changeButtonState(true);
-            Util.showAlert(activity, activity.getString(R.string.error), e.getMessage());
-        }
+		super.onCreate(savedInstanceState);
 
-    
-        /**
-         * 
-         */
-        public void onComplete(Bundle values) {
-           
-        	changeButtonState(true);
+		setContentView(R.layout.token_refresh);
 
-            // The access_token and expires_at values are automatically updated,
-            // so they can be obtained by using:
-            // - Facebook.getAccessToken()
-            // - Facebook.getAccessExpires()
-            // methods, but we can also get them from the 'values' bundle.
-            tokenEdit.setText(values.getString(Facebook.TOKEN));
-            
-            setExpiresAt(values.getLong(Facebook.EXPIRES));
-            
-        }
-    }
+		tokenEdit = (EditText) findViewById(R.id.tokenEdit);
+		tokenEdit.setText(Utility.mFacebook.getAccessToken());
 
-    /**
-     * Altera o estado do botão
-     * @param enabled
-     */
-    private void changeButtonState(boolean enabled) {
-        
-    	mRefreshButton.setEnabled(enabled);
-        
-    	mRefreshButton.setText(enabled ? R.string.refresh_button : R.string.refresh_button_pending);
-    	
-    }
+		tokenExpiresEdit = (EditText) findViewById(R.id.tokenExpiresEdit);
 
-    /**
-     * 
-     * @param time
-     */
-    private void setExpiresAt(long time) {
-    
-    	DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-        
-    	tokenExpiresEdit.setText(dateFormat.format(new Date(time)));
-    	
-    }
-    
+		// Estabelece o "tempo de expiração" da sessão
+		setExpiresAt(Utility.mFacebook.getAccessExpires());
+
+		mUsefulTip = (TextView) findViewById(R.id.usefulTip);
+
+		// Estabelece o métdo de movimento
+		mUsefulTip.setMovementMethod(LinkMovementMethod.getInstance());
+
+		mRefreshButton = (Button) findViewById(R.id.refresh_button);
+
+		mRefreshButton.setOnClickListener(new View.OnClickListener() {
+
+			/**
+			 * 
+			 */
+			public void onClick(View v) {
+
+				// atualiza o estado dos botões para false
+				changeButtonState(false);
+
+				// cria um listener
+				RefreshTokenListener listener = new RefreshTokenListener();
+
+				if (!Utility.mFacebook.extendAccessToken(activity, listener)) {
+					
+					listener.onError(new Error(activity.getString(R.string.refresh_token_binding_error)));
+					
+				}
+
+			}
+
+		});
+
+	}
+
+
+	/**
+	 * 
+	 * Listener de refresh do token
+	 *
+	 */
+	private class RefreshTokenListener implements Facebook.ServiceListener {
+
+		/**
+		 * 
+		 */
+		public void onFacebookError(FacebookError e) {
+
+			changeButtonState(true);
+
+			String title = String.format(activity.getString(R.string.facebook_error) + "%d", e.getErrorCode());
+
+			Util.showAlert(activity, title, e.getMessage());
+
+		}
+
+		/**
+		 * 
+		 */
+		public void onError(Error e) {
+			
+			changeButtonState(true);
+			
+			Util.showAlert(activity, activity.getString(R.string.error), e.getMessage());
+			
+		}
+
+		/**
+		 * 
+		 */
+		public void onComplete(Bundle values) {
+
+			changeButtonState(true);
+
+			// The access_token and expires_at values are automatically updated,
+			// so they can be obtained by using:
+			// - Facebook.getAccessToken()
+			// - Facebook.getAccessExpires()
+			// methods, but we can also get them from the 'values' bundle.
+			tokenEdit.setText(values.getString(Facebook.TOKEN));
+
+			setExpiresAt(values.getLong(Facebook.EXPIRES));
+
+		}
+		
+	}
+
+	/**
+	 * Altera o estado do botão
+	 * 
+	 * @param enabled
+	 */
+	private void changeButtonState(boolean enabled) {
+
+		mRefreshButton.setEnabled(enabled);
+
+		mRefreshButton.setText(enabled ? R.string.refresh_button : R.string.refresh_button_pending);
+
+	}
+
+	/**
+	 * Estabelece o "tempo" onde a sessão será expirada
+	 *  
+	 * @param time tempo 
+	 */
+	private void setExpiresAt(long time) {
+
+		// 
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+
+		tokenExpiresEdit.setText(dateFormat.format(new Date(time)));
+
+	}
+
 }

@@ -28,19 +28,44 @@ import android.provider.MediaStore;
  */
 public class Utility extends Application {
 
+	/**
+	 * Facebook
+	 */
 	public static Facebook mFacebook;
 
+	/**
+	 * AsyncFacebookRunner
+	 */
 	public static AsyncFacebookRunner mAsyncRunner;
 
+	/**
+	 * 
+	 */
 	public static JSONObject mFriendsList;
 
+	/**
+	 * Identificador do usuário
+	 */
 	public static String userUID = null;
+	
+	/**
+	 * Identificador do objeto
+	 */
 	public static String objectID = null;
 
+	/**
+	 * 
+	 */
 	public static FriendsGetProfilePics model;
 
+	/**
+	 * 
+	 */
 	public static AndroidHttpClient httpclient = null;
 
+	/**
+	 * Permissões atuais
+	 */
 	public static Hashtable<String, String> currentPermissions = new Hashtable<String, String>();
 
 	// Dimensão máxima da imagem
@@ -97,15 +122,18 @@ public class Utility extends Application {
 	}
 
 	/**
+	 * É um InputStream com flush automático
 	 * 
-	 * Classe Estática
+	 * 
 	 * 
 	 */
 	static class FlushedInputStream extends FilterInputStream {
 		
 		/**
+		 * Construtor
 		 * 
-		 * @param inputStream
+		 * @param inputStream stream de entrada
+		 * 
 		 */
 		public FlushedInputStream(InputStream inputStream) {
 			super(inputStream);
@@ -113,7 +141,7 @@ public class Utility extends Application {
 
 		@Override
 		/**
-		 * 
+		 * @param n nº de bytes que serão skippados
 		 */
 		public long skip(long n) throws IOException {
 			
@@ -195,6 +223,7 @@ public class Utility extends Application {
 			
 		}
 
+		// Source bitmap
 		Bitmap srcBitmap;
 		
 		is = context.getContentResolver().openInputStream(photoUri);

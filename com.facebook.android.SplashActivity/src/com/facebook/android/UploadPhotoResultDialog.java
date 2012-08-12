@@ -19,19 +19,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
- * 
+ * Diálogo do resultado do upload de foto
  * 
  *
  */
 public class UploadPhotoResultDialog extends Dialog {
 
 	private String response, photo_id;
+	
 	private TextView mOutput, mUsefulTip;
+	
 	private Button mViewPhotoButton, mTagPhotoButton;
+	
 	private ImageView mUploadedPhoto;
+	
 	private Activity activity;
+	
 	private ProgressDialog dialog;
+	
 	private boolean hidePhoto = false;
+	
 	private Handler mHandler;
 
 	/**
@@ -42,91 +49,89 @@ public class UploadPhotoResultDialog extends Dialog {
 	 * @param response
 	 * 
 	 */
-	public UploadPhotoResultDialog(Activity activity, String title,	String response) {
-		
+	public UploadPhotoResultDialog(Activity activity, String title, String response) {
+
 		super(activity);
-		
+
 		this.activity = activity;
 		this.response = response;
-		
+
 		setTitle(title);
-		
+
 	}
 
 	/**
 	 * 
 	 */
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
-		
+
 		mHandler = new Handler();
 
 		setContentView(R.layout.upload_photo_response);
-		
+
 		LayoutParams params = getWindow().getAttributes();
-		
+
 		params.width = LayoutParams.FILL_PARENT;
 		params.height = LayoutParams.FILL_PARENT;
-		
+
 		getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
 
-		mOutput = (TextView) findViewById(R.id.apiOutput);
-		mUsefulTip = (TextView) findViewById(R.id.usefulTip);
-		mViewPhotoButton = (Button) findViewById(R.id.view_photo_button);
-		mTagPhotoButton = (Button) findViewById(R.id.tag_photo_button);
-		mUploadedPhoto = (ImageView) findViewById(R.id.uploadedPhoto);
+		mOutput           = (TextView)  findViewById(R.id.apiOutput);
+		mUsefulTip        = (TextView)  findViewById(R.id.usefulTip);
+		mViewPhotoButton  = (Button)    findViewById(R.id.view_photo_button);
+		mTagPhotoButton   = (Button)    findViewById(R.id.tag_photo_button);
+		mUploadedPhoto    = (ImageView) findViewById(R.id.uploadedPhoto);
 
 		JSONObject json;
-		
+
 		try {
-		
+
 			json = Util.parseJson(response);
-			
+
+			// identificador da foto
 			final String photo_id = json.getString("id");
-			
+
 			this.photo_id = photo_id;
 
 			mOutput.setText(json.toString(2));
-			
+
 			mUsefulTip.setText(activity.getString(R.string.photo_tip));
-			
+
 			Linkify.addLinks(mUsefulTip, Linkify.WEB_URLS);
 
 			mViewPhotoButton.setOnClickListener(new View.OnClickListener() {
 
 				public void onClick(View v) {
-					
+
 					if (hidePhoto) {
-						
+
 						mViewPhotoButton.setText(R.string.view_photo);
 						hidePhoto = false;
 						mUploadedPhoto.setImageBitmap(null);
-						
+
 					} else {
-						
+
 						hidePhoto = true;
 						mViewPhotoButton.setText(R.string.hide_photo);
-						
+
 						/*
 						 * Source tag: view_photo_tag
 						 */
 						Bundle params = new Bundle();
 						params.putString("fields", "picture");
-						dialog = ProgressDialog.show(activity, "",
-								activity.getString(R.string.please_wait), true,
-								true);
-						
+						dialog = ProgressDialog.show(activity, "", activity.getString(R.string.please_wait), true, true);
+
 						dialog.show();
-						
-						Utility.mAsyncRunner.request(photo_id, params,
-								new ViewPhotoRequestListener());
-						
+
+						Utility.mAsyncRunner.request(photo_id, params, new ViewPhotoRequestListener());
+
 					}
-					
+
 				}
 			});
-			
+
 			mTagPhotoButton.setOnClickListener(new View.OnClickListener() {
 
 				public void onClick(View v) {
@@ -136,12 +141,11 @@ public class UploadPhotoResultDialog extends Dialog {
 					setTag();
 				}
 			});
-			
+
 		} catch (JSONException e) {
 			setText(activity.getString(R.string.exception) + e.getMessage());
 		} catch (FacebookError e) {
-			setText(activity.getString(R.string.facebook_error)
-					+ e.getMessage());
+			setText(activity.getString(R.string.facebook_error) + e.getMessage());
 		}
 	}
 
@@ -153,59 +157,58 @@ public class UploadPhotoResultDialog extends Dialog {
 		String relativePath = photo_id + "/tags/" + Utility.userUID;
 
 		Bundle params = new Bundle();
-		
+
 		params.putString("x", "5");
 		params.putString("y", "5");
 
-		Utility.mAsyncRunner.request(relativePath, params, "POST",	new TagPhotoRequestListener(), null);
-		
+		Utility.mAsyncRunner.request(relativePath, params, "POST", new TagPhotoRequestListener(), null);
+
 	}
 
 	/**
-	 * 
+	 * Listener de Reqisição de Visualização da Foto 
 	 * 
 	 * 
 	 */
 	public class ViewPhotoRequestListener extends BaseRequestListener {
 
 		/**
-		 * 
+		 * Ação executada com sucesso
 		 */
 		public void onComplete(final String response, final Object state) {
-			
+
 			try {
-				
+
 				JSONObject json = Util.parseJson(response);
-				
+
 				final String pictureURL = json.getString("picture");
-				
+
 				if (TextUtils.isEmpty(pictureURL)) {
-					
+
 					setText("Error getting \'picture\' field of the photo");
-					
+
 				} else {
-					
+
 					mHandler.post(new Runnable() {
 
 						public void run() {
 							new FetchImage().execute(pictureURL);
 						}
-						
+
 					});
 				}
 			} catch (JSONException e) {
-				
+
 				dialog.dismiss();
 				setText(activity.getString(R.string.exception) + e.getMessage());
-				
+
 			} catch (FacebookError e) {
-				
+
 				dialog.dismiss();
-				setText(activity.getString(R.string.facebook_error)
-						+ e.getMessage());
-				
+				setText(activity.getString(R.string.facebook_error) + e.getMessage());
+
 			}
-			
+
 		}
 
 		/**
@@ -213,41 +216,48 @@ public class UploadPhotoResultDialog extends Dialog {
 		 * @param error
 		 */
 		public void onFacebookError(FacebookError error) {
-			
+
 			dialog.dismiss();
-			setText(activity.getString(R.string.facebook_error)	+ error.getMessage());
-			
+			setText(activity.getString(R.string.facebook_error) + error.getMessage());
+
 		}
 
 	}
 
 	/**
-	 * 
+	 * Listener de Requisição do Tag da Foto
 	 * 
 	 * 
 	 */
 	public class TagPhotoRequestListener extends BaseRequestListener {
 
+		/**
+		 * 
+		 */
 		public void onComplete(final String response, final Object state) {
-			
+
 			if (response.equals("true")) {
-				
+
 				String message = "User tagged in photo at (5, 5)" + "\n";
 				message += "Api Response: " + response;
 				setText(message);
-				
+
 			} else {
-				
+
 				setText("User could not be tagged.");
-				
+
 			}
-			
+
 		}
 
+		/**
+		 * 
+		 * @param error
+		 */
 		public void onFacebookError(FacebookError error) {
-			setText(activity.getString(R.string.facebook_error)	+ error.getMessage());
+			setText(activity.getString(R.string.facebook_error) + error.getMessage());
 		}
-		
+
 	}
 
 	/**
@@ -255,15 +265,15 @@ public class UploadPhotoResultDialog extends Dialog {
 	 * @param txt
 	 */
 	public void setText(final String txt) {
-		
+
 		mHandler.post(new Runnable() {
 
 			public void run() {
 				mOutput.setText(txt);
 			}
-			
+
 		});
-		
+
 	}
 
 	/**
@@ -275,7 +285,7 @@ public class UploadPhotoResultDialog extends Dialog {
 	private class FetchImage extends AsyncTask<String, Void, Bitmap> {
 
 		/**
-		 * Obtem um bitmap 
+		 * Obtem um bitmap
 		 */
 		protected Bitmap doInBackground(String... urls) {
 			return Utility.getBitmap(urls[0]);
@@ -288,7 +298,7 @@ public class UploadPhotoResultDialog extends Dialog {
 			dialog.dismiss();
 			mUploadedPhoto.setImageBitmap(result);
 		}
-		
+
 	}
 
 }

@@ -27,312 +27,342 @@ import com.facebook.android.Facebook.DialogListener;
 /**
  * Diálogo de Permissões
  * 
- *
+ * 
  */
 public class PermissionsDialog extends Dialog {
 
-    private final static int TAB_HEIGHT = 50;
+	private final static int TAB_HEIGHT = 50;
 
-    private Button mGetPermissions;
-    private TextView mPermissionDetails;
+	/**
+	 * 
+	 */
+	private Button mGetPermissions;
 
-    private Activity activity;
+	/**
+	 * 
+	 */
+	private TextView mPermissionDetails;
 
-    private ListView userPermissionsList, friendPermissionsList, extendedPermissionsList;
+	/**
+	 * 
+	 */
+	private Activity activity;
 
-    private BaseAdapter userPermissionsAdapter, friendPermissionsAdapter, extendedPermissionAdapter;
+	/**
+	 * 
+	 */
+	private ListView userPermissionsList, friendPermissionsList, extendedPermissionsList;
 
-    protected Vector<String> reqPermVector;
+	/**
+	 * 
+	 */
+	private BaseAdapter userPermissionsAdapter, friendPermissionsAdapter, extendedPermissionAdapter;
 
-    String[] user_permissions = { 
-    		"user_about_me", 
-    		"user_activities", 
-    		"user_birthday",
-            "user_checkins", 
-            "user_education_history", "user_events", "user_groups",
-            "user_hometown", 
-            "user_interests", "user_likes", "user_location", "user_notes",
-            "user_online_presence", "user_photos", "user_photo_video_tags", "user_relationships",
-            "user_relationship_details", "user_religion_politics", "user_status", "user_videos",
-            "user_website", "user_work_history" };
+	/**
+	 * 
+	 */
+	protected Vector<String> reqPermVector;
 
-    String[] friend_permissions = { "friends_about_me", "friends_activities", "friends_birthday",
-            "friends_checkins", "friends_education_history", "friends_events", "friends_groups",
-            "friends_hometown", "friends_interests", "friends_likes", "friends_location",
-            "friends_notes", "friends_online_presence", "friends_photos",
-            "friends_photo_video_tags", "friends_relationships", "friends_relationship_details",
-            "friends_religion_politics", "friends_status", "friends_videos", "friends_website",
-            "friends_work_history" };
+	String[] user_permissions = { "user_about_me", "user_activities", "user_birthday", "user_checkins", "user_education_history",
+			"user_events", "user_groups", "user_hometown", "user_interests", "user_likes", "user_location", "user_notes",
+			"user_online_presence", "user_photos", "user_photo_video_tags", "user_relationships", "user_relationship_details",
+			"user_religion_politics", "user_status", "user_videos", "user_website", "user_work_history" };
 
-    String[] extended_permissions = { "ads_management", "create_event", "create_note", "email",
-            "export_stream", "manage_friendlists", "manage_groups", "manage_pages",
-            "offline_access", "publish_actions", "photo_upload", "publish_checkins",
-            "publish_stream", "read_friendlists", "read_insights", "read_mailbox", "read_requests",
-            "read_stream", "rsvp_event", "share_item", "status_update", "sms", "video_upload",
-            "xmpp_login" };
+	String[] friend_permissions = { "friends_about_me", "friends_activities", "friends_birthday", "friends_checkins",
+			"friends_education_history", "friends_events", "friends_groups", "friends_hometown", "friends_interests", "friends_likes",
+			"friends_location", "friends_notes", "friends_online_presence", "friends_photos", "friends_photo_video_tags",
+			"friends_relationships", "friends_relationship_details", "friends_religion_politics", "friends_status", "friends_videos",
+			"friends_website", "friends_work_history" };
 
-    /**
-     * Construtor que recebe como parâmetro uma Activity
-     *  
-     * @param activity
-     * 
-     */
-    public PermissionsDialog(Activity activity) {
-       
-    	super(activity);
-        
-    	this.activity = activity;
-        
-    	setTitle(activity.getString(R.string.permissions_request));
-        
-    	reqPermVector = new Vector<String>();
-    	
-    }
+	String[] extended_permissions = { "ads_management", "create_event", "create_note", "email", "export_stream",
+			"manage_friendlists", "manage_groups", "manage_pages", "offline_access", "publish_actions", "photo_upload",
+			"publish_checkins", "publish_stream", "read_friendlists", "read_insights", "read_mailbox", "read_requests", "read_stream",
+			"rsvp_event", "share_item", "status_update", "sms", "video_upload", "xmpp_login" };
 
-    /*
-     * Layout the permission dialog
-     */
-    
-    protected void onCreate(Bundle savedInstanceState) {
-        
-    	super.onCreate(savedInstanceState);
+	/**
+	 * Construtor que recebe como parâmetro uma Activity
+	 * 
+	 * @param activity
+	 * 
+	 */
+	public PermissionsDialog(Activity activity) {
 
-        setContentView(R.layout.permissions_list);
-        
-        LayoutParams params = getWindow().getAttributes();
-        
-        params.width = LayoutParams.FILL_PARENT;
-        params.height = LayoutParams.FILL_PARENT;
-        
-        getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+		super(activity);
 
-        mPermissionDetails = (TextView) findViewById(R.id.permission_detail);
-        mPermissionDetails.setMovementMethod(LinkMovementMethod.getInstance());
+		this.activity = activity;
 
-        userPermissionsList = (ListView) findViewById(R.id.user_permissions_list);
-        friendPermissionsList = (ListView) findViewById(R.id.friend_permissions_list);
-        extendedPermissionsList = (ListView) findViewById(R.id.extended_permissions_list);
+		setTitle(activity.getString(R.string.permissions_request));
 
-        userPermissionsAdapter = new PermissionsListAdapter(user_permissions);
-        userPermissionsList.setAdapter(userPermissionsAdapter);
+		reqPermVector = new Vector<String>();
 
-        friendPermissionsAdapter = new PermissionsListAdapter(friend_permissions);
-        friendPermissionsList.setAdapter(friendPermissionsAdapter);
+	}
 
-        extendedPermissionAdapter = new PermissionsListAdapter(extended_permissions);
-        extendedPermissionsList.setAdapter(extendedPermissionAdapter);
+	/*
+	 * Layout the permission dialog
+	 */
 
-        TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
-        tabHost.setup();
+	protected void onCreate(Bundle savedInstanceState) {
 
-        TabSpec spec1 = tabHost.newTabSpec("Tab 1");
-        spec1.setIndicator(activity.getString(R.string.user));
-        spec1.setContent(R.id.user_permissions_list);
+		super.onCreate(savedInstanceState);
 
-        TabSpec spec2 = tabHost.newTabSpec("Tab 2");
-        spec2.setIndicator(activity.getString(R.string.friend));
-        spec2.setContent(R.id.friend_permissions_list);
+		setContentView(R.layout.permissions_list);
 
-        TabSpec spec3 = tabHost.newTabSpec("Tab 3");
-        spec3.setIndicator(activity.getString(R.string.extended));
-        spec3.setContent(R.id.extended_permissions_list);
+		LayoutParams params = getWindow().getAttributes();
 
-        tabHost.addTab(spec1);
-        tabHost.addTab(spec2);
-        tabHost.addTab(spec3);
-        
-        tabHost.setCurrentTab(0);
-        
-        tabHost.getTabWidget().getChildAt(0).getLayoutParams().height = TAB_HEIGHT;
-        tabHost.getTabWidget().getChildAt(1).getLayoutParams().height = TAB_HEIGHT;
-        tabHost.getTabWidget().getChildAt(2).getLayoutParams().height = TAB_HEIGHT;
+		params.width = LayoutParams.FILL_PARENT;
+		params.height = LayoutParams.FILL_PARENT;
 
-        mGetPermissions = (Button) findViewById(R.id.get_permissions_button);
+		getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
 
-        mGetPermissions.setOnClickListener(new View.OnClickListener() {
-            
-            public void onClick(View v) {
-        
-            	/*
-                 * Source Tag: perms_tag Call authorize to get the new
-                 * permissions
-                 */
-                if (reqPermVector.isEmpty() && Utility.mFacebook.isSessionValid()) {
-            
-                	Toast.makeText(activity.getBaseContext(), "No Permissions selected.", Toast.LENGTH_SHORT).show();
-                    
-                	PermissionsDialog.this.dismiss();
-                	
-                } else {
-                    
-                	String[] permissions = reqPermVector.toArray(new String[0]);
-                	
-                    Utility.mFacebook.authorize(activity, permissions, new LoginDialogListener());
-                    
-                }
-                
-            }
-            
-        });
-        
-    }
+		mPermissionDetails = (TextView) findViewById(R.id.permission_detail);
+		mPermissionDetails.setMovementMethod(LinkMovementMethod.getInstance());
 
-    /*
-     * Callback when user has authorized the app with the new permissions
-     */
-    private final class LoginDialogListener implements DialogListener {
-        
-    	/**
-    	 * 
-    	 */
-        public void onComplete(Bundle values) {
+		userPermissionsList = (ListView) findViewById(R.id.user_permissions_list);
+		friendPermissionsList = (ListView) findViewById(R.id.friend_permissions_list);
+		extendedPermissionsList = (ListView) findViewById(R.id.extended_permissions_list);
 
-        	// Inform the parent loginlistener so it can update the user's
-            // profile pic and name on the home screen.
-            SessionEvents.onLoginSuccess();
+		userPermissionsAdapter = new PermissionsListAdapter(user_permissions);
+		userPermissionsList.setAdapter(userPermissionsAdapter);
 
-            Toast.makeText(activity.getBaseContext(), "New Permissions granted.", Toast.LENGTH_SHORT).show();
-            
-            PermissionsDialog.this.dismiss();
-            
-        }
+		friendPermissionsAdapter = new PermissionsListAdapter(friend_permissions);
+		friendPermissionsList.setAdapter(friendPermissionsAdapter);
 
-       
-        /**
-         * 
-         */
-        public void onFacebookError(FacebookError error) {
-        	
-            Toast.makeText(activity.getBaseContext(), "Facebook Error! No new permissions granted.", Toast.LENGTH_SHORT).show();
-            
-            PermissionsDialog.this.dismiss();
-            
-        }
+		extendedPermissionAdapter = new PermissionsListAdapter(extended_permissions);
+		extendedPermissionsList.setAdapter(extendedPermissionAdapter);
 
-        /**
-         * 
-         */
-        public void onError(DialogError error) {
-            
-        	Toast.makeText(activity.getBaseContext(), "Error! No new permissions granted.",
-                    Toast.LENGTH_SHORT).show();
-            
-        	PermissionsDialog.this.dismiss();
-        	
-        }
+		TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
+		tabHost.setup();
 
-        
-        /**
-         * 
-         */
-        public void onCancel() {
-            
-        	Toast.makeText(activity.getBaseContext(),
-                    "Action cancelled, No new permissions granted.", Toast.LENGTH_SHORT).show();
-            
-            PermissionsDialog.this.dismiss();
-            
-        }
-    }
+		TabSpec spec1 = tabHost.newTabSpec("Tab 1");
+		spec1.setIndicator(activity.getString(R.string.user));
+		spec1.setContent(R.id.user_permissions_list);
 
-    /**
-     * Definition of the list adapter
-     */
-    public class PermissionsListAdapter extends BaseAdapter {
-    	
-        private LayoutInflater mInflater;
-        
-        String[] permissions;
-        
-        boolean[] isChecked;
+		TabSpec spec2 = tabHost.newTabSpec("Tab 2");
+		spec2.setIndicator(activity.getString(R.string.friend));
+		spec2.setContent(R.id.friend_permissions_list);
 
-        /**
-         * 
-         * @param permissions
-         */
-        public PermissionsListAdapter(String[] permissions) {
-        
-        	this.permissions = permissions;
-            
-        	this.isChecked = new boolean[permissions.length];
-            
-        	mInflater = LayoutInflater.from(activity.getBaseContext());
-        	
-        }
+		TabSpec spec3 = tabHost.newTabSpec("Tab 3");
+		spec3.setIndicator(activity.getString(R.string.extended));
+		spec3.setContent(R.id.extended_permissions_list);
 
-        /**
-         * 
-         */
-        public int getCount() {
-            return permissions.length;
-        }
+		tabHost.addTab(spec1);
+		tabHost.addTab(spec2);
+		tabHost.addTab(spec3);
 
-        /**
-         * 
-         */
-        public Object getItem(int position) {
-            return null;
-        }
+		tabHost.setCurrentTab(0);
 
-        /**
-         * 
-         */
-        public long getItemId(int position) {
-            return 0;
-        }
+		tabHost.getTabWidget().getChildAt(0).getLayoutParams().height = TAB_HEIGHT;
+		tabHost.getTabWidget().getChildAt(1).getLayoutParams().height = TAB_HEIGHT;
+		tabHost.getTabWidget().getChildAt(2).getLayoutParams().height = TAB_HEIGHT;
 
-        /**
-         * 
-         */
-        public View getView(final int position, View convertView, ViewGroup parent) {
+		mGetPermissions = (Button) findViewById(R.id.get_permissions_button);
 
-            View hView = convertView;
-            CheckBox checkbox;
+		mGetPermissions.setOnClickListener(new View.OnClickListener() {
 
-            if (hView == null) {
-                hView = mInflater.inflate(R.layout.permission_item, null);
-                checkbox = (CheckBox) hView.findViewById(R.id.permission_checkbox);
-                hView.setTag(checkbox);
-            } else {
-                checkbox = (CheckBox) hView.getTag();
-            }
-            
-            checkbox.setText(this.permissions[position]);
-            
-            checkbox.setId(position);
-            
-            if (Utility.currentPermissions.containsKey(this.permissions[position])
-                    && Utility.currentPermissions.get(this.permissions[position]).equals("1")) {
-            
-            	checkbox.setTextColor(Color.GREEN);
-                checkbox.setChecked(true);
-                checkbox.setEnabled(false);
-                checkbox.setOnCheckedChangeListener(null);
-            
-            } else {
-            
-            	checkbox.setTextColor(Color.WHITE);
-                checkbox.setChecked(this.isChecked[position]);
-                checkbox.setEnabled(true);
-                
-                checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                    
-                    public void onCheckedChanged(CompoundButton button, boolean checked) {
-                        isChecked[button.getId()] = checked;
-                        if (checked) {
-                            reqPermVector.add(button.getText().toString());
-                        } else if (reqPermVector.contains(button.getText())) {
-                            reqPermVector.remove(button.getText());
-                        }
-                    }
-                });
-                
-            }
-            
-            return hView;
-            
-        }
-        
-    }
-    
+			public void onClick(View v) {
+
+				/*
+				 * Source Tag: perms_tag Call authorize to get the new permissions
+				 */
+				if (reqPermVector.isEmpty() && Utility.mFacebook.isSessionValid()) {
+
+					Toast.makeText(activity.getBaseContext(), "No Permissions selected.", Toast.LENGTH_SHORT).show();
+
+					PermissionsDialog.this.dismiss();
+
+				} else {
+
+					String[] permissions = reqPermVector.toArray(new String[0]);
+
+					Utility.mFacebook.authorize(activity, permissions, new LoginDialogListener());
+
+				}
+
+			}
+
+		});
+
+	}
+
+	/*
+	 * Callback when user has authorized the app with the new permissions
+	 */
+	private final class LoginDialogListener implements DialogListener {
+
+		/**
+		 * login completado com sucesso
+		 */
+		public void onComplete(Bundle values) {
+
+			// Inform the parent login listener so it can update the user's
+			// profile pic and name on the home screen.
+			SessionEvents.onLoginSuccess();
+
+			// indica que novas permissões foram concedidas
+			Toast.makeText(activity.getBaseContext(), "New Permissions granted.", Toast.LENGTH_SHORT).show();
+
+			// desfaz o diálogo
+			PermissionsDialog.this.dismiss();
+
+		}
+
+		/**
+		 * 
+		 */
+		public void onFacebookError(FacebookError error) {
+
+			Toast.makeText(activity.getBaseContext(), "Facebook Error! No new permissions granted.", Toast.LENGTH_SHORT).show();
+
+			PermissionsDialog.this.dismiss();
+
+		}
+
+		/**
+		 * 
+		 */
+		public void onError(DialogError error) {
+
+			Toast.makeText(activity.getBaseContext(), "Error! No new permissions granted.", Toast.LENGTH_SHORT).show();
+
+			PermissionsDialog.this.dismiss();
+
+		}
+
+		/**
+		 * 
+		 */
+		public void onCancel() {
+
+			Toast.makeText(activity.getBaseContext(), "Action cancelled, No new permissions granted.", Toast.LENGTH_SHORT).show();
+
+			PermissionsDialog.this.dismiss();
+
+		}
+
+	}
+
+	/**
+	 * Definition of the list adapter
+	 */
+	public class PermissionsListAdapter extends BaseAdapter {
+
+		/**
+		 * 
+		 */
+		private LayoutInflater mInflater;
+
+		/**
+		 * array de permissões
+		 */
+		String[] permissions;
+
+		/**
+		 * array indicado item checados
+		 */
+		boolean[] isChecked;
+
+		/**
+		 * Construtor
+		 * 
+		 * @param permissions
+		 *          array contendo as permissões
+		 */
+		public PermissionsListAdapter(String[] permissions) {
+
+			this.permissions = permissions;
+
+			this.isChecked = new boolean[permissions.length];
+
+			mInflater = LayoutInflater.from(activity.getBaseContext());
+
+		}
+
+		/**
+		 * retorna o tamanho do array de permissões
+		 */
+		public int getCount() {
+			return permissions.length;
+		}
+
+		/**
+		 * retorna o item (null)
+		 */
+		public Object getItem(int position) {
+			return null;
+		}
+
+		/**
+		 * retorna o identificador do item (0)
+		 */
+		public long getItemId(int position) {
+			return 0;
+		}
+
+		/**
+		 * retorna uma view
+		 */
+		public View getView(final int position, View convertView, ViewGroup parent) {
+
+			View hView = convertView;
+			
+			CheckBox checkbox;
+
+			if (hView == null) {
+				
+				hView = mInflater.inflate(R.layout.permission_item, null);
+				checkbox = (CheckBox) hView.findViewById(R.id.permission_checkbox);
+				hView.setTag(checkbox);
+				
+			} else {
+				
+				checkbox = (CheckBox) hView.getTag();
+				
+			}
+
+			checkbox.setText(this.permissions[position]);
+
+			checkbox.setId(position);
+
+			if (Utility.currentPermissions.containsKey(this.permissions[position])
+					&& Utility.currentPermissions.get(this.permissions[position]).equals("1")) {
+
+				checkbox.setTextColor(Color.GREEN);
+				checkbox.setChecked(true);
+				checkbox.setEnabled(false);
+				checkbox.setOnCheckedChangeListener(null);
+
+			} else {
+
+				checkbox.setTextColor(Color.WHITE);
+				checkbox.setChecked(this.isChecked[position]);
+				checkbox.setEnabled(true);
+
+				checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					public void onCheckedChanged(CompoundButton button, boolean checked) {
+
+						isChecked[button.getId()] = checked;
+
+						if (checked) {
+
+							reqPermVector.add(button.getText().toString());
+
+						} else if (reqPermVector.contains(button.getText())) {
+
+							reqPermVector.remove(button.getText());
+
+						}
+
+					}
+
+				});
+
+			}
+
+			return hView;
+
+		}
+
+	}
+
 }
