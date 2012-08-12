@@ -13,6 +13,8 @@ import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
+
+
 public class MyGreatActivity extends Activity {
 
 	private static final String TAG = "greatapp";
