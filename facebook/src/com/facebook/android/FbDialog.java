@@ -183,10 +183,14 @@ public class FbDialog extends Dialog {
 		LinearLayout webViewContainer = new LinearLayout(getContext());
 
 		mWebView = new WebView(getContext());
+		
 		mWebView.setVerticalScrollBarEnabled(false);
 		mWebView.setHorizontalScrollBarEnabled(false);
+		
 		mWebView.setWebViewClient(new FbDialog.FbWebViewClient());
+		
 		mWebView.getSettings().setJavaScriptEnabled(true);
+		
 		mWebView.loadUrl(mUrl);
 		mWebView.setLayoutParams(FILL);
 		mWebView.setVisibility(View.INVISIBLE);

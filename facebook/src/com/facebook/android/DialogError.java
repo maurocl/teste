@@ -35,10 +35,12 @@ public class DialogError extends Throwable {
 	private String mFailingUrl;
 
 	/**
+	 * Construtor
 	 * 
-	 * @param message
-	 * @param errorCode
-	 * @param failingUrl
+	 * @param message mensagem de erro
+	 * @param errorCode código do erro
+	 * @param failingUrl a URL que o diálogo estava tentando carregar
+	 * 
 	 */
 	public DialogError(String message, int errorCode, String failingUrl) {
 		super(message);
@@ -56,9 +58,9 @@ public class DialogError extends Throwable {
 	}
 
 	/**
-	 * Obtem a URL
+	 * Obtem a URL que o diálogo estava tentando carregar
 	 * 
-	 * @return
+	 * @return a URL que o diálogo estava tentando carregar
 	 * 
 	 */
 	String getFailingUrl() {
