@@ -1046,11 +1046,15 @@ public class Facebook {
 
 	/**
 	 * Callback interface for service requests.
+	 * 
+	 * Inteface de callback para requisição de serviços
+	 * 
 	 */
 	public static interface ServiceListener {
 
 		/**
 		 * Called when a service request completes.
+		 * Chamado quando uma requisição de serviços está completa
 		 * 
 		 * @param values
 		 *          Key-value string pairs extracted from the response.
@@ -1069,6 +1073,9 @@ public class Facebook {
 
 	}
 
+	/**
+	 * Assinatura da aplicação Facebook
+	 */
 	public static final String FB_APP_SIGNATURE = "30820268308201d102044a9c4610300d06092a864886f70d0101040500307a310"
 			+ "b3009060355040613025553310b30090603550408130243413112301006035504"
 			+ "07130950616c6f20416c746f31183016060355040a130f46616365626f6f6b204"

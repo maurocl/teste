@@ -19,6 +19,8 @@ package com.facebook.android;
 /**
  * Encapsulation of Dialog Error.
  * 
+ * Encapsulamento de um Dialog Error.
+ * 
  * @author ssoneff@facebook.com
  */
 public class DialogError extends Throwable {
@@ -43,9 +45,12 @@ public class DialogError extends Throwable {
 	 * 
 	 */
 	public DialogError(String message, int errorCode, String failingUrl) {
+	  
 		super(message);
+		
 		mErrorCode = errorCode;
 		mFailingUrl = failingUrl;
+		
 	}
 
 	/**

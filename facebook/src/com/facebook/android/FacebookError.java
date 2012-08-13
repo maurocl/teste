@@ -19,6 +19,8 @@ package com.facebook.android;
 /**
  * Encapsulation of a Facebook Error: a Facebook request that could not be
  * fulfilled.
+ * 
+ * Encapsulamento de um Erro Facebook: uma requisição feita ao Facebook que não pode ser preenchida.
  *
  * @author ssoneff@facebook.com
  */
@@ -26,8 +28,10 @@ public class FacebookError extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
+    // código do erro
     private int mErrorCode = 0;
     
+    // tipo do erro
     private String mErrorType;
 
     /**
