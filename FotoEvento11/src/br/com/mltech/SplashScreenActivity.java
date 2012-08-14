@@ -25,7 +25,6 @@ public class SplashScreenActivity extends Activity implements Runnable {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 
-    // TODO Auto-generated method stub
     super.onCreate(savedInstanceState);
 
     // Exibe o layout com a imagem
