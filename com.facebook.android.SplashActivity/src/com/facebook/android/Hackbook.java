@@ -743,12 +743,12 @@ public class Hackbook extends Activity implements OnItemClickListener {
 	public class FbAPIsAuthListener implements AuthListener {
 
 		/**
-		 * autorização executada com sucesso 
+		 * autorização executada com sucesso
 		 */
 		public void onAuthSucceed() {
-			
+
 			requestUserData();
-			
+
 		}
 
 		/**
@@ -764,12 +764,12 @@ public class Hackbook extends Activity implements OnItemClickListener {
 	 * The Callback for notifying the application when log out starts and
 	 * finishes.
 	 * 
-	 *
+	 * 
 	 */
 	public class FbAPIsLogoutListener implements LogoutListener {
 
 		/**
-		 * inicio do processo de logout 
+		 * inicio do processo de logout
 		 */
 		public void onLogoutBegin() {
 			mText.setText("Logging out...");
@@ -795,7 +795,6 @@ public class Hackbook extends Activity implements OnItemClickListener {
 	 */
 	public void requestUserData() {
 
-		
 		mText.setText("Fetching user name, profile pic...");
 
 		Bundle params = new Bundle();
