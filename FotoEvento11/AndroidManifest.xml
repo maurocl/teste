@@ -17,9 +17,9 @@
 
     <!-- Permissão do uso da Rede (Internet) -->
     <uses-permission android:name="android.permission.INTERNET" />
-    
+
     <!-- Permissão de acesso ao estado da rede -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Declaração de features requeridas pela aplicação -->
     <uses-feature android:name="android.hardware.camera" />
@@ -96,8 +96,8 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-         <!-- configura esta activity para usar orientacao landscape -->
-        
+        <!-- configura esta activity para usar orientacao landscape -->
+
         <activity
             android:name=".CameraActivity2"
             android:label="Câmera"
@@ -165,6 +165,13 @@
         <activity
             android:name=".ParticipacaoActivity"
             android:label="Tela de Participacao do Usuario" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".FacebookActivity"
+            android:label="Tela de Interface com o Facebook" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
