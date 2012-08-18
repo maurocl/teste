@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import android.app.Activity;
@@ -23,199 +24,251 @@ import com.facebook.android.Util;
  */
 public class FacebookActivity extends Activity {
 
-	private static final String TAG = "FacebookActivity";
+  private static final String TAG = "FacebookActivity";
 
-	/*
-	 * Your Facebook Application ID must be set before running this example See
-	 * http://www.facebook.com/developers/createapp.php
-	 */
-	// public static final String APP_ID = "157111564357680";
-	public static final String APP_ID = "304628302969929";
+  /*
+   * Your Facebook Application ID must be set before running this example See
+   * http://www.facebook.com/developers/createapp.php
+   */
+  // public static final String APP_ID = "157111564357680";
+  public static final String APP_ID = "304628302969929";
 
-	final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
-	final static int PICK_EXISTING_PHOTO_RESULT_CODE = 1;
+  final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
-	// caixa de diálogo de progresso
-	ProgressDialog dialog;
+  final static int PICK_EXISTING_PHOTO_RESULT_CODE = 1;
 
-	private Handler mHandler;
+  // caixa de diálogo de progresso
+  ProgressDialog dialog;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+  private Handler mHandler;
 
-		if (APP_ID == null) {
-			Util.showAlert(this, "Warning", "Facebook Applicaton ID must be "
-					+ "specified before running this application: see FbAPIs.java");
-			return;
-		}
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
 
-		super.onCreate(savedInstanceState);
+    if (APP_ID == null) {
+      Util.showAlert(this, "Aviso", "Facebook Applicaton ID must be "
+          + "specified before running this application: see FbAPIs.java");
+      return;
+    }
 
-		// Default constructor associates this handler with the queue for the
-		// current thread.
-		// If there isn't one, this handler won't be able to receive messages.
-		mHandler = new Handler();
+    super.onCreate(savedInstanceState);
 
-		// Create the Facebook Object using the app id.
-		Utility.mFacebook = new Facebook(APP_ID);
+    // Default constructor associates this handler with the queue for the
+    // current thread.
+    // If there isn't one, this handler won't be able to receive messages.
+    mHandler = new Handler();
 
-		// Instantiate the asyncrunner object for asynchronous api calls.
-		Utility.mAsyncRunner = new AsyncFacebookRunner(Utility.mFacebook);
+    // Create the Facebook Object using the app id.
+    Utility.mFacebook = new Facebook(APP_ID);
 
-	}
+    // Instantiate the asyncrunner object for asynchronous api calls.
+    Utility.mAsyncRunner = new AsyncFacebookRunner(Utility.mFacebook);
+    
+    xxx();
 
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
+  }
 
-	/**
+  @Override
+  protected void onResume() {
+
+    super.onResume();
+  }
+
+  /**
 	 * 
 	 */
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-		switch (requestCode) {
-		/*
-		 * if this is the activity result from authorization flow, do a call back to
-		 * authorizeCallback Source Tag: login_tag
-		 */
-		case AUTHORIZE_ACTIVITY_RESULT_CODE: {
-			// Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
-			break;
-		}
+    switch (requestCode) {
+    /*
+     * if this is the activity result from authorization flow, do a call back to
+     * authorizeCallback Source Tag: login_tag
+     */
+      case AUTHORIZE_ACTIVITY_RESULT_CODE: {
+        // Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
+        break;
+      }
 
-		/*
-		 * if this is the result for a photo picker from the gallery, upload the
-		 * image after scaling it. You can use the Utility.scaleImage() function for
-		 * scaling
-		 */
-		case PICK_EXISTING_PHOTO_RESULT_CODE: {
+      /*
+       * if this is the result for a photo picker from the gallery, upload the
+       * image after scaling it. You can use the Utility.scaleImage() function
+       * for scaling
+       */
+      case PICK_EXISTING_PHOTO_RESULT_CODE: {
 
-			if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
 
-				// Retrieve data this intent is operating on
-				Uri photoUri = data.getData();
+          // Retrieve data this intent is operating on
+          Uri photoUri = data.getData();
 
-				if (photoUri != null) {
+          if (photoUri != null) {
 
-					// há uma foto selecionada
+            // há uma foto selecionada
 
-					Bundle params = new Bundle();
+            Bundle params = new Bundle();
 
-					// try {
-					// Inserts a byte array value into the mapping of this Bundle,
-					// replacing any existing value for the given key.
-					// Either key or value may be null.
-					// params.putByteArray("photo",
-					// Utility.scaleImage(getApplicationContext(), photoUri));
+            // try {
+            // Inserts a byte array value into the mapping of this Bundle,
+            // replacing any existing value for the given key.
+            // Either key or value may be null.
+            // params.putByteArray("photo",
+            // Utility.scaleImage(getApplicationContext(), photoUri));
 
-					// } catch (IOException e) {
+            // } catch (IOException e) {
 
-					// e.printStackTrace();
+            // e.printStackTrace();
 
-					// }
+            // }
 
-					params.putString("caption", "FbAPIs Sample App photo upload");
+            params.putString("caption", "FbAPIs Sample App photo upload");
 
-					// Utility.mAsyncRunner.request("me/photos", params, "POST", new
-					// PhotoUploadListener(), null);
+            // Utility.mAsyncRunner.request("me/photos", params, "POST", new
+            // PhotoUploadListener(), null);
 
-				} else {
+          } else {
 
-					Toast.makeText(getApplicationContext(), "Error selecting image from the gallery.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error selecting image from the gallery.", Toast.LENGTH_SHORT).show();
 
-				}
-			} else {
+          }
+        } else {
 
-				Toast.makeText(getApplicationContext(), "No image selected for upload.", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), "No image selected for upload.", Toast.LENGTH_SHORT).show();
 
-			}
-			break;
-		}
+        }
+        break;
+      }
 
-		}
+    }
 
-	}
+  }
 
-	/**
+  /**
 	 * 
 	 */
-	private void xxx() {
+  private void xxx() {
 
-		if (!Utility.mFacebook.isSessionValid()) {
+    if (!Utility.mFacebook.isSessionValid()) {
 
-			// sessão não é válida
-			Util.showAlert(this, "Warning", "You must first log in.");
+      // sessão não é válida
+      Util.showAlert(this, "Aviso", "Você precisa primeiro loggar no Facebook.");
+      
+      FacebookLogin fbl = new FacebookLogin(this);
+      
+      fbl.executaLogin(Utility.mFacebook);
+      
 
-		} else {
+    } else {
 
-			// cria uma caixa de diálogo de progresso
-			dialog = ProgressDialog.show(FacebookActivity.this, "", "Aguarde...", true, true);
+      // cria uma caixa de diálogo de progresso
+      dialog = ProgressDialog.show(FacebookActivity.this, "", "Aguarde...", true, true);
 
-			new AlertDialog.Builder(this).setTitle("Título").setMessage("Mensagem")
-					.setPositiveButton("botão", new DialogInterface.OnClickListener() {
+      AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-						public void onClick(DialogInterface dialog, int which) {
-							Intent intent = new Intent(Intent.ACTION_PICK, (MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
-							startActivityForResult(intent, PICK_EXISTING_PHOTO_RESULT_CODE);
-						}
+      String caption = "Foto enviada pela aplicação FotoEvento";
+      String url = "http://www.facebook.com/images/devsite/iphone_connect_btn.jpg";
 
-					}).setNegativeButton("outro botão", new DialogInterface.OnClickListener() {
+      criaAlert(alert, caption, url);
 
-						public void onClick(DialogInterface dialog, int which) {
-							/*
-							 * Source tag: upload_photo_tag
-							 */
-							Bundle params = new Bundle();
-							params.putString("url", "http://www.facebook.com/images/devsite/iphone_connect_btn.jpg");
-							params.putString("caption", "FbAPIs Sample App photo upload");
+      alert.show();
 
-							// Utility.mAsyncRunner.request("me/photos", params, "POST", new
-							// PhotoUploadListener(), null);
+    }
 
-							Utility.mAsyncRunner.request("me/photos", params, "POST", (RequestListener) new PhotoUploadListener(), null);
+  }
 
-						}
+  /**
+   * Cria uma janela de diálogo usada como alerta
+   * 
+   * @param alert
+   */
+  private void criaAlert(AlertDialog.Builder alert, final String caption, final String url) {
 
-					}).setOnCancelListener(new DialogInterface.OnCancelListener() {
+    alert.setTitle("Título");
+    alert.setMessage("Mensagem");
 
-						public void onCancel(DialogInterface d) {
-							dialog.dismiss();
-						}
+    alert.setPositiveButton("botão +",
+        new DialogInterface.OnClickListener() {
 
-					}).show();
+          public void onClick(DialogInterface dialog, int which) {
 
-		}
+            Intent intent = new Intent(Intent.ACTION_PICK, (MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
+            startActivityForResult(intent, PICK_EXISTING_PHOTO_RESULT_CODE);
+          }
 
-	}
+        }
 
-	class PhotoUploadListener extends BaseRequestListener {
+        );
 
-		/**
-		 * operação executada co sucesso
-		 */
-		public void onComplete(final String response, final Object state) {
+    alert.setNegativeButton("botão -",
+        new DialogInterface.OnClickListener() {
 
-			// Dismiss this dialog, removing it from the screen.
-			dialog.dismiss();
+          public void onClick(DialogInterface dialog, int which) {
 
-			// Causes the Runnable r to be added to the message queue.
-			// The runnable will be run on the thread to which this handler is
-			// attached.
-			mHandler.post(new Runnable() {
+            /*
+             * Source tag: upload_photo_tag
+             */
+            Bundle params = new Bundle();
+            params.putString("url", url);
+            params.putString("caption", caption);
 
-				// executa o diálogo de resultado do upload da foto
-				public void run() {
-					// 
-					new UploadPhotoResultDialog(FacebookActivity.this, "Upload Photo executed", response).show();
-				}
-				
-			});
+            // Utility.mAsyncRunner.request("me/photos", params, "POST", new
+            // PhotoUploadListener(), null);
 
-		}
+            Utility.mAsyncRunner.request("me/photos", params, "POST", (RequestListener) new PhotoUploadListener(), null);
 
-	}
-	
+          }
+
+        }
+
+        );
+
+    alert.setOnCancelListener(
+        new DialogInterface.OnCancelListener() {
+
+          public void onCancel(DialogInterface d) {
+
+            // desfaz o diálogo
+            dialog.dismiss();
+
+          }
+
+        }
+
+        );
+
+  }
+
+  /**
+   * Listener usado no upload da foto
+   * 
+   *
+   */
+  class PhotoUploadListener extends BaseRequestListener {
+
+    /**
+     * operação executada com sucesso
+     */
+    public void onComplete(final String response, final Object state) {
+
+      // Dismiss this dialog, removing it from the screen.
+      dialog.dismiss();
+
+      // Causes the Runnable r to be added to the message queue.
+      // The runnable will be run on the thread to which this handler is
+      // attached.
+      mHandler.post(new Runnable() {
+
+        // executa o diálogo de resultado do upload da foto
+        public void run() {
+
+          // 
+          new UploadPhotoResultDialog(FacebookActivity.this, "Upload da foto foi executado", response).show();
+
+        }
+
+      });
+
+    }
+
+  }
+
 }

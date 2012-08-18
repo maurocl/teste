@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:paddingLeft="3dp"
         android:paddingTop="3dp"
-        android:text="tring/api_response"
-        android:textColor="@color/branco" />
+        android:text="string/api_response"
+        android:textColor="@color/white" />
 
     <ScrollView
         android:id="@+id/ScrollView01"
@@ -27,7 +27,9 @@
             android:background="@color/grey"
             android:paddingLeft="3dp"
             android:paddingTop="3dp"
-            android:textColor="@color/white" />
+            android:textColor="@color/white" 
+        />
+        
     </ScrollView>
 
     <View

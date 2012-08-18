@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import br.com.mltech.SessionEvents.AuthListener;
 import br.com.mltech.SessionEvents.LogoutListener;
@@ -97,9 +96,9 @@ public class LoginButton extends ImageButton {
 	/**
 	 * Método de inicialização
 	 * 
-	 * @param activity
-	 * @param activityCode
-	 * @param fb
+	 * @param activity activity
+	 * @param activityCode código de identificação da activity
+	 * @param fb instância da classe Facebook
 	 */
 	public void init(final Activity activity, final int activityCode, final Facebook fb) {
 
@@ -110,10 +109,10 @@ public class LoginButton extends ImageButton {
 	/**
 	 * Método de inicialização
 	 * 
-	 * @param activity
-	 * @param activityCode
-	 * @param fb
-	 * @param permissions
+	 * @param activity activity
+	 * @param activityCode código de identificação da activity
+	 * @param fb instância da classe Facebook
+	 * @param permissions array de string contendo as permissões necessárias à operação
 	 * 
 	 */
 	public void init(final Activity activity, final int activityCode, final Facebook fb, final String[] permissions) {
