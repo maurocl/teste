@@ -44,6 +44,10 @@ public class MyGreatActivity extends Activity {
         Log.d(TAG, "onComplete()");
 
         showBundle(values);
+        
+        Log.d(TAG,"AccessToken: ["+facebook.getAccessToken()+"]");
+        Log.d(TAG,"AccessExpires: ["+facebook.getAccessExpires()+"]");
+        Log.d(TAG,"AppId: ["+facebook.getAppId()+"]");
 
       }
 
@@ -54,14 +58,22 @@ public class MyGreatActivity extends Activity {
 
         Log.d(TAG, "onFacebookError");
         showFacebookError(error);
+        
+        finish();
+        
       }
 
+     
+      
       /**
 			 * 
 			 */
       public void onError(DialogError e) {
 
         Log.d(TAG, "onDialog()");
+        
+        finish();
+        
       }
 
       /**
@@ -70,6 +82,8 @@ public class MyGreatActivity extends Activity {
       public void onCancel() {
 
         Log.d(TAG, "onCancel()");
+        
+        finish();
       }
 
     });
