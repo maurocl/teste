@@ -1,7 +1,7 @@
+
 package com.facebook.android;
 
 import com.facebook.android.Facebook.DialogListener;
-
 
 /**
  * Skeleton base class for RequestListeners, providing default error handling.
@@ -9,24 +9,27 @@ import com.facebook.android.Facebook.DialogListener;
  */
 public abstract class BaseDialogListener implements DialogListener {
 
-	/**
+  /**
 	 * 
 	 */
-    public void onFacebookError(FacebookError e) {
-        e.printStackTrace();
-    }
+  public void onFacebookError(FacebookError e) {
 
-    /**
-     * 
-     */
-    public void onError(DialogError e) {
-        e.printStackTrace();
-    }
+    e.printStackTrace();
+  }
 
-    /**
-     * 
-     */
-    public void onCancel() {
-    }
+  /**
+   * 
+   */
+  public void onError(DialogError e) {
+
+    e.printStackTrace();
+  }
+
+  /**
+   * 
+   */
+  public void onCancel() {
+
+  }
 
 }

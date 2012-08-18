@@ -1,3 +1,4 @@
+
 package com.facebook.android;
 
 import org.json.JSONArray;
@@ -20,156 +21,164 @@ import android.widget.TextView;
 /**
  * Facebook Query Language
  * 
- *
+ * 
  */
 public class FQLQuery extends Dialog {
 
-	private EditText mFQLQuery;
-	private TextView mFQLOutput;
-	private Button mSubmitButton;
-	private Activity activity;
-	private Handler mHandler;
-	private ProgressDialog dialog;
+  private EditText mFQLQuery;
 
-	/**
-	 * Construtor
-	 * 
-	 * @param activity 
-	 */
-	public FQLQuery(Activity activity) {
-		
-		super(activity);
-		
-		this.activity = activity;
-		
-		setTitle(R.string.fqlquery);
-		
-	}
+  private TextView mFQLOutput;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		
-		super.onCreate(savedInstanceState);
+  private Button mSubmitButton;
 
-		mHandler = new Handler();
+  private Activity activity;
 
-		setContentView(R.layout.fql_query);
-		
-		LayoutParams params = getWindow().getAttributes();
-		
-		params.width = LayoutParams.FILL_PARENT;
-		params.height = LayoutParams.FILL_PARENT;
-		
-		getWindow().setAttributes(
-				(android.view.WindowManager.LayoutParams) params);
+  private Handler mHandler;
 
-		mFQLQuery = (EditText) findViewById(R.id.fqlquery);
-		mFQLOutput = (TextView) findViewById(R.id.fqlOutput);
-		mSubmitButton = (Button) findViewById(R.id.submit_button);
+  private ProgressDialog dialog;
 
-		mSubmitButton.setOnClickListener(new View.OnClickListener() {
+  /**
+   * Construtor
+   * 
+   * @param activity
+   */
+  public FQLQuery(Activity activity) {
 
-			public void onClick(View v) {
-		
-				((InputMethodManager) activity
-						.getSystemService(Context.INPUT_METHOD_SERVICE))
-						.hideSoftInputFromWindow(mFQLQuery.getWindowToken(), 0);
-				
-				dialog = ProgressDialog.show(FQLQuery.this.activity, "",
-						FQLQuery.this.activity.getString(R.string.please_wait),
-						true, true);
-				
-				/*
-				 * Source tag: fql_query_tag
-				 */
-				String query = mFQLQuery.getText().toString();
-				
-				Bundle params = new Bundle();
-				
-				params.putString("method", "fql.query");
-				params.putString("query", query);
-				
-				Utility.mAsyncRunner.request(null, params,	new FQLRequestListener());
-				
-			}
-			
-		});
-		
-	}
+    super(activity);
 
-	/**
-	 * 
-	 * @author maurocl
-	 *
-	 */
-	public class FQLRequestListener extends BaseRequestListener {
+    this.activity = activity;
 
-		public void onComplete(final String response, final Object state) {
-			
-			dialog.dismiss();
-			
-			/*
-			 * Output can be a JSONArray or a JSONObject. Try JSONArray and if
-			 * there's a JSONException, parse to JSONObject
-			 */
-			try {
-				
-				JSONArray json = new JSONArray(response);
-				
-				setText(json.toString(2));
-				
-			} catch (JSONException e) {
-				
-				try {
-					/*
-					 * JSONObject probably indicates there was some error
-					 * Display that error, but for end user you should parse the
-					 * error and show appropriate message
-					 */
-					JSONObject json = new JSONObject(response);
-					setText(json.toString(2));
-				} catch (JSONException e1) {
-					setText(activity.getString(R.string.exception)
-							+ e1.getMessage());
-				}
-				
-			}
-			
-		}
+    setTitle(R.string.fqlquery);
 
-		/**
-		 * Método executado quando houver algum erro
-		 * 
-		 * @param error erro reportado pelo Facebook
-		 * 
-		 */
-		public void onFacebookError(FacebookError error) {
-			
-			dialog.dismiss();
-			
-			setText(activity.getString(R.string.facebook_error)
-					+ error.getMessage());
-			
-		}
-		
-	}
+  }
 
-	/**
-	 * Atualiza o texto
-	 * 
-	 * @param txt text
-	 */
-	public void setText(final String txt) {
-		
-		mHandler.post(new Runnable() {
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
 
-			public void run() {
-				mFQLOutput.setText(txt);
-				mFQLOutput.setVisibility(View.VISIBLE);
-			}
-			
-		});
-		
-	}
-	
+    super.onCreate(savedInstanceState);
+
+    mHandler = new Handler();
+
+    setContentView(R.layout.fql_query);
+
+    LayoutParams params = getWindow().getAttributes();
+
+    params.width = LayoutParams.FILL_PARENT;
+    params.height = LayoutParams.FILL_PARENT;
+
+    getWindow().setAttributes(
+        (android.view.WindowManager.LayoutParams) params);
+
+    mFQLQuery = (EditText) findViewById(R.id.fqlquery);
+    mFQLOutput = (TextView) findViewById(R.id.fqlOutput);
+    mSubmitButton = (Button) findViewById(R.id.submit_button);
+
+    mSubmitButton.setOnClickListener(new View.OnClickListener() {
+
+      public void onClick(View v) {
+
+        ((InputMethodManager) activity
+            .getSystemService(Context.INPUT_METHOD_SERVICE))
+            .hideSoftInputFromWindow(mFQLQuery.getWindowToken(), 0);
+
+        dialog = ProgressDialog.show(FQLQuery.this.activity, "",
+            FQLQuery.this.activity.getString(R.string.please_wait),
+            true, true);
+
+        /*
+         * Source tag: fql_query_tag
+         */
+        String query = mFQLQuery.getText().toString();
+
+        Bundle params = new Bundle();
+
+        params.putString("method", "fql.query");
+        params.putString("query", query);
+
+        Utility.mAsyncRunner.request(null, params, new FQLRequestListener());
+
+      }
+
+    });
+
+  }
+
+  /**
+   * 
+   * @author maurocl
+   * 
+   */
+  public class FQLRequestListener extends BaseRequestListener {
+
+    public void onComplete(final String response, final Object state) {
+
+      dialog.dismiss();
+
+      /*
+       * Output can be a JSONArray or a JSONObject. Try JSONArray and if there's
+       * a JSONException, parse to JSONObject
+       */
+      try {
+
+        JSONArray json = new JSONArray(response);
+
+        setText(json.toString(2));
+
+      } catch (JSONException e) {
+
+        try {
+          /*
+           * JSONObject probably indicates there was some error Display that
+           * error, but for end user you should parse the error and show
+           * appropriate message
+           */
+          JSONObject json = new JSONObject(response);
+          setText(json.toString(2));
+        } catch (JSONException e1) {
+          setText(activity.getString(R.string.exception)
+              + e1.getMessage());
+        }
+
+      }
+
+    }
+
+    /**
+     * Método executado quando houver algum erro
+     * 
+     * @param error
+     *          erro reportado pelo Facebook
+     * 
+     */
+    public void onFacebookError(FacebookError error) {
+
+      dialog.dismiss();
+
+      setText(activity.getString(R.string.facebook_error)
+          + error.getMessage());
+
+    }
+
+  }
+
+  /**
+   * Atualiza o texto
+   * 
+   * @param txt
+   *          text
+   */
+  public void setText(final String txt) {
+
+    mHandler.post(new Runnable() {
+
+      public void run() {
+
+        mFQLOutput.setText(txt);
+        mFQLOutput.setVisibility(View.VISIBLE);
+      }
+
+    });
+
+  }
+
 }

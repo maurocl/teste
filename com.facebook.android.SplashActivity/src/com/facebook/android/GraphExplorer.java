@@ -1,7 +1,9 @@
+
 package com.facebook.android;
 
 /*
- * The me, delete and back_parent buttons are downloaded from http://icongal.com/
+ * The me, delete and back_parent buttons are downloaded from
+ * http://icongal.com/
  */
 
 import java.util.Iterator;
@@ -37,479 +39,493 @@ import android.widget.Toast;
  *
  */
 public class GraphExplorer extends Activity {
-	
-    private Button mSubmitButton, mViewURLButton;
-    private Button mGetPermissionsButton;
-    private Button mTextDeleteButton, mMeButton;
-    private Button mFieldsConnectionsButton, mBackParentButton;
-    private TextView mOutput;
-    private EditText mInputId;
-    private Bundle params;
-    private String url, mParentObjectId;
-    private ProgressDialog dialog;
-    private String rootString;
-    private ScrollView mScrollView;
-    private Handler mHandler;
-    
-    private final static String BASE_GRAPH_URL = "https://graph.facebook.com";
 
-    private JSONObject metadataObject;
+  private Button mSubmitButton, mViewURLButton;
 
-    /*
-     * Layout the Graph Explorer
-     */
-    
-    /**
+  private Button mGetPermissionsButton;
+
+  private Button mTextDeleteButton, mMeButton;
+
+  private Button mFieldsConnectionsButton, mBackParentButton;
+
+  private TextView mOutput;
+
+  private EditText mInputId;
+
+  private Bundle params;
+
+  private String url, mParentObjectId;
+
+  private ProgressDialog dialog;
+
+  private String rootString;
+
+  private ScrollView mScrollView;
+
+  private Handler mHandler;
+
+  private final static String BASE_GRAPH_URL = "https://graph.facebook.com";
+
+  private JSONObject metadataObject;
+
+  /*
+   * Layout the Graph Explorer
+   */
+
+  /**
      * 
      */
-    public void onCreate(Bundle savedInstanceState) {
-    	
-        super.onCreate(savedInstanceState);
+  public void onCreate(Bundle savedInstanceState) {
 
-        mHandler = new Handler();
+    super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.graph_explorer);
+    mHandler = new Handler();
+
+    setContentView(R.layout.graph_explorer);
+
+    url = BASE_GRAPH_URL; // Base URL
+
+    mInputId = (EditText) findViewById(R.id.inputId);
+    mOutput = (TextView) findViewById(R.id.output);
+
+    mSubmitButton = (Button) findViewById(R.id.submitButton);
+    mViewURLButton = (Button) findViewById(R.id.viewURLButton);
+    mGetPermissionsButton = (Button) findViewById(R.id.accessTokenButton);
+    mFieldsConnectionsButton = (Button) findViewById(R.id.fieldsAndConnectionsButton);
+    mBackParentButton = (Button) findViewById(R.id.backParentButton);
+
+    mScrollView = (ScrollView) findViewById(R.id.ScrollView01);
+
+    mTextDeleteButton = (Button) findViewById(R.id.textDeleteButton);
+    mMeButton = (Button) findViewById(R.id.meButton);
+
+    if (Utility.mFacebook.isSessionValid()) {
+      mMeButton.setVisibility(View.VISIBLE);
+    }
+
+    params = new Bundle();
+
+    mSubmitButton.setOnClickListener(new OnClickListener() {
+
+      public void onClick(View v) {
+
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+            .hideSoftInputFromWindow(mInputId.getWindowToken(), 0);
+
+        // Prepare the URL to be shown on 'View URL' click action. This
+        // is not used by the SDK
+        url = BASE_GRAPH_URL; // Base URL
+
+        /*
+         * Source Tag: graph_explorer
+         */
+        rootString = mInputId.getText().toString();
+        if (!TextUtils.isEmpty(rootString)) {
+          dialog = ProgressDialog.show(GraphExplorer.this, "",
+              getString(R.string.please_wait), true, true);
+          params.putString("metadata", "1");
+          Utility.mAsyncRunner.request(rootString, params, new graphApiRequestListener());
+          url += "/" + rootString; // Relative Path provided by you
+        }
+
+      }
+
+    });
+
+    mViewURLButton.setOnClickListener(new OnClickListener() {
+
+      public void onClick(View v) {
+
+        setText(url);
+        Linkify.addLinks(mOutput, Linkify.WEB_URLS);
+      }
+
+    });
+
+    mGetPermissionsButton.setOnClickListener(new OnClickListener() {
+
+      public void onClick(View v) {
+
+        if (Utility.mFacebook.isSessionValid()) {
+
+          dialog = ProgressDialog.show(GraphExplorer.this, "",
+              getString(R.string.fetching_current_permissions), true, true);
+
+          Bundle params = new Bundle();
+
+          params.putString("access_token", Utility.mFacebook.getAccessToken());
+
+          Utility.mAsyncRunner.request("me/permissions", params,
+              new permissionsRequestListener());
+
+        } else {
+
+          new PermissionsDialog(GraphExplorer.this).show();
+
+        }
+
+      }
+    });
+
+    mFieldsConnectionsButton.setOnClickListener(new OnClickListener() {
+
+      public void onClick(View v) {
+
+        if (metadataObject == null) {
+          makeToast("No fields, connections availalbe for this object.");
+        } else {
+          new FieldsConnectionsDialog(GraphExplorer.this, metadataObject).show();
+        }
+
+      }
+
+    });
+
+    mTextDeleteButton.setOnClickListener(new OnClickListener() {
+
+      public void onClick(View v) {
 
         url = BASE_GRAPH_URL; // Base URL
 
-        mInputId = (EditText) findViewById(R.id.inputId);
-        mOutput = (TextView) findViewById(R.id.output);
-    
-        mSubmitButton = (Button) findViewById(R.id.submitButton);
-        mViewURLButton = (Button) findViewById(R.id.viewURLButton);
-        mGetPermissionsButton = (Button) findViewById(R.id.accessTokenButton);
-        mFieldsConnectionsButton = (Button) findViewById(R.id.fieldsAndConnectionsButton);
-        mBackParentButton = (Button) findViewById(R.id.backParentButton);
+        mParentObjectId = "";
+        mInputId.setText("");
+        params.clear();
 
-        mScrollView = (ScrollView) findViewById(R.id.ScrollView01);
+        metadataObject = null;
 
-        mTextDeleteButton = (Button) findViewById(R.id.textDeleteButton);
-        mMeButton = (Button) findViewById(R.id.meButton);
-  
-        if (Utility.mFacebook.isSessionValid()) {
-            mMeButton.setVisibility(View.VISIBLE);
-        }
+        setText("");
 
-        params = new Bundle();
-        
-        mSubmitButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
+        mBackParentButton.setVisibility(View.INVISIBLE);
 
-                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                        .hideSoftInputFromWindow(mInputId.getWindowToken(), 0);
+      }
 
-                // Prepare the URL to be shown on 'View URL' click action. This
-                // is not used by the SDK
-                url = BASE_GRAPH_URL; // Base URL
+    });
 
-                /*
-                 * Source Tag: graph_explorer
-                 */
-                rootString = mInputId.getText().toString();
-                if (!TextUtils.isEmpty(rootString)) {
-                    dialog = ProgressDialog.show(GraphExplorer.this, "",
-                            getString(R.string.please_wait), true, true);
-                    params.putString("metadata", "1");
-                    Utility.mAsyncRunner.request(rootString, params, new graphApiRequestListener());
-                    url += "/" + rootString; // Relative Path provided by you
-                }
+    mMeButton.setOnClickListener(new OnClickListener() {
 
-            }
-            
-        });
+      public void onClick(View v) {
 
-        mViewURLButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-                setText(url);
-                Linkify.addLinks(mOutput, Linkify.WEB_URLS);
-            }
-        
-        });
-
-        mGetPermissionsButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-            	
-                if (Utility.mFacebook.isSessionValid()) {
-                
-                	dialog = ProgressDialog.show(GraphExplorer.this, "",
-                            getString(R.string.fetching_current_permissions), true, true);
-                    
-                	Bundle params = new Bundle();
-                    
-                	params.putString("access_token", Utility.mFacebook.getAccessToken());
-                    
-                	Utility.mAsyncRunner.request("me/permissions", params,
-                            new permissionsRequestListener());
-                	
-                } else {
-                	
-                    new PermissionsDialog(GraphExplorer.this).show();
-                    
-                }
-                
-            }
-        });
-
-        mFieldsConnectionsButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-            	
-                if (metadataObject == null) {
-                    makeToast("No fields, connections availalbe for this object.");
-                } else {
-                    new FieldsConnectionsDialog(GraphExplorer.this, metadataObject).show();
-                }
-                
-            }
-            
-        });
-
-        mTextDeleteButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-            	
-                url = BASE_GRAPH_URL; // Base URL
-                
-                mParentObjectId = "";
-                mInputId.setText("");
-                params.clear();
-                
-                metadataObject = null;
-                
-                setText("");
-                
-                mBackParentButton.setVisibility(View.INVISIBLE);
-                
-            }
-            
-        });
-
-        mMeButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-                mInputId.setText("me");
-                mSubmitButton.performClick();
-            }
-            
-        });
-
-        mBackParentButton.setOnClickListener(new OnClickListener() {
-            
-            public void onClick(View v) {
-                mInputId.setText(mParentObjectId);
-                mParentObjectId = "";
-                mSubmitButton.performClick();
-            }
-            
-        });
-    }
-
-    
-    /**
-     * 
-     */
-    public void onResume() {
-        
-    	super.onResume();
-        
-    	if (Utility.mFacebook.isSessionValid()) {
-            mMeButton.setVisibility(View.VISIBLE);
-        }
-        
-    	if (Utility.objectID != null) {
-            mInputId.setText(Utility.objectID);
-            Utility.objectID = null;
-            mSubmitButton.performClick();
-        }
-        
-    }
-
-    /**
-     * 
-     * @param incomingIntent
-     */
-    protected void processIntent(Intent incomingIntent) {
-        
-    	Uri intentUri = incomingIntent.getData();
-        
-    	if (intentUri == null) {
-            return;
-        }
-        
-        String objectID = intentUri.getHost();
-        
-        mInputId.setText(objectID);
-        
+        mInputId.setText("me");
         mSubmitButton.performClick();
-        
+      }
+
+    });
+
+    mBackParentButton.setOnClickListener(new OnClickListener() {
+
+      public void onClick(View v) {
+
+        mInputId.setText(mParentObjectId);
+        mParentObjectId = "";
+        mSubmitButton.performClick();
+      }
+
+    });
+  }
+
+  /**
+     * 
+     */
+  public void onResume() {
+
+    super.onResume();
+
+    if (Utility.mFacebook.isSessionValid()) {
+      mMeButton.setVisibility(View.VISIBLE);
+    }
+
+    if (Utility.objectID != null) {
+      mInputId.setText(Utility.objectID);
+      Utility.objectID = null;
+      mSubmitButton.performClick();
+    }
+
+  }
+
+  /**
+   * 
+   * @param incomingIntent
+   */
+  protected void processIntent(Intent incomingIntent) {
+
+    Uri intentUri = incomingIntent.getData();
+
+    if (intentUri == null) {
+      return;
+    }
+
+    String objectID = intentUri.getHost();
+
+    mInputId.setText(objectID);
+
+    mSubmitButton.performClick();
+
+  }
+
+  /**
+   * 
+   * @param connection
+   */
+  public void getConnection(String connection) {
+
+    mInputId.setText(rootString + "/" + connection);
+
+    mParentObjectId = rootString;
+
+    mSubmitButton.performClick();
+
+  }
+
+  /**
+   * Obtem os campos
+   * 
+   * @param fieldsVector
+   */
+  public void getFields(Vector<String> fieldsVector) {
+
+    String fields = "";
+
+    int count = 0;
+
+    for (String field : fieldsVector) {
+
+      fields += field;
+
+      if (++count < fieldsVector.size()) {
+        fields += ",";
+      }
+
+    }
+
+    params.putString("fields", fields);
+
+    mSubmitButton.performClick();
+
+  }
+
+  /*
+   * Callback for the permission OAuth Dialog
+   */
+  public class permissionsRequestListener extends BaseRequestListener {
+
+    public void onComplete(final String response, final Object state) {
+
+      dialog.dismiss();
+      /*
+       * Clear the current permission list and repopulate with new permissions.
+       * This is used to mark assigned permission green and unclickable.
+       */
+
+      Utility.currentPermissions.clear();
+
+      try {
+
+        JSONObject jsonObject = new JSONObject(response).getJSONArray("data")
+            .getJSONObject(0);
+
+        Iterator<?> iterator = jsonObject.keys();
+
+        String permission;
+
+        while (iterator.hasNext()) {
+          permission = (String) iterator.next();
+          Utility.currentPermissions.put(permission,
+              String.valueOf(jsonObject.getInt(permission)));
+        }
+
+      } catch (JSONException e) {
+
+        makeToast("Permissions could not be fetched, none will be selected by default.");
+
+      }
+
+      mHandler.post(new Runnable() {
+
+        public void run() {
+
+          new PermissionsDialog(GraphExplorer.this).show();
+          
+        }
+
+      });
+
     }
 
     /**
      * 
-     * @param connection
+     * @param error
      */
-    public void getConnection(String connection) {
-        
-    	mInputId.setText(rootString + "/" + connection);
-        
-    	mParentObjectId = rootString;
-        
-    	mSubmitButton.performClick();
-    	
+    public void onFacebookError(FacebookError error) {
+
+      dialog.dismiss();
+
+      makeToast("Permissions could not be fetched, none will be selected by default.");
+
+      mHandler.post(new Runnable() {
+
+        public void run() {
+
+          new PermissionsDialog(GraphExplorer.this).show();
+        }
+      });
+
+    }
+
+  }
+
+  /**
+     * 
+     */
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
+
+  }
+
+  /*
+   * Callback after a given Graph API request is executed Get the response and
+   * show it.
+   */
+  public class graphApiRequestListener extends BaseRequestListener {
+
+    public void onComplete(final String response, final Object state) {
+
+      dialog.dismiss();
+
+      // access token is appended by Facebook object, hence params are
+      // added here after request is complete
+      if (!params.isEmpty()) {
+        url += "?" + Util.encodeUrl(params); // Params
+      }
+
+      metadataObject = null;
+
+      params.clear();
+
+      try {
+
+        JSONObject json = Util.parseJson(response);
+
+        if (json.has("metadata")) {
+          metadataObject = json.getJSONObject("metadata");
+          json.remove("metadata");
+        } else {
+          metadataObject = null;
+        }
+
+        setText(json.toString(2));
+
+      } catch (JSONException e) {
+
+        setText(e.getMessage());
+        e.printStackTrace();
+
+      } catch (FacebookError e) {
+
+        setText(e.getMessage());
+        e.printStackTrace();
+
+      }
+
     }
 
     /**
-     * Obtem os campos
+     * Método executado quando houver erro
      * 
-     * @param fieldsVector
+     * @param error
      */
-    public void getFields(Vector<String> fieldsVector) {
-        
-    	String fields = "";
-        
-    	int count = 0;
-        
-    	for (String field : fieldsVector) {
-        
-    		fields += field;
-            
-    		if (++count < fieldsVector.size()) {
-                fields += ",";
-            }
-    		
-        }
-    	
-        
-    	params.putString("fields", fields);
-        
-    	mSubmitButton.performClick();
-    	
+    public void onFacebookError(FacebookError error) {
+
+      dialog.dismiss();
+
+      setText(error.getMessage());
+
+      params.clear();
+
+      metadataObject = null;
+
     }
 
-    /*
-     * Callback for the permission OAuth Dialog
-     */
-    public class permissionsRequestListener extends BaseRequestListener {
+  }
 
-        
-        public void onComplete(final String response, final Object state) {
-        
-        	dialog.dismiss();
-            /*
-             * Clear the current permission list and repopulate with new
-             * permissions. This is used to mark assigned permission green and
-             * unclickable.
-             */
-            
-        	Utility.currentPermissions.clear();
-            
-        	try {
+  /**
+   * Atualiza o texto
+   * 
+   * @param txt
+   *          texto
+   * 
+   */
+  public void setText(final String txt) {
 
-        		JSONObject jsonObject = new JSONObject(response).getJSONArray("data")
-                        .getJSONObject(0);
-                
-        		Iterator<?> iterator = jsonObject.keys();
-                
-        		String permission;
-                
-        		while (iterator.hasNext()) {
-                    permission = (String) iterator.next();
-                    Utility.currentPermissions.put(permission,
-                            String.valueOf(jsonObject.getInt(permission)));
-                }
-        		
-            } catch (JSONException e) {
-            	
-                makeToast("Permissions could not be fetched, none will be selected by default.");
-                
-            }
-            
-        	mHandler.post(new Runnable() {
-                
-                public void run() {
-                    new PermissionsDialog(GraphExplorer.this).show();
-                }
-                
-            });
-            
+    mHandler.post(new Runnable() {
+
+      /*
+       * A transform filter that simply returns just the text captured by the
+       * first regular expression group.
+       */
+      TransformFilter idFilter = new TransformFilter() {
+
+        public final String transformUrl(final Matcher match, String url) {
+
+          return match.group(1);
         }
 
-        /**
-         * 
-         * @param error
+      };
+
+      public void run() {
+
+        mViewURLButton.setVisibility(
+            TextUtils.isEmpty(txt) ? View.INVISIBLE : View.VISIBLE);
+
+        mFieldsConnectionsButton.setVisibility(TextUtils.isEmpty(txt) ? View.INVISIBLE
+            : View.VISIBLE);
+
+        mOutput.setVisibility(TextUtils.isEmpty(txt) ? View.INVISIBLE : View.VISIBLE);
+
+        mBackParentButton.setVisibility(
+            TextUtils.isEmpty(mParentObjectId) ? View.INVISIBLE : View.VISIBLE);
+
+        String convertedTxt = txt.replace("\\/", "/");
+
+        mOutput.setText(convertedTxt);
+
+        mScrollView.scrollTo(0, 0);
+
+        Linkify.addLinks(mOutput, Linkify.WEB_URLS);
+
+        /*
+         * Linkify the object ids so they can be clicked. match pattern: "id" :
+         * "objectid" (objectid can be int or int_int)
          */
-        public void onFacebookError(FacebookError error) {
-            
-        	dialog.dismiss();
-            
-        	makeToast("Permissions could not be fetched, none will be selected by default.");
-            
-        	mHandler.post(new Runnable() {
-                
-                public void run() {
-                    new PermissionsDialog(GraphExplorer.this).show();
-                }
-            });
-        	
-        }
 
-    }
+        Pattern pattern = Pattern.compile("\"id\": \"(\\d*_?\\d*)\"");
 
-    
-    /**
-     * 
-     */
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        
-    	Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
-    	
-    }
+        String scheme = "fbGraphEx://";
 
-    /*
-     * Callback after a given Graph API request is executed Get the response and
-     * show it.
-     */
-    public class graphApiRequestListener extends BaseRequestListener {
-        
-        public void onComplete(final String response, final Object state) {
-        
-        	dialog.dismiss();
-            
-        	// access token is appended by Facebook object, hence params are
-            // added here after request is complete
-            if (!params.isEmpty()) {
-                url += "?" + Util.encodeUrl(params); // Params
-            }
-            
-            metadataObject = null;
-            
-            params.clear();
-            
-            try {
-            	
-                JSONObject json = Util.parseJson(response);
-                
-                if (json.has("metadata")) {
-                    metadataObject = json.getJSONObject("metadata");
-                    json.remove("metadata");
-                } else {
-                    metadataObject = null;
-                }
-                
-                setText(json.toString(2));
-                
-            } catch (JSONException e) {
-            	
-                setText(e.getMessage());
-                e.printStackTrace();
-                
-            } catch (FacebookError e) {
-            	
-                setText(e.getMessage());
-                e.printStackTrace();
-                
-            }
-            
-        }
+        Linkify.addLinks(mOutput, pattern, scheme, null, idFilter);
 
-        /**
-         * Método executado quando houver erro
-         * 
-         * @param error
-         */
-        public void onFacebookError(FacebookError error) {
-           
-        	dialog.dismiss();
-            
-        	setText(error.getMessage());
-            
-        	params.clear();
-            
-        	metadataObject = null;
-            
-        }
+      }
 
-    }
+    });
+  }
 
-    /**
-     * Atualiza o texto
-     * 
-     * @param txt texto
-     * 
-     */
-    public void setText(final String txt) {
-       
-    	mHandler.post(new Runnable() {
+  /**
+   * Cria e exibe uma mensagem
+   * 
+   * @param msg
+   * 
+   */
+  private void makeToast(final String msg) {
 
-            /*
-             * A transform filter that simply returns just the text captured by
-             * the first regular expression group.
-             */
-            TransformFilter idFilter = new TransformFilter() {
-                
-                public final String transformUrl(final Matcher match, String url) {
-                    return match.group(1);
-                }
-                
-            };
+    mHandler.post(new Runnable() {
 
-            
-            public void run() {
-            	
-                mViewURLButton.setVisibility(
-                        TextUtils.isEmpty(txt) ? View.INVISIBLE : View.VISIBLE);
-                
-                mFieldsConnectionsButton.setVisibility(TextUtils.isEmpty(txt) ? View.INVISIBLE
-                        : View.VISIBLE);
-                
-                mOutput.setVisibility(TextUtils.isEmpty(txt) ? View.INVISIBLE : View.VISIBLE);
-                
-                mBackParentButton.setVisibility(
-                        TextUtils.isEmpty(mParentObjectId) ? View.INVISIBLE : View.VISIBLE);
+      public void run() {
 
-                String convertedTxt = txt.replace("\\/", "/");
-                
-                mOutput.setText(convertedTxt);
-                
-                mScrollView.scrollTo(0, 0);
+        Toast.makeText(GraphExplorer.this, msg, Toast.LENGTH_SHORT).show();
+      }
 
-                Linkify.addLinks(mOutput, Linkify.WEB_URLS);
-            
-                /*
-                 * Linkify the object ids so they can be clicked. match pattern:
-                 * "id" : "objectid" (objectid can be int or int_int)
-                 */
-                
-                Pattern pattern = Pattern.compile("\"id\": \"(\\d*_?\\d*)\"");
-                
-                String scheme = "fbGraphEx://";
-                
-                Linkify.addLinks(mOutput, pattern, scheme, null, idFilter);
-                
-            }
-            
-        });
-    }
+    });
 
-    /**
-     * Cria e exibe uma mensagem
-     * 
-     * @param msg
-     * 
-     */
-    private void makeToast(final String msg) {
-    	
-        mHandler.post(new Runnable() {
-            
-            public void run() {
-                Toast.makeText(GraphExplorer.this, msg, Toast.LENGTH_SHORT).show();
-            }
-            
-        });
-        
-    }
-    
+  }
+
 }

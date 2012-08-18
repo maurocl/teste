@@ -1,3 +1,4 @@
+
 package com.facebook.android;
 
 import org.json.JSONArray;
@@ -34,498 +35,518 @@ import android.widget.Toast;
  * 
  */
 public class Places extends Activity implements OnItemClickListener {
-	
-	private Handler mHandler;
-	
-	private JSONObject location;
 
-	protected ListView placesList;
-	protected LocationManager lm;
-	
-	protected MyLocationListener locationListener;
+  private Handler mHandler;
 
-	protected static JSONArray jsonArray;
-	
-	final static double TIMES_SQUARE_LAT = 40.756;
-	final static double TIMES_SQUARE_LON = -73.987;
+  private JSONObject location;
 
-	protected ProgressDialog dialog;
+  protected ListView placesList;
 
-	/**
+  protected LocationManager lm;
+
+  protected MyLocationListener locationListener;
+
+  protected static JSONArray jsonArray;
+
+  final static double TIMES_SQUARE_LAT = 40.756;
+
+  final static double TIMES_SQUARE_LON = -73.987;
+
+  protected ProgressDialog dialog;
+
+  /**
 	 * 
 	 */
-	public void onCreate(Bundle savedInstanceState) {
-	
-		super.onCreate(savedInstanceState);
+  public void onCreate(Bundle savedInstanceState) {
 
-		mHandler = new Handler();
-		location = new JSONObject();
+    super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.places_list);
+    mHandler = new Handler();
+    location = new JSONObject();
 
-		Bundle extras = getIntent().getExtras();
-		
-		String default_or_new = extras.getString("LOCATION");
-		
-		if (default_or_new.equals("times_square")) {
-		
-			try {
-				location.put("latitude", new Double(TIMES_SQUARE_LAT));
-				location.put("longitude", new Double(TIMES_SQUARE_LON));
-			} catch (JSONException e) {
-			}
-			fetchPlaces();
-			
-		} else {
-			
-			getLocation();
-			
-		}
-		
-	}
+    setContentView(R.layout.places_list);
 
-	/**
-	 * Obtem a localização
-	 */
-	public void getLocation() {
-		/*
-		 * launch a new Thread to get new location
-		 */
-		new Thread() {
+    Bundle extras = getIntent().getExtras();
 
-			/**
+    String default_or_new = extras.getString("LOCATION");
+
+    if (default_or_new.equals("times_square")) {
+
+      try {
+        location.put("latitude", new Double(TIMES_SQUARE_LAT));
+        location.put("longitude", new Double(TIMES_SQUARE_LON));
+      } catch (JSONException e) {
+      }
+      fetchPlaces();
+
+    } else {
+
+      getLocation();
+
+    }
+
+  }
+
+  /**
+   * Obtem a localização
+   */
+  public void getLocation() {
+
+    /*
+     * launch a new Thread to get new location
+     */
+    new Thread() {
+
+      /**
 			 * 
 			 */
-			public void run() {
-				Looper.prepare();
-				dialog = ProgressDialog.show(Places.this, "",
-						getString(R.string.fetching_location), false, true,
-						new DialogInterface.OnCancelListener() {
+      public void run() {
 
-							public void onCancel(DialogInterface dialog) {
-								showToast("No location fetched.");
-							}
-						});
+        Looper.prepare();
+        dialog = ProgressDialog.show(Places.this, "",
+            getString(R.string.fetching_location), false, true,
+            new DialogInterface.OnCancelListener() {
 
-				if (lm == null) {
-					lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-				}
+              public void onCancel(DialogInterface dialog) {
 
-				if (locationListener == null) {
-					locationListener = new MyLocationListener();
-				}
+                showToast("No location fetched.");
+              }
+            });
 
-				Criteria criteria = new Criteria();
-				criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-				String provider = lm.getBestProvider(criteria, true);
-				if (provider != null && lm.isProviderEnabled(provider)) {
-					lm.requestLocationUpdates(provider, 1, 0, locationListener,
-							Looper.getMainLooper());
-				} else {
-					/*
-					 * GPS not enabled, prompt user to enable GPS in the
-					 * Location menu
-					 */
-					new AlertDialog.Builder(Places.this)
-							.setTitle(R.string.enable_gps_title)
-							.setMessage(getString(R.string.enable_gps))
-							.setPositiveButton(R.string.gps_settings,
-									new DialogInterface.OnClickListener() {
+        if (lm == null) {
+          lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        }
 
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											startActivityForResult(
-													new Intent(
-															android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
-													0);
-										}
-									})
-							.setNegativeButton(R.string.cancel,
-									new DialogInterface.OnClickListener() {
+        if (locationListener == null) {
+          locationListener = new MyLocationListener();
+        }
 
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											dialog.dismiss();
-											Places.this.finish();
-										}
-									}).show();
-				}
-				Looper.loop();
-			}
-		}.start();
-	}
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        String provider = lm.getBestProvider(criteria, true);
+        if (provider != null && lm.isProviderEnabled(provider)) {
+          lm.requestLocationUpdates(provider, 1, 0, locationListener,
+              Looper.getMainLooper());
+        } else {
+          /*
+           * GPS not enabled, prompt user to enable GPS in the Location menu
+           */
+          new AlertDialog.Builder(Places.this)
+              .setTitle(R.string.enable_gps_title)
+              .setMessage(getString(R.string.enable_gps))
+              .setPositiveButton(R.string.gps_settings,
+                  new DialogInterface.OnClickListener() {
 
-	/**
+                    public void onClick(
+                        DialogInterface dialog,
+                        int which) {
+
+                      startActivityForResult(
+                          new Intent(
+                              android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),
+                          0);
+                    }
+                  })
+              .setNegativeButton(R.string.cancel,
+                  new DialogInterface.OnClickListener() {
+
+                    public void onClick(
+                        DialogInterface dialog,
+                        int which) {
+
+                      dialog.dismiss();
+                      Places.this.finish();
+                    }
+                  }).show();
+        }
+        Looper.loop();
+      }
+    }.start();
+  }
+
+  /**
 	 * 
 	 */
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-		/*
-		 * User returning from the Location settings menu. try to fetch location
-		 * again.
-		 */
-		dialog.dismiss();
-		
-		getLocation();
-		
-	}
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-	/*
-	 * Fetch nearby places by providing the search type as 'place' within 1000
-	 * mtrs of the provided lat & lon
-	 */
-	private void fetchPlaces() {
-		
-		if (!isFinishing()) {
-		
-			dialog = ProgressDialog.show(Places.this, "",
-					getString(R.string.nearby_places), true, true,
-					new DialogInterface.OnCancelListener() {
+    /*
+     * User returning from the Location settings menu. try to fetch location
+     * again.
+     */
+    dialog.dismiss();
 
-						public void onCancel(DialogInterface dialog) {
-							showToast("No places fetched.");
-						}
-					});
-		}
-		
-		/*
-		 * Source tag: fetch_places_tag
-		 */
-		Bundle params = new Bundle();
-		
-		params.putString("type", "place");
-		
-		try {
-			params.putString("center", location.getString("latitude") + ","
-					+ location.getString("longitude"));
-		} catch (JSONException e) {
-			showToast("No places fetched.");
-			return;
-		}
-		
-		params.putString("distance", "1000");
-		
-		Utility.mAsyncRunner.request("search", params,	new placesRequestListener());
-		
-	}
+    getLocation();
 
-	/*
-	 * Callback after places are fetched.
-	 */
-	public class placesRequestListener extends BaseRequestListener {
+  }
 
-		/**
+  /*
+   * Fetch nearby places by providing the search type as 'place' within 1000
+   * mtrs of the provided lat & lon
+   */
+  private void fetchPlaces() {
+
+    if (!isFinishing()) {
+
+      dialog = ProgressDialog.show(Places.this, "",
+          getString(R.string.nearby_places), true, true,
+          new DialogInterface.OnCancelListener() {
+
+            public void onCancel(DialogInterface dialog) {
+
+              showToast("No places fetched.");
+            }
+          });
+    }
+
+    /*
+     * Source tag: fetch_places_tag
+     */
+    Bundle params = new Bundle();
+
+    params.putString("type", "place");
+
+    try {
+      params.putString("center", location.getString("latitude") + ","
+          + location.getString("longitude"));
+    } catch (JSONException e) {
+      showToast("No places fetched.");
+      return;
+    }
+
+    params.putString("distance", "1000");
+
+    Utility.mAsyncRunner.request("search", params, new placesRequestListener());
+
+  }
+
+  /*
+   * Callback after places are fetched.
+   */
+  public class placesRequestListener extends BaseRequestListener {
+
+    /**
 		 * 
 		 */
-		public void onComplete(final String response, final Object state) {
-			
-			Log.d("Facebook-FbAPIs", "Got response: " + response);
-			
-			dialog.dismiss();
+    public void onComplete(final String response, final Object state) {
 
-			try {
-				jsonArray = new JSONObject(response).getJSONArray("data");
-				if (jsonArray == null) {
-					showToast("Error: nearby places could not be fetched");
-					return;
-				}
-			} catch (JSONException e) {
-				showToast("Error: " + e.getMessage());
-				return;
-			}
-			
-			mHandler.post(new Runnable() {
+      Log.d("Facebook-FbAPIs", "Got response: " + response);
 
-				public void run() {
-					placesList = (ListView) findViewById(R.id.places_list);
-					placesList.setOnItemClickListener(Places.this);
-					placesList.setAdapter(new PlacesListAdapter(Places.this));
-				}
-				
-			});
+      dialog.dismiss();
 
-		}
+      try {
+        jsonArray = new JSONObject(response).getJSONArray("data");
+        if (jsonArray == null) {
+          showToast("Error: nearby places could not be fetched");
+          return;
+        }
+      } catch (JSONException e) {
+        showToast("Error: " + e.getMessage());
+        return;
+      }
 
-		/**
-		 * 
-		 * @param error
-		 */
-		public void onFacebookError(FacebookError error) {
-		
-			dialog.dismiss();
-			
-			showToast("Fetch Places Error: " + error.getMessage());
-			
-		}
-		
-	}
+      mHandler.post(new Runnable() {
 
-	/**
+        public void run() {
+
+          placesList = (ListView) findViewById(R.id.places_list);
+          placesList.setOnItemClickListener(Places.this);
+          placesList.setAdapter(new PlacesListAdapter(Places.this));
+        }
+
+      });
+
+    }
+
+    /**
+     * 
+     * @param error
+     */
+    public void onFacebookError(FacebookError error) {
+
+      dialog.dismiss();
+
+      showToast("Fetch Places Error: " + error.getMessage());
+
+    }
+
+  }
+
+  /**
 	 * 
 	 */
-	public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
-		
-		if (!Utility.mFacebook.isSessionValid()) {
-		
-			Util.showAlert(this, "Warning", "You must first log in.");
-		
-		} else {
-		
-			try {
-			
-				final String message = "Check-in from the "
-						+ getString(R.string.app_name);
-				
-				final String name = jsonArray.getJSONObject(position)
-						.getString("name");
-				
-				final String placeID = jsonArray.getJSONObject(position)
-						.getString("id");
-				
-				new AlertDialog.Builder(this)
-						.setTitle(R.string.check_in_title)
-						.setMessage(
-								String.format(getString(R.string.check_in_at),
-										name))
-						.setPositiveButton(R.string.checkin,
-								new DialogInterface.OnClickListener() {
-									/*
-									 * Source tag: check_in_tag Check-in user at
-									 * the selected location posting to the
-									 * me/checkins endpoint. More info here:
-									 * https://developers.facebook
-									 * .com/docs/reference/api/user/ - checkins
-									 */
+  public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
 
-									public void onClick(DialogInterface dialog,	int which) {
-										
-										Bundle params = new Bundle();
-										
-										params.putString("place", placeID);
-										params.putString("message", message);
-										params.putString("coordinates",	location.toString());
-										
-										Utility.mAsyncRunner.request(
-												"me/checkins", params, "POST",
-												new placesCheckInListener(),
-												null);
-									}
-									
-								}).setNegativeButton(R.string.cancel, null)
-						.show();
-			
-			} catch (JSONException e) {
-			
-				showToast("Error: " + e.getMessage());
-				
-			}
-			
-		}
-		
-	}
+    if (!Utility.mFacebook.isSessionValid()) {
 
-	/**
+      Util.showAlert(this, "Warning", "You must first log in.");
+
+    } else {
+
+      try {
+
+        final String message = "Check-in from the "
+            + getString(R.string.app_name);
+
+        final String name = jsonArray.getJSONObject(position)
+            .getString("name");
+
+        final String placeID = jsonArray.getJSONObject(position)
+            .getString("id");
+
+        new AlertDialog.Builder(this)
+            .setTitle(R.string.check_in_title)
+            .setMessage(
+                String.format(getString(R.string.check_in_at),
+                    name))
+            .setPositiveButton(R.string.checkin,
+                new DialogInterface.OnClickListener() {
+
+                  /*
+                   * Source tag: check_in_tag Check-in user at the selected
+                   * location posting to the me/checkins endpoint. More info
+                   * here: https://developers.facebook
+                   * .com/docs/reference/api/user/ - checkins
+                   */
+
+                  public void onClick(DialogInterface dialog, int which) {
+
+                    Bundle params = new Bundle();
+
+                    params.putString("place", placeID);
+                    params.putString("message", message);
+                    params.putString("coordinates", location.toString());
+
+                    Utility.mAsyncRunner.request(
+                        "me/checkins", params, "POST",
+                        new placesCheckInListener(),
+                        null);
+                  }
+
+                }).setNegativeButton(R.string.cancel, null)
+            .show();
+
+      } catch (JSONException e) {
+
+        showToast("Error: " + e.getMessage());
+
+      }
+
+    }
+
+  }
+
+  /**
 	 * 
 	 * 
 	 * 
 	 */
-	public class placesCheckInListener extends BaseRequestListener {
+  public class placesCheckInListener extends BaseRequestListener {
 
-		/**
+    /**
 		 * 
 		 */
-		public void onComplete(final String response, final Object state) {
-			showToast("API Response: " + response);
-		}
+    public void onComplete(final String response, final Object state) {
 
-		/**
+      showToast("API Response: " + response);
+    }
+
+    /**
+     * 
+     * @param error
+     */
+    public void onFacebookError(FacebookError error) {
+
+      dialog.dismiss();
+      showToast("Check-in Error: " + error.getMessage());
+    }
+
+  }
+
+  /**
+   * 
+   * @param msg
+   */
+  public void showToast(final String msg) {
+
+    mHandler.post(new Runnable() {
+
+      public void run() {
+
+        Toast toast = Toast.makeText(Places.this, msg, Toast.LENGTH_LONG);
+        toast.show();
+      }
+
+    });
+
+  }
+
+  /**
+   * Definition of the list adapter
+   */
+  public class PlacesListAdapter extends BaseAdapter {
+
+    private LayoutInflater mInflater;
+
+    /**
 		 * 
-		 * @param error
 		 */
-		public void onFacebookError(FacebookError error) {
-			dialog.dismiss();
-			showToast("Check-in Error: " + error.getMessage());
-		}
-		
-	}
+    Places placesList;
 
-	/**
+    /**
+     * 
+     * @param context
+     */
+    public PlacesListAdapter(Context context) {
+
+      mInflater = LayoutInflater.from(context);
+    }
+
+    /**
+		 * 
+		 */
+    public int getCount() {
+
+      return jsonArray.length();
+    }
+
+    /**
+		 * 
+		 */
+    public Object getItem(int position) {
+
+      return null;
+    }
+
+    /**
+		 * 
+		 */
+    public long getItemId(int position) {
+
+      return 0;
+    }
+
+    /**
+		 * 
+		 */
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+      JSONObject jsonObject = null;
+
+      try {
+        jsonObject = jsonArray.getJSONObject(position);
+      } catch (JSONException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
+
+      View hView = convertView;
+
+      if (convertView == null) {
+
+        hView = mInflater.inflate(R.layout.place_item, null);
+
+        ViewHolder holder = new ViewHolder();
+
+        holder.name = (TextView) hView.findViewById(R.id.place_name);
+        holder.location = (TextView) hView.findViewById(R.id.place_location);
+
+        hView.setTag(holder);
+
+      }
+
+      ViewHolder holder = (ViewHolder) hView.getTag();
+
+      try {
+        holder.name.setText(jsonObject.getString("name"));
+      } catch (JSONException e) {
+        holder.name.setText("");
+      }
+
+      try {
+        String location = jsonObject.getJSONObject("location")
+            .getString("street")
+            + ", "
+            + jsonObject.getJSONObject("location")
+                .getString("city")
+            + ", "
+            + jsonObject.getJSONObject("location").getString(
+                "state");
+
+        holder.location.setText(location);
+
+      } catch (JSONException e) {
+        holder.location.setText("");
+      }
+
+      return hView;
+
+    }
+
+  }
+
+  /**
+   * 
+   * Nome e Localização
+   * 
+   */
+  class ViewHolder {
+
+    TextView name;
+
+    TextView location;
+  }
+
+  /**
 	 * 
-	 * @param msg
-	 */
-	public void showToast(final String msg) {
-
-		mHandler.post(new Runnable() {
-
-			public void run() {
-				Toast toast = Toast.makeText(Places.this, msg, Toast.LENGTH_LONG);
-				toast.show();
-			}
-			
-		});
-
-	}
-
-	/**
-	 * Definition of the list adapter
-	 */
-	public class PlacesListAdapter extends BaseAdapter {
-		
-		private LayoutInflater mInflater;
-		
-		/**
-		 * 
-		 */
-		Places placesList;
-
-		/**
-		 * 
-		 * @param context
-		 */
-		public PlacesListAdapter(Context context) {
-			mInflater = LayoutInflater.from(context);
-		}
-
-		/**
-		 * 
-		 */
-		public int getCount() {
-			return jsonArray.length();
-		}
-
-		/**
-		 * 
-		 */
-		public Object getItem(int position) {
-			return null;
-		}
-
-		/**
-		 * 
-		 */
-		public long getItemId(int position) {
-			return 0;
-		}
-
-		/**
-		 * 
-		 */
-		public View getView(int position, View convertView, ViewGroup parent) {
-		
-			JSONObject jsonObject = null;
-			
-			try {
-				jsonObject = jsonArray.getJSONObject(position);
-			} catch (JSONException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			View hView = convertView;
-			
-			if (convertView == null) {
-			
-				hView = mInflater.inflate(R.layout.place_item, null);
-				
-				ViewHolder holder = new ViewHolder();
-				
-				holder.name = (TextView) hView.findViewById(R.id.place_name);
-				holder.location = (TextView) hView.findViewById(R.id.place_location);
-				
-				hView.setTag(holder);
-				
-			}
-
-			ViewHolder holder = (ViewHolder) hView.getTag();
-			
-			try {
-				holder.name.setText(jsonObject.getString("name"));
-			} catch (JSONException e) {
-				holder.name.setText("");
-			}
-			
-			try {
-				String location = jsonObject.getJSONObject("location")
-						.getString("street")
-						+ ", "
-						+ jsonObject.getJSONObject("location")
-								.getString("city")
-						+ ", "
-						+ jsonObject.getJSONObject("location").getString(
-								"state");
-			
-				holder.location.setText(location);
-				
-			} catch (JSONException e) {
-				holder.location.setText("");
-			}
-			
-			return hView;
-			
-		}
-
-	}
-
-	/**
 	 * 
-	 * Nome e Localização
 	 *
 	 */
-	class ViewHolder {
-		TextView name;
-		TextView location;
-	}
+  class MyLocationListener implements LocationListener {
 
-	/**
-	 * 
-	 * 
-	 *
-	 */
-	class MyLocationListener implements LocationListener {
+    public void onLocationChanged(Location loc) {
 
-		public void onLocationChanged(Location loc) {
-		
-			dialog.dismiss();
-			
-			if (loc != null) {
-			
-				try {
-					location.put("latitude", new Double(loc.getLatitude()));
-					location.put("longitude", new Double(loc.getLongitude()));
-				} catch (JSONException e) {
-				}
-				
-				showToast("Location acquired: "
-						+ String.valueOf(loc.getLatitude()) + " "
-						+ String.valueOf(loc.getLongitude()));
-				
-				lm.removeUpdates(this);
-				
-				fetchPlaces();
-				
-			}
-		}
+      dialog.dismiss();
 
-		/**
+      if (loc != null) {
+
+        try {
+          location.put("latitude", new Double(loc.getLatitude()));
+          location.put("longitude", new Double(loc.getLongitude()));
+        } catch (JSONException e) {
+        }
+
+        showToast("Location acquired: "
+            + String.valueOf(loc.getLatitude()) + " "
+            + String.valueOf(loc.getLongitude()));
+
+        lm.removeUpdates(this);
+
+        fetchPlaces();
+
+      }
+    }
+
+    /**
 		 * 
 		 */
-		public void onProviderDisabled(String provider) {
-		}
+    public void onProviderDisabled(String provider) {
 
-		/**
+    }
+
+    /**
 		 * 
 		 */
-		public void onProviderEnabled(String provider) {
-		}
+    public void onProviderEnabled(String provider) {
 
-		/**
+    }
+
+    /**
 		 * 
 		 */
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-		}
-		
-	}
-	
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+  }
+
 }

@@ -1,3 +1,4 @@
+
 package com.facebook.android;
 
 import org.json.JSONException;
@@ -21,284 +22,311 @@ import android.widget.TextView;
 /**
  * Diálogo do resultado do upload de foto
  * 
- *
+ * 
  */
 public class UploadPhotoResultDialog extends Dialog {
 
-	private String response, photo_id;
-	
-	private TextView mOutput, mUsefulTip;
-	
-	private Button mViewPhotoButton, mTagPhotoButton;
-	
-	private ImageView mUploadedPhoto;
-	
-	private Activity activity;
-	
-	private ProgressDialog dialog;
-	
-	private boolean hidePhoto = false;
-	
-	private Handler mHandler;
+  private String response, photo_id;
 
-	/**
-	 * Construtor
-	 * 
-	 * @param activity
-	 * @param title
-	 * @param response
-	 * 
-	 */
-	public UploadPhotoResultDialog(Activity activity, String title, String response) {
+  private TextView mOutput, mUsefulTip;
 
-		super(activity);
+  private Button mViewPhotoButton, mTagPhotoButton;
 
-		this.activity = activity;
-		this.response = response;
+  private ImageView mUploadedPhoto;
 
-		setTitle(title);
+  private Activity activity;
 
-	}
+  private ProgressDialog dialog;
 
-	/**
-	 * 
-	 */
-	protected void onCreate(Bundle savedInstanceState) {
+  private boolean hidePhoto = false;
 
-		super.onCreate(savedInstanceState);
+  private Handler mHandler;
 
-		mHandler = new Handler();
+  /**
+   * Construtor
+   * 
+   * @param activity
+   * @param title
+   * @param response
+   * 
+   */
+  public UploadPhotoResultDialog(Activity activity, String title, String response) {
 
-		setContentView(R.layout.upload_photo_response);
+    super(activity);
 
-		LayoutParams params = getWindow().getAttributes();
+    this.activity = activity;
+    this.response = response;
 
-		params.width = LayoutParams.FILL_PARENT;
-		params.height = LayoutParams.FILL_PARENT;
+    setTitle(title);
 
-		getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+  }
 
-		mOutput           = (TextView)  findViewById(R.id.apiOutput);
-		mUsefulTip        = (TextView)  findViewById(R.id.usefulTip);
-		mViewPhotoButton  = (Button)    findViewById(R.id.view_photo_button);
-		mTagPhotoButton   = (Button)    findViewById(R.id.tag_photo_button);
-		mUploadedPhoto    = (ImageView) findViewById(R.id.uploadedPhoto);
-
-		JSONObject json;
-
-		try {
-
-			json = Util.parseJson(response);
-
-			// identificador da foto
-			final String photo_id = json.getString("id");
-
-			this.photo_id = photo_id;
-
-			mOutput.setText(json.toString(2));
-
-			mUsefulTip.setText(activity.getString(R.string.photo_tip));
-
-			Linkify.addLinks(mUsefulTip, Linkify.WEB_URLS);
-
-			mViewPhotoButton.setOnClickListener(new View.OnClickListener() {
-
-				public void onClick(View v) {
-
-					if (hidePhoto) {
-
-						mViewPhotoButton.setText(R.string.view_photo);
-						hidePhoto = false;
-						mUploadedPhoto.setImageBitmap(null);
-
-					} else {
-
-						hidePhoto = true;
-						mViewPhotoButton.setText(R.string.hide_photo);
-
-						/*
-						 * Source tag: view_photo_tag
-						 */
-						Bundle params = new Bundle();
-						params.putString("fields", "picture");
-						dialog = ProgressDialog.show(activity, "", activity.getString(R.string.please_wait), true, true);
-
-						dialog.show();
-
-						Utility.mAsyncRunner.request(photo_id, params, new ViewPhotoRequestListener());
-
-					}
-
-				}
-			});
-
-			mTagPhotoButton.setOnClickListener(new View.OnClickListener() {
-
-				public void onClick(View v) {
-					/*
-					 * Source tag: tag_photo_tag
-					 */
-					setTag();
-				}
-			});
-
-		} catch (JSONException e) {
-			setText(activity.getString(R.string.exception) + e.getMessage());
-		} catch (FacebookError e) {
-			setText(activity.getString(R.string.facebook_error) + e.getMessage());
-		}
-	}
-
-	/**
+  /**
 	 * 
 	 */
-	public void setTag() {
+  protected void onCreate(Bundle savedInstanceState) {
 
-		String relativePath = photo_id + "/tags/" + Utility.userUID;
+    super.onCreate(savedInstanceState);
 
-		Bundle params = new Bundle();
+    mHandler = new Handler();
 
-		params.putString("x", "5");
-		params.putString("y", "5");
+    setContentView(R.layout.upload_photo_response);
 
-		Utility.mAsyncRunner.request(relativePath, params, "POST", new TagPhotoRequestListener(), null);
+    LayoutParams params = getWindow().getAttributes();
 
-	}
+    params.width = LayoutParams.FILL_PARENT;
+    params.height = LayoutParams.FILL_PARENT;
 
-	/**
-	 * Listener de Reqisição de Visualização da Foto 
-	 * 
-	 * 
+    getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+
+    mOutput          = (TextView) findViewById(R.id.apiOutput);
+    mUsefulTip       = (TextView) findViewById(R.id.usefulTip);
+    mViewPhotoButton = (Button) findViewById(R.id.view_photo_button);
+    mTagPhotoButton  = (Button) findViewById(R.id.tag_photo_button);
+    mUploadedPhoto   = (ImageView) findViewById(R.id.uploadedPhoto);
+
+    JSONObject json;
+
+    try {
+
+      // obtem o objeto JSON a partir da response
+      json = Util.parseJson(response);
+
+      // identificador da foto
+      final String photo_id = json.getString("id");
+
+      // atualiza o id da foto
+      this.photo_id = photo_id;
+
+      // atualiza a mensagem
+      mOutput.setText(json.toString(2));
+
+      // atualiza o tip da foto
+      mUsefulTip.setText(activity.getString(R.string.photo_tip));
+
+      // Linkify take a piece of text and a regular expression and turns all of the regex 
+      // matches in the text into clickable links
+      Linkify.addLinks(mUsefulTip, Linkify.WEB_URLS);
+
+      // tratador de eventos do botão mViewPhotoButton
+      mViewPhotoButton.setOnClickListener(new View.OnClickListener() {
+
+        public void onClick(View v) {
+
+          if (hidePhoto) {
+
+            mViewPhotoButton.setText(R.string.view_photo);
+            hidePhoto = false;
+            mUploadedPhoto.setImageBitmap(null);
+
+          } else {
+
+            hidePhoto = true;
+            
+            mViewPhotoButton.setText(R.string.hide_photo);
+
+            /*
+             * Source tag: view_photo_tag
+             */
+            Bundle params = new Bundle();
+            
+            params.putString("fields", "picture");
+            
+            dialog = ProgressDialog.show(activity, "", activity.getString(R.string.please_wait), true, true);
+
+            // exibe a caixa de diálogo de progresso da operação
+            dialog.show();
+
+            // executa uma requisição passando o id da foto, os parâmetros e o listener associado a essa requisição
+            Utility.mAsyncRunner.request(photo_id, params, new ViewPhotoRequestListener());
+
+          }
+
+        }
+      });
+
+      // Tratamento de eventos do botão mTagPhotoButton
+      mTagPhotoButton.setOnClickListener(new View.OnClickListener() {
+
+        public void onClick(View v) {
+
+          /*
+           * Source tag: tag_photo_tag
+           */
+          setTag();
+          
+        }
+        
+      });
+
+    } catch (JSONException e) {
+      
+      setText(activity.getString(R.string.exception) + e.getMessage());
+      
+    } catch (FacebookError e) {
+      
+      setText(activity.getString(R.string.facebook_error) + e.getMessage());
+      
+    }
+    
+  }
+
+  /**
+	 * Estabelece um tag 
 	 */
-	public class ViewPhotoRequestListener extends BaseRequestListener {
+  public void setTag() {
 
-		/**
-		 * Ação executada com sucesso
-		 */
-		public void onComplete(final String response, final Object state) {
+    String relativePath = photo_id + "/tags/" + Utility.userUID;
 
-			try {
+    Bundle params = new Bundle();
 
-				JSONObject json = Util.parseJson(response);
+    params.putString("x", "5");
+    params.putString("y", "5");
 
-				final String pictureURL = json.getString("picture");
+    // executa uma requisção
+    Utility.mAsyncRunner.request(relativePath, params, "POST", new TagPhotoRequestListener(), null);
 
-				if (TextUtils.isEmpty(pictureURL)) {
+  }
 
-					setText("Error getting \'picture\' field of the photo");
+  /**
+   * Listener de Reqisição de Visualização da Foto
+   * 
+   * 
+   */
+  public class ViewPhotoRequestListener extends BaseRequestListener {
 
-				} else {
+    /**
+     * Ação executada com sucesso
+     */
+    public void onComplete(final String response, final Object state) {
 
-					mHandler.post(new Runnable() {
+      try {
 
-						public void run() {
-							new FetchImage().execute(pictureURL);
-						}
+        JSONObject json = Util.parseJson(response);
 
-					});
-				}
-			} catch (JSONException e) {
+        final String pictureURL = json.getString("picture");
 
-				dialog.dismiss();
-				setText(activity.getString(R.string.exception) + e.getMessage());
+        if (TextUtils.isEmpty(pictureURL)) {
 
-			} catch (FacebookError e) {
+          setText("Error getting \'picture\' field of the photo");
 
-				dialog.dismiss();
-				setText(activity.getString(R.string.facebook_error) + e.getMessage());
+        } else {
 
-			}
+          mHandler.post(new Runnable() {
 
-		}
+            public void run() {
 
-		/**
-		 * 
-		 * @param error
-		 */
-		public void onFacebookError(FacebookError error) {
+              new FetchImage().execute(pictureURL);
+            }
 
-			dialog.dismiss();
-			setText(activity.getString(R.string.facebook_error) + error.getMessage());
+          });
+        }
+      } catch (JSONException e) {
 
-		}
+        dialog.dismiss();
+        setText(activity.getString(R.string.exception) + e.getMessage());
 
-	}
+      } catch (FacebookError e) {
 
-	/**
-	 * Listener de Requisição do Tag da Foto
-	 * 
-	 * 
-	 */
-	public class TagPhotoRequestListener extends BaseRequestListener {
+        dialog.dismiss();
+        setText(activity.getString(R.string.facebook_error) + e.getMessage());
 
-		/**
-		 * 
-		 */
-		public void onComplete(final String response, final Object state) {
+      }
 
-			if (response.equals("true")) {
+    }
 
-				String message = "User tagged in photo at (5, 5)" + "\n";
-				message += "Api Response: " + response;
-				setText(message);
+    /**
+     * 
+     * @param error
+     */
+    public void onFacebookError(FacebookError error) {
 
-			} else {
+      dialog.dismiss();
+      setText(activity.getString(R.string.facebook_error) + error.getMessage());
 
-				setText("User could not be tagged.");
+    }
 
-			}
+  }
 
-		}
+  /**
+   * Listener de Requisição do Tag da Foto
+   * 
+   * 
+   */
+  public class TagPhotoRequestListener extends BaseRequestListener {
 
-		/**
-		 * 
-		 * @param error
-		 */
-		public void onFacebookError(FacebookError error) {
-			setText(activity.getString(R.string.facebook_error) + error.getMessage());
-		}
-
-	}
-
-	/**
-	 * 
-	 * @param txt
-	 */
-	public void setText(final String txt) {
-
-		mHandler.post(new Runnable() {
-
-			public void run() {
-				mOutput.setText(txt);
-			}
-
-		});
-
-	}
-
-	/**
-	 * Busca uma imagem
-	 * 
-	 * 
-	 * 
-	 */
-	private class FetchImage extends AsyncTask<String, Void, Bitmap> {
-
-		/**
-		 * Obtem um bitmap
-		 */
-		protected Bitmap doInBackground(String... urls) {
-			return Utility.getBitmap(urls[0]);
-		}
-
-		/**
+    /**
 		 * 
 		 */
-		protected void onPostExecute(Bitmap result) {
-			dialog.dismiss();
-			mUploadedPhoto.setImageBitmap(result);
-		}
+    public void onComplete(final String response, final Object state) {
 
-	}
+      if (response.equals("true")) {
+
+        String message = "User tagged in photo at (5, 5)" + "\n";
+        message += "Api Response: " + response;
+        setText(message);
+
+      } else {
+
+        setText("User could not be tagged.");
+
+      }
+
+    }
+
+    /**
+     * 
+     * @param error
+     */
+    public void onFacebookError(FacebookError error) {
+
+      setText(activity.getString(R.string.facebook_error) + error.getMessage());
+    }
+
+  }
+
+  /**
+   * 
+   * @param txt
+   */
+  public void setText(final String txt) {
+
+    mHandler.post(new Runnable() {
+
+      public void run() {
+
+        mOutput.setText(txt);
+      }
+
+    });
+
+  }
+
+  /**
+   * Busca uma imagem
+   * 
+   * 
+   * 
+   */
+  private class FetchImage extends AsyncTask<String, Void, Bitmap> {
+
+    /**
+     * Obtem um bitmap
+     */
+    protected Bitmap doInBackground(String... urls) {
+
+      return Utility.getBitmap(urls[0]);
+    }
+
+    /**
+		 * 
+		 */
+    protected void onPostExecute(Bitmap result) {
+
+      dialog.dismiss();
+      mUploadedPhoto.setImageBitmap(result);
+    }
+
+  }
 
 }

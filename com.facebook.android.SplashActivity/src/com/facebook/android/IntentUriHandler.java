@@ -1,3 +1,4 @@
+
 package com.facebook.android;
 
 import android.app.Activity;
@@ -12,45 +13,44 @@ import android.os.Bundle;
  */
 public class IntentUriHandler extends Activity {
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		
-		super.onCreate(savedInstanceState);
-		
-		// Obtém informações sobre a intent chamadora
-		Intent incomingIntent = getIntent();
-		
-		if (incomingIntent != null) {
-		
-			// intent não é nula
-			
-			// obtem os dados da intent (no caso é uma Uri)
-			Uri intentUri = incomingIntent.getData();
-	
-			
-			if (intentUri != null) {
-				
-				// Uri não é nula
-				
-				// atualiza o objeto com o nome do host
-				Utility.objectID = intentUri.getHost();
-				
-				// cria uma nova intent para execução do GraphExplorer
-				Intent graphIntent = new Intent(getApplicationContext(), GraphExplorer.class);
-				
-				// atualiza os flags da intent
-				graphIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-				
-				// lança a activity
-				startActivity(graphIntent);
-				
-			}
-			
-			// finaliza a activity correnre
-			finish();
-			
-		}
-		
-	}
-	
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+
+    super.onCreate(savedInstanceState);
+
+    // Obtém informações sobre a intent chamadora
+    Intent incomingIntent = getIntent();
+
+    if (incomingIntent != null) {
+
+      // intent não é nula
+
+      // obtem os dados da intent (no caso é uma Uri)
+      Uri intentUri = incomingIntent.getData();
+
+      if (intentUri != null) {
+
+        // Uri não é nula
+
+        // atualiza o objeto com o nome do host
+        Utility.objectID = intentUri.getHost();
+
+        // cria uma nova intent para execução do GraphExplorer
+        Intent graphIntent = new Intent(getApplicationContext(), GraphExplorer.class);
+
+        // atualiza os flags da intent
+        graphIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        // lança a activity
+        startActivity(graphIntent);
+
+      }
+
+      // finaliza a activity correnre
+      finish();
+
+    }
+
+  }
+
 }

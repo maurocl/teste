@@ -1,17 +1,17 @@
 /*
  * Copyright 2004 - Present Facebook, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package com.facebook.android;
@@ -52,836 +52,860 @@ import com.facebook.android.SessionEvents.LogoutListener;
  */
 public class Hackbook extends Activity implements OnItemClickListener {
 
-	/*
-	 * Your Facebook Application ID must be set before running this example See
-	 * http://www.facebook.com/developers/createapp.php
-	 */
-	// public static final String APP_ID = "157111564357680";
-	public static final String APP_ID = "304628302969929";
+  /*
+   * Your Facebook Application ID must be set before running this example See
+   * http://www.facebook.com/developers/createapp.php
+   */
+  // public static final String APP_ID = "157111564357680";
+  public static final String APP_ID = "304628302969929";
 
-	// botão de login
-	private LoginButton mLoginButton;
+  // botão de login
+  private LoginButton mLoginButton;
 
-	private TextView mText;
+  private TextView mText;
 
-	private ImageView mUserPic;
+  private ImageView mUserPic;
 
-	private Handler mHandler;
+  private Handler mHandler;
 
-	// caixa de diálogo de progresso
-	ProgressDialog dialog;
+  // caixa de diálogo de progresso
+  ProgressDialog dialog;
 
-	final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
-	final static int PICK_EXISTING_PHOTO_RESULT_CODE = 1;
+  final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
-	private String graph_or_fql;
+  final static int PICK_EXISTING_PHOTO_RESULT_CODE = 1;
 
-	private ListView list;
+  private String graph_or_fql;
 
-	/**
-	 * Itens principais
-	 */
-	String[] main_items = { "Update Status", "App Requests", "Get Friends", "Upload Photo", "Place Check-in", "Run FQL Query",
-			"Graph API Explorer", "Token Refresh" };
+  private ListView list;
 
-	/**
-	 * Permissões
-	 */
-	String[] permissions = { "offline_access", "publish_stream", "user_photos", "publish_checkins", "photo_upload" };
+  /**
+   * Itens principais
+   */
+  String[] main_items = { "Update Status", "App Requests", "Get Friends", "Upload Photo", "Place Check-in", "Run FQL Query",
+      "Graph API Explorer", "Token Refresh" };
 
-	/** Called when the activity is first created. */
+  /**
+   * Permissões
+   */
+  String[] permissions = { "offline_access", "publish_stream", "user_photos", "publish_checkins", "photo_upload" };
 
-	public void onCreate(Bundle savedInstanceState) {
+  /** Called when the activity is first created. */
 
-		super.onCreate(savedInstanceState);
+  public void onCreate(Bundle savedInstanceState) {
 
-		if (APP_ID == null) {
-			Util.showAlert(this, "Warning", "Facebook Applicaton ID must be " + "specified before running this example: see FbAPIs.java");
-			return;
-		}
+    super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.main);
+    if (APP_ID == null) {
+      Util.showAlert(this, "Warning", "Facebook Applicaton ID must be " + "specified before running this example: see FbAPIs.java");
+      return;
+    }
 
-		// Default constructor associates this handler with the queue for the
-		// current thread.
-		// If there isn't one, this handler won't be able to receive messages.
-		mHandler = new Handler();
+    setContentView(R.layout.main);
 
-		mText = (TextView) Hackbook.this.findViewById(R.id.txt);
-		mUserPic = (ImageView) Hackbook.this.findViewById(R.id.user_pic);
+    // Default constructor associates this handler with the queue for the
+    // current thread.
+    // If there isn't one, this handler won't be able to receive messages.
+    mHandler = new Handler();
 
-		// Create the Facebook Object using the app id.
-		Utility.mFacebook = new Facebook(APP_ID);
+    mText = (TextView) Hackbook.this.findViewById(R.id.txt);
+    mUserPic = (ImageView) Hackbook.this.findViewById(R.id.user_pic);
 
-		// Instantiate the asyncrunner object for asynchronous api calls.
-		Utility.mAsyncRunner = new AsyncFacebookRunner(Utility.mFacebook);
+    // Create the Facebook Object using the app id.
+    Utility.mFacebook = new Facebook(APP_ID);
 
-		mLoginButton = (LoginButton) findViewById(R.id.login);
+    // Instantiate the AsyncRunner object for asynchronous api calls.
+    Utility.mAsyncRunner = new AsyncFacebookRunner(Utility.mFacebook);
 
-		// restore session if one exists
-		SessionStore.restore(Utility.mFacebook, this);
+    mLoginButton = (LoginButton) findViewById(R.id.login);
 
-		// adiciona um listener para cuidar das autorizações
-		SessionEvents.addAuthListener(new FbAPIsAuthListener());
+    // restore session if one exists
+    SessionStore.restore(Utility.mFacebook, this);
 
-		// adciona um novo listener para cuidar do precesso de logout
-		SessionEvents.addLogoutListener(new FbAPIsLogoutListener());
+    // adiciona um listener para cuidar das autorizações
+    SessionEvents.addAuthListener(new FbAPIsAuthListener());
 
-		/*
-		 * Source Tag: login_tag
-		 */
-		mLoginButton.init(this, AUTHORIZE_ACTIVITY_RESULT_CODE, Utility.mFacebook, permissions);
+    // adciona um novo listener para cuidar do precesso de logout
+    SessionEvents.addLogoutListener(new FbAPIsLogoutListener());
 
-		if (Utility.mFacebook.isSessionValid()) {
-			requestUserData();
-		}
+    /*
+     * Source Tag: login_tag
+     */
+    mLoginButton.init(this, AUTHORIZE_ACTIVITY_RESULT_CODE, Utility.mFacebook, permissions);
 
-		list = (ListView) findViewById(R.id.main_list);
+    if (Utility.mFacebook.isSessionValid()) {
+      requestUserData();
+    }
 
-		list.setOnItemClickListener(this);
+    list = (ListView) findViewById(R.id.main_list);
 
-		list.setAdapter(new ArrayAdapter<String>(this, R.layout.main_list_item, main_items));
+    list.setOnItemClickListener(this);
 
-	}
+    list.setAdapter(new ArrayAdapter<String>(this, R.layout.main_list_item, main_items));
 
-	/**
+  }
+
+  /**
 	 * 
 	 */
-	public void onResume() {
+  public void onResume() {
 
-		super.onResume();
+    super.onResume();
 
-		// se o Facebook ainda não estiver sido instanciado
-		if (Utility.mFacebook != null) {
+    // se o Facebook ainda não estiver sido instanciado
+    if (Utility.mFacebook != null) {
 
-			// se a sessão não for válida
-			if (!Utility.mFacebook.isSessionValid()) {
+      // se a sessão não for válida
+      if (!Utility.mFacebook.isSessionValid()) {
 
-				// exibe mensagem indicando que o usuário foi logged out
-				mText.setText("You are logged out! ");
+        // exibe mensagem indicando que o usuário foi logged out
+        mText.setText("You are logged out! ");
 
-				// remove a imagem do usuário
-				mUserPic.setImageBitmap(null);
+        // remove a imagem do usuário
+        mUserPic.setImageBitmap(null);
 
-			} else {
+      } else {
 
-				// sessão está válida
+        // sessão está válida
 
-				//
-				Utility.mFacebook.extendAccessTokenIfNeeded(this, null);
+        //
+        Utility.mFacebook.extendAccessTokenIfNeeded(this, null);
 
-			}
+      }
 
-		}
+    }
 
-	}
+  }
 
-	/**
-	 * Trata o callback das activities.
-	 * 
-	 * @param requestCode
-	 * @param resultCode
-	 * @param data
-	 * 
-	 */
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  /**
+   * Trata o callback das activities.
+   * 
+   * @param requestCode código associado a requisição
+   * @param resultCode resultado da execução da activity
+   * @param data intent contendo os dados retornados
+   * 
+   */
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-		switch (requestCode) {
-		/*
-		 * if this is the activity result from authorization flow, do a call back to
-		 * authorizeCallback Source Tag: login_tag
-		 */
-		case AUTHORIZE_ACTIVITY_RESULT_CODE: {
-			Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
-			break;
-		}
+    switch (requestCode) {
+    /*
+     * if this is the activity result from authorization flow, do a call back to
+     * authorizeCallback Source Tag: login_tag
+     */
+      case AUTHORIZE_ACTIVITY_RESULT_CODE: {
+        Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
+        break;
+      }
 
-		/*
-		 * if this is the result for a photo picker from the gallery, upload the
-		 * image after scaling it. You can use the Utility.scaleImage() function for
-		 * scaling
-		 */
-		case PICK_EXISTING_PHOTO_RESULT_CODE: {
+      /*
+       * if this is the result for a photo picker from the gallery, upload the
+       * image after scaling it. You can use the Utility.scaleImage() function
+       * for scaling
+       */
+      case PICK_EXISTING_PHOTO_RESULT_CODE: {
 
-			if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
 
-				// Retrieve data this intent is operating on
-				Uri photoUri = data.getData();
+          // Retrieve data this intent is operating on
+          // recupera o dado que esta intent está operando
+          Uri photoUri = data.getData();
 
-				if (photoUri != null) {
+          if (photoUri != null) {
 
-					// há uma foto selecionada
+            // há uma foto selecionada
 
-					Bundle params = new Bundle();
+            Bundle params = new Bundle();
 
-					try {
-						// Inserts a byte array value into the mapping of this Bundle,
-						// replacing any existing value for the given key.
-						// Either key or value may be null.
-						params.putByteArray("photo", Utility.scaleImage(getApplicationContext(), photoUri));
+            try {
+              // Inserts a byte array value into the mapping of this Bundle,
+              // replacing any existing value for the given key.
+              // Either key or value may be null.
+              params.putByteArray("photo", Utility.scaleImage(getApplicationContext(), photoUri));
 
-					} catch (IOException e) {
+            } catch (IOException e) {
 
-						e.printStackTrace();
+              e.printStackTrace();
 
-					}
+            }
 
-					params.putString("caption", "FbAPIs Sample App photo upload");
+            // adiciona o 'caption' da foto
+            params.putString("caption", "FbAPIs Sample App photo upload");
 
-					Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
+            // executa um post da foto
+            Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
 
-				} else {
+          } else {
 
-					Toast.makeText(getApplicationContext(), "Error selecting image from the gallery.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error selecting image from the gallery.", Toast.LENGTH_SHORT).show();
 
-				}
-			} else {
+          }
+        } else {
 
-				Toast.makeText(getApplicationContext(), "No image selected for upload.", Toast.LENGTH_SHORT).show();
+          Toast.makeText(getApplicationContext(), "No image selected for upload.", Toast.LENGTH_SHORT).show();
 
-			}
-			break;
-		}
+        }
+        break;
+      }
 
-		}
+    }
 
-	}
+  }
 
-	/**
-	 * parent The AdapterView where the click happened. view The view within the
-	 * AdapterView that was clicked (this will be a view provided by the adapter)
-	 * position The position of the view in the adapter. id The row id of the item
-	 * that was clicked.
-	 */
-	public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
+  /**
+   * parent The AdapterView where the click happened. view The view within the
+   * AdapterView that was clicked (this will be a view provided by the adapter)
+   * position The position of the view in the adapter. id The row id of the item
+   * that was clicked.
+   */
+  public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
 
-		switch (position) {
-		/*
-		 * Source Tag: update_status_tag Update user's status by invoking the feed
-		 * dialog To post to a friend's wall, provide his uid in the 'to' parameter
-		 * Refer to https://developers.facebook.com/docs/reference/dialogs/feed/ for
-		 * more info.
-		 */
-		case 0: {
+    switch (position) {
+    /*
+     * Source Tag: update_status_tag Update user's status by invoking the feed
+     * dialog To post to a friend's wall, provide his uid in the 'to' parameter
+     * Refer to https://developers.facebook.com/docs/reference/dialogs/feed/ for
+     * more info.
+     */
+      case 0: {
 
-			Bundle params = new Bundle();
+        Bundle params = new Bundle();
 
-			params.putString("caption", getString(R.string.app_name));
-			params.putString("description", getString(R.string.app_desc));
-			params.putString("picture", Utility.HACK_ICON_URL);
-			params.putString("name", getString(R.string.app_action));
+        params.putString("caption", getString(R.string.app_name));
+        params.putString("description", getString(R.string.app_desc));
+        params.putString("picture", Utility.HACK_ICON_URL);
+        params.putString("name", getString(R.string.app_action));
 
-			Utility.mFacebook.dialog(Hackbook.this, "feed", params, new UpdateStatusListener());
+        Utility.mFacebook.dialog(Hackbook.this, "feed", params, new UpdateStatusListener());
 
-			// obtem o token de acesso
-			String access_token = Utility.mFacebook.getAccessToken();
+        // obtem o token de acesso
+        String access_token = Utility.mFacebook.getAccessToken();
 
-			// exibe o token de acesso
-			System.out.println(access_token);
+        // exibe o token de acesso
+        System.out.println(access_token);
 
-			break;
+        break;
 
-		}
+      }
 
-		/*
-		 * Source Tag: app_requests Send an app request to friends. If no friend is
-		 * specified, the user will see a friend selector and will be able to select
-		 * a maximum of 50 recipients. To send request to specific friend, provide
-		 * the uid in the 'to' parameter Refer to
-		 * https://developers.facebook.com/docs/reference/dialogs/requests/ for more
-		 * info.
-		 */
-		case 1: {
+      /*
+       * Source Tag: app_requests Send an app request to friends. If no friend
+       * is specified, the user will see a friend selector and will be able to
+       * select a maximum of 50 recipients. To send request to specific friend,
+       * provide the uid in the 'to' parameter Refer to
+       * https://developers.facebook.com/docs/reference/dialogs/requests/ for
+       * more info.
+       */
+      case 1: {
 
-			Bundle params = new Bundle();
+        Bundle params = new Bundle();
 
-			params.putString("message", getString(R.string.request_message));
+        params.putString("message", getString(R.string.request_message));
 
-			Utility.mFacebook.dialog(Hackbook.this, "apprequests", params, new AppRequestsListener());
+        Utility.mFacebook.dialog(Hackbook.this, "apprequests", params, new AppRequestsListener());
 
-			break;
-		}
+        break;
+      }
 
-		/*
-		 * Source Tag: friends_tag You can get friends using
-		 * graph.facebook.com/me/friends, this returns the list sorted by UID OR
-		 * using the friend table. With this you can sort the way you want it.
-		 * Friend table - https://developers.facebook.com/docs/reference/fql/friend/
-		 * User table - https://developers.facebook.com/docs/reference/fql/user/
-		 */
-		case 2: {
+      /*
+       * Source Tag: friends_tag You can get friends using
+       * graph.facebook.com/me/friends, this returns the list sorted by UID OR
+       * using the friend table. With this you can sort the way you want it.
+       * Friend table -
+       * https://developers.facebook.com/docs/reference/fql/friend/ User table -
+       * https://developers.facebook.com/docs/reference/fql/user/
+       */
+      case 2: {
 
-			if (!Utility.mFacebook.isSessionValid()) {
+        if (!Utility.mFacebook.isSessionValid()) {
 
-				Util.showAlert(this, "Warning", "You must first log in.");
+          Util.showAlert(this, "Warning", "You must first log in.");
 
-			} else {
-				dialog = ProgressDialog.show(Hackbook.this, "", getString(R.string.please_wait), true, true);
-				new AlertDialog.Builder(this).setTitle(R.string.Graph_FQL_title).setMessage(R.string.Graph_FQL_msg)
-						.setPositiveButton(R.string.graph_button, new DialogInterface.OnClickListener() {
+        } else {
+          dialog = ProgressDialog.show(Hackbook.this, "", getString(R.string.please_wait), true, true);
+          new AlertDialog.Builder(this).setTitle(R.string.Graph_FQL_title).setMessage(R.string.Graph_FQL_msg)
+              .setPositiveButton(R.string.graph_button, new DialogInterface.OnClickListener() {
 
-							public void onClick(DialogInterface dialog, int which) {
+                public void onClick(DialogInterface dialog, int which) {
 
-								graph_or_fql = "graph";
+                  graph_or_fql = "graph";
 
-								Bundle params = new Bundle();
+                  Bundle params = new Bundle();
 
-								// define quais campos serão retornaos
-								params.putString("fields", "name, picture, location");
+                  // define quais campos serão retornaos
+                  params.putString("fields", "name, picture, location");
 
-								Utility.mAsyncRunner.request("me/friends", params, new FriendsRequestListener());
+                  Utility.mAsyncRunner.request("me/friends", params, new FriendsRequestListener());
 
-							}
+                }
 
-						}).setNegativeButton(R.string.fql_button, new DialogInterface.OnClickListener() {
+              }).setNegativeButton(R.string.fql_button, new DialogInterface.OnClickListener() {
 
-							public void onClick(DialogInterface dialog, int which) {
-								graph_or_fql = "fql";
+                public void onClick(DialogInterface dialog, int which) {
 
-								String query = "select name, current_location, uid, pic_square from user where uid in (select uid2 from friend where uid1=me()) order by name";
+                  graph_or_fql = "fql";
 
-								Bundle params = new Bundle();
+                  String query = "select name, current_location, uid, pic_square from user where uid in (select uid2 from friend where uid1=me()) order by name";
 
-								params.putString("method", "fql.query");
+                  Bundle params = new Bundle();
 
-								params.putString("query", query);
+                  params.putString("method", "fql.query");
 
-								Utility.mAsyncRunner.request(null, params, new FriendsRequestListener());
+                  params.putString("query", query);
 
-							}
+                  Utility.mAsyncRunner.request(null, params, new FriendsRequestListener());
 
-						}).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                }
 
-							public void onCancel(DialogInterface d) {
-								dialog.dismiss();
-							}
-						}).show();
+              }).setOnCancelListener(new DialogInterface.OnCancelListener() {
 
-			}
-			break;
-		}
+                public void onCancel(DialogInterface d) {
 
-		/*
-		 * Source Tag: upload_photo You can upload a photo from the media gallery or
-		 * from a remote server How to upload photo:
-		 * https://developers.facebook.com/blog/post/498/
-		 */
-		case 3: {
-			if (!Utility.mFacebook.isSessionValid()) {
+                  dialog.dismiss();
+                }
+              }).show();
 
-				// sessão não é válida
-				Util.showAlert(this, "Warning", "You must first log in.");
+        }
+        break;
+      }
 
-			} else {
+      /*
+       * Source Tag: upload_photo You can upload a photo from the media gallery
+       * or from a remote server How to upload photo:
+       * https://developers.facebook.com/blog/post/498/
+       */
+      case 3: {
+        if (!Utility.mFacebook.isSessionValid()) {
 
-				// cria uma caixa de diálogo de progresso
-				dialog = ProgressDialog.show(Hackbook.this, "", getString(R.string.please_wait), true, true);
+          // sessão não é válida
+          Util.showAlert(this, "Warning", "You must first log in.");
 
-				new AlertDialog.Builder(this).setTitle(R.string.gallery_remote_title).setMessage(R.string.gallery_remote_msg)
-						.setPositiveButton(R.string.gallery_button, new DialogInterface.OnClickListener() {
+        } else {
 
-							public void onClick(DialogInterface dialog, int which) {
-								Intent intent = new Intent(Intent.ACTION_PICK, (MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
-								startActivityForResult(intent, PICK_EXISTING_PHOTO_RESULT_CODE);
-							}
+          // cria uma caixa de diálogo de progresso
+          dialog = ProgressDialog.show(Hackbook.this, "", getString(R.string.please_wait), true, true);
 
-						}).setNegativeButton(R.string.remote_button, new DialogInterface.OnClickListener() {
+          new AlertDialog.Builder(this).setTitle(R.string.gallery_remote_title).setMessage(R.string.gallery_remote_msg)
+              .setPositiveButton(R.string.gallery_button, new DialogInterface.OnClickListener() {
 
-							public void onClick(DialogInterface dialog, int which) {
-								/*
-								 * Source tag: upload_photo_tag
-								 */
-								Bundle params = new Bundle();
-								params.putString("url", "http://www.facebook.com/images/devsite/iphone_connect_btn.jpg");
-								params.putString("caption", "FbAPIs Sample App photo upload");
-								Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
-							}
+                public void onClick(DialogInterface dialog, int which) {
 
-						}).setOnCancelListener(new DialogInterface.OnCancelListener() {
+                  Intent intent = new Intent(Intent.ACTION_PICK, (MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
+                  startActivityForResult(intent, PICK_EXISTING_PHOTO_RESULT_CODE);
+                }
 
-							public void onCancel(DialogInterface d) {
-								dialog.dismiss();
-							}
+              }).setNegativeButton(R.string.remote_button, new DialogInterface.OnClickListener() {
 
-						}).show();
+                public void onClick(DialogInterface dialog, int which) {
 
-			}
-			break;
-		}
+                  /*
+                   * Source tag: upload_photo_tag
+                   */
+                  Bundle params = new Bundle();
+                  params.putString("url", "http://www.facebook.com/images/devsite/iphone_connect_btn.jpg");
+                  params.putString("caption", "FbAPIs Sample App photo upload");
+                  Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
+                }
 
-		/*
-		 * User can check-in to a place, you require publish_checkins permission for
-		 * that. You can use the default Times Square location or fetch user's
-		 * current location. Get user's checkins:
-		 * https://developers.facebook.com/docs/reference/api/checkin/
-		 */
-		case 4: {
+              }).setOnCancelListener(new DialogInterface.OnCancelListener() {
 
-			final Intent myIntent = new Intent(getApplicationContext(), Places.class);
+                public void onCancel(DialogInterface d) {
 
-			new AlertDialog.Builder(this).setTitle(R.string.get_location).setMessage(R.string.get_default_or_new_location)
-					.setPositiveButton(R.string.current_location_button, new DialogInterface.OnClickListener() {
+                  dialog.dismiss();
+                }
 
-						public void onClick(DialogInterface dialog, int which) {
-							myIntent.putExtra("LOCATION", "current");
-							startActivity(myIntent);
-						}
+              }).show();
 
-					}).setNegativeButton(R.string.times_square_button, new DialogInterface.OnClickListener() {
+        }
+        break;
+      }
 
-						public void onClick(DialogInterface dialog, int which) {
-							myIntent.putExtra("LOCATION", "times_square");
-							startActivity(myIntent);
-						}
+      /*
+       * User can check-in to a place, you require publish_checkins permission
+       * for that. You can use the default Times Square location or fetch user's
+       * current location. Get user's checkins:
+       * https://developers.facebook.com/docs/reference/api/checkin/
+       */
+      case 4: {
 
-					}).show();
+        final Intent myIntent = new Intent(getApplicationContext(), Places.class);
 
-			break;
-		}
+        new AlertDialog.Builder(this).setTitle(R.string.get_location).setMessage(R.string.get_default_or_new_location)
+            .setPositiveButton(R.string.current_location_button, new DialogInterface.OnClickListener() {
 
-		case 5: {
-			if (!Utility.mFacebook.isSessionValid()) {
+              public void onClick(DialogInterface dialog, int which) {
 
-				Util.showAlert(this, "Warning", "You must first log in.");
+                myIntent.putExtra("LOCATION", "current");
+                startActivity(myIntent);
+              }
 
-			} else {
+            }).setNegativeButton(R.string.times_square_button, new DialogInterface.OnClickListener() {
 
-				new FQLQuery(Hackbook.this).show();
+              public void onClick(DialogInterface dialog, int which) {
 
-			}
-			break;
-		}
-		/*
-		 * This is advanced feature where you can request new permissions Browser
-		 * user's graph, his fields and connections. This is similar to the www
-		 * version: http://developers.facebook.com/tools/explorer/
-		 */
-		case 6: {
+                myIntent.putExtra("LOCATION", "times_square");
+                startActivity(myIntent);
+              }
 
-			Intent myIntent = new Intent(getApplicationContext(), GraphExplorer.class);
+            }).show();
 
-			if (Utility.mFacebook.isSessionValid()) {
-				Utility.objectID = "me";
-			}
+        break;
+      }
 
-			startActivity(myIntent);
+      case 5: {
+        if (!Utility.mFacebook.isSessionValid()) {
 
-			break;
+          Util.showAlert(this, "Warning", "You must first log in.");
 
-		}
+        } else {
 
-		case 7: {
+          new FQLQuery(Hackbook.this).show();
 
-			if (!Utility.mFacebook.isSessionValid()) {
-				Util.showAlert(this, "Warning", "You must first log in.");
-			} else {
-				new TokenRefreshDialog(Hackbook.this).show();
-			}
+        }
+        break;
+      }
+      /*
+       * This is advanced feature where you can request new permissions Browser
+       * user's graph, his fields and connections. This is similar to the www
+       * version: http://developers.facebook.com/tools/explorer/
+       */
+      case 6: {
 
-		}
+        Intent myIntent = new Intent(getApplicationContext(), GraphExplorer.class);
 
-		}
-	}
+        if (Utility.mFacebook.isSessionValid()) {
+          Utility.objectID = "me";
+        }
 
-	/*
-	 * callback for the feed dialog which updates the profile status
-	 */
-	public class UpdateStatusListener extends BaseDialogListener {
+        startActivity(myIntent);
 
-		/**
+        break;
+
+      }
+
+      case 7: {
+
+        if (!Utility.mFacebook.isSessionValid()) {
+          Util.showAlert(this, "Warning", "You must first log in.");
+        } else {
+          new TokenRefreshDialog(Hackbook.this).show();
+        }
+
+      }
+
+    }
+  }
+
+  /*
+   * callback for the feed dialog which updates the profile status
+   */
+  public class UpdateStatusListener extends BaseDialogListener {
+
+    /**
 		 * 
 		 */
-		public void onComplete(Bundle values) {
+    public void onComplete(Bundle values) {
 
-			final String postId = values.getString("post_id");
+      final String postId = values.getString("post_id");
 
-			if (postId != null) {
+      if (postId != null) {
 
-				new UpdateStatusResultDialog(Hackbook.this, "Update Status executed", values).show();
+        new UpdateStatusResultDialog(Hackbook.this, "Update Status executed", values).show();
 
-			} else {
+      } else {
 
-				Toast toast = Toast.makeText(getApplicationContext(), "No wall post made", Toast.LENGTH_SHORT);
-				toast.show();
+        Toast toast = Toast.makeText(getApplicationContext(), "No wall post made", Toast.LENGTH_SHORT);
+        toast.show();
 
-			}
+      }
 
-		}
+    }
 
-		/**
+    /**
 		 * 
 		 */
-		public void onFacebookError(FacebookError error) {
+    public void onFacebookError(FacebookError error) {
 
-			Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+      Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
 
-		}
+    }
 
-		/**
+    /**
 		 * 
 		 */
-		public void onCancel() {
+    public void onCancel() {
 
-			Toast toast = Toast.makeText(getApplicationContext(), "Update status cancelled", Toast.LENGTH_SHORT);
+      Toast toast = Toast.makeText(getApplicationContext(), "Update status cancelled", Toast.LENGTH_SHORT);
 
-			toast.show();
+      toast.show();
 
-		}
+    }
 
-	}
+  }
 
-	/*
-	 * callback for the apprequests dialog which sends an app request to user's
-	 * friends.
-	 */
-	public class AppRequestsListener extends BaseDialogListener {
+  /*
+   * callback for the apprequests dialog which sends an app request to user's
+   * friends.
+   */
+  public class AppRequestsListener extends BaseDialogListener {
 
-		/**
+    /**
 		 * 
 		 */
-		public void onComplete(Bundle values) {
-			Toast toast = Toast.makeText(getApplicationContext(), "App request sent", Toast.LENGTH_SHORT);
-			toast.show();
-		}
+    public void onComplete(Bundle values) {
 
-		/**
+      Toast toast = Toast.makeText(getApplicationContext(), "App request sent", Toast.LENGTH_SHORT);
+      toast.show();
+    }
+
+    /**
 		 * 
 		 */
-		public void onFacebookError(FacebookError error) {
-			Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-		}
+    public void onFacebookError(FacebookError error) {
 
-		/**
+      Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    /**
 		 * 
 		 */
-		public void onCancel() {
-			Toast toast = Toast.makeText(getApplicationContext(), "App request cancelled", Toast.LENGTH_SHORT);
-			toast.show();
-		}
-
-	}
-
-	/*
-	 * callback after friends are fetched via me/friends or fql query.
-	 */
-	public class FriendsRequestListener extends BaseRequestListener {
-
-		/**
-		 * "operação" executada com sucesso
-		 */
-		public void onComplete(final String response, final Object state) {
+    public void onCancel() {
 
-			// fecha a caixa de diálogo
-			// Dismiss this dialog, removing it from the screen.
-			// This method can be invoked safely from any thread.
-			dialog.dismiss();
-
-			// executa a intent FriendsList
-			Intent myIntent = new Intent(getApplicationContext(), FriendsList.class);
-
-			// Estabelece os parâmetros:
-			myIntent.putExtra("API_RESPONSE", response);
-			myIntent.putExtra("METHOD", graph_or_fql);
-
-			// Chama a activity
-			startActivity(myIntent);
+      Toast toast = Toast.makeText(getApplicationContext(), "App request cancelled", Toast.LENGTH_SHORT);
+      toast.show();
+    }
 
-		}
+  }
 
-		/**
-		 * Operação executada com erro
-		 * 
-		 * @param error
-		 * 
-		 */
-		public void onFacebookError(FacebookError error) {
-
-			// Dismiss this dialog, removing it from the screen.
-			dialog.dismiss();
+  /*
+   * callback after friends are fetched via me/friends or fql query.
+   */
+  public class FriendsRequestListener extends BaseRequestListener {
 
-			Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-		}
+    /**
+     * "operação" executada com sucesso
+     */
+    public void onComplete(final String response, final Object state) {
 
-	}
+      // fecha a caixa de diálogo
+      // Dismiss this dialog, removing it from the screen.
+      // This method can be invoked safely from any thread.
+      dialog.dismiss();
 
-	/*
-	 * callback for the photo upload
-	 */
-	public class PhotoUploadListener extends BaseRequestListener {
+      // executa a intent FriendsList
+      Intent myIntent = new Intent(getApplicationContext(), FriendsList.class);
 
-		/**
-		 * operação executada co sucesso
-		 */
-		public void onComplete(final String response, final Object state) {
+      // Estabelece os parâmetros:
+      myIntent.putExtra("API_RESPONSE", response);
+      myIntent.putExtra("METHOD", graph_or_fql);
 
-			// Dismiss this dialog, removing it from the screen.
-			dialog.dismiss();
+      // Chama a activity
+      startActivity(myIntent);
 
-			// Causes the Runnable r to be added to the message queue.
-			// The runnable will be run on the thread to which this handler is
-			// attached.
-			mHandler.post(new Runnable() {
+    }
 
-				// executa o diálogo de resultado do upload da foto
-				public void run() {
-					new UploadPhotoResultDialog(Hackbook.this, "Upload Photo executed", response).show();
-				}
+    /**
+     * Operação executada com erro
+     * 
+     * @param error
+     * 
+     */
+    public void onFacebookError(FacebookError error) {
 
-			});
+      // Dismiss this dialog, removing it from the screen.
+      dialog.dismiss();
 
-		}
+      Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+    }
 
-		/**
-		 * operção executada com erro
-		 * 
-		 * @param error
-		 */
-		public void onFacebookError(FacebookError error) {
+  }
 
-			// Desfaz o diálogo indicativo de operação em progresso removendo-o da
-			// tela.
-			dialog.dismiss();
+  /*
+   * callback for the photo upload
+   */
+  public class PhotoUploadListener extends BaseRequestListener {
 
-			Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
-		}
+    /**
+     * operação executada co sucesso
+     */
+    public void onComplete(final String response, final Object state) {
 
-	}
+      // Dismiss this dialog, removing it from the screen.
+      dialog.dismiss();
 
-	/**
-	 * Facebook Query Language Listener
-	 * 
-	 * 
-	 */
-	public class FQLRequestListener extends BaseRequestListener {
+      // Causes the Runnable r to be added to the message queue.
+      // The runnable will be run on the thread to which this handler is
+      // attached.
+      mHandler.post(new Runnable() {
 
-		/**
-		 * operação completada com sucesso
-		 */
-		public void onComplete(final String response, final Object state) {
+        // executa o diálogo de resultado do upload da foto
+        public void run() {
 
-			// Causes the Runnable r to be added to the message queue.
-			// The runnable will be run on the thread to which this handler is
-			// attached.
-			mHandler.post(new Runnable() {
+          new UploadPhotoResultDialog(Hackbook.this, "Upload Photo executed", response).show();
+        }
 
-				public void run() {
-					Toast.makeText(getApplicationContext(), "Response: " + response, Toast.LENGTH_LONG).show();
-				}
+      });
 
-			});
+    }
 
-		}
+    /**
+     * operção executada com erro
+     * 
+     * @param error
+     */
+    public void onFacebookError(FacebookError error) {
 
-		/**
-		 * operação executada com erro
-		 * 
-		 * @param error
-		 *          erro do Facebook
-		 * 
-		 */
-		public void onFacebookError(FacebookError error) {
+      // Desfaz o diálogo indicativo de operação em progresso removendo-o da
+      // tela.
+      dialog.dismiss();
 
-			Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+      Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+    }
 
-		}
+  }
 
-	}
+  /**
+   * Facebook Query Language Listener
+   * 
+   * 
+   */
+  public class FQLRequestListener extends BaseRequestListener {
 
-	/*
-	 * Callback for fetching current user's name, picture, uid.
-	 */
-	public class UserRequestListener extends BaseRequestListener {
+    /**
+     * operação completada com sucesso
+     */
+    public void onComplete(final String response, final Object state) {
 
-		/**
-		 * operação realizada com sucesso
-		 */
-		public void onComplete(final String response, final Object state) {
+      // Causes the Runnable r to be added to the message queue.
+      // The runnable will be run on the thread to which this handler is
+      // attached.
+      mHandler.post(new Runnable() {
 
-			JSONObject jsonObject;
+        public void run() {
 
-			try {
+          Toast.makeText(getApplicationContext(), "Response: " + response, Toast.LENGTH_LONG).show();
+        }
 
-				// cria um object a partir da String de responsta recebida
-				jsonObject = new JSONObject(response);
+      });
 
-				final String picURL = jsonObject.getString("picture");
-				final String name = jsonObject.getString("name");
-				Utility.userUID = jsonObject.getString("id");
+    }
 
-				// Causes the Runnable r to be added to the message queue.
-				// The runnable will be run on the thread to which this handler is
-				// attached.
-				mHandler.post(new Runnable() {
+    /**
+     * operação executada com erro
+     * 
+     * @param error
+     *          erro do Facebook
+     * 
+     */
+    public void onFacebookError(FacebookError error) {
 
-					public void run() {
+      Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
 
-						mText.setText("Welcome " + name + "!");
-						mUserPic.setImageBitmap(Utility.getBitmap(picURL));
+    }
 
-					}
+  }
 
-				});
+  /*
+   * Callback for fetching current user's name, picture, uid.
+   */
+  public class UserRequestListener extends BaseRequestListener {
 
-			} catch (JSONException e) {
+    /**
+     * operação realizada com sucesso
+     */
+    public void onComplete(final String response, final Object state) {
 
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+      JSONObject jsonObject;
 
-			}
+      try {
 
-		}
+        // cria um object a partir da String de responsta recebida
+        jsonObject = new JSONObject(response);
 
-	}
+        final String picURL = jsonObject.getString("picture");
+        final String name = jsonObject.getString("name");
+        Utility.userUID = jsonObject.getString("id");
 
-	/**
-	 * The Callback for notifying the application when authorization succeeds or
-	 * fails.
-	 * 
-	 * 
-	 * 
-	 */
-	public class FbAPIsAuthListener implements AuthListener {
+        // Causes the Runnable r to be added to the message queue.
+        // The runnable will be run on the thread to which this handler is
+        // attached.
+        mHandler.post(new Runnable() {
 
-		/**
-		 * autorização executada com sucesso
-		 */
-		public void onAuthSucceed() {
+          public void run() {
 
-			requestUserData();
+            mText.setText("Welcome " + name + "!");
+            mUserPic.setImageBitmap(Utility.getBitmap(picURL));
 
-		}
+          }
 
-		/**
-		 * falha na autorização
-		 */
-		public void onAuthFail(String error) {
-			mText.setText("Login Failed: " + error);
-		}
+        });
 
-	}
+      } catch (JSONException e) {
 
-	/**
-	 * The Callback for notifying the application when log out starts and
-	 * finishes.
-	 * 
-	 * 
-	 */
-	public class FbAPIsLogoutListener implements LogoutListener {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
 
-		/**
-		 * inicio do processo de logout
-		 */
-		public void onLogoutBegin() {
-			mText.setText("Logging out...");
-		}
+      }
 
-		/**
-		 * método executado apos terminar o processo de logout
-		 */
-		public void onLogoutFinish() {
-			// exibe mensagem de logout
-			mText.setText("You have logged out! ");
-			// remove a imagem
-			mUserPic.setImageBitmap(null);
-		}
+    }
 
-	}
+  }
 
-	/**
-	 * Request user name, and picture to show on the main screen.
-	 * 
-	 * Requisita o nome e foto do usuário para exibição na tela principal
-	 * 
-	 */
-	public void requestUserData() {
+  /**
+   * The Callback for notifying the application when authorization succeeds or
+   * fails.
+   * 
+   * 
+   * 
+   */
+  public class FbAPIsAuthListener implements AuthListener {
 
-		mText.setText("Fetching user name, profile pic...");
+    /**
+     * autorização executada com sucesso
+     */
+    public void onAuthSucceed() {
 
-		Bundle params = new Bundle();
+      requestUserData();
 
-		// parâmetro fields com os valores: name, picture
-		params.putString("fields", "name, picture");
+    }
 
-		// executa a requisição de acordo com os parâmetros
-		Utility.mAsyncRunner.request("me", params, new UserRequestListener());
+    /**
+     * falha na autorização
+     */
+    public void onAuthFail(String error) {
 
-	}
+      mText.setText("Login Failed: " + error);
+    }
 
-	/**
-	 * Definition of the list adapter
-	 */
-	public class MainListAdapter extends BaseAdapter {
+  }
 
-		/**
-		 * 
-		 */
-		private LayoutInflater mInflater;
+  /**
+   * The Callback for notifying the application when log out starts and
+   * finishes.
+   * 
+   * 
+   */
+  public class FbAPIsLogoutListener implements LogoutListener {
 
-		/**
-		 * 
-		 */
-		public MainListAdapter() {
-			mInflater = LayoutInflater.from(Hackbook.this.getBaseContext());
-		}
+    /**
+     * inicio do processo de logout
+     */
+    public void onLogoutBegin() {
 
-		/**
+      mText.setText("Logging out...");
+    }
+
+    /**
+     * método executado apos terminar o processo de logout
+     */
+    public void onLogoutFinish() {
+
+      // exibe mensagem de logout
+      mText.setText("You have logged out! ");
+      // remove a imagem
+      mUserPic.setImageBitmap(null);
+    }
+
+  }
+
+  /**
+   * Request user name, and picture to show on the main screen.
+   * 
+   * Requisita o nome e foto do usuário para exibição na tela principal
+   * 
+   */
+  public void requestUserData() {
+
+    mText.setText("Fetching user name, profile pic...");
+
+    Bundle params = new Bundle();
+
+    // parâmetro fields com os valores: name, picture
+    params.putString("fields", "name, picture");
+
+    // executa a requisição de acordo com os parâmetros
+    Utility.mAsyncRunner.request("me", params, new UserRequestListener());
+
+  }
+
+  /**
+   * Definition of the list adapter
+   */
+  public class MainListAdapter extends BaseAdapter {
+
+    /**
 		 * 
 		 */
-		public int getCount() {
-			return main_items.length;
-		}
+    private LayoutInflater mInflater;
 
-		/**
+    /**
 		 * 
 		 */
-		public Object getItem(int position) {
-			return null;
-		}
+    public MainListAdapter() {
 
-		/**
+      mInflater = LayoutInflater.from(Hackbook.this.getBaseContext());
+    }
+
+    /**
 		 * 
 		 */
-		public long getItemId(int position) {
-			return 0;
-		}
+    public int getCount() {
 
-		/**
+      return main_items.length;
+    }
+
+    /**
 		 * 
 		 */
-		public View getView(int position, View convertView, ViewGroup parent) {
+    public Object getItem(int position) {
 
-			View hView = convertView;
+      return null;
+    }
 
-			if (convertView == null) {
+    /**
+		 * 
+		 */
+    public long getItemId(int position) {
 
-				hView = mInflater.inflate(R.layout.main_list_item, null);
+      return 0;
+    }
 
-				ViewHolder holder = new ViewHolder();
+    /**
+		 * 
+		 */
+    public View getView(int position, View convertView, ViewGroup parent) {
 
-				holder.main_list_item = (TextView) hView.findViewById(R.id.main_api_item);
+      View hView = convertView;
 
-				hView.setTag(holder);
+      if (convertView == null) {
 
-			}
+        hView = mInflater.inflate(R.layout.main_list_item, null);
 
-			ViewHolder holder = (ViewHolder) hView.getTag();
+        ViewHolder holder = new ViewHolder();
 
-			holder.main_list_item.setText(main_items[position]);
+        holder.main_list_item = (TextView) hView.findViewById(R.id.main_api_item);
 
-			return hView;
+        hView.setTag(holder);
 
-		}
+      }
 
-	}
+      ViewHolder holder = (ViewHolder) hView.getTag();
 
-	/**
-	 * 
-	 * @author maurocl
-	 * 
-	 */
-	class ViewHolder {
+      holder.main_list_item.setText(main_items[position]);
 
-		TextView main_list_item;
-	}
+      return hView;
+
+    }
+
+  }
+
+  /**
+   * 
+   * @author maurocl
+   * 
+   */
+  class ViewHolder {
+
+    TextView main_list_item;
+  }
 
 }

@@ -1,3 +1,4 @@
+
 package com.facebook.android;
 
 import java.text.DateFormat;
@@ -19,168 +20,168 @@ import android.widget.TextView;
  */
 public class TokenRefreshDialog extends Dialog {
 
-	/**
+  /**
 	 * 
 	 */
-	private EditText tokenEdit, tokenExpiresEdit;
+  private EditText tokenEdit, tokenExpiresEdit;
 
-	/**
+  /**
 	 * 
 	 */
-	private TextView mUsefulTip;
+  private TextView mUsefulTip;
 
-	/**
-	 * botão de refresh
-	 */
-	private Button mRefreshButton;
+  /**
+   * botão de refresh
+   */
+  private Button mRefreshButton;
 
-	/**
+  /**
 	 * 
 	 */
-	private Activity activity;
+  private Activity activity;
 
-	/**
-	 * Construtor
-	 * 
-	 * @param activity
-	 *          activity
-	 */
-	public TokenRefreshDialog(Activity activity) {
+  /**
+   * Construtor
+   * 
+   * @param activity
+   *          activity
+   */
+  public TokenRefreshDialog(Activity activity) {
 
-		super(activity);
+    super(activity);
 
-		// guarda a instância da activity
-		this.activity = activity;
+    // guarda a instância da activity
+    this.activity = activity;
 
-		// estabelece o título
-		setTitle(R.string.refresh_token_title);
+    // estabelece o título
+    setTitle(R.string.refresh_token_title);
 
-	}
+  }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
 
-		super.onCreate(savedInstanceState);
+    super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.token_refresh);
+    setContentView(R.layout.token_refresh);
 
-		tokenEdit = (EditText) findViewById(R.id.tokenEdit);
-		tokenEdit.setText(Utility.mFacebook.getAccessToken());
+    tokenEdit = (EditText) findViewById(R.id.tokenEdit);
+    tokenEdit.setText(Utility.mFacebook.getAccessToken());
 
-		tokenExpiresEdit = (EditText) findViewById(R.id.tokenExpiresEdit);
+    tokenExpiresEdit = (EditText) findViewById(R.id.tokenExpiresEdit);
 
-		// Estabelece o "tempo de expiração" da sessão
-		setExpiresAt(Utility.mFacebook.getAccessExpires());
+    // Estabelece o "tempo de expiração" da sessão
+    setExpiresAt(Utility.mFacebook.getAccessExpires());
 
-		mUsefulTip = (TextView) findViewById(R.id.usefulTip);
+    mUsefulTip = (TextView) findViewById(R.id.usefulTip);
 
-		// Estabelece o métdo de movimento
-		mUsefulTip.setMovementMethod(LinkMovementMethod.getInstance());
+    // Estabelece o métdo de movimento
+    mUsefulTip.setMovementMethod(LinkMovementMethod.getInstance());
 
-		mRefreshButton = (Button) findViewById(R.id.refresh_button);
+    mRefreshButton = (Button) findViewById(R.id.refresh_button);
 
-		mRefreshButton.setOnClickListener(new View.OnClickListener() {
+    mRefreshButton.setOnClickListener(new View.OnClickListener() {
 
-			/**
+      /**
 			 * 
 			 */
-			public void onClick(View v) {
+      public void onClick(View v) {
 
-				// atualiza o estado dos botões para false
-				changeButtonState(false);
+        // atualiza o estado dos botões para false
+        changeButtonState(false);
 
-				// cria um listener
-				RefreshTokenListener listener = new RefreshTokenListener();
+        // cria um listener
+        RefreshTokenListener listener = new RefreshTokenListener();
 
-				if (!Utility.mFacebook.extendAccessToken(activity, listener)) {
-					
-					listener.onError(new Error(activity.getString(R.string.refresh_token_binding_error)));
-					
-				}
+        if (!Utility.mFacebook.extendAccessToken(activity, listener)) {
 
-			}
+          listener.onError(new Error(activity.getString(R.string.refresh_token_binding_error)));
 
-		});
+        }
 
-	}
+      }
 
+    });
 
-	/**
-	 * 
-	 * Listener de refresh do token
-	 *
-	 */
-	private class RefreshTokenListener implements Facebook.ServiceListener {
+  }
 
-		/**
+  /**
+   * 
+   * Listener de refresh do token
+   * 
+   */
+  private class RefreshTokenListener implements Facebook.ServiceListener {
+
+    /**
 		 * 
 		 */
-		public void onFacebookError(FacebookError e) {
+    public void onFacebookError(FacebookError e) {
 
-			changeButtonState(true);
+      changeButtonState(true);
 
-			String title = String.format(activity.getString(R.string.facebook_error) + "%d", e.getErrorCode());
+      String title = String.format(activity.getString(R.string.facebook_error) + "%d", e.getErrorCode());
 
-			Util.showAlert(activity, title, e.getMessage());
+      Util.showAlert(activity, title, e.getMessage());
 
-		}
+    }
 
-		/**
+    /**
 		 * 
 		 */
-		public void onError(Error e) {
-			
-			changeButtonState(true);
-			
-			Util.showAlert(activity, activity.getString(R.string.error), e.getMessage());
-			
-		}
+    public void onError(Error e) {
 
-		/**
+      changeButtonState(true);
+
+      Util.showAlert(activity, activity.getString(R.string.error), e.getMessage());
+
+    }
+
+    /**
 		 * 
 		 */
-		public void onComplete(Bundle values) {
+    public void onComplete(Bundle values) {
 
-			changeButtonState(true);
+      changeButtonState(true);
 
-			// The access_token and expires_at values are automatically updated,
-			// so they can be obtained by using:
-			// - Facebook.getAccessToken()
-			// - Facebook.getAccessExpires()
-			// methods, but we can also get them from the 'values' bundle.
-			tokenEdit.setText(values.getString(Facebook.TOKEN));
+      // The access_token and expires_at values are automatically updated,
+      // so they can be obtained by using:
+      // - Facebook.getAccessToken()
+      // - Facebook.getAccessExpires()
+      // methods, but we can also get them from the 'values' bundle.
+      tokenEdit.setText(values.getString(Facebook.TOKEN));
 
-			setExpiresAt(values.getLong(Facebook.EXPIRES));
+      setExpiresAt(values.getLong(Facebook.EXPIRES));
 
-		}
-		
-	}
+    }
 
-	/**
-	 * Altera o estado do botão
-	 * 
-	 * @param enabled
-	 */
-	private void changeButtonState(boolean enabled) {
+  }
 
-		mRefreshButton.setEnabled(enabled);
+  /**
+   * Altera o estado do botão
+   * 
+   * @param enabled
+   */
+  private void changeButtonState(boolean enabled) {
 
-		mRefreshButton.setText(enabled ? R.string.refresh_button : R.string.refresh_button_pending);
+    mRefreshButton.setEnabled(enabled);
 
-	}
+    mRefreshButton.setText(enabled ? R.string.refresh_button : R.string.refresh_button_pending);
 
-	/**
-	 * Estabelece o "tempo" onde a sessão será expirada
-	 *  
-	 * @param time tempo 
-	 */
-	private void setExpiresAt(long time) {
+  }
 
-		// 
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+  /**
+   * Estabelece o "tempo" onde a sessão será expirada
+   * 
+   * @param time
+   *          tempo
+   */
+  private void setExpiresAt(long time) {
 
-		tokenExpiresEdit.setText(dateFormat.format(new Date(time)));
+    // 
+    DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
 
-	}
+    tokenExpiresEdit.setText(dateFormat.format(new Date(time)));
+
+  }
 
 }

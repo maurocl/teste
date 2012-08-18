@@ -1,3 +1,4 @@
+
 package com.facebook.android;
 
 import java.util.Timer;
@@ -15,45 +16,45 @@ import android.os.Bundle;
  */
 public class SplashActivity extends Activity {
 
-	/**
-	 * Nº de milisegundos que serão esperados antes da execução da tarefa.
-	 */
-	private long splashDelay = 1500;
+  /**
+   * Nº de milisegundos que serão esperados antes da execução da tarefa.
+   */
+  private long splashDelay = 1500;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
 
-		super.onCreate(savedInstanceState);
+    super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.splash);
+    setContentView(R.layout.splash);
 
-		// The TimerTask class represents a task to run at a specified time.
-		// The task may be run once or repeatedly.
-		TimerTask task = new TimerTask() {
+    // The TimerTask class represents a task to run at a specified time.
+    // The task may be run once or repeatedly.
+    TimerTask task = new TimerTask() {
 
-			@Override
-			public void run() {
+      @Override
+      public void run() {
 
-				// finaliza a activity
-				finish();
+        // finaliza a activity
+        finish();
 
-				// cria uma nova intent com uma instância da classe Hackbook
-				Intent hackbookIntent = new Intent().setClass(SplashActivity.this, Hackbook.class);
+        // cria uma nova intent com uma instância da classe Hackbook
+        Intent hackbookIntent = new Intent().setClass(SplashActivity.this, Hackbook.class);
 
-				// inicia a activity
-				startActivity(hackbookIntent);
+        // inicia a activity
+        startActivity(hackbookIntent);
 
-			}
+      }
 
-		};
+    };
 
-		// Timers schedule one-shot or recurring tasks for execution.
-		Timer timer = new Timer();
+    // Timers schedule one-shot or recurring tasks for execution.
+    Timer timer = new Timer();
 
-		// executa a tarefa
-		// Schedule a task for single execution after a specified delay.
-		timer.schedule(task, splashDelay);
+    // executa a tarefa
+    // Schedule a task for single execution after a specified delay.
+    timer.schedule(task, splashDelay);
 
-	}
+  }
 
 }
