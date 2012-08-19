@@ -49,6 +49,8 @@ public class FacebookActivity2 extends Activity {
   ProgressDialog dialog;
 
   private Handler mHandler;
+  
+  
 
   /*
    * Your Facebook Application ID must be set before running this example See
@@ -484,7 +486,9 @@ public class FacebookActivity2 extends Activity {
 
       Log.d(TAG, "FetchImage() - Lendo o arquivo: " + urls[0]);
 
-      return Utility.getBitmap(urls[0]);
+      mBitmap = Utility.getBitmap(urls[0]);
+      
+      return mBitmap;
 
     }
 
@@ -495,7 +499,7 @@ public class FacebookActivity2 extends Activity {
 
       dialog.dismiss();
 
-      mBitmap = result;
+     
 
       // mUploadedPhoto.setImageBitmap(result);
 
