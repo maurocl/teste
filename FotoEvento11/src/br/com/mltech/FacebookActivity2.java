@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,7 +50,7 @@ public class FacebookActivity2 extends Activity {
 
   private String url;
 
-  private Uri uri;
+ // private Uri uri;
 
   // caixa de diálogo de progresso
   ProgressDialog dialog;
@@ -62,8 +61,7 @@ public class FacebookActivity2 extends Activity {
    * Your Facebook Application ID must be set before running this example See
    * http://www.facebook.com/developers/createapp.php
    */
-  // public static final String APP_ID = "157111564357680";
-  //public static final String APP_ID = "304628302969929";
+  
 
   public static final String APP_ID = "316626011767784";
 
@@ -130,41 +128,13 @@ public class FacebookActivity2 extends Activity {
         //Utility.mAsyncRunner = new AsyncFacebookRunner(Utility.mFacebook);
         Utility.mAsyncRunner = new AsyncFacebookRunner(facebook);
 
-        // url onde será retirada a foto
-        //String url = "http://www.facebook.com/images/devsite/iphone_connect_btn.jpg";
-        //String url = "http://www.mltech.com.br/fb/xtz250.png";
-        String url = "http://www.mltech.com.br/fb/crypton.png";
-
-        //String url = "http://www.mltech.com.br/fb/xvs950.png";
-
+        
         //String caption = "FbAPIs Sample App photo upload";
         String caption = "Facebook APIs - foto upload";
         
         String filename = "/mnt/sdcard/Pictures/fotoevento/fotos/20120820_180211.jpg";
+
         postImageOnWall(filename);
-/*
-        try {
-
-          //xxx(url, caption);
-
-          // yyy(url, caption);
-
-          //zzz(url, caption);
-
-          //www(url,caption);
-          
-          Log.d(TAG, "===> ");
-
-        } catch (InterruptedException e) {
-
-          Log.w(TAG, "InterruptedException - ", e);
-
-        } catch (ExecutionException e) {
-
-          Log.w(TAG, "ExecutionException - ", e);
-
-        }
-*/
         
       }
 
@@ -174,7 +144,6 @@ public class FacebookActivity2 extends Activity {
       public void onFacebookError(FacebookError error) {
 
         Log.d(TAG, "onFacebookError()");
-        showFacebookError(error);
 
         finish();
 
@@ -510,95 +479,8 @@ public class FacebookActivity2 extends Activity {
 
   }
 
-  private class FetchImage2 extends AsyncTask<String, Void, Bitmap> {
 
-    /**
-     * Obtem um bitmap a partir de sua URL
-     */
-    protected Bitmap doInBackground(String... urls) {
 
-      Log.d(TAG, "FetchImage() - Lendo o arquivo: " + urls[0]);
-
-      mBitmap = Utility.getBitmap2(urls[0]);
-
-      return mBitmap;
-
-    }
-
-    /**
-     * Exibe o bitmap recebido
-     */
-    protected void onPostExecute(Bitmap result) {
-
-      dialog.dismiss();
-
-      // mUploadedPhoto.setImageBitmap(result);
-
-    }
-
-  }
-
-  /**
-   * Exibe informações sobre o erro Facebook
-   * 
-   * @param error
-   *          instância de um erro do facebook
-   * 
-   */
-  private void showFacebookError(FacebookError error) {
-
-    Log.i(TAG, "ShowFacebookError:");
-
-    Log.w(TAG, "FacebookError: " + error);
-    Log.w(TAG, "FacebookError: getErrorCode(): " + error.getErrorCode());
-    Log.w(TAG, "FacebookError: getErrorType(): " + error.getErrorType());
-    Log.w(TAG, "FacebookError: getMessage(): " + error.getMessage());
-    Log.w(TAG, "FacebookError: getLocalizedMessage(): " + error.getLocalizedMessage());
-    Log.w(TAG, "FacebookError: getCause(): " + error.getCause());
-    Log.w(TAG, "FacebookError: getClass(): " + error.getClass());
-  }
-
-  /**
-   * Exibe a relação de chaves e valores de um Bundle
-   * 
-   * @param values
-   * 
-   */
-  private void showBundle(Bundle values) {
-
-    // Bundle: mapping from String values to various Parcelable types.
-
-    Log.i(TAG, "------------------------------------------------------------");
-    Log.i(TAG, "ShowBundle:");
-
-    if (values != null) {
-
-      Set<String> chaves = values.keySet();
-
-      if (chaves != null) {
-
-        Log.d(TAG, "Nº de chaves:" + chaves.size());
-
-        int i = 0;
-
-        for (String chave : chaves) {
-
-          Log.d(TAG,
-              i + ": Chave: " + chave + ", valor="
-                  + values.getString(chave) + ", size=" + values.getString(chave).length());
-          Log.d(TAG, "");
-
-          i++;
-
-        }
-
-      }
-
-    }
-
-    Log.i(TAG, "------------------------------------------------------------");
-
-  }
 
   /**
    * Lê um bitmap armazenado em um arquivo localizado no SDCARD
@@ -608,7 +490,7 @@ public class FacebookActivity2 extends Activity {
    * 
    * @return o bitmap lido ou null caso haja algum erro
    */
-  public static Bitmap getBitmapFromFile(File f) {
+  private static Bitmap getBitmapFromFile(File f) {
 
     Bitmap bm = null;
 
@@ -649,8 +531,9 @@ public class FacebookActivity2 extends Activity {
     byte[] data=null;
     
     Bitmap bi = BitmapFactory.decodeFile(filename);
+    
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+    boolean b =  bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
     data=baos.toByteArray();
     
     Bundle params = new Bundle();
