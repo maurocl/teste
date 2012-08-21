@@ -142,7 +142,7 @@ public class FacebookActivity2 extends Activity {
         
         String filename = "/mnt/sdcard/Pictures/fotoevento/fotos/20120820_180211.jpg";
         postImageOnWall(filename);
-
+/*
         try {
 
           //xxx(url, caption);
@@ -151,7 +151,7 @@ public class FacebookActivity2 extends Activity {
 
           //zzz(url, caption);
 
-          www(url,caption);
+          //www(url,caption);
           
           Log.d(TAG, "===> ");
 
@@ -164,7 +164,8 @@ public class FacebookActivity2 extends Activity {
           Log.w(TAG, "ExecutionException - ", e);
 
         }
-
+*/
+        
       }
 
       /**
@@ -220,166 +221,7 @@ public class FacebookActivity2 extends Activity {
 
   }
 
-  /**
-   * @throws ExecutionException
-   * @throws InterruptedException
-   * 
-   */
-  private void xxx(final String url, String caption) throws InterruptedException, ExecutionException {
-
-    Log.d(TAG, "xxx() - url=" + url);
-
-    byte[] data = null;
-
-    FetchImage fetch = new FetchImage();
-    fetch.execute(url);
-    mBitmap = fetch.get();
-
-    /*
-     * mHandler.post(new Runnable() {
-     * 
-     * public void run() {
-     * 
-     * new FetchImage().execute(url);
-     * 
-     * }
-     * 
-     * });
-     */
-
-    //Bitmap bitmap = Utility.getBitmap(url);
-
-    //Bitmap bitmap = mBitmap;
-
-    if (mBitmap != null) {
-
-      Log.i(TAG, "Bitmap não é nulo");
-
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-      data = baos.toByteArray();
-
-    }
-    else {
-      Log.w(TAG, "Bitmap é nulo");
-    }
-
-    /*
-     * Source tag: upload_photo_tag
-     */
-    Bundle params = new Bundle();
-
-    params.putString("url", url);
-    params.putString("caption", caption);
-
-    params.putString(Facebook.TOKEN, facebook.getAccessToken());
-    params.putString("method", "photos.upload");
-    params.putByteArray("picture", data);
-
-    // cria uma caixa de diálogo de progresso
-    //dialog = ProgressDialog.show(FacebookActivity2.this, "", "Aguarde...", true, true);
-    dialog = ProgressDialog.show(this, "", "Aguarde...", true, true);
-
-    //Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
-    Utility.mAsyncRunner.request(null, params, "POST", new PhotoUploadListener(), null);
-
-  }
-
-  private void yyy(final String url, String caption) throws InterruptedException, ExecutionException {
-
-    Log.d(TAG, "yyy() - url=" + url);
-
-    byte[] data = null;
-
-    FetchImage2 fetch = new FetchImage2();
-    fetch.execute(url);
-    mBitmap = fetch.get();
-
-    if (mBitmap != null) {
-
-      Log.i(TAG, "Bitmap não é nulo");
-
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-      data = baos.toByteArray();
-
-      Log.i(TAG, "tamanho=" + data.length);
-
-    }
-    else {
-      Log.w(TAG, "Bitmap é nulo");
-    }
-
-    /*
-     * Source tag: upload_photo_tag
-     */
-    Bundle params = new Bundle();
-
-    params.putString("url", url);
-    params.putString("caption", caption);
-
-    params.putString(Facebook.TOKEN, facebook.getAccessToken());
-    params.putString("method", "photos.upload");
-    params.putByteArray("picture", data);
-
-    // cria uma caixa de diálogo de progresso
-    //dialog = ProgressDialog.show(FacebookActivity2.this, "", "Aguarde...", true, true);
-    dialog = ProgressDialog.show(this, "", "Aguarde...", true, true);
-
-    //Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
-    Utility.mAsyncRunner.request(null, params, "POST", new PhotoUploadListener(), null);
-
-  }
-
-  private void zzz(String url, String caption) throws InterruptedException, ExecutionException {
-
-    Log.d(TAG, "zzz() - ");
-
-    byte[] data = null;
-
-    if (mBitmap != null) {
-
-      Log.i(TAG, "Bitmap não é nulo");
-
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-      data = baos.toByteArray();
-
-      Log.i(TAG, "zzz() - tamanho=" + data.length);
-
-    }
-    else {
-      Log.w(TAG, "Bitmap é nulo");
-    }
-
-    /*
-     * Source tag: upload_photo_tag
-     */
-    Bundle params = new Bundle();
-
-    //params.putString("url", url);
-    params.putString("caption", caption);
-
-    params.putString(Facebook.TOKEN, facebook.getAccessToken());
-    params.putString("method", "photos.upload");
-    params.putByteArray("picture", data);
-
-    // cria uma caixa de diálogo de progresso
-    //dialog = ProgressDialog.show(FacebookActivity2.this, "", "Aguarde...", true, true);
-    dialog = ProgressDialog.show(this, "", "Aguarde...", true, true);
-
-    //Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
-    Utility.mAsyncRunner.request(null, params, "POST", new PhotoUploadListener(), null);
-
-  }
-
-  
-  private void www(String url, String caption) throws InterruptedException, ExecutionException {
-
-    Log.d(TAG, "www() - ");
-    
-  }
-
+ 
   
   /**
    * Cria uma janela de diálogo usada como alerta
