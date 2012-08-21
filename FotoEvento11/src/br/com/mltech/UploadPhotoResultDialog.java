@@ -273,8 +273,9 @@ public class UploadPhotoResultDialog extends Dialog {
      */
     public void onFacebookError(FacebookError error) {
 
-      dialog.dismiss();
       setText("R.string.facebook_error: " + error.getMessage());
+      dialog.dismiss();
+      
 
     }
 
@@ -315,6 +316,7 @@ public class UploadPhotoResultDialog extends Dialog {
     public void onFacebookError(FacebookError error) {
 
       setText("R.string.facebook_error: " + error.getMessage());
+      
     }
 
   }

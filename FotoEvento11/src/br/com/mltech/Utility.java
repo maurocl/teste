@@ -1,3 +1,4 @@
+
 package br.com.mltech;
 
 import java.io.BufferedInputStream;
@@ -20,6 +21,7 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
@@ -31,300 +33,343 @@ import com.facebook.android.Facebook;
  */
 public class Utility extends Application {
 
-	/**
-	 * Facebook
-	 */
-	public static Facebook mFacebook;
+  public static final String TAG = "Utility";
+  
+  /**
+   * Facebook
+   */
+  public static Facebook mFacebook;
 
-	/**
-	 * AsyncFacebookRunner
-	 */
-	public static AsyncFacebookRunner mAsyncRunner;
+  /**
+   * AsyncFacebookRunner
+   */
+  public static AsyncFacebookRunner mAsyncRunner;
 
-	/**
+  /**
 	 * 
 	 */
-	public static JSONObject mFriendsList;
+  public static JSONObject mFriendsList;
 
-	/**
-	 * Identificador do usuário
-	 */
-	public static String userUID = null;
+  /**
+   * Identificador do usuário
+   */
+  public static String userUID = null;
 
-	/**
-	 * Identificador do objeto
-	 */
-	public static String objectID = null;
+  /**
+   * Identificador do objeto
+   */
+  public static String objectID = null;
 
-	/**
+  /**
 	 * 
 	 */
-	// public static FriendsGetProfilePics model;
+  // public static FriendsGetProfilePics model;
 
-	/**
+  /**
 	 * 
 	 */
-	public static AndroidHttpClient httpclient = null;
+  public static AndroidHttpClient httpclient = null;
 
-	/**
-	 * Permissões atuais
-	 */
-	public static Hashtable<String, String> currentPermissions = new Hashtable<String, String>();
+  /**
+   * Permissões atuais
+   */
+  public static Hashtable<String, String> currentPermissions = new Hashtable<String, String>();
 
-	// Dimensão máxima da imagem
-	private static int MAX_IMAGE_DIMENSION = 720;
+  // Dimensão máxima da imagem
+  private static int MAX_IMAGE_DIMENSION = 720;
 
-	// Endereço da imagem usada
-	public static final String HACK_ICON_URL = "http://www.facebookmobileweb.com/hackbook/img/facebook_icon_large.png";
+  // Endereço da imagem usada
+  public static final String HACK_ICON_URL = "http://www.facebookmobileweb.com/hackbook/img/facebook_icon_large.png";
 
-	/**
-	 * Obtem o bitmap dada sua URL
-	 * 
-	 * @param url
-	 *          URL onde se encontra o bitmap
-	 * 
-	 * @return o bitmap associado a URL ou null em caso de erro
-	 * 
-	 */
-	public static Bitmap getBitmap(String url) {
+  /**
+   * Obtem o bitmap dada sua URL
+   * 
+   * @param url
+   *          URL onde se encontra o bitmap
+   * 
+   * @return o bitmap associado a URL ou null em caso de erro
+   * 
+   */
+  public static Bitmap getBitmap(String url) {
 
-		Bitmap bm = null;
+    Bitmap bm = null;
 
-		try {
+    try {
 
-			URL aURL = new URL(url);
+      URL aURL = new URL(url);
 
-			URLConnection conn = aURL.openConnection();
+      URLConnection conn = aURL.openConnection();
 
-			conn.connect();
+      conn.connect();
 
-			InputStream is = conn.getInputStream();
+      InputStream is = conn.getInputStream();
 
-			BufferedInputStream bis = new BufferedInputStream(is);
+      BufferedInputStream bis = new BufferedInputStream(is);
 
-			// Cria o bitmap
-			bm = BitmapFactory.decodeStream(new FlushedInputStream(is));
+      // Cria o bitmap
+      bm = BitmapFactory.decodeStream(new FlushedInputStream(is));
 
-			bis.close();
+      bis.close();
 
-			is.close();
+      is.close();
 
-		} catch (Exception e) {
+    } catch (Exception e) {
 
-			e.printStackTrace();
+      e.printStackTrace();
 
-		} finally {
+    } finally {
 
-			if (httpclient != null) {
-				httpclient.close();
-			}
+      if (httpclient != null) {
+        httpclient.close();
+      }
 
-		}
+    }
 
-		return bm;
+    return bm;
 
-	}
+  }
 
-	/**
-	 * É um InputStream com flush automático
-	 * 
-	 * 
-	 * 
-	 */
-	static class FlushedInputStream extends FilterInputStream {
 
-		/**
-		 * Construtor
-		 * 
-		 * @param inputStream
-		 *          stream de entrada
-		 * 
-		 */
-		public FlushedInputStream(InputStream inputStream) {
-			super(inputStream);
-		}
+  public static Bitmap getBitmap2(String url) {
 
-		@Override
-		/**
-		 * @param n nº de bytes que serão skippados
-		 */
-		public long skip(long n) throws IOException {
+    Bitmap bm = null;
 
-			long totalBytesSkipped = 0L;
+    try {
 
-			while (totalBytesSkipped < n) {
+      Log.d(TAG,"url="+url);
+      
+      URL aURL = new URL(url);
 
-				long bytesSkipped = in.skip(n - totalBytesSkipped);
+      URLConnection conn = aURL.openConnection();
 
-				if (bytesSkipped == 0L) {
+      conn.connect();
 
-					int b = read();
+      InputStream is = conn.getInputStream();
 
-					if (b < 0) {
-						break; // we reached EOF
-					} else {
-						bytesSkipped = 1; // we read one byte
-					}
+      // Cria o bitmap
+      bm = BitmapFactory.decodeStream(is);
 
-				}
+      is.close();
 
-				totalBytesSkipped += bytesSkipped;
+    } catch (Exception e) {
 
-			}
+      Log.e(TAG,"Exceção: ",e);
+      
 
-			// nº total de bytes "pulados"
-			return totalBytesSkipped;
+    } finally {
 
-		}
+      if (httpclient != null) {
+        httpclient.close();
+      }
 
-	}
+    }
 
-	/**
-	 * Redimensiona uma imagem
-	 * 
-	 * @param context
-	 *          contexto da aplicação
-	 * @param photoUri
-	 *          URI da foto
-	 * 
-	 * @return um array de bytes com a imagem escalonada
-	 * 
-	 * @throws IOException
-	 * 
-	 */
-	public static byte[] scaleImage(Context context, Uri photoUri) throws IOException {
+    return bm;
 
-		InputStream is = context.getContentResolver().openInputStream(photoUri);
+  }
 
-		BitmapFactory.Options dbo = new BitmapFactory.Options();
+  
+  /**
+   * É um InputStream com flush automático
+   * 
+   * 
+   * 
+   */
+  static class FlushedInputStream extends FilterInputStream {
 
-		dbo.inJustDecodeBounds = true;
+    /**
+     * Construtor
+     * 
+     * @param inputStream
+     *          stream de entrada
+     * 
+     */
+    public FlushedInputStream(InputStream inputStream) {
 
-		// Decode an input stream into a bitmap.
-		// If the input stream is null, or cannot be used to decode a bitmap,
-		// the function returns null.
-		// The stream's position will be where ever
-		// it was after the encoded data was read.
-		BitmapFactory.decodeStream(is, null, dbo);
+      super(inputStream);
+    }
 
-		// fecha o stream
-		is.close();
+    @Override
+    /**
+     * @param n nº de bytes que serão skippados
+     */
+    public long skip(long n) throws IOException {
 
-		int rotatedWidth, rotatedHeight;
+      long totalBytesSkipped = 0L;
 
-		int orientation = getOrientation(context, photoUri);
+      while (totalBytesSkipped < n) {
 
-		if (orientation == 90 || orientation == 270) {
+        long bytesSkipped = in.skip(n - totalBytesSkipped);
 
-			// The resulting height of the bitmap, set independent of the state of
-			// inJustDecodeBounds.
-			// However, if there is an error trying to decode,
-			// outHeight will be set to -1.
+        if (bytesSkipped == 0L) {
 
-			rotatedWidth = dbo.outHeight;
-			rotatedHeight = dbo.outWidth;
+          int b = read();
 
-		} else {
+          if (b < 0) {
+            break; // we reached EOF
+          } else {
+            bytesSkipped = 1; // we read one byte
+          }
 
-			rotatedWidth = dbo.outWidth;
-			rotatedHeight = dbo.outHeight;
+        }
 
-		}
+        totalBytesSkipped += bytesSkipped;
 
-		// Source bitmap
-		Bitmap srcBitmap;
+      }
 
-		is = context.getContentResolver().openInputStream(photoUri);
+      // nº total de bytes "pulados"
+      return totalBytesSkipped;
 
-		// se a largura ou altura for maior que a dimensão máxima da imagem
-		if (rotatedWidth > MAX_IMAGE_DIMENSION || rotatedHeight > MAX_IMAGE_DIMENSION) {
+    }
 
-			// calcula a taxa de redução da largura
-			float widthRatio = ((float) rotatedWidth) / ((float) MAX_IMAGE_DIMENSION);
+  }
 
-			// calcula a taxa de redução da altura
-			float heightRatio = ((float) rotatedHeight) / ((float) MAX_IMAGE_DIMENSION);
+  /**
+   * Redimensiona uma imagem
+   * 
+   * @param context
+   *          contexto da aplicação
+   * @param photoUri
+   *          URI da foto
+   * 
+   * @return um array de bytes com a imagem escalonada
+   * 
+   * @throws IOException
+   * 
+   */
+  public static byte[] scaleImage(Context context, Uri photoUri) throws IOException {
 
-			// calcula o maior taxa de redução
-			float maxRatio = Math.max(widthRatio, heightRatio);
+    InputStream is = context.getContentResolver().openInputStream(photoUri);
 
-			// Create the bitmap from file
-			BitmapFactory.Options options = new BitmapFactory.Options();
+    BitmapFactory.Options dbo = new BitmapFactory.Options();
 
-			options.inSampleSize = (int) maxRatio;
+    dbo.inJustDecodeBounds = true;
 
-			srcBitmap = BitmapFactory.decodeStream(is, null, options);
+    // Decode an input stream into a bitmap.
+    // If the input stream is null, or cannot be used to decode a bitmap,
+    // the function returns null.
+    // The stream's position will be where ever
+    // it was after the encoded data was read.
+    BitmapFactory.decodeStream(is, null, dbo);
 
-		} else {
+    // fecha o stream
+    is.close();
 
-			// Decode an input stream into a bitmap
-			srcBitmap = BitmapFactory.decodeStream(is);
+    int rotatedWidth, rotatedHeight;
 
-		}
+    int orientation = getOrientation(context, photoUri);
 
-		is.close();
+    if (orientation == 90 || orientation == 270) {
 
-		/*
-		 * if the orientation is not 0 (or -1, which means we don't know), we have
-		 * to do a rotation.
-		 */
-		if (orientation > 0) {
+      // The resulting height of the bitmap, set independent of the state of
+      // inJustDecodeBounds.
+      // However, if there is an error trying to decode,
+      // outHeight will be set to -1.
 
-			Matrix matrix = new Matrix();
+      rotatedWidth = dbo.outHeight;
+      rotatedHeight = dbo.outWidth;
 
-			// Postconcats the matrix with the specified rotation. M' = R(degrees) * M
-			matrix.postRotate(orientation);
+    } else {
 
-			srcBitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(), srcBitmap.getHeight(), matrix, true);
+      rotatedWidth = dbo.outWidth;
+      rotatedHeight = dbo.outHeight;
 
-		}
+    }
 
-		String type = context.getContentResolver().getType(photoUri);
+    // Source bitmap
+    Bitmap srcBitmap;
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    is = context.getContentResolver().openInputStream(photoUri);
 
-		if (type.equals("image/png")) {
+    // se a largura ou altura for maior que a dimensão máxima da imagem
+    if (rotatedWidth > MAX_IMAGE_DIMENSION || rotatedHeight > MAX_IMAGE_DIMENSION) {
 
-			srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+      // calcula a taxa de redução da largura
+      float widthRatio = ((float) rotatedWidth) / ((float) MAX_IMAGE_DIMENSION);
 
-		} else if (type.equals("image/jpg") || type.equals("image/jpeg")) {
+      // calcula a taxa de redução da altura
+      float heightRatio = ((float) rotatedHeight) / ((float) MAX_IMAGE_DIMENSION);
 
-			srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+      // calcula o maior taxa de redução
+      float maxRatio = Math.max(widthRatio, heightRatio);
 
-		}
+      // Create the bitmap from file
+      BitmapFactory.Options options = new BitmapFactory.Options();
 
-		byte[] bMapArray = baos.toByteArray();
+      options.inSampleSize = (int) maxRatio;
 
-		baos.close();
+      srcBitmap = BitmapFactory.decodeStream(is, null, options);
 
-		return bMapArray;
+    } else {
 
-	}
+      // Decode an input stream into a bitmap
+      srcBitmap = BitmapFactory.decodeStream(is);
 
-	/**
-	 * Obtém a orientação da tela
-	 * 
-	 * @param context
-	 *          contexto da aplicação
-	 * @param photoUri
-	 *          URI da foto
-	 * 
-	 * @return
-	 */
-	public static int getOrientation(Context context, Uri photoUri) {
+    }
 
-		/* it's on the external media. */
-		Cursor cursor = context.getContentResolver().query(photoUri, new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null,
-				null, null);
+    is.close();
 
-		if (cursor.getCount() != 1) {
-			return -1;
-		}
+    /*
+     * if the orientation is not 0 (or -1, which means we don't know), we have
+     * to do a rotation.
+     */
+    if (orientation > 0) {
 
-		cursor.moveToFirst();
+      Matrix matrix = new Matrix();
 
-		return cursor.getInt(0);
+      // Postconcats the matrix with the specified rotation. M' = R(degrees) * M
+      matrix.postRotate(orientation);
 
-	}
+      srcBitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(), srcBitmap.getHeight(), matrix, true);
+
+    }
+
+    String type = context.getContentResolver().getType(photoUri);
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    if (type.equals("image/png")) {
+
+      srcBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+
+    } else if (type.equals("image/jpg") || type.equals("image/jpeg")) {
+
+      srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+    }
+
+    byte[] bMapArray = baos.toByteArray();
+
+    baos.close();
+
+    return bMapArray;
+
+  }
+
+  /**
+   * Obtém a orientação da tela
+   * 
+   * @param context
+   *          contexto da aplicação
+   * @param photoUri
+   *          URI da foto
+   * 
+   * @return
+   */
+  public static int getOrientation(Context context, Uri photoUri) {
+
+    /* it's on the external media. */
+    Cursor cursor = context.getContentResolver().query(photoUri, new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null,
+        null, null);
+
+    if (cursor.getCount() != 1) {
+      return -1;
+    }
+
+    cursor.moveToFirst();
+
+    return cursor.getInt(0);
+
+  }
 
 }

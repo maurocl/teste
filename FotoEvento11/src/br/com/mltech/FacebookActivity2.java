@@ -2,10 +2,12 @@
 package br.com.mltech;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,6 +15,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,9 +24,9 @@ import android.provider.MediaStore;
 import android.util.Log;
 import br.com.mltech.SessionEvents.AuthListener;
 import br.com.mltech.SessionEvents.LogoutListener;
+import br.com.mltech.utils.FileUtils;
 
 import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
@@ -45,12 +49,14 @@ public class FacebookActivity2 extends Activity {
 
   final static int PICK_EXISTING_PHOTO_RESULT_CODE = 1;
 
+  private String url;
+
+  private Uri uri;
+
   // caixa de diálogo de progresso
   ProgressDialog dialog;
 
   private Handler mHandler;
-  
-  
 
   /*
    * Your Facebook Application ID must be set before running this example See
@@ -73,6 +79,27 @@ public class FacebookActivity2 extends Activity {
     setContentView(R.layout.facebook);
 
     Log.d(TAG, "onCreate() ...");
+
+    Intent intent = getIntent();
+
+    if (intent != null) {
+
+      Uri data = intent.getData();
+      if (data != null) {
+        url = data.toString();
+      }
+      else {
+        //url= "http://www.facebook.com/images/devsite/iphone_connect_btn.jpg";
+        url = "file:///mnt/sdcard/Pictures/fotoevento/fotos/20120820_180211.jpg";
+
+        String s = "/mnt/sdcard/Pictures/fotoevento/fotos/20120820_180211.jpg";
+
+        Log.d(TAG, "Lê o bitmap ..." + s);
+
+        mBitmap = getBitmapFromFile(new File(s));
+
+      }
+    }
 
     String[] permissions = { "publish_stream" };
 
@@ -104,12 +131,34 @@ public class FacebookActivity2 extends Activity {
         Utility.mAsyncRunner = new AsyncFacebookRunner(facebook);
 
         // url onde será retirada a foto
-        String url = "http://www.facebook.com/images/devsite/iphone_connect_btn.jpg";
+        //String url = "http://www.facebook.com/images/devsite/iphone_connect_btn.jpg";
+        //String url = "http://www.mltech.com.br/fb/xtz250.png";
+        String url = "http://www.mltech.com.br/fb/crypton.png";
+
+        //String url = "http://www.mltech.com.br/fb/xvs950.png";
 
         //String caption = "FbAPIs Sample App photo upload";
         String caption = "Facebook APIs - foto upload";
 
-        xxx(url, caption);
+        try {
+
+          //xxx(url, caption);
+
+          // yyy(url, caption);
+
+          zzz(url, caption);
+
+          Log.d(TAG, "===> ");
+
+        } catch (InterruptedException e) {
+
+          Log.w(TAG, "InterruptedException - ", e);
+
+        } catch (ExecutionException e) {
+
+          Log.w(TAG, "ExecutionException - ", e);
+
+        }
 
       }
 
@@ -167,35 +216,131 @@ public class FacebookActivity2 extends Activity {
   }
 
   /**
+   * @throws ExecutionException
+   * @throws InterruptedException
    * 
    */
-  private void xxx(final String url, String caption) {
+  private void xxx(final String url, String caption) throws InterruptedException, ExecutionException {
 
     Log.d(TAG, "xxx() - url=" + url);
 
     byte[] data = null;
 
-    mHandler.post(new Runnable() {
+    FetchImage fetch = new FetchImage();
+    fetch.execute(url);
+    mBitmap = fetch.get();
 
-      public void run() {
-
-        new FetchImage().execute(url);
-
-      }
-
-    });
+    /*
+     * mHandler.post(new Runnable() {
+     * 
+     * public void run() {
+     * 
+     * new FetchImage().execute(url);
+     * 
+     * }
+     * 
+     * });
+     */
 
     //Bitmap bitmap = Utility.getBitmap(url);
 
-    Bitmap bitmap = mBitmap;
+    //Bitmap bitmap = mBitmap;
 
-    if (bitmap != null) {
+    if (mBitmap != null) {
 
       Log.i(TAG, "Bitmap não é nulo");
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+      mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
       data = baos.toByteArray();
+
+    }
+    else {
+      Log.w(TAG, "Bitmap é nulo");
+    }
+
+    /*
+     * Source tag: upload_photo_tag
+     */
+    Bundle params = new Bundle();
+
+    params.putString("url", url);
+    params.putString("caption", caption);
+
+    params.putString(Facebook.TOKEN, facebook.getAccessToken());
+    params.putString("method", "photos.upload");
+    params.putByteArray("picture", data);
+
+    // cria uma caixa de diálogo de progresso
+    //dialog = ProgressDialog.show(FacebookActivity2.this, "", "Aguarde...", true, true);
+    dialog = ProgressDialog.show(this, "", "Aguarde...", true, true);
+
+    //Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
+    Utility.mAsyncRunner.request(null, params, "POST", new PhotoUploadListener(), null);
+
+  }
+
+  private void yyy(final String url, String caption) throws InterruptedException, ExecutionException {
+
+    Log.d(TAG, "yyy() - url=" + url);
+
+    byte[] data = null;
+
+    FetchImage2 fetch = new FetchImage2();
+    fetch.execute(url);
+    mBitmap = fetch.get();
+
+    if (mBitmap != null) {
+
+      Log.i(TAG, "Bitmap não é nulo");
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+      data = baos.toByteArray();
+
+      Log.i(TAG, "tamanho=" + data.length);
+
+    }
+    else {
+      Log.w(TAG, "Bitmap é nulo");
+    }
+
+    /*
+     * Source tag: upload_photo_tag
+     */
+    Bundle params = new Bundle();
+
+    params.putString("url", url);
+    params.putString("caption", caption);
+
+    params.putString(Facebook.TOKEN, facebook.getAccessToken());
+    params.putString("method", "photos.upload");
+    params.putByteArray("picture", data);
+
+    // cria uma caixa de diálogo de progresso
+    //dialog = ProgressDialog.show(FacebookActivity2.this, "", "Aguarde...", true, true);
+    dialog = ProgressDialog.show(this, "", "Aguarde...", true, true);
+
+    //Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
+    Utility.mAsyncRunner.request(null, params, "POST", new PhotoUploadListener(), null);
+
+  }
+
+  private void zzz(String url, String caption) throws InterruptedException, ExecutionException {
+
+    Log.d(TAG, "zzz() - ");
+
+    byte[] data = null;
+
+    if (mBitmap != null) {
+
+      Log.i(TAG, "Bitmap não é nulo");
+
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+      data = baos.toByteArray();
+
+      Log.i(TAG, "zzz() - tamanho=" + data.length);
 
     }
     else {
@@ -261,7 +406,8 @@ public class FacebookActivity2 extends Activity {
             // Utility.mAsyncRunner.request("me/photos", params, "POST", new
             // PhotoUploadListener(), null);
 
-            Utility.mAsyncRunner.request("me/photos", params, "POST", (RequestListener) new PhotoUploadListener(), null);
+            //Utility.mAsyncRunner.request("me/photos", params, "POST", (RequestListener) new PhotoUploadListener(), null);
+            Utility.mAsyncRunner.request("me/photos", params, "POST", new PhotoUploadListener(), null);
 
           }
 
@@ -301,6 +447,8 @@ public class FacebookActivity2 extends Activity {
       if (dialog != null) {
         dialog.dismiss();
       }
+
+      Log.d(TAG, "response=" + response);
 
       // Causes the Runnable r to be added to the message queue.
       // The runnable will be run on the thread to which this handler is
@@ -474,6 +622,8 @@ public class FacebookActivity2 extends Activity {
   /**
    * Busca uma imagem
    * 
+   * nome da imagem
+   * 
    * 
    * 
    */
@@ -487,7 +637,7 @@ public class FacebookActivity2 extends Activity {
       Log.d(TAG, "FetchImage() - Lendo o arquivo: " + urls[0]);
 
       mBitmap = Utility.getBitmap(urls[0]);
-      
+
       return mBitmap;
 
     }
@@ -499,7 +649,33 @@ public class FacebookActivity2 extends Activity {
 
       dialog.dismiss();
 
-     
+      // mUploadedPhoto.setImageBitmap(result);
+
+    }
+
+  }
+
+  private class FetchImage2 extends AsyncTask<String, Void, Bitmap> {
+
+    /**
+     * Obtem um bitmap a partir de sua URL
+     */
+    protected Bitmap doInBackground(String... urls) {
+
+      Log.d(TAG, "FetchImage() - Lendo o arquivo: " + urls[0]);
+
+      mBitmap = Utility.getBitmap2(urls[0]);
+
+      return mBitmap;
+
+    }
+
+    /**
+     * Exibe o bitmap recebido
+     */
+    protected void onPostExecute(Bitmap result) {
+
+      dialog.dismiss();
 
       // mUploadedPhoto.setImageBitmap(result);
 
@@ -566,6 +742,46 @@ public class FacebookActivity2 extends Activity {
     }
 
     Log.i(TAG, "------------------------------------------------------------");
+
+  }
+
+  /**
+   * Lê um bitmap armazenado em um arquivo localizado no SDCARD
+   * 
+   * @param f
+   *          Arquivo
+   * 
+   * @return o bitmap lido ou null caso haja algum erro
+   */
+  public static Bitmap getBitmapFromFile(File f) {
+
+    Bitmap bm = null;
+
+    if (f == null) {
+
+      Log.w(TAG, "getBitmapFromFile() - arquivo fornecido é nulo");
+      return null;
+
+    } else {
+
+      if (f.exists() && f.isFile()) {
+
+        FileUtils.showFile(f);
+
+        // Decodifica o bitmap armazenado no arquivo
+        bm = BitmapFactory.decodeFile(f.getAbsolutePath());
+
+      } else if (f.isDirectory()) {
+
+        Log.w(TAG, "getBitmapFromFile() - arquivo: " + f.getAbsolutePath() + " não existe ou é um diretório.");
+
+        return null;
+
+      }
+
+    }
+
+    return bm;
 
   }
 
