@@ -139,6 +139,9 @@ public class FacebookActivity2 extends Activity {
 
         //String caption = "FbAPIs Sample App photo upload";
         String caption = "Facebook APIs - foto upload";
+        
+        String filename = "/mnt/sdcard/Pictures/fotoevento/fotos/20120820_180211.jpg";
+        postImageOnWall(filename);
 
         try {
 
@@ -146,8 +149,10 @@ public class FacebookActivity2 extends Activity {
 
           // yyy(url, caption);
 
-          zzz(url, caption);
+          //zzz(url, caption);
 
+          www(url,caption);
+          
           Log.d(TAG, "===> ");
 
         } catch (InterruptedException e) {
@@ -352,7 +357,7 @@ public class FacebookActivity2 extends Activity {
      */
     Bundle params = new Bundle();
 
-    params.putString("url", url);
+    //params.putString("url", url);
     params.putString("caption", caption);
 
     params.putString(Facebook.TOKEN, facebook.getAccessToken());
@@ -368,6 +373,14 @@ public class FacebookActivity2 extends Activity {
 
   }
 
+  
+  private void www(String url, String caption) throws InterruptedException, ExecutionException {
+
+    Log.d(TAG, "www() - ");
+    
+  }
+
+  
   /**
    * Cria uma janela de diálogo usada como alerta
    * 
@@ -785,4 +798,30 @@ public class FacebookActivity2 extends Activity {
 
   }
 
+  /**
+   * 
+   * @param filename
+   */
+  public void postImageOnWall(String filename) {
+    
+    byte[] data=null;
+    
+    Bitmap bi = BitmapFactory.decodeFile(filename);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+    data=baos.toByteArray();
+    
+    Bundle params = new Bundle();
+    
+    params.putString(Facebook.TOKEN,facebook.getAccessToken());
+    params.putString("method","photos.upload");
+    params.putByteArray("picture", data);
+    
+    AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(facebook);
+    
+    mAsyncRunner.request(null, params, "POST", new PhotoUploadListener(), null);
+    
+        
+  }
+  
 }
