@@ -165,9 +165,12 @@ public class DummyActivity3 extends Activity implements Constantes {
   // Indica o tipo do disparo da câmera (1=Manual,2=Automático)
   private int tipoDisparo = 2;
 
+  // nome do arquivo onde se encontra a foto
+  private String mFilename;
+  
   // nº de fotos tiradas
   //private static int indiceFoto = 0;
-  
+
   // ---------------------------------------------
   // área de inicialização de variáveis estáticas
   // ---------------------------------------------
@@ -425,11 +428,11 @@ public class DummyActivity3 extends Activity implements Constantes {
     logger2.addHandler(fh);
 
     Handler[] handlers = logger2.getHandlers();
-    
+
     if (handlers != null) {
       Log.d(TAG, "iniciarLogger() - nº de handlers: " + handlers.length);
       for (int i = 0; i < handlers.length; i++) {
-        Handler h = handlers[i];        
+        Handler h = handlers[i];
         Log.d(TAG, "iniciarLogger() - i=" + i + ", h=" + h);
       }
     }
@@ -1161,9 +1164,7 @@ public class DummyActivity3 extends Activity implements Constantes {
    */
   private void executaActivityTiraFotoCabine() {
 
-
     Log.i(TAG, "executaActivityTiraFotoCabine()");
-
 
     // TODO melhorar a construção abaixo
     // gera o nome de um arquivo onde será armazenada a foto
@@ -1361,6 +1362,41 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
+   * 
+   * @param resultCode
+   * @param data
+   */
+  private void resultActivityFacebook(int resultCode, Intent data) {
+
+    Log.d(TAG, "resultActivityFacebook() ==> processando resultado da ACTIVITY FACEBOOK");
+
+    if (resultCode == RESULT_CANCELED) {
+
+      // operação cancelada
+
+      Log.d(TAG, "resultCode=RESULT_CANCELED - FACEBOOK foi cancelada.");
+
+      return;
+
+    } else if (resultCode != RESULT_OK) {
+
+      // o resultado execução da activity não é conhecido
+      Log.w(TAG, "resultActivityFacebook() - resultCode não conhecido: " + resultCode);
+      return;
+
+    }
+
+    if (data == null) {
+      // caso a Intent não retorne nada houve algum problema
+      Log.w(TAG, "resultActivityFacebook() - A intent não retornou nenhuma informação");
+      return;
+    }
+
+    Log.d(TAG, "resultActivityFacebook() - finalizado com sucesso");
+
+  }
+
+  /**
    * Recebe o nome do arquivo da foto já processado.
    * 
    * @param requestCode
@@ -1395,27 +1431,21 @@ public class DummyActivity3 extends Activity implements Constantes {
     // --------------------------------------------------------------
 
     /*
-    String msg = null;
-
-    // executa ação baseada no requestCode
-    switch (requestCode) {
-
-      case TIRA_FOTO_POLAROID:
-        msg = "TIRA_FOTO_POLAROID";
-        Log.w(TAG, "meuMetodo() - requestCode: " + requestCode);
-        break;
-
-      case TIRA_FOTO_CABINE:
-        msg = "TIRA_FOTO_CABINE";
-        Log.w(TAG, "meuMetodo() - requestCode: " + requestCode);
-        break;
-
-      default:
-        Log.w(TAG, "meuMetodo() - Erro ... requestCode: " + requestCode + " não pode ser processado");
-        break;
-
-    }
-    */
+     * String msg = null;
+     * 
+     * // executa ação baseada no requestCode switch (requestCode) {
+     * 
+     * case TIRA_FOTO_POLAROID: msg = "TIRA_FOTO_POLAROID"; Log.w(TAG,
+     * "meuMetodo() - requestCode: " + requestCode); break;
+     * 
+     * case TIRA_FOTO_CABINE: msg = "TIRA_FOTO_CABINE"; Log.w(TAG,
+     * "meuMetodo() - requestCode: " + requestCode); break;
+     * 
+     * default: Log.w(TAG, "meuMetodo() - Erro ... requestCode: " + requestCode
+     * + " não pode ser processado"); break;
+     * 
+     * }
+     */
 
     // TODO aqui é necessário a criação de uma thread pois a proxima operação é
     // muito demorada !!!
@@ -1428,11 +1458,15 @@ public class DummyActivity3 extends Activity implements Constantes {
     if (meuArquivo != null) {
 
       fileMeuArquivoPadrao = new File(meuArquivo);
+      
+      mFilename = meuArquivo;
 
     } else {
       // TODO: remover
       String meuArquivoPadrao = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
       fileMeuArquivoPadrao = new File(meuArquivoPadrao);
+      
+      
 
     }
 
@@ -1529,7 +1563,7 @@ public class DummyActivity3 extends Activity implements Constantes {
       Log.d(TAG, "to: " + to + ", bcc=" + bcc + ", subject=" + subject + ", body=" + body + ", lastUri=" + lastUri);
 
       boolean enviadoComSucesso = false;
-      
+
       // Verifica se existe rede disponível no momento
       if (AndroidUtils.isNetworkingAvailable(this)) {
 
@@ -1539,14 +1573,12 @@ public class DummyActivity3 extends Activity implements Constantes {
 
         Log.w(TAG, "enviaEmail() - EMAIL ENVIADO COM SUCESSO: " + enviadoComSucesso);
 
-        
       }
       else {
-        
+
         Log.w(TAG, "enviaEmail() - Não há rede disponível no momento !!!");
-        
+
       }
-      
 
       if (enviadoComSucesso) {
         // processa o resultado do envio do email com sucesso
@@ -1561,7 +1593,8 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
-   * Valida se existe informações suficientes para envio do email.<br><br>
+   * Valida se existe informações suficientes para envio do email.<br>
+   * <br>
    * 
    * As seguintes condições são verificadas :<br>
    * <ul>
@@ -1685,8 +1718,10 @@ public class DummyActivity3 extends Activity implements Constantes {
     startActivityForResult(emailIntent, ACTIVITY_CHOOSER);
 
     // Envia "email" a redes sociais previamente cadastradas
-    sendEmailRedesSociais();
+    sendEmailRedesSociais(mFilename);
 
+    
+    
     // sendEmailByChooser(emailIntent);
 
   }
@@ -1861,7 +1896,7 @@ public class DummyActivity3 extends Activity implements Constantes {
    * Usa mEvento (informações sobre o evento).
    * 
    */
-  private void sendEmailRedesSociais() {
+  private void sendEmailRedesSociais(String filename) {
 
     Log.w(TAG, "sendEmailRedesSociais() - Inicio do método ...");
 
@@ -1881,7 +1916,7 @@ public class DummyActivity3 extends Activity implements Constantes {
       // TODO qual texto ???
 
       Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Facebook ...");
-      sendMsgFacebook();
+      sendMsgFacebook(filename);
 
     }
 
@@ -1898,11 +1933,18 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
-   * sendMsgFacebook()
+   * sendMsgFacebook(String filename)
    */
-  private void sendMsgFacebook() {
+  private void sendMsgFacebook(String filename) {
 
     Log.i(TAG, "sendMsgFacebook() - em construção");
+
+    Intent intent = new Intent();
+
+    intent.putExtra("br.com.mltech.filename", filename);
+
+    startActivityForResult(intent, ACTIVITY_FACEBOOK);
+
   }
 
   /**
@@ -2190,6 +2232,10 @@ public class DummyActivity3 extends Activity implements Constantes {
 
         break;
 
+      case ACTIVITY_FACEBOOK:
+        resultActivityFacebook(resultCode, data);
+        break;
+
       default:
         Log.w(TAG, "onActivityResult() - Erro ... requestCode: " + requestCode + " não pode ser processado");
         break;
@@ -2391,7 +2437,8 @@ public class DummyActivity3 extends Activity implements Constantes {
       return null;
     }
 
-    Log.d(TAG, "formatarPolaroid() -  tamanho da foto original - w=" + bmFotoOriginal.getWidth() + ", h=" + bmFotoOriginal.getHeight());
+    Log.d(TAG,
+        "formatarPolaroid() -  tamanho da foto original - w=" + bmFotoOriginal.getWidth() + ", h=" + bmFotoOriginal.getHeight());
 
     if (ManipulaImagem.isLandscape(bmFotoOriginal)) {
       // foto possui a largura maior que a altura
@@ -2622,7 +2669,7 @@ public class DummyActivity3 extends Activity implements Constantes {
     // TODO talvez seja necessário permitir o envio via Facebook e Twitter
     // também
 
-    sendEmailRedesSociais();
+    //sendEmailRedesSociais();
 
     startActivityForResult(chooser, ACTIVITY_CHOOSER);
 
@@ -2663,6 +2710,10 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       case ACTIVITY_CHOOSER:
         nome = "ACTIVITY_CHOOSER";
+        break;
+
+      case ACTIVITY_FACEBOOK:
+        nome = "ACTIVITY_FACEBOOK";
         break;
 
       default:

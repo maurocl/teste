@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Hashtable;
+import java.util.Set;
 
 import org.json.JSONObject;
 
@@ -20,11 +21,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
 
 /**
  * Classe Utilitária
@@ -370,6 +373,68 @@ public class Utility extends Application {
 
     return cursor.getInt(0);
 
+  }
+
+  /**
+   * Exibe a relação de chaves e valores de um Bundle
+   * 
+   * @param values
+   * 
+   */
+  public void showBundle(Bundle values) {
+
+    // Bundle: mapping from String values to various Parcelable types.
+
+    Log.i(TAG, "------------------------------------------------------------");
+    Log.i(TAG, "ShowBundle:");
+
+    if (values != null) {
+
+      Set<String> chaves = values.keySet();
+
+      if (chaves != null) {
+
+        Log.d(TAG, "Nº de chaves:" + chaves.size());
+
+        int i = 0;
+
+        for (String chave : chaves) {
+
+          Log.d(TAG,
+              i + ": Chave: " + chave + ", valor="
+                  + values.getString(chave) + ", size=" + values.getString(chave).length());
+          Log.d(TAG, "");
+
+          i++;
+
+        }
+
+      }
+
+    }
+
+    Log.i(TAG, "------------------------------------------------------------");
+
+  }
+
+  /**
+   * Exibe informações sobre o erro Facebook
+   * 
+   * @param error
+   *          instância de um erro do facebook
+   * 
+   */
+  public void showFacebookError(FacebookError error) {
+
+    Log.i(TAG, "ShowFacebookError:");
+
+    Log.w(TAG, "FacebookError: " + error);
+    Log.w(TAG, "FacebookError: getErrorCode(): " + error.getErrorCode());
+    Log.w(TAG, "FacebookError: getErrorType(): " + error.getErrorType());
+    Log.w(TAG, "FacebookError: getMessage(): " + error.getMessage());
+    Log.w(TAG, "FacebookError: getLocalizedMessage(): " + error.getLocalizedMessage());
+    Log.w(TAG, "FacebookError: getCause(): " + error.getCause());
+    Log.w(TAG, "FacebookError: getClass(): " + error.getClass());
   }
 
 }

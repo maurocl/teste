@@ -2,11 +2,9 @@
 package br.com.mltech;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,15 +13,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import br.com.mltech.SessionEvents.AuthListener;
 import br.com.mltech.SessionEvents.LogoutListener;
-import br.com.mltech.utils.FileUtils;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
@@ -48,9 +43,7 @@ public class FacebookActivity2 extends Activity {
 
   final static int PICK_EXISTING_PHOTO_RESULT_CODE = 1;
 
-  private String url;
-
- // private Uri uri;
+  String mFilename;
 
   // caixa de diálogo de progresso
   ProgressDialog dialog;
@@ -61,11 +54,8 @@ public class FacebookActivity2 extends Activity {
    * Your Facebook Application ID must be set before running this example See
    * http://www.facebook.com/developers/createapp.php
    */
-  
-
   public static final String APP_ID = "316626011767784";
 
-  // Facebook facebook = new Facebook("YOUR_APP_ID");
   Facebook facebook = new Facebook(APP_ID);
 
   public static Bitmap mBitmap = null;
@@ -82,21 +72,23 @@ public class FacebookActivity2 extends Activity {
 
     if (intent != null) {
 
-      Uri data = intent.getData();
-      if (data != null) {
-        url = data.toString();
+      mFilename = intent.getStringExtra("br.com.mltech.filename");
+
+      //Uri data = intent.getData();
+      if ((mFilename != null) && (!mFilename.equals(""))) {
+        Log.i(TAG, "Recebido: " + mFilename);
+
       }
       else {
-        //url= "http://www.facebook.com/images/devsite/iphone_connect_btn.jpg";
-        url = "file:///mnt/sdcard/Pictures/fotoevento/fotos/20120820_180211.jpg";
-
-        String s = "/mnt/sdcard/Pictures/fotoevento/fotos/20120820_180211.jpg";
-
-        Log.d(TAG, "Lê o bitmap ..." + s);
-
-        mBitmap = getBitmapFromFile(new File(s));
-
+        Log.w(TAG, "Filename é nulo");
+        mFilename = "/mnt/sdcard/Pictures/fotoevento/fotos/20120820_180211.jpg";
+        Log.d(TAG, "Nenhum parâmetro passado. Usando arquivo: " + mFilename);
       }
+
+    }
+    else {
+      Log.d(TAG, "Passei aqui");
+
     }
 
     String[] permissions = { "publish_stream" };
@@ -128,13 +120,24 @@ public class FacebookActivity2 extends Activity {
         //Utility.mAsyncRunner = new AsyncFacebookRunner(Utility.mFacebook);
         Utility.mAsyncRunner = new AsyncFacebookRunner(facebook);
 
-        
         //String caption = "FbAPIs Sample App photo upload";
         String caption = "Facebook APIs - foto upload";
-        
-        String filename = "/mnt/sdcard/Pictures/fotoevento/fotos/20120820_180211.jpg";
 
-        postImageOnWall(filename);
+        //
+
+        postImageOnWall(mFilename, caption);
+
+        
+        // ---------------------------------------------------------
+        // Criação da Intent com resultado da execução da Activity
+        // ---------------------------------------------------------
+        Intent it = new Intent();
+
+        //it.putExtra(Constantes.PARTICIPANTE, novoParticipante);
+
+        setResult(RESULT_OK, it);
+
+        finish();
         
       }
 
@@ -145,7 +148,7 @@ public class FacebookActivity2 extends Activity {
 
         Log.d(TAG, "onFacebookError()");
 
-        finish();
+        finalizaActivity();
 
       }
 
@@ -156,7 +159,7 @@ public class FacebookActivity2 extends Activity {
 
         Log.d(TAG, "onError()");
 
-        finish();
+        finalizaActivity();
 
       }
 
@@ -165,15 +168,31 @@ public class FacebookActivity2 extends Activity {
        */
       public void onCancel() {
 
-        Log.d(TAG, "onCancel()");
+        Log.d(TAG, "onCancel() - Operação cancelada pelo usuário");
 
-        finish();
+        finalizaActivity();
       }
 
     });
 
   }
 
+  /**
+   * 
+   */
+  private void finalizaActivity() {
+    
+    
+    Intent it = new Intent();
+
+    //it.putExtra(Constantes.PARTICIPANTE, novoParticipante);
+
+    setResult(RESULT_CANCELED, it);
+    
+    finish();
+    
+  }
+  
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -190,8 +209,6 @@ public class FacebookActivity2 extends Activity {
 
   }
 
- 
-  
   /**
    * Cria uma janela de diálogo usada como alerta
    * 
@@ -283,18 +300,19 @@ public class FacebookActivity2 extends Activity {
         public void run() {
 
           // 
-          new UploadPhotoResultDialog(FacebookActivity2.this, "Upload da foto foi executado", response).show();
+          //new UploadPhotoResultDialog(FacebookActivity2.this, "Upload da foto foi executado", response).show();
 
         }
 
       });
+
+      Log.d(TAG, "Arquivo uploaded com sucesso !!!");
 
     }
 
     @Override
     public void onFacebookError(FacebookError e, Object state) {
 
-      // TODO Auto-generated method stub
       super.onFacebookError(e, state);
 
       Log.d(TAG, "onFacebookError");
@@ -304,7 +322,6 @@ public class FacebookActivity2 extends Activity {
     @Override
     public void onFileNotFoundException(FileNotFoundException e, Object state) {
 
-      // TODO Auto-generated method stub
       super.onFileNotFoundException(e, state);
 
       Log.d(TAG, "onFileNotFoundException");
@@ -313,7 +330,6 @@ public class FacebookActivity2 extends Activity {
     @Override
     public void onIOException(IOException e, Object state) {
 
-      // TODO Auto-generated method stub
       super.onIOException(e, state);
       Log.d(TAG, "onIOException");
     }
@@ -321,7 +337,6 @@ public class FacebookActivity2 extends Activity {
     @Override
     public void onMalformedURLException(MalformedURLException e, Object state) {
 
-      // TODO Auto-generated method stub
       super.onMalformedURLException(e, state);
       Log.d(TAG, "onMalformedURLException");
 
@@ -444,109 +459,31 @@ public class FacebookActivity2 extends Activity {
   }
 
   /**
-   * Busca uma imagem
-   * 
-   * nome da imagem
-   * 
-   * 
-   * 
-   */
-  private class FetchImage extends AsyncTask<String, Void, Bitmap> {
-
-    /**
-     * Obtem um bitmap a partir de sua URL
-     */
-    protected Bitmap doInBackground(String... urls) {
-
-      Log.d(TAG, "FetchImage() - Lendo o arquivo: " + urls[0]);
-
-      mBitmap = Utility.getBitmap(urls[0]);
-
-      return mBitmap;
-
-    }
-
-    /**
-     * Exibe o bitmap recebido
-     */
-    protected void onPostExecute(Bitmap result) {
-
-      dialog.dismiss();
-
-      // mUploadedPhoto.setImageBitmap(result);
-
-    }
-
-  }
-
-
-
-
-  /**
-   * Lê um bitmap armazenado em um arquivo localizado no SDCARD
-   * 
-   * @param f
-   *          Arquivo
-   * 
-   * @return o bitmap lido ou null caso haja algum erro
-   */
-  private static Bitmap getBitmapFromFile(File f) {
-
-    Bitmap bm = null;
-
-    if (f == null) {
-
-      Log.w(TAG, "getBitmapFromFile() - arquivo fornecido é nulo");
-      return null;
-
-    } else {
-
-      if (f.exists() && f.isFile()) {
-
-        FileUtils.showFile(f);
-
-        // Decodifica o bitmap armazenado no arquivo
-        bm = BitmapFactory.decodeFile(f.getAbsolutePath());
-
-      } else if (f.isDirectory()) {
-
-        Log.w(TAG, "getBitmapFromFile() - arquivo: " + f.getAbsolutePath() + " não existe ou é um diretório.");
-
-        return null;
-
-      }
-
-    }
-
-    return bm;
-
-  }
-
-  /**
    * 
    * @param filename
+   *          nome do arquivo onde está a foto
    */
-  public void postImageOnWall(String filename) {
-    
-    byte[] data=null;
-    
+  public void postImageOnWall(String filename, String caption) {
+
+    byte[] data = null;
+
     Bitmap bi = BitmapFactory.decodeFile(filename);
-    
+
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    boolean b =  bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-    data=baos.toByteArray();
-    
+    bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+    data = baos.toByteArray();
+
     Bundle params = new Bundle();
-    
-    params.putString(Facebook.TOKEN,facebook.getAccessToken());
-    params.putString("method","photos.upload");
+
+    params.putString(Facebook.TOKEN, facebook.getAccessToken());
+    params.putString("method", "photos.upload");
     params.putByteArray("picture", data);
-    
+    params.putString("caption", caption);
+
     AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(facebook);
-    
+
     mAsyncRunner.request(null, params, "POST", new PhotoUploadListener(), null);
-    
-        
+
   }
-  
+
 }

@@ -52,6 +52,8 @@ public interface Constantes {
   public static final int ACTIVITY_PARTICIPANTE = 102;
 
   public static final int ACTIVITY_PARTICIPACAO = 107;
+  
+  public static final int ACTIVITY_FACEBOOK = 197;
 
   public static final int TIRA_FOTO = 200;
 

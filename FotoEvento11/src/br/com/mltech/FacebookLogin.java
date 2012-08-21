@@ -42,8 +42,6 @@ public class FacebookLogin /* extends ImageButton */{
 
   private SessionListener mSessionListener = new SessionListener();
 
-  
-
   private Activity mActivity;
 
   private int mActivityCode;
@@ -51,7 +49,6 @@ public class FacebookLogin /* extends ImageButton */{
   // contexto da aplicação
   private Context mContext;
 
- 
   /**
    * Construtor
    * 
@@ -65,7 +62,6 @@ public class FacebookLogin /* extends ImageButton */{
   public FacebookLogin(Context context) {
 
     this.mContext = context;
-  
 
   }
 
