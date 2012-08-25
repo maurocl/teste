@@ -25,47 +25,47 @@ public class TweetToTwitterActivity extends Activity {
 	private static final String TAG = "Blundell.TweetToTwitterActivity";
 
 	/** Name to store the users access token */
-	//private static final String PREF_ACCESS_TOKEN = "accessToken";
+	// private static final String PREF_ACCESS_TOKEN = "accessToken";
 	private static final String PREF_ACCESS_TOKEN = "744058794-ikhMEa7IzZP0nl1RnWtHVEF0iE7P7JOlM4cEVX78";
-	
+
 	/** Name to store the users access token secret */
-	//private static final String PREF_ACCESS_TOKEN_SECRET = "accessTokenSecret";
+	// private static final String PREF_ACCESS_TOKEN_SECRET =
+	// "accessTokenSecret";
 	private static final String PREF_ACCESS_TOKEN_SECRET = "ds69T9ZolKz8K93dCbUgxQlRGQ5C34qm7uZGkWGeNw";
-	
+
 	/**
 	 * Consumer Key generated when you registered your app at
 	 * https://dev.twitter.com/apps/
 	 */
-	//private static final String CONSUMER_KEY = "yourConsumerKey";
+	// private static final String CONSUMER_KEY = "yourConsumerKey";
 	private static final String CONSUMER_KEY = "VSUElrJiOSrXWLqfdnpOHA";
-	
+
 	/**
 	 * Consumer Secret generated when you registered your app at
 	 * https://dev.twitter.com/apps/
 	 */
-	//private static final String CONSUMER_SECRET = "yourConsumerSecret"; // XXX
-																		// Encode
-																		// in
-																		// your
-																		// app
+	// private static final String CONSUMER_SECRET = "yourConsumerSecret"; //
+	// XXX
+	// Encode
+	// in
+	// your
+	// app
 	private static final String CONSUMER_SECRET = "sNRDsxmDDnsGnRUcIGkoXtqnyRnUfLf2unRMMuM7E";
-	
-	
-	
+
 	/**
 	 * The url that Twitter will redirect to after a user log's in - this will
 	 * be picked up by your app manifest and redirected into this activity
 	 */
 	private static final String CALLBACK_URL = "tweet-to-twitter-blundell-01-android:///";
-	
-	//private static final String CALLBACK_URL = "";
-	
+
+	// private static final String CALLBACK_URL = "";
+
 	/** Preferences to store a logged in users credentials */
 	private SharedPreferences mPrefs;
-	
+
 	/** Twitter4j object */
 	private Twitter mTwitter;
-	
+
 	/**
 	 * The request token signifies the unique ID of the request you are sending
 	 * to twitter
@@ -78,7 +78,7 @@ public class TweetToTwitterActivity extends Activity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 		Log.i(TAG, "Loading TweetToTwitterActivity");
 		setContentView(R.layout.activity_main);
@@ -110,9 +110,9 @@ public class TweetToTwitterActivity extends Activity {
 	 *            the clicked button
 	 */
 	public void buttonLogin(View v) {
-		
+
 		Log.i(TAG, "Login Pressed");
-		
+
 		if (mPrefs.contains(PREF_ACCESS_TOKEN)) {
 			Log.i(TAG, "Repeat User");
 			loginAuthorisedUser();
@@ -120,7 +120,7 @@ public class TweetToTwitterActivity extends Activity {
 			Log.i(TAG, "New User");
 			loginNewUser();
 		}
-		
+
 	}
 
 	/**
@@ -131,10 +131,10 @@ public class TweetToTwitterActivity extends Activity {
 	 *            the clicked button
 	 */
 	public void buttonTweet(View v) {
-		
+
 		Log.i(TAG, "Tweet Pressed");
 		tweetMessage();
-		
+
 	}
 
 	/**
@@ -147,15 +147,15 @@ public class TweetToTwitterActivity extends Activity {
 	 * 
 	 */
 	private void loginNewUser() {
-		
+
 		try {
-			
+
 			Log.i(TAG, "Request App Authentication");
-			
+
 			mReqToken = mTwitter.getOAuthRequestToken(CALLBACK_URL);
 
 			Log.i(TAG, "Starting Webview to login to twitter");
-			 WebView twitterSite = new WebView(this);
+			WebView twitterSite = new WebView(this);
 			twitterSite.loadUrl(mReqToken.getAuthenticationURL());
 			setContentView(twitterSite);
 
@@ -163,7 +163,7 @@ public class TweetToTwitterActivity extends Activity {
 			Toast.makeText(this, "Twitter Login error, try again later",
 					Toast.LENGTH_SHORT).show();
 		}
-		
+
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class TweetToTwitterActivity extends Activity {
 	 * Therefore we retrieve these credentials and fill out the Twitter4j helper
 	 */
 	private void loginAuthorisedUser() {
-		
+
 		String token = mPrefs.getString(PREF_ACCESS_TOKEN, null);
 		String secret = mPrefs.getString(PREF_ACCESS_TOKEN_SECRET, null);
 
@@ -184,7 +184,7 @@ public class TweetToTwitterActivity extends Activity {
 		Toast.makeText(this, "Welcome back", Toast.LENGTH_SHORT).show();
 
 		enableTweetButton();
-		
+
 	}
 
 	/**
@@ -194,20 +194,20 @@ public class TweetToTwitterActivity extends Activity {
 	 */
 	@Override
 	protected void onNewIntent(Intent intent) {
-		
+
 		super.onNewIntent(intent);
-		
+
 		Log.i(TAG, "New Intent Arrived");
 		dealWithTwitterResponse(intent);
-		
+
 	}
 
 	@Override
 	protected void onResume() {
-		
+
 		super.onResume();
 		Log.i(TAG, "Arrived at onResume");
-		
+
 	}
 
 	/**
@@ -217,9 +217,9 @@ public class TweetToTwitterActivity extends Activity {
 	 * @param intent
 	 */
 	private void dealWithTwitterResponse(Intent intent) {
-		
+
 		Uri uri = intent.getData();
-		
+
 		if (uri != null && uri.toString().startsWith(CALLBACK_URL)) { // If the
 																		// user
 																		// has
@@ -230,7 +230,7 @@ public class TweetToTwitterActivity extends Activity {
 
 			authoriseNewUser(oauthVerifier);
 		}
-		
+
 	}
 
 	/**
@@ -241,7 +241,7 @@ public class TweetToTwitterActivity extends Activity {
 	 * @param oauthVerifier
 	 */
 	private void authoriseNewUser(String oauthVerifier) {
-		
+
 		try {
 			AccessToken at = mTwitter.getOAuthAccessToken(mReqToken,
 					oauthVerifier);
@@ -257,7 +257,7 @@ public class TweetToTwitterActivity extends Activity {
 			Toast.makeText(this, "Twitter auth error x01, try again later",
 					Toast.LENGTH_SHORT).show();
 		}
-		
+
 	}
 
 	/**
@@ -273,7 +273,7 @@ public class TweetToTwitterActivity extends Activity {
 	 * Send a tweet on your timeline, with a Toast msg for success or failure
 	 */
 	private void tweetMessage() {
-		
+
 		try {
 			mTwitter.updateStatus("Test - Tweeting with @Blundell_apps #AndroidDev Tutorial using #Twitter4j http://blog.blundell-apps.com/sending-a-tweet/");
 
@@ -283,7 +283,7 @@ public class TweetToTwitterActivity extends Activity {
 			Toast.makeText(this, "Tweet error, try again later",
 					Toast.LENGTH_SHORT).show();
 		}
-		
+
 	}
 
 	/**
@@ -298,5 +298,5 @@ public class TweetToTwitterActivity extends Activity {
 		editor.putString(PREF_ACCESS_TOKEN_SECRET, secret);
 		editor.commit();
 	}
-	
+
 }
