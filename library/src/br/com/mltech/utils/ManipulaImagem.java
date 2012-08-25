@@ -2061,4 +2061,79 @@ public class ManipulaImagem {
 
   }
 
+  /**
+   * Cria um bitmap refletido em relação ao eixo y
+   * 
+   * @param bitmap bitmap original
+   * 
+   * @return bitmap invertido com relação ao eixo y
+   */
+  public Bitmap getReflectedBitmapAxisY(Bitmap bitmap) {
+
+    Matrix matrix = new Matrix();
+
+    matrix.reset();
+    
+    matrix.setValues(new float[] { 
+        -1.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 1.0f}
+    );
+
+    Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    
+    return resizedBitmap;
+    
+  }
+
+  /**
+   * Cria um bitmap refletido em relação ao eixo x
+   * 
+   * @param bitmap bitmap original
+   * 
+   * @return bitmap invertido com relação ao eixo x
+   */
+  public Bitmap getReflectedBitmapAxisX(Bitmap bitmap) {
+
+    Matrix matrix = new Matrix();
+
+    matrix.reset();
+    
+    matrix.setValues(new float[] { 
+         1.0f, 0.0f, 0.0f,
+         0.0f, -1.0f, 0.0f,
+         0.0f, 0.0f, 1.0f}
+    );
+
+    Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    
+    return resizedBitmap;
+    
+  }
+
+  /**
+   * Cria um bitmap refletido em relação aos eixos x e y
+   * 
+   * @param bitmap bitmap original
+   * 
+   * @return bitmap invertido em relação aos eixos x e y
+   */
+  public Bitmap getReflectedBitmapAxisXY(Bitmap bitmap) {
+
+    Matrix matrix = new Matrix();
+
+    matrix.reset();
+    
+    matrix.setValues(new float[] { 
+         -1.0f, 0.0f, 0.0f,
+         0.0f, -1.0f, 0.0f,
+         0.0f, 0.0f, 1.0f}
+    );
+
+    Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    
+    return resizedBitmap;
+    
+  }
+  
 }

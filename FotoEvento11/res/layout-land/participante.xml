@@ -75,7 +75,7 @@
                     android:hint="Digite seu email"
                     android:inputType="textEmailAddress" >
 
-                    <requestFocus />
+                  
                 </EditText>
             </TableRow>
 

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -96,6 +97,9 @@ public class ParticipanteActivity extends Activity implements Constantes {
     // Atualiza os parâmetros opcionais
     updateOptionalParamFields(params);
 
+    // Hide soft-keyboard:
+    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
     // =========================================
 
     if (DEBUG == 1) {
@@ -115,6 +119,8 @@ public class ParticipanteActivity extends Activity implements Constantes {
       public void onClick(View v) {
 
         Log.d(TAG, "onCreate(btnEnviar) - *** Botão Enviar do Participante foi selecionado ***");
+
+        // método para inibir o aparecimento do teclado
 
         if (editNome.getText().toString().equals("")) {
           // email não pode ser vazio

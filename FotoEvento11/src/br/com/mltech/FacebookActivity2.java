@@ -27,23 +27,29 @@ import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
 /**
- * 
+ * Activity de interface com o Facebook 
  * 
  * 
  */
 public class FacebookActivity2 extends Activity {
 
   private static final String TAG = "FacebookActivity2";
-
-  public String accessToken;
-
-  public long accessExpires;
-
+  
   final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
   final static int PICK_EXISTING_PHOTO_RESULT_CODE = 1;
 
+  // string contendo o token de acesso ao Facebook
+  public String accessToken;
+
+  // nº de segundos até que o token de acesso expire
+  public long accessExpires;
+
+  // nome do arquivo contendo a foto
   String mFilename;
+
+  // bitmap contendo a foto
+  public static Bitmap mBitmap = null;
 
   // caixa de diálogo de progresso
   ProgressDialog dialog;
@@ -56,9 +62,10 @@ public class FacebookActivity2 extends Activity {
    */
   public static final String APP_ID = "316626011767784";
 
+  // Cria uma instância do Facebook passando o identificador da aplicação
   Facebook facebook = new Facebook(APP_ID);
 
-  public static Bitmap mBitmap = null;
+  
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -68,10 +75,12 @@ public class FacebookActivity2 extends Activity {
 
     Log.d(TAG, "onCreate() ...");
 
+    // obtém informações sobre a intent chamadora
     Intent intent = getIntent();
 
     if (intent != null) {
 
+      // obtem o nome do arquivo passado
       mFilename = intent.getStringExtra("br.com.mltech.filename");
 
       //Uri data = intent.getData();
@@ -121,13 +130,11 @@ public class FacebookActivity2 extends Activity {
         Utility.mAsyncRunner = new AsyncFacebookRunner(facebook);
 
         //String caption = "FbAPIs Sample App photo upload";
-        String caption = "Facebook APIs - foto upload";
+        String caption = "Facebook APIs - foto upload - " + System.currentTimeMillis();
 
-        //
-
+        // Executa o post da foto no facebook
         postImageOnWall(mFilename, caption);
 
-        
         // ---------------------------------------------------------
         // Criação da Intent com resultado da execução da Activity
         // ---------------------------------------------------------
@@ -138,7 +145,7 @@ public class FacebookActivity2 extends Activity {
         setResult(RESULT_OK, it);
 
         finish();
-        
+
       }
 
       /**
@@ -181,18 +188,17 @@ public class FacebookActivity2 extends Activity {
    * 
    */
   private void finalizaActivity() {
-    
-    
+
     Intent it = new Intent();
 
     //it.putExtra(Constantes.PARTICIPANTE, novoParticipante);
 
     setResult(RESULT_CANCELED, it);
-    
+
     finish();
-    
+
   }
-  
+
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -203,6 +209,7 @@ public class FacebookActivity2 extends Activity {
     facebook.authorizeCallback(requestCode, resultCode, data);
 
     if (data != null) {
+
       Bundle values = data.getExtras();
       //showBundle(values);
     }
@@ -346,9 +353,6 @@ public class FacebookActivity2 extends Activity {
 
   /**
    * Listener para tratar do diálogo de login
-   * 
-   * 
-   * 
    */
   private final class LoginDialogListener implements DialogListener {
 
@@ -415,8 +419,7 @@ public class FacebookActivity2 extends Activity {
 
   }
 
-  /**
-   * 
+  /** 
    * Listener de sessão
    * 
    */
@@ -459,6 +462,7 @@ public class FacebookActivity2 extends Activity {
   }
 
   /**
+   * Executa um post de uma imagem no mural do Facebook
    * 
    * @param filename
    *          nome do arquivo onde está a foto
@@ -467,14 +471,19 @@ public class FacebookActivity2 extends Activity {
 
     byte[] data = null;
 
+    // decodifica o bitmap a partir do arquivo
     Bitmap bi = BitmapFactory.decodeFile(filename);
 
+    // Cria um stream de saída de bytes
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    // Escteve o bitmap para o stream de saída
     bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+    // Obtem um array de bytes com o bitmap
     data = baos.toByteArray();
 
     Bundle params = new Bundle();
 
+    // Configura os parâmetros do post
     params.putString(Facebook.TOKEN, facebook.getAccessToken());
     params.putString("method", "photos.upload");
     params.putByteArray("picture", data);
@@ -482,6 +491,7 @@ public class FacebookActivity2 extends Activity {
 
     AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(facebook);
 
+    // Executa uma requisição de Post
     mAsyncRunner.request(null, params, "POST", new PhotoUploadListener(), null);
 
   }

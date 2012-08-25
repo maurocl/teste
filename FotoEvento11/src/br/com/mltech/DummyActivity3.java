@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -167,7 +168,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
   // nome do arquivo onde se encontra a foto
   private String mFilename;
-  
+
   // nº de fotos tiradas
   //private static int indiceFoto = 0;
 
@@ -1076,13 +1077,16 @@ public class DummyActivity3 extends Activity implements Constantes {
       }
 
       if (fotoPolaroid != null) {
+        // cria um arquivo com o nome da foto
         File temp1 = new File(fotoPolaroid[0]);
+        // retorna a Uri da foto
         outputFileUri = Uri.fromFile(temp1);
       }
       else {
         Log.w(TAG, "processaActivityResultPolaroid() - nenhum dado retornou");
       }
 
+      // Loga a uri da foto
       Log.d(TAG, "processaActivityResultPolaroid() - outputFileUri= " + outputFileUri);
 
     } else {
@@ -1094,7 +1098,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     }
 
-    // exibe a URI contendo a foto
+    // exibe a URI conteúdo a foto
     Log.i(TAG, "processaActivityResultPolaroid() - outputFileUri: " + outputFileUri);
 
     // grava o bitmap (foto original)
@@ -1340,9 +1344,15 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       // transforma cada foto em 3x4
       // gera um bitmap com a imagem redimensionada em 3x4
-      fotosRedimesionadas[i] = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 151, 131);
+      //fotosRedimesionadas[i] = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 151, 131);
+      fotosRedimesionadas[i] = ManipulaImagem.getScaledBitmap2(fotos[i].getImagem(), 131, 151);
 
     }
+
+    // Inverte as todas asfotos
+    fotosRedimesionadas[0] = getReflectedBitmapAxisY(fotosRedimesionadas[0]);
+    fotosRedimesionadas[1] = getReflectedBitmapAxisY(fotosRedimesionadas[1]);
+    fotosRedimesionadas[2] = getReflectedBitmapAxisY(fotosRedimesionadas[2]);
 
     //
     // gera um único bitmap a partir das três foto 3x4 e inclui a moldura
@@ -1362,19 +1372,20 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
+   * Resultado da execução da ActivityFacebook
    * 
    * @param resultCode
    * @param data
    */
   private void resultActivityFacebook(int resultCode, Intent data) {
 
-    Log.d(TAG, "resultActivityFacebook() ==> processando resultado da ACTIVITY FACEBOOK");
+    Log.d(TAG, "***** resultActivityFacebook() ==> processando resultado da ACTIVITY FACEBOOK");
 
     if (resultCode == RESULT_CANCELED) {
 
       // operação cancelada
 
-      Log.d(TAG, "resultCode=RESULT_CANCELED - FACEBOOK foi cancelada.");
+      Log.d(TAG, "resultActivityFacebook() - resultCode=RESULT_CANCELED - FACEBOOK foi cancelada.");
 
       return;
 
@@ -1428,25 +1439,6 @@ public class DummyActivity3 extends Activity implements Constantes {
       executaActivityExibeFoto(meuArquivo);
     }
 
-    // --------------------------------------------------------------
-
-    /*
-     * String msg = null;
-     * 
-     * // executa ação baseada no requestCode switch (requestCode) {
-     * 
-     * case TIRA_FOTO_POLAROID: msg = "TIRA_FOTO_POLAROID"; Log.w(TAG,
-     * "meuMetodo() - requestCode: " + requestCode); break;
-     * 
-     * case TIRA_FOTO_CABINE: msg = "TIRA_FOTO_CABINE"; Log.w(TAG,
-     * "meuMetodo() - requestCode: " + requestCode); break;
-     * 
-     * default: Log.w(TAG, "meuMetodo() - Erro ... requestCode: " + requestCode
-     * + " não pode ser processado"); break;
-     * 
-     * }
-     */
-
     // TODO aqui é necessário a criação de uma thread pois a proxima operação é
     // muito demorada !!!
     // showAlert(msg);
@@ -1458,15 +1450,11 @@ public class DummyActivity3 extends Activity implements Constantes {
     if (meuArquivo != null) {
 
       fileMeuArquivoPadrao = new File(meuArquivo);
-      
-      mFilename = meuArquivo;
 
     } else {
       // TODO: remover
       String meuArquivoPadrao = "/mnt/sdcard/Pictures/fotoevento/fotos/casa_320x240.png";
       fileMeuArquivoPadrao = new File(meuArquivoPadrao);
-      
-      
 
     }
 
@@ -1484,6 +1472,14 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       // Envia o email com a foto
       enviaEmail(Uri.fromFile(fileMeuArquivoPadrao));
+
+      // atualiza o nome do arquivo que possui a foto enviada por email
+      mFilename = fileMeuArquivoPadrao.getAbsolutePath();
+
+      Log.i(TAG, "mFilename=" + mFilename);
+
+      // Envia "email" a redes sociais previamente cadastradas
+      sendEmailRedesSociais(mFilename);
 
     } catch (Exception e) {
 
@@ -1608,39 +1604,26 @@ public class DummyActivity3 extends Activity implements Constantes {
    */
   private void validaDadosEmail(Uri lastUri) {
 
-    boolean erro = false;
-
-    //
-    // TODO verificar o estado da aplicação
-    // aqui é necessário saber se existe uma foto
-    //
-
     Log.d(TAG, "validaDadosEmail() - lastUri=" + lastUri);
 
     if (getEstado() < 2) {
       Log.w(TAG, "validaDadosEmail() - Foto não foi tirada");
-      erro = true;
+
     }
 
     if (mParticipante == null) {
       Log.w(TAG, "validaDadosEmail() - Não há informações sobre o participante");
-      erro = true;
+
     }
 
     if (mContratante == null) {
       Log.w(TAG, "validaDadosEmail() - Não há informações sobre o contratante");
-      erro = true;
+
     }
 
     if (lastUri == null) {
       Log.w(TAG, "validaDadosEmail() - Não há foto");
-      erro = true;
-    }
 
-    if (erro) {
-      // TODO o que fazer ???
-    } else {
-      // TODO o que fazer ???
     }
 
     Log.d(TAG, "validaDadosEmail() - fim");
@@ -1717,11 +1700,6 @@ public class DummyActivity3 extends Activity implements Constantes {
     // TODO verificar se funciona !!!
     startActivityForResult(emailIntent, ACTIVITY_CHOOSER);
 
-    // Envia "email" a redes sociais previamente cadastradas
-    sendEmailRedesSociais(mFilename);
-
-    
-    
     // sendEmailByChooser(emailIntent);
 
   }
@@ -1916,7 +1894,12 @@ public class DummyActivity3 extends Activity implements Constantes {
       // TODO qual texto ???
 
       Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Facebook ...");
-      sendMsgFacebook(filename);
+      if (filename != null) {
+        sendMsgFacebook(filename);
+      }
+      else {
+        Log.w(TAG, "O nome do arquivo de foto está vazio !!!");
+      }
 
     }
 
@@ -1937,10 +1920,12 @@ public class DummyActivity3 extends Activity implements Constantes {
    */
   private void sendMsgFacebook(String filename) {
 
-    Log.i(TAG, "sendMsgFacebook() - em construção");
+    Log.i(TAG,"-------------------------------------------------");
+    Log.i(TAG, "sendMsgFacebook() - filename="+filename);
+    Log.i(TAG,"-------------------------------------------------");
 
-    Intent intent = new Intent();
-
+    Intent intent = new Intent(this, FacebookActivity2.class);
+    
     intent.putExtra("br.com.mltech.filename", filename);
 
     startActivityForResult(intent, ACTIVITY_FACEBOOK);
@@ -1997,6 +1982,10 @@ public class DummyActivity3 extends Activity implements Constantes {
 
       // processa
       aposEnviarEmail();
+
+      // TODO verificar se aqui é o melhor lugar para essa chamada
+      // Envia "email" a redes sociais previamente cadastradas
+      sendEmailRedesSociais(mFilename);
 
     } else if (resultCode == RESULT_CANCELED) {
       // envio do email foi cancelado pelo usuário
@@ -2437,6 +2426,8 @@ public class DummyActivity3 extends Activity implements Constantes {
       return null;
     }
 
+    bmFotoOriginal = getReflectedBitmapAxisY(bmFotoOriginal);
+
     Log.d(TAG,
         "formatarPolaroid() -  tamanho da foto original - w=" + bmFotoOriginal.getWidth() + ", h=" + bmFotoOriginal.getHeight());
 
@@ -2854,6 +2845,32 @@ public class DummyActivity3 extends Activity implements Constantes {
     }
 
     return s;
+
+  }
+
+  /**
+   * Cria um bitmap refletido em relação ao eixo y
+   * 
+   * @param bitmap
+   *          bitmap original
+   * 
+   * @return bitmap invertido com relação ao eixo y
+   */
+  public Bitmap getReflectedBitmapAxisY(Bitmap bitmap) {
+
+    Matrix matrix = new Matrix();
+
+    matrix.reset();
+
+    matrix.setValues(new float[] {
+        -1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f }
+        );
+
+    Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+    return resizedBitmap;
 
   }
 

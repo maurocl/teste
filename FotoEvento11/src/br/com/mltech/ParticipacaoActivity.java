@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,6 +93,9 @@ public class ParticipacaoActivity extends Activity implements Constantes {
     // Botões
     final Button btnEnviar = (Button) findViewById(R.id.button1);
     final Button btnCancelar = (Button) findViewById(R.id.button2);
+
+    // Hide soft-keyboard:
+    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
     // -------------------------------------------------------------------------
     // Tratamento de Evento dos Botões
