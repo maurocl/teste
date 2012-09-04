@@ -1981,6 +1981,9 @@ public class DummyActivity3 extends Activity implements Constantes {
 
     Intent intent = new Intent(this, TwitterActivity.class);
     
+    Log.d(TAG,"sendMsgTwitter() - filename: "+filename);
+    Log.d(TAG,"sendMsgTwitter() - text: "+text);
+    
     intent.putExtra("br.com.mltech.filename", filename);
     intent.putExtra("br.com.mltech.text", text);
 

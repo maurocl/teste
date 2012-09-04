@@ -325,7 +325,7 @@ public class Evento implements Serializable {
   }
 
   public void setEnviaTwitter(boolean enviaTwitter) {
-
+    
     this.enviaTwitter = enviaTwitter;
   }
 

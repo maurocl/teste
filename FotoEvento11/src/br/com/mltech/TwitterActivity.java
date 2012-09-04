@@ -32,11 +32,11 @@ public class TwitterActivity extends Activity {
 		
 		Bundle bundle = i.getExtras();
 		if(bundle!=null) {
-			if(bundle.containsKey("filename")) {
-				filename=bundle.getString("filename");
+			if(bundle.containsKey("br.com.mltech.filename")) {
+				filename=bundle.getString("br.com.mltech.filename");
 			}
-			if(bundle.containsKey("text")) {
-				text = bundle.getString("text");
+			if(bundle.containsKey("br.com.mltech.text")) {
+				text = bundle.getString("br.com.mltech.text");
 			}
 		}
 		else {
@@ -46,9 +46,12 @@ public class TwitterActivity extends Activity {
 
 		}
 		
+		Log.i(TAG,"onCreate() - Filename: "+filename);
+		Log.i(TAG,"onCreate() - Text: "+text);
+		
 		String result = executaEnviaFotoTwitter(filename,text);
 		
-		Intent resposta = new Intent();
+		//Intent resposta = new Intent();
 		
 		if(result!=null) {
 			setResult(Activity.RESULT_OK);

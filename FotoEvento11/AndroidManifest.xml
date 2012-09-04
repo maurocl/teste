@@ -183,6 +183,17 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".TwitterActivity"
+            android:label="Tela de Interface com o Twitter" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        
+        
     </application>
+    
 
 </manifest>

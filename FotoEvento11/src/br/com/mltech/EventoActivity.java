@@ -466,9 +466,9 @@ public class EventoActivity extends Activity implements Constantes {
      */
 
     if (nome != null) {
+      
       mEvento.setNome(nome.getText().toString());
-      
-      
+            
       if(nome.getText().toString().equals("")) {
         // nome não pode ser vazio
         showToast("Nome não pode ser nulo");
