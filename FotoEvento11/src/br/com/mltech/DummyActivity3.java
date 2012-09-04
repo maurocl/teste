@@ -1408,6 +1408,44 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
+   * Resultado da execução da ActivityTwitter
+   * 
+   * @param resultCode
+   * @param data
+   * 
+   */
+  private void resultActivityTwitter(int resultCode, Intent data) {
+
+    Log.d(TAG, "***** resultActivityTwitter() ==> processando resultado da ACTIVITY TWITTER");
+
+    if (resultCode == RESULT_CANCELED) {
+
+      // operação cancelada
+
+      Log.d(TAG, "resultActivityTwitter() - resultCode=RESULT_CANCELED - Twitter foi cancelada.");
+
+      return;
+
+    } else if (resultCode != RESULT_OK) {
+
+      // o resultado execução da activity não é conhecido
+      Log.w(TAG, "resultActivityTwitter() - resultCode não conhecido: " + resultCode);
+      return;
+
+    }
+
+    if (data == null) {
+      // caso a Intent não retorne nada houve algum problema
+      Log.w(TAG, "resultActivityTwitter() - A intent não retornou nenhuma informação");
+      return;
+    }
+
+    Log.d(TAG, "resultActivityTwitter() - finalizado com sucesso");
+
+  }
+
+  
+  /**
    * Recebe o nome do arquivo da foto já processado.
    * 
    * @param requestCode
@@ -1909,7 +1947,7 @@ public class DummyActivity3 extends Activity implements Constantes {
       // TODO qual texto ?
 
       Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Twitter ...");
-      sendMsgTwitter();
+      sendMsgTwitter(filename,"texto");
 
     }
 
@@ -1935,9 +1973,20 @@ public class DummyActivity3 extends Activity implements Constantes {
   /**
    * sendMsgTwitter()
    */
-  private void sendMsgTwitter() {
+  private void sendMsgTwitter(String filename, String text) {
+    
+    Log.i(TAG,"-------------------------------------------------");
+    Log.i(TAG, "sendMsgTwitter() - filename="+filename);
+    Log.i(TAG,"-------------------------------------------------");
 
-    Log.i(TAG, "sendMsgTwitter() - em construção");
+    Intent intent = new Intent(this, TwitterActivity.class);
+    
+    intent.putExtra("br.com.mltech.filename", filename);
+    intent.putExtra("br.com.mltech.text", text);
+
+    startActivityForResult(intent, ACTIVITY_TWITTER);
+
+    
   }
 
   /**
@@ -2224,6 +2273,10 @@ public class DummyActivity3 extends Activity implements Constantes {
       case ACTIVITY_FACEBOOK:
         resultActivityFacebook(resultCode, data);
         break;
+        
+      case ACTIVITY_TWITTER:
+        resultActivityTwitter(resultCode, data);
+        break;        
 
       default:
         Log.w(TAG, "onActivityResult() - Erro ... requestCode: " + requestCode + " não pode ser processado");
@@ -2707,6 +2760,10 @@ public class DummyActivity3 extends Activity implements Constantes {
         nome = "ACTIVITY_FACEBOOK";
         break;
 
+      case ACTIVITY_TWITTER:
+        nome = "ACTIVITY_TWITTER";
+        break;
+        
       default:
         nome = "Activity não encontrada.";
         break;

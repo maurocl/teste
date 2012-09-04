@@ -1,4 +1,4 @@
-package com.example.teste;
+package br.com.mltech;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -26,7 +26,7 @@ public class TwitterActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		//setContentView(R.layout.activity_main);
 		
 		Intent i = getIntent();
 		
@@ -46,7 +46,7 @@ public class TwitterActivity extends Activity {
 
 		}
 		
-		String result = execute2(filename,text);
+		String result = executaEnviaFotoTwitter(filename,text);
 		
 		Intent resposta = new Intent();
 		
@@ -62,10 +62,11 @@ public class TwitterActivity extends Activity {
 	}
 
 	/**
+	 * Cria um thread para envio de uma foto ao Twitter
 	 * 
 	 * @param text
 	 */
-	String execute2(String filename, String text) {
+	private String executaEnviaFotoTwitter(String filename, String text) {
 
 		String result=null;
 	
