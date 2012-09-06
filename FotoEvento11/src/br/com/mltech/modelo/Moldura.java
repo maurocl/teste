@@ -54,6 +54,8 @@ public class Moldura extends Foto {
   }
 
   /**
+   * Cria uma moldura
+   * 
    * @param arquivo
    *          nome do arquivo onde onde está o bitmap da moldura
    * @param imagem
@@ -68,6 +70,8 @@ public class Moldura extends Foto {
   }
 
   /**
+   * Obtém a descrição da moldura
+   * 
    * @return descrição da moldura
    * 
    */
@@ -77,6 +81,8 @@ public class Moldura extends Foto {
   }
 
   /**
+   * Estabelece a descrição da moldura
+   * 
    * @param descricao
    * 
    */

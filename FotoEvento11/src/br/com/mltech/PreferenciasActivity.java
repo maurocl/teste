@@ -109,13 +109,8 @@ public class PreferenciasActivity extends Activity implements Constantes {
     chkAuth.setChecked(checked);
 
 
-    s = preferences.getString(Constantes.PREFERENCIAS_EMAIL_SSL, "");
-    if (s.equalsIgnoreCase("true")) {
-      checked = true;
-    }
-    else {
-      checked = false;
-    }
+    s = preferences.getString(Constantes.PREFERENCIAS_EMAIL_SSL, "");    
+    checked = convertStrToBoolean(s); 
     chkSsl.setChecked(checked);
 
     
@@ -176,4 +171,21 @@ public class PreferenciasActivity extends Activity implements Constantes {
 
   };
 
+  /**
+   * Converte um valor string em um valor booleano
+   * 
+   * @param str um string contendo os valores true ou false
+   * 
+   * @return true caso a string contenha o valor true ou false caso contrário
+   */
+  private static boolean convertStrToBoolean(String str) {
+    
+    boolean b;
+    
+    b = ((str.equalsIgnoreCase("true"))) ? true:false;
+        
+    return b;
+    
+  }
+  
 }

@@ -46,8 +46,8 @@ public class TwitterActivity extends Activity {
 
 		}
 		
-		Log.i(TAG,"onCreate() - Filename: "+filename);
-		Log.i(TAG,"onCreate() - Text: "+text);
+		Log.v(TAG,"onCreate() - Filename: "+filename);
+		Log.v(TAG,"onCreate() - Text: "+text);
 		
 		String result = executaEnviaFotoTwitter(filename,text);
 		

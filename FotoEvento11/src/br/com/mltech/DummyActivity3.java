@@ -1926,28 +1926,28 @@ public class DummyActivity3 extends Activity implements Constantes {
     Log.d(TAG, "sendEmailRedesSociais() - mEvento.isEnviaFacebook()=" + mEvento.isEnviaFacebook());
     Log.d(TAG, "sendEmailRedesSociais() - mEvento.isEnviaTwitter()=" + mEvento.isEnviaTwitter());
 
+    if(filename==null || filename.equals("")) {
+      Log.w(TAG, "O nome do arquivo é nulo ou está vazio !!!");
+    }
+    
     if (mEvento.isEnviaFacebook()) {
 
       // enviar foto ao Facebook
       // TODO qual texto ???
 
+      
       Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Facebook ...");
-      if (filename != null) {
-        sendMsgFacebook(filename);
-      }
-      else {
-        Log.w(TAG, "O nome do arquivo de foto está vazio !!!");
-      }
+      sendMsgFacebook(filename);
 
     }
 
     if (mEvento.isEnviaTwitter()) {
 
-      // enviar foto ao Twitter
-      // TODO qual texto ?
-
       Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Twitter ...");
-      sendMsgTwitter(filename,"texto");
+      
+      String text = mPreferences.getString(Constantes.PREFERENCIAS_TEXTO_TWITTER, "");
+            
+      sendMsgTwitter(filename,text);
 
     }
 
@@ -1955,6 +1955,9 @@ public class DummyActivity3 extends Activity implements Constantes {
 
   /**
    * sendMsgFacebook(String filename)
+   * 
+   * @param filename nome do arquivo onde se encontra a foto
+   * 
    */
   private void sendMsgFacebook(String filename) {
 
@@ -1971,7 +1974,11 @@ public class DummyActivity3 extends Activity implements Constantes {
   }
 
   /**
-   * sendMsgTwitter()
+   * sendMsgTwitter(String filename, String text)
+   * 
+   * @param filename nome do arquivo
+   * @param text texto que acompanha a foto
+   * 
    */
   private void sendMsgTwitter(String filename, String text) {
     
