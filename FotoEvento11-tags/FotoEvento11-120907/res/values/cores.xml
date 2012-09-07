@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="red">#FF0000</color>
+    <color name="Red">#FF0000</color>
+    <color name="blue">#0000FF</color>
+    <color name="green">#00FF00</color>
+    <color name="DarkGreen">#006400</color>
+    <color name="Violet">#EE82EE</color>
+    <color name="White">#FFFFFF</color>
+    <color name="Black">#000000</color>
+    <color name="Gray">#C0C0C0</color>
+    <color name="Yellow">#FFFF00</color>
+
+    <!-- Cores RGB -->
+    <color name="vermelho">#FF0000</color>
+    <color name="azul">#0000FF</color>
+    <color name="verde">#00FF00</color>
+    <color name="fundo">#ffffff</color>
+    <color name="amarelo">#FFA500</color>
+    <color name="branco">#ffffff</color>
+    <color name="laranja">#ffa500</color>
+    <color name="preto">#000000</color>
+    <color name="transparente">#00000000</color>
+    <color name="cinza_c">#cccccc</color>
+    <color name="cinza_d">#dddddd</color>
+    <color name="cinza_e">#eeeeee</color>
+
+    <!-- Tonalidades de Azul -->
+    <color name="azul01">#E2F4FB</color>
+    <color name="azul02">#C4EAF8</color>
+    <color name="azul03">#A8DFF4</color>
+    <color name="azul04">#8AD5F0</color>
+    <color name="azul05">#6DCAEC</color>
+    <color name="azul05">#50C0E9</color>
+    <color name="azul07">#33B5E5</color>
+    <color name="azul08">#2CB1E1</color>
+    <color name="azul09">#24ADDE</color>
+    <color name="azul10">#1DA9DA</color>
+    <color name="azul11">#16A5D7</color>
+    <color name="azul12">#0FA1D3</color>
+    <color name="azul13">#079DD0</color>
+    <color name="azul14">#0099CC</color>
+
+    <!-- Tonalidades de Violeta -->
+    <color name="violeta07">#AA66CC</color>
+    <color name="violeta14">#9933CC</color>
+
+    <!-- Tonalidades de Verde -->
+    <color name="verde07">#99CC00</color>
+    <color name="verde14">#669900</color>
+
+    <!-- Tonalidades de Laranja -->
+    <color name="laranja07">#FFBB33</color>
+    <color name="laranja14">#FF8800</color>
+
+    <!-- Tonalidades de Vermelho -->
+    <color name="vermelho07">#FF4444</color>
+    <color name="vermelho14">#CC0000</color>
+
+</resources>

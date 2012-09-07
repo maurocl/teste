@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <!-- Header -->
+
+        <include layout="@layout/include_header" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dados do Evento"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <!-- Contratante -->
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp" >
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Nome do contratante do evento"
+                    android:text="Contratante:"
+                    android:textSize="@dimen/Fonte20" />
+
+                <EditText
+                    android:id="@+evento/editCliente"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Nome do contratante do evento"
+                    android:textColor="@color/DarkGreen" />
+            </TableRow>
+
+            <!-- Nome do Evento -->
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nome do Evento"
+                    android:textSize="@dimen/Fonte20" />
+
+                <EditText
+                    android:id="@+evento/editNome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Nome do Evento" >
+                </EditText>
+            </TableRow>
+
+            <!-- Checkbox para envio de fotos as redes sociais -->
+
+
+            <!-- Endereço -->
+
+            <TableRow
+                android:id="@+id/tableRow3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textEndereco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Endereço"
+                    android:text="Endereço"
+                    android:textSize="@dimen/Fonte20" />
+
+                <EditText
+                    android:id="@+evento/endereco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Endereço do Evento" />
+            </TableRow>
+
+            <!-- Cidade -->
+
+            <TableRow
+                android:id="@+id/tableRow4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+evento/textCidade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Cidade onde ocorre o evento"
+                    android:text="Cidade"
+                    android:textSize="@dimen/Fonte20" />
+
+                <EditText
+                    android:id="@+id/cidade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Cidade onde ocorre o evento" />
+            </TableRow>
+
+            <!-- Estado -->
+
+            <TableRow
+                android:id="@+id/tableRow5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textEstado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Estado"
+                    android:text="Estado"
+                    android:textSize="@dimen/Fonte20" />
+
+                <EditText
+                    android:id="@+id/estado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Estado" />
+
+                <Spinner
+                    android:id="@+id/spinner1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <!-- CEP -->
+
+            <TableRow
+                android:id="@+id/tableRow6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textCep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="CEP"
+                    android:text="CEP"
+                    android:textSize="@dimen/Fonte20" />
+
+                <EditText
+                    android:id="@+id/cep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="CEP"
+                    android:inputType="number" />
+            </TableRow>
+
+            <!-- Telefone -->
+
+            <TableRow
+                android:id="@+id/tableRow7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewTelefone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Telefone de contato"
+                    android:text="Telefone"
+                    android:textSize="@dimen/Fonte20" />
+
+                <EditText
+                    android:id="@+id/telefone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Telefone de contato"
+                    android:inputType="phone" />
+            </TableRow>
+
+            <!-- Data do Evento -->
+
+            <TableRow
+                android:id="@+id/tableRow8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textDataEvento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Data do evento"
+                    android:text="Data do Evento"
+                    android:textSize="@dimen/Fonte20" />
+
+                <EditText
+                    android:id="@+id/data"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Data do evento"
+                    android:inputType="date" />
+            </TableRow>
+        </TableLayout>
+
+        <!-- Quais redes sociais participantes -->
+
+        <TextView
+            android:id="@+id/textViewRedesSociais"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="Quais redes sociais receberam postagens do evento"
+            android:text="Redes Sociais"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <!-- Facebook -->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+evento/chkTwitter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:hint="Posta uma mensagem no Twitter do Evento"
+                android:text="Twitter" />
+
+            <CheckBox
+                android:id="@+evento/chkFacebook"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="Posta uma mensagem no Facebook do Evento"
+                android:text="Facebook" />
+        </LinearLayout>
+
+        <!-- Twitter -->
+
+
+        <!-- Bordas do Evento -->
+
+
+        <!-- Borda Polaroid -->
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp" >
+
+            <TableRow
+                android:id="@+id/tableRow9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    style="@style/texto14"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Borda usada no formato de borda Polaroid"
+                    android:text="Borda Polaroid"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+evento/editBordaPolaroid"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="URL do arquivo com a borda Polaroid"
+                    android:inputType="text" />
+            </TableRow>
+
+            <!-- Borda Cabine -->
+
+            <TableRow
+                android:id="@+id/tableRow10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    style="@style/texto14"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Borda usada no formato de borda Cabine"
+                    android:text="Borda Cabine"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+evento/editBordaCabine"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="URL do arquivo com a borda Cabine"
+                    android:inputType="text" >
+
+                    <requestFocus />
+                </EditText>
+            </TableRow>
+        </TableLayout>
+
+        <!-- Parâmetros Adicionais -->
+
+
+        <!-- Definição de Parâmetros Adicionais -->
+
+        <TextView
+            android:id="@+id/textViewParametros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint=""
+            android:text="Definição de Parâmetros Adicionais"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <!-- Param 1 -->
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp" >
+
+            <TableRow
+                android:id="@+id/tableRow11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Parâmetro adicional 1"
+                    android:text="Parâmetro 1" />
+
+                <EditText
+                    android:id="@+evento/editParam1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Parâmetro adicional 1" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Parâmetro adicional 2"
+                    android:text="Parâmetro 2" />
+
+                <EditText
+                    android:id="@+evento/editParam2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Parâmetro adicional 2" />
+            </TableRow>
+
+            <!-- Param 2 -->
+
+
+            <!-- Param 3 -->
+
+            <TableRow
+                android:id="@+id/tableRow13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Parâmetro adicional 3"
+                    android:text="Parâmetro 3" />
+
+                <EditText
+                    android:id="@+evento/editParam3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Parâmetro adicional 3" />
+            </TableRow>
+
+            <!-- Param 4 -->
+
+            <TableRow
+                android:id="@+id/tableRow14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Parâmetro adicional 4"
+                    android:text="Parâmetro 4" />
+
+                <EditText
+                    android:id="@+evento/editParam4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Parâmetro adicional 4" />
+            </TableRow>
+
+            <!-- Param 5 -->
+
+            <TableRow
+                android:id="@+id/tableRow15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Parâmetro adicional 5"
+                    android:text="Parâmetro 5" />
+
+                <EditText
+                    android:id="@+evento/editParam5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Parâmetro adicional 5" />
+            </TableRow>
+        </TableLayout>
+
+        <!-- Botões de Ação -->
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <!-- Botões -->
+
+            <Button
+                android:id="@+evento/btnGravar"
+                style="@style/btnConfirmaStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Gravar" />
+
+            <Button
+                android:id="@+evento/btnCancelar"
+                style="@style/btnCancelarStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cancelar" />
+        </LinearLayout>
+
+        <!-- Footer -->
+
+        <include layout="@layout/include_footer" />
+    </LinearLayout>
+
+</ScrollView>

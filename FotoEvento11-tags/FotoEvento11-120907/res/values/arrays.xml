@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="array_estados_entries">
+        <item>SP</item>
+        <item>RJ</item>
+        <item>MG</item>
+        <item>ES</item>
+        <item>AC</item>
+        <item>AM</item>
+        <item>PA</item>
+        <item>RO</item>
+        <item>RR</item>
+        <item>RS</item>
+        <item>PR</item>
+        <item>SC</item>
+        <item>MS</item>
+        <item>GO</item>
+        <item>DF</item>
+        <item>TO</item>
+        <item>CE</item>
+        <item>PB</item>
+        <item>SE</item>
+        <item>AL</item>
+        <item>MA</item>
+        <item>PI</item>
+    </string-array>
+    <string-array name="array_estados_values">
+        <item>São Paulo</item>
+        <item>Rio de Janeiro</item>
+        <item>Minas Gerais</item>
+        <item>Espírito Santo</item>
+        <item>Acre</item>
+        <item>AM</item>
+        <item>PA</item>
+        <item>RO</item>
+        <item>RR</item>
+        <item>RS</item>
+        <item>PR</item>
+        <item>SC</item>
+        <item>MS</item>
+        <item>GO</item>
+        <item>DF</item>
+        <item>TO</item>
+        <item>CE</item>
+        <item>PB</item>
+        <item>SE</item>
+        <item>AL</item>
+        <item>MA</item>
+        <item>PI</item>
+    </string-array>
+
+    <!-- Planet Array -->
+    
+    <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+    </string-array>
+
+</resources>
