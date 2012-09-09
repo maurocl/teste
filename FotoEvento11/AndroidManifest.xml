@@ -28,7 +28,7 @@
         android:debuggable="true"
         android:icon="@drawable/ic_launcher" >
         <activity
-            android:name=".FotoEventoActivity"
+            android:name=".view.FotoEventoActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,49 +37,49 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ParticipanteActivity"
+            android:name=".view.ParticipanteActivity"
             android:label="Cadastrar Usuários" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".RelatorioActivity"
+            android:name=".view.RelatorioActivity"
             android:label="Relatórios" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".EventoActivity"
+            android:name=".view.EventoActivity"
             android:label="Cadastro de Eventos" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".PreferenciasActivity"
+            android:name=".view.PreferenciasActivity"
             android:label="Cadastro de Preferências" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ContratanteActivity"
+            android:name=".view.ContratanteActivity"
             android:label="Cadastro de Contratante" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".view.LoginActivity"
             android:label="Login de acesso a telas protegidas" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ManutencaoActivity"
+            android:name=".view.ManutencaoActivity"
             android:label="Manutencao das informaçõea da aplicação" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -97,73 +97,21 @@
             </intent-filter>
         </activity>
         <!-- configura esta activity para usar orientacao landscape -->
-
-        <activity
-            android:name=".CameraActivity2"
-            android:label="Câmera"
-            android:screenOrientation="landscape" >
+        <activity android:name=".view.ExibeFotoActivity" >
+            android:label="Exibe uma foto na tela"
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".CameraSimples"
-            android:label="Câmera Simples fornecida pelo Android" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".DummyActivity"
-            android:label="Câmera Simples fornecida pelo Android" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".DummyActivity2"
-            android:label="Câmera Simples fornecida pelo Android (2)" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".DummyActivity3"
-            android:label="Câmera Simples fornecida pelo Android (3)" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ActivityCameraSimplesDummy"
-            android:label="" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ExibeFotoActivity"
-            android:label="Exibe uma foto na tela" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".TestCameraActivity"
-            android:label="Testa o funcionamento da activity CameraActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".SplashScreenActivity"
+            android:name=".view.SplashScreenActivity"
             android:label="Splash Screen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ParticipacaoActivity"
+            android:name=".view.ParticipacaoActivity"
             android:label="Tela de Participacao do Usuario" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -183,17 +131,20 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        
         <activity
-            android:name=".TwitterActivity"
+            android:name=".view.TwitterActivity"
             android:label="Tela de Interface com o Twitter" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        
-        
+         <activity
+            android:name=".view.DummyActivity3"
+            android:label="Tela Principal" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
-    
 
 </manifest>

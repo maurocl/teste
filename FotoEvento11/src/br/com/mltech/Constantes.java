@@ -47,7 +47,7 @@ public interface Constantes {
   // Definição da Activies chamadas a partir de DummyActivity
   public static final int ACTIVITY_TIRA_FOTO_3 = 113;
 
-  public static final int ACTIVITY_CHOOSER = 150;
+  //public static final int ACTIVITY_CHOOSER = 150;
 
   public static final int ACTIVITY_PARTICIPANTE = 102;
 

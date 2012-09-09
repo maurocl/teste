@@ -34,7 +34,10 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="Nome do usuário"
-                android:inputType="none" />
+                android:inputType="none" >
+
+                <requestFocus />
+            </EditText>
         </TableRow>
 
         <TableRow
@@ -56,12 +59,10 @@
                 android:ems="10"
                 android:hint="Senha do Usuário"
                 android:inputType="none|textPassword" >
-
-                <requestFocus />
             </EditText>
         </TableRow>
     </TableLayout>
-
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

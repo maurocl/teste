@@ -16,5 +16,8 @@
     <string name="participacao">Participação</string>
     <string name="manutencao">Manutenção</string>
     <string name="evento">Evento</string>
+    
+    <string name="aguarde">aguarde ...</string>
+    
 
 </resources>
