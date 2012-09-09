@@ -239,53 +239,6 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(ManutencaoActivity.this);
 
-				/*
-				 * builder.setMessage(
-				 * "Você tem certeza que apagar todos os dados e restaurar do arquivo ?"
-				 * ).setCancelable(false) .setPositiveButton("Sim", new
-				 * DialogInterface.OnClickListener() {
-				 * 
-				 * public void onClick(DialogInterface dialog, int id) {
-				 * 
-				 * String arquivo = FileUtils.getBaseDirectory() + File.separator +
-				 * "config.txt";
-				 * 
-				 * HashMap<String, String> hash = null;
-				 * 
-				 * // Lê o arquivo de configuração try {
-				 * 
-				 * hash = leArquivoConfiguracao(arquivo);
-				 * 
-				 * } catch (FileNotFoundException e) { Log.w(TAG, "onClick(restore) - "
-				 * + arquivo + " não foi encontrado", e);
-				 * Toast.makeText(getBaseContext(), "Falha na abertura do arquivo: " +
-				 * arquivo, Toast.LENGTH_SHORT).show();
-				 * 
-				 * } catch (IOException e) { Log.w(TAG,
-				 * "onClick(restore) - Erro na abertura do arquivo: " + arquivo, e);
-				 * 
-				 * }
-				 * 
-				 * // Atualiza as variáveis de preferência if (hash != null) { if
-				 * (saveMapPreferences(hash)) { Toast.makeText(getBaseContext(),
-				 * "Restauração feita com sucesso do arquivo: " + arquivo,
-				 * Toast.LENGTH_SHORT) .show(); } else {
-				 * Toast.makeText(getBaseContext(),
-				 * "Falha na restauração da configuração", Toast.LENGTH_SHORT).show(); }
-				 * } else { Log.w(TAG,
-				 * "onClick(restore) - Erro na restauração do arquivo: " + arquivo); }
-				 * 
-				 * }
-				 * 
-				 * }).setNegativeButton("Não", new DialogInterface.OnClickListener() {
-				 * 
-				 * public void onClick(DialogInterface dialog, int id) {
-				 * 
-				 * dialog.cancel(); }
-				 * 
-				 * });
-				 */
-
 				builder.setMessage("Você tem certeza que apagar todos os dados e restaurar do arquivo ?");
 
 				builder.setCancelable(false);
@@ -534,6 +487,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
 	}
 
 	/**
+	 * Trata o resultado da execução da activity Relatórios
 	 * 
 	 * @param resultCode
 	 * @param data

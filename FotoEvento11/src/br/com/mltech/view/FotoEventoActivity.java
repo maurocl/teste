@@ -7,12 +7,14 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,9 +28,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import br.com.mltech.Constantes;
 import br.com.mltech.R;
-import br.com.mltech.R.drawable;
-import br.com.mltech.R.id;
-import br.com.mltech.R.layout;
 import br.com.mltech.modelo.Contratante;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Parametros;
@@ -94,7 +93,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   // de manutenção. É usado para testes
   // TODO incluir essa configuração nas configurações da aplicação
   //
-  private boolean mAdminAccount = false;
+  private boolean mAdminAccount = true;
 
   // Repositório - Participacao
   static RepositorioParticipacao repositorio;
@@ -235,10 +234,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
           bundle.putSerializable(PARTICIPANTE, mParticipante);
           bundle.putSerializable(PARTICIPACAO, mParticipacao);
 
-          // launchActivity(FotoEventoActivity.this, DummyActivity3.class,
-          // bundle, ACTIVITY_DUMMY3);
-          // launchActivity(getBaseContext(), DummyActivity3.class, bundle,
-          // ACTIVITY_FOTOS);
+         
 
           // lança uma activity implementada na classe CLASS_FOTOS, com código
           // de retorno ACTIVITY_FOTOS,
@@ -1109,7 +1105,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
    * 
    * @return o nome associado ao código usado na execução da Activity.
    */
-
   private String getActivityName(int requestCode) {
 
     String nome = null;
@@ -1136,6 +1131,78 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     return nome;
 
+  }
+  
+  // AsyncTask<Params, Progress, Result>
+  private class BuscaBitmapTask extends AsyncTask<String, Void, Bitmap> {
+  	
+  	private ProgressDialog progress;
+  	private Context ctx;
+  	
+  	private Bitmap bitmap = null;
+  	
+  	@Override
+  	protected void onPreExecute() {
+
+  		super.onPreExecute();
+  		
+  		progress = ProgressDialog.show(ctx, "title", "message");
+  		
+  	}
+  	
+  	@Override
+  	protected Bitmap doInBackground(String... params) {
+  		// 
+
+      SharedPreferences preferences = getSharedPreferences(PREF_EMAIL, MODE_PRIVATE);
+
+      if (preferences == null) {
+        Log.w(TAG, "obtemImagemTelaInicial() - Não foi possível abrir o arquivo de preferências: " + PREF_EMAIL);
+        return null;
+      }
+
+      String urlImagem = preferences.getString("preferencias_url_imagem", null);
+
+      preferences = null;
+
+      if (urlImagem == null) {
+        Log.w(TAG,
+            "obtemImagemTelaInicial() - Não foi possível encontrar o parâmetro de configuração 'preferencias_url_imagem'. Usando a tela padrão");
+        return null;
+      }
+
+      File f = new File(urlImagem);
+
+      if (f.exists()) {
+
+        // Arquivo existente. Carrega (decodifica o arquivo e cria um objeto bitmap)
+        bitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+
+      } else {
+
+        // Arquivo não existe (ou não foi configurado)
+        // Carrega a foto default (padrão)
+        // TODO definir o tamanho da imagem inicial
+
+        Log.w(TAG, "obtemImagemTelaInicial() - Arquivo: " + f.getAbsolutePath() + " não foi encontrado.");
+
+      }  		
+      
+  		return bitmap;
+  		
+  	}
+  	
+  	@Override
+  	protected void onPostExecute(Bitmap result) {
+  		
+  		super.onPostExecute(result);
+  		
+  		if(progress!=null) {
+  			progress.dismiss();
+  		}
+  		
+  	}
+  	
   }
 
 }

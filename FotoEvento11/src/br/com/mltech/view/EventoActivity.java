@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -165,6 +166,10 @@ public class EventoActivity extends Activity implements Constantes {
     // mEvento
     atualizaValorComponentes();
 
+    // Hide soft-keyboard:
+    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+    
     /**
      * Checkbox do Facebook
      */

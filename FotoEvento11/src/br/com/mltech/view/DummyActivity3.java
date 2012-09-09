@@ -1758,8 +1758,6 @@ public class DummyActivity3 extends Activity implements Constantes {
 		if (mEvento.isEnviaFacebook()) {
 
 			// enviar foto ao Facebook
-			// TODO qual texto ???
-
 			Log.i(TAG, "sendEmailRedesSociais() - Envia foto ao Facebook ...");
 			sendMsgFacebook(filename);
 
@@ -1778,7 +1776,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 	}
 
 	/**
-	 * sendMsgFacebook(String filename)
+	 * Envia a foto e a mensaem configurada ao Facebook
 	 * 
 	 * @param filename
 	 *          nome do arquivo onde se encontra a foto
@@ -1799,7 +1797,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 	}
 
 	/**
-	 * sendMsgTwitter(String filename, String text)
+	 * Envia a foto e a mensagem configurada ao Twitter.
 	 * 
 	 * @param filename
 	 *          nome do arquivo

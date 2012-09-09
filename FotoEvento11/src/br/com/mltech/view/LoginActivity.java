@@ -30,13 +30,13 @@ public class LoginActivity extends Activity implements OnClickListener, Constant
 
   private static boolean mUsuarioValidado;
 
-  Button btnLogin;
+  private Button btnLogin;
 
-  Button btnCancelar;
+  private Button btnCancelar;
 
-  EditText usuario;
+  private EditText usuario;
 
-  EditText senha;
+  private EditText senha;
 
   /**
    * onCreate(Bundle savedInstanceState)
@@ -51,17 +51,15 @@ public class LoginActivity extends Activity implements OnClickListener, Constant
     usuario = (EditText) findViewById(R.id.usuario);
     senha = (EditText) findViewById(R.id.senha);
 
-    Button btnLogin = (Button) findViewById(R.id.btnLogin);
+    btnLogin = (Button) findViewById(R.id.btnLogin);
     btnLogin.setOnClickListener(this);
 
-    Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
+    btnCancelar = (Button) findViewById(R.id.btnCancelar);
     btnCancelar.setOnClickListener(this);
 
   }
 
   /**
-   * onClick(View v)
-   * 
    * Trata os eventos dos botões
    * 
    * @param v
@@ -81,6 +79,9 @@ public class LoginActivity extends Activity implements OnClickListener, Constant
    * processaLogin()
    * 
    * Processa ação do botão login
+   * 
+   * Obtém o usuário e sua senha.
+   * Verifica se o usuário e senha fornecida são compatíveis.
    * 
    */
   private void processaLogin() {
@@ -106,11 +107,15 @@ public class LoginActivity extends Activity implements OnClickListener, Constant
       Log.d(TAG, "onClick() - Usuário NÃO validado");
     }
 
+    // retorna o usuário
     it.putExtra(USUARIO, usuario.getText().toString());
+    // retorna a senha
     it.putExtra(SENHA, senha.getText().toString());
 
+    // Estabelece o resultado da verificação
     setResult(RESULT_OK, it);
 
+    // finaliza a activity
     finish();
 
   }
@@ -156,27 +161,5 @@ public class LoginActivity extends Activity implements OnClickListener, Constant
     return usuarioValidado;
 
   }
-
-  // TODO verificar o que fazer - remover
-  /**
-   * verificaUsuarioSenha
-   * 
-   * @param usuario
-   * @param senha
-   * 
-   * @return true caso o usuário e senha estejam corretas ou false caso
-   *         contrário.
-   */
-  /*
-   * private boolean verificaUsuarioSenha(String usuario, String senha) {
-   * 
-   * boolean b;
-   * 
-   * if ("root".equals(usuario) && "root".equals(senha)) { // usário validado
-   * Log.d(TAG, "Usuário validado com sucesso !"); b = true; } else { // usuário
-   * não é válido Log.w(TAG, "Usuário não válido !"); b = false; }
-   * 
-   * return b; }
-   */
 
 }

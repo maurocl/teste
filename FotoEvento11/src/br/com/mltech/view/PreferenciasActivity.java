@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -117,7 +118,9 @@ public class PreferenciasActivity extends Activity implements Constantes {
     checked = convertStrToBoolean(s); 
     chkSsl.setChecked(checked);
 
-    
+    // Hide soft-keyboard:
+    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
     //---------------------------
     // processa o botão de Gravar
     //---------------------------

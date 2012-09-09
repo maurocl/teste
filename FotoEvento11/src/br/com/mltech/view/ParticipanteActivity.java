@@ -446,6 +446,7 @@ public class ParticipanteActivity extends Activity implements Constantes {
   public void showToast(String msg) {
 
     Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    
   }
 
 }
