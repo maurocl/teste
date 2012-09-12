@@ -1,19 +1,17 @@
 package br.com.mltech.view;
 
-import br.com.mltech.Constantes;
-import br.com.mltech.R;
-import br.com.mltech.R.id;
-import br.com.mltech.R.layout;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import br.com.mltech.Constantes;
+import br.com.mltech.R;
 
 /**
  * Activity responsável pela manutenção das preferências de uso do sistema<br>

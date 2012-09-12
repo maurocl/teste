@@ -1,9 +1,5 @@
 package br.com.mltech.view;
 
-import br.com.mltech.Constantes;
-import br.com.mltech.R;
-import br.com.mltech.R.id;
-import br.com.mltech.R.layout;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +8,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import br.com.mltech.Constantes;
+import br.com.mltech.R;
 
 /** 
  * Activity responsável por pegar as informações de login e senha para acesso a telas

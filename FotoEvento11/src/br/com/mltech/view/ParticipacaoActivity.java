@@ -14,8 +14,6 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 import br.com.mltech.Constantes;
 import br.com.mltech.R;
-import br.com.mltech.R.id;
-import br.com.mltech.R.layout;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.Participante;
 

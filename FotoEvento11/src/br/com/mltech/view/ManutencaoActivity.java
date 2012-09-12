@@ -27,14 +27,11 @@ import android.widget.Button;
 import android.widget.Toast;
 import br.com.mltech.Constantes;
 import br.com.mltech.R;
-import br.com.mltech.R.id;
-import br.com.mltech.R.layout;
 import br.com.mltech.modelo.Contratante;
 import br.com.mltech.modelo.Evento;
 import br.com.mltech.modelo.Parametros;
 import br.com.mltech.modelo.Participacao;
 import br.com.mltech.modelo.RepositorioParticipacaoScript;
-import br.com.mltech.modelo.SQLiteHelper;
 import br.com.mltech.utils.FileUtils;
 
 /**
