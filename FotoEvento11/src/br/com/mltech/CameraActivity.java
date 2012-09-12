@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
-import android.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
