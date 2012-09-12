@@ -406,35 +406,7 @@ public class ManipulaImagem {
     return arqSaida;
 
   }
-
-  /**
-   * aplicaFiltroCores(Bitmap bi)
-   * 
-   * @param bi
-   *          Bitmap original
-   * 
-   * @return um bitmap com o filtro aplicado ou null
-   * 
-   */
-  public static Bitmap aplicaFiltroCores(Bitmap bi) {
-
-    return null;
-  }
-
-  /**
-   * aplicaFiltroPB(Bitmap bi)
-   * 
-   * @param bi
-   *          Bitmap original
-   * 
-   * @return um bitmap com o filtro aplicado ou null
-   * 
-   */
-  public static Bitmap aplicaFiltroPB(Bitmap bi) {
-
-    return null;
-  }
-
+ 
   /**
    * aplicaMolduraFoto(String foto, String moldura)
    * 
@@ -805,6 +777,7 @@ public class ManipulaImagem {
 
       if (f.exists() && f.isFile()) {
 
+      	// exibe informações sobre o arquivo
         FileUtils.showFile(f);
 
         // Decodifica o bitmap armazenado no arquivo
@@ -825,6 +798,8 @@ public class ManipulaImagem {
   }
 
   /**
+   * Lê um bitmap armazenado em um array de bytes.
+   * 
    * data byte array of compressed image data <br>
    * offset into imageData for where the decoder should begin parsing. <br>
    * length the number of bytes, beginning at offset, to parse
@@ -959,12 +934,13 @@ public class ManipulaImagem {
   }
 
   /**
-   * getBitmapRegion(String filename, Rect rect, Options options)
-   * 
+   * Obtém um retângulo do bitmap armazenado em um arquivo.
+   *  
    * @param filename
    *          nome do arquivo
    * @param rect
    *          The rectangle that specified the region to be decode.
+   *          O retângulo que especifica a região a ser decodificada
    * @param options
    *          null-ok; Options that control downsampling. inPurgeable is not
    *          supported.
@@ -995,7 +971,8 @@ public class ManipulaImagem {
       return null;
     }
 
-    // Decodes a rectangle region in the image specified by rect.    
+    // Decodes a rectangle region in the image specified by rect.
+    // decodifica uma região retangular na imagem especificada pelo retângulo.
     bitmap = brd.decodeRegion(rect, options);
 
     if (bitmap == null) {
@@ -1010,6 +987,8 @@ public class ManipulaImagem {
 
   /**
    * getRotatedBitmap(Resources res, int id, int angle)
+   * 
+   * cria um novo bitmap rotacionado de acordo com um ângulo definido no parâmetro a partir de um bitmap (recurso). 
    * 
    * @param res
    *          Resource
@@ -1038,6 +1017,8 @@ public class ManipulaImagem {
 
   /**
    * getRoundedCornerBitmap(Bitmap bitmap)
+   * 
+   * Obtem um bitmap de bordas arredondadas
    * 
    * @param bitmap
    *          Bitmap de origem
@@ -1296,6 +1277,8 @@ public class ManipulaImagem {
   }
 
   /**
+   * Grava um bitmap em um arquivo
+   * 
    * @param bitmap
    *          bitmap que será gravado
    * 
@@ -1583,10 +1566,7 @@ public class ManipulaImagem {
     } else {
       h = bmp2.getHeight();
     }
-
-    // w = bmp1.getWidth();
-    // h = bmp1.getHeight();
-
+ 
     /*
      * Possible bitmap configurations. A bitmap configuration describes how
      * pixels are stored. This affects the quality (color depth) as well as the
@@ -1750,9 +1730,7 @@ public class ManipulaImagem {
   }
 
   /**
-   * showBitmapInfo2(Bitmap bm)
-   * 
-   * Exibe informações detalhadas sobre um bitmap.
+   * Exibe informações detalhadas sobre um bitmap no log da aplicação
    * 
    * @param bitmap
    *          Instância de um bitmap
@@ -1766,7 +1744,6 @@ public class ManipulaImagem {
 
     Config config = bitmap.getConfig();
 
-    // int density = bm.getDensity();
     int h = bitmap.getHeight();
     int w = bitmap.getWidth();
 
@@ -1791,8 +1768,6 @@ public class ManipulaImagem {
   }
 
   /**
-   * showBitmapInfo(Bitmap bm)
-   * 
    * Exibe o tamanho (largura x altura), densidade de pixels, etc
    * 
    * @param bm
@@ -1972,6 +1947,7 @@ public class ManipulaImagem {
 
       image.setImageBitmap(bitmap);
 
+      // Exibe informações sobre o bitmap
       showBitmapInfo(bitmap);
 
     } else {
@@ -2032,7 +2008,7 @@ public class ManipulaImagem {
   }
 
   /**
-   * Cria um novo bitmap redimensionado
+   * Cria um bitmap com nova altura e largura a partir do bitmap fornecido
    * 
    * @param photo
    *          Bitmap contendo a foto

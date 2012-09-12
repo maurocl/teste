@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 /**
+ * Executa o download de um arquivo
  * 
  */
 public class FileDownload {
@@ -198,7 +199,10 @@ public class FileDownload {
   }
 
   /**
+   * Obtém a URL da foto
+   * 
    * @return a URL de origem
+   * 
    */
   public String getUrl() {
 
@@ -265,6 +269,7 @@ public class FileDownload {
   public ImageView getImageView() {
 
     return imageView;
+    
   }
 
   /**
@@ -276,6 +281,7 @@ public class FileDownload {
   public void setImageView(ImageView imageView) {
 
     this.imageView = imageView;
+    
   }
 
   /**

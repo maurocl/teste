@@ -52,7 +52,7 @@ public class AndroidUtils {
   }
 
   /**
-   * alertDialog(Context context, int message)
+   * Exibe uma caixa de diálogo de Alerta
    * 
    * @param context Contexto da aplicação
    * @param message Mensagem que será exibida

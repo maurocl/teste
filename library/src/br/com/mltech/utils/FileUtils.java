@@ -92,7 +92,7 @@ public class FileUtils {
   }
 
   /**
-   * Retorna um arquivo para uso na captura de uma foto e armazenamento no
+   * Cria um arquivo (File) para uso na captura de uma foto e armazenamento no
    * formato .png (sem compressão).
    * 
    * @return o arquivo
@@ -135,6 +135,7 @@ public class FileUtils {
   }
 
   /**
+   * Obtém o nome de um arquivo no formato .png
    * 
    * @return o nome do arquivo localizado no diretório de fotos com a extensão
    *         .png
@@ -151,6 +152,8 @@ public class FileUtils {
   }
 
   /**
+   * Obtém o nome de um arquivo com extensão .jpg
+   * 
    * @return @return o nome do arquivo localizado no diretório de fotos com a
    *         extensão .jpg
    */
