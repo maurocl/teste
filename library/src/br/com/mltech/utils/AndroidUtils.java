@@ -9,95 +9,98 @@ import android.net.NetworkInfo;
 
 public class AndroidUtils {
 
-  /**
-   * isNetworkingAvailable(Context context)
-   * 
-   * @param context Contexto da aplicação
-   * 
-   * @return true se houver algum tipo de conexão de rede ou false caso contrário.
-   * 
-   */
-  public static boolean isNetworkingAvailable(Context context) {
+	/**
+	 * Verifica se há algum tipo de conexão externa disponível.
+	 * 
+	 * @param context
+	 *          Contexto da aplicação
+	 * 
+	 * @return true se houver algum tipo de conexão de rede ou false caso
+	 *         contrário.
+	 * 
+	 */
+	public static boolean isNetworkingAvailable(Context context) {
 
-    boolean conectividade = false;
+		boolean conectividade = false;
 
-    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    if (connectivityManager == null) {
+		if (connectivityManager != null) {
 
-      //
+			NetworkInfo[] info = connectivityManager.getAllNetworkInfo();
 
-    } else {
-      
-      NetworkInfo[] info = connectivityManager.getAllNetworkInfo();
-      
-      if (info != null) {
-      
-        for (int i = 0; i < info.length; i++) {
-        
-          if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-            
-            conectividade = true;
-            
-          }
-          
-        }
-        
-      }
-      
-    }
+			if (info != null) {
 
-    return conectividade;
+				for (int i = 0; i < info.length; i++) {
 
-  }
+					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+						
+						conectividade = true;
 
-  /**
-   * Exibe uma caixa de diálogo de Alerta
-   * 
-   * @param context Contexto da aplicação
-   * @param message Mensagem que será exibida
-   * 
-   */
-  public static void alertDialog(Context context, int message) {
+					}
 
-    AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Título").setMessage(message).create();
-    dialog.setButton("OK", new OnClickListener() {
+				}
 
-      //@Override
-      public void onClick(DialogInterface dialog, int which) {
-        // simplesmente retorna sem executar nenhuma ação.
-        return;
-      }
-    });
+			}
 
-    // exibe a caixa de diálogo
-    dialog.show();
+		}
 
-  }
+		return conectividade;
 
-  /**
-   * alertDialog(Context context, String title, String message)
-   * 
-   * @param context Contexto da Aplicação
-   * @param title Título da janela
-   * @param message Mensagem que será exibida
-   * 
-   */
-  public static void alertDialog(Context context, String title, String message) {
+	}
 
-    AlertDialog dialog = new AlertDialog.Builder(context).setTitle(title).setMessage(message).create();
-    dialog.setButton("OK", new OnClickListener() {
+	/**
+	 * Exibe uma caixa de diálogo de Alerta
+	 * 
+	 * @param context
+	 *          Contexto da aplicação
+	 * @param message
+	 *          Mensagem que será exibida
+	 * 
+	 */
+	public static void alertDialog(Context context, int message) {
 
-      //@Override
-      public void onClick(DialogInterface dialog, int which) {
-        // simplesmente retorna sem executar nenhuma ação.
-        return;
-      }
-    });
+		AlertDialog dialog = new AlertDialog.Builder(context).setTitle("Título").setMessage(message).create();
+		dialog.setButton("OK", new OnClickListener() {
 
-    // exibe a caixa de diálogo
-    dialog.show();
+			// @Override
+			public void onClick(DialogInterface dialog, int which) {
+				// simplesmente retorna sem executar nenhuma ação.
+				return;
+			}
+		});
 
-  }
-  
+		// exibe a caixa de diálogo
+		dialog.show();
+
+	}
+
+	/**
+	 * alertDialog(Context context, String title, String message)
+	 * 
+	 * @param context
+	 *          Contexto da Aplicação
+	 * @param title
+	 *          Título da janela
+	 * @param message
+	 *          Mensagem que será exibida
+	 * 
+	 */
+	public static void alertDialog(Context context, String title, String message) {
+
+		AlertDialog dialog = new AlertDialog.Builder(context).setTitle(title).setMessage(message).create();
+		dialog.setButton("OK", new OnClickListener() {
+
+			// @Override
+			public void onClick(DialogInterface dialog, int which) {
+				// simplesmente retorna sem executar nenhuma ação.
+				return;
+			}
+		});
+
+		// exibe a caixa de diálogo
+		dialog.show();
+
+	}
+
 }

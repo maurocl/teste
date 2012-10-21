@@ -901,18 +901,23 @@ public class CameraTools {
 
 		int num = 0;
 
+		// para cada chave ...
 		for (String chave : hash.keySet()) {
 
+			// incrementa o nº de chaves
 			num++;
 
+			// obtem a lista de strings associada a chave
 			List<String> listaValues = hash.get(chave);
 
+			// Loga o nome da chave e seu nº de sequencia associado
 			Log.d(TAG, "showHash() chave(" + num + ")=" + chave);
 
 			if (listaValues != null) {
 
-				for (String s2 : listaValues) {
-					Log.d(TAG, "  showHash() - value=" + s2);
+				// exibe a lista de valores associada a chave
+				for (String valor : listaValues) {
+					Log.d(TAG, "  showHash() - value=" + valor);
 				}
 
 			}
@@ -922,8 +927,7 @@ public class CameraTools {
 	}
 
 	/**
-	 * Exibe informações sobre a configuração de todas as câmeras disponíveis no
-	 * dispositivo.
+	 * Exibe a configuração de todas as câmeras disponíveis no dispositivo no log da aplicação.
 	 * 
 	 */
 	public static void showCameraInfo() {
