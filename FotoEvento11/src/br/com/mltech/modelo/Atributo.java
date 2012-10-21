@@ -15,9 +15,24 @@ public class Atributo implements Serializable {
    */
   private static final long serialVersionUID = -2386538206919855202L;
   
+  /**
+   * Nome do atributo
+   */
   private String nome;
+  
+  /**
+   * Tipo do atributo
+   */
   private String tipo;
+  
+  /**
+   * Valor associado ao atributo
+   */
   private String valor;
+  
+  /**
+   * Indica a obrigatoriedade do atributo
+   */
   private boolean obrigatorio;
 
   /**

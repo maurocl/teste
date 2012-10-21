@@ -33,10 +33,8 @@ import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
-
-
 /**
- * LoginButton é um "controle" (botão usado para fazer login)
+ * LoginButton é um "controle" (botão usado para fazer login). Ele extende ImageButton.
  * 
  * 
  */
@@ -48,6 +46,7 @@ public class LoginButton extends ImageButton {
 
 	private SessionListener mSessionListener = new SessionListener();
 
+	// Array de permissões
 	private String[] mPermissions;
 
 	private Activity mActivity;
@@ -96,9 +95,12 @@ public class LoginButton extends ImageButton {
 	/**
 	 * Método de inicialização
 	 * 
-	 * @param activity activity
-	 * @param activityCode código de identificação da activity
-	 * @param fb instância da classe Facebook
+	 * @param activity
+	 *          activity
+	 * @param activityCode
+	 *          código de identificação da activity
+	 * @param fb
+	 *          instância da classe Facebook
 	 */
 	public void init(final Activity activity, final int activityCode, final Facebook fb) {
 
@@ -109,10 +111,14 @@ public class LoginButton extends ImageButton {
 	/**
 	 * Método de inicialização
 	 * 
-	 * @param activity activity
-	 * @param activityCode código de identificação da activity
-	 * @param fb instância da classe Facebook
-	 * @param permissions array de string contendo as permissões necessárias à operação
+	 * @param activity
+	 *          activity
+	 * @param activityCode
+	 *          código de identificação da activity
+	 * @param fb
+	 *          instância da classe Facebook
+	 * @param permissions
+	 *          array de string contendo as permissões necessárias à operação
 	 * 
 	 */
 	public void init(final Activity activity, final int activityCode, final Facebook fb, final String[] permissions) {

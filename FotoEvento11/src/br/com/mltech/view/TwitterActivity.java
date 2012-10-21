@@ -15,6 +15,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * 
+ * 
+ *
+ */
 public class TwitterActivity extends Activity {
 
 	public static final String TAG = "TwitterActivity";
@@ -31,6 +36,7 @@ public class TwitterActivity extends Activity {
 		Intent i = getIntent();
 		
 		Bundle bundle = i.getExtras();
+		
 		if(bundle!=null) {
 			if(bundle.containsKey("br.com.mltech.filename")) {
 				filename=bundle.getString("br.com.mltech.filename");
@@ -148,12 +154,12 @@ public class TwitterActivity extends Activity {
 			try {
 
 				url = upload.upload(new File(filename), text);
-				Log.d(TAG, "Successfully uploaded image to Twitter at " + url);
+				Log.d(TAG, "Upload da imagem feita com sucesso no Twitter em: " + url);
 				result = url.toString();
 
 			} catch (TwitterException e) {
 
-				Log.w(TAG, "Failed to upload the image: " + e.getMessage(), e);
+				Log.w(TAG, "Falha no upload da imagem: " + e.getMessage(), e);
 
 			}
 

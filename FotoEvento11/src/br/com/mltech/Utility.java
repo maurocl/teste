@@ -133,6 +133,13 @@ public class Utility extends Application {
   }
 
 
+  /**
+   * Obtem o bitmap localizado pela URL
+   * 
+   * @param url URL contendo um bitmap
+   * 
+   * @return o bitmap
+   */
   public static Bitmap getBitmap2(String url) {
 
     Bitmap bm = null;
@@ -143,6 +150,7 @@ public class Utility extends Application {
       
       URL aURL = new URL(url);
 
+      // abre uma conexão
       URLConnection conn = aURL.openConnection();
 
       conn.connect();
@@ -167,6 +175,7 @@ public class Utility extends Application {
 
     }
 
+    // retorna o bitmap criado ou null em caso de erro
     return bm;
 
   }

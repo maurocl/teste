@@ -18,7 +18,7 @@ import br.com.mltech.modelo.Contratante;
 /**
  * Essa tela gerencia as informações a respeito do Contratante do evento.
  * 
- * @author maurocl
+ * 
  * 
  */
 public class ContratanteActivity extends Activity implements Constantes {

@@ -1,74 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" >
 
-     <!-- Header -->
-
-    <include layout="@layout/include_header" />
-
-
- 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/fundo"
-        android:drawableTop="@drawable/shape_rectangle_linear_gradient"
-        android:gravity="center_horizontal"
-        android:text="Foto Evento Participações"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/vermelho"
-        android:textSize="@dimen/Fonte30"
-        android:textStyle="bold" />
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:minHeight="480dp"
-        android:minWidth="640dp"
-        android:src="@drawable/ic_launcher" />
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_weight="1"
-        android:background="@color/branco"
-        android:gravity="center_horizontal" >
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/btnParticipante"
-            style="@style/btnConfirmaStyle"
+        <!-- Header -->
+
+        <include layout="@layout/include_header" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/fundo"
+            android:drawableTop="@drawable/shape_rectangle_linear_gradient"
+            android:gravity="center_horizontal"
+            android:text="Foto Evento Participações"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/vermelho"
+            android:textSize="@dimen/Fonte30"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Participar"
-            android:width="200dp" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:minHeight="480dp"
+            android:minWidth="640dp"
+            android:src="@drawable/ic_launcher" />
 
-        <Button
-            android:id="@+id/btnBotao"
-            style="@style/btnConfirmaStyle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Botão"
-            android:width="200dp" />
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@color/branco"
+            android:gravity="center_horizontal" >
 
-        <Button
-            android:id="@+id/btnSair"
-            style="@style/btnConfirmaStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sair"
-            android:width="200dp" />
+            <Button
+                android:id="@+id/btnParticipante"
+                style="@style/btnConfirmaStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Participar"
+                android:width="200dp" />
+
+            <Button
+                android:id="@+id/btnBotao"
+                style="@style/btnConfirmaStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Botão"
+                android:width="200dp" />
+
+            <Button
+                android:id="@+id/btnSair"
+                style="@style/btnConfirmaStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sair"
+                android:width="200dp" />
+        </LinearLayout>
+
+        <!-- Footer -->
+
+        <include layout="@layout/include_footer" />
     </LinearLayout>
 
-    <!-- Footer -->
-
-    <include layout="@layout/include_footer" />
-    
-    
-</LinearLayout>
+</ScrollView>
