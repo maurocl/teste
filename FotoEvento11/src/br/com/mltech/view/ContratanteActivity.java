@@ -212,7 +212,7 @@ public class ContratanteActivity extends Activity implements Constantes {
    * @param msg mensagem exibida pelo toast
    * 
    */
-  public void showToast(String msg) {
+  private void showToast(String msg) {
 
     Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
   }
