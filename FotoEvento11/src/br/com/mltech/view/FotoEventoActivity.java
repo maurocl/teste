@@ -93,7 +93,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   // de manutenção. É usado para testes
   // TODO incluir essa configuração nas configurações da aplicação
   //
-  private boolean mAdminAccount = true;
+  private boolean mAdminAccount = false;
 
   // Repositório - Participacao
   static RepositorioParticipacao repositorio;
@@ -122,6 +122,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
     // TODO verificar qual repositório é necessário criar aqui !!!
 
     if (funcao == 1) {
+      
       Log.d(TAG, "Abrindo E CRIANDO o repositório ...");
       repositorio = new RepositorioParticipacaoScript(this);
 
@@ -172,7 +173,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
       lerConfiguracoes("preferencias");
     }
 
-    // lista de participações
+    // Instancia a lista de participações no evento
     mListaParticipacao = new ArrayList<Participacao>();
 
     // Verifica se existem algum bitmap configurado para exibição na tela inicial
@@ -193,6 +194,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
     Button btn = (Button) findViewById(R.id.btnBotao);
 
     Button btnSair = (Button) findViewById(R.id.btnSair);
+    
+    Button btnBotao = (Button) findViewById(R.id.btnBotao);
 
     if (DEBUG == 1) {
 
@@ -225,6 +228,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
         boolean condicoesSatisfeitas = isCondicoesIniciaisSatisfeitas();
 
         if (condicoesSatisfeitas) {
+          
           // condições iniciais foram satisfeitas
 
           Bundle bundle = new Bundle();
@@ -232,9 +236,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
           bundle.putSerializable(CONTRATANTE, mContratante);
           bundle.putSerializable(EVENTO, mEvento);
           bundle.putSerializable(PARTICIPANTE, mParticipante);
-          bundle.putSerializable(PARTICIPACAO, mParticipacao);
-
-         
+          bundle.putSerializable(PARTICIPACAO, mParticipacao);        
 
           // lança uma activity implementada na classe CLASS_FOTOS, com código
           // de retorno ACTIVITY_FOTOS,
@@ -267,6 +269,16 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     });
 
+    btnBotao.setOnClickListener(new OnClickListener() {
+
+      public void onClick(View v) {
+
+        processaClickItemMenuManutencao();
+
+      }
+
+    });
+    
   }
 
   /**
@@ -275,7 +287,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
    */
   private void exibeInformacaoSobreDispositivo() {
 
-    Log.d(TAG,"Informações sobre o dispositivo executando a aplicação: ");
+    Log.d(TAG, "Informações sobre o dispositivo executando a aplicação: ");
     Log.d(TAG, "DEVICE=" + Build.DEVICE);
     Log.d(TAG, "ID=" + Build.ID);
     Log.d(TAG, "MANUFACTURER=" + Build.MANUFACTURER);

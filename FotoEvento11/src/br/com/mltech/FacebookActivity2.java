@@ -27,14 +27,14 @@ import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
 /**
- * Activity de interface com o Facebook 
+ * Activity de interface com o Facebook
  * 
  * 
  */
 public class FacebookActivity2 extends Activity {
 
   private static final String TAG = "FacebookActivity2";
-  
+
   final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
   final static int PICK_EXISTING_PHOTO_RESULT_CODE = 1;
@@ -65,12 +65,11 @@ public class FacebookActivity2 extends Activity {
   // Cria uma instância do Facebook passando o identificador da aplicação
   Facebook facebook = new Facebook(APP_ID);
 
-  
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
 
     super.onCreate(savedInstanceState);
+    
     setContentView(R.layout.facebook);
 
     Log.d(TAG, "onCreate() ...");
@@ -185,6 +184,7 @@ public class FacebookActivity2 extends Activity {
   }
 
   /**
+   * Finaliza a Activity
    * 
    */
   private void finalizaActivity() {
@@ -419,7 +419,7 @@ public class FacebookActivity2 extends Activity {
 
   }
 
-  /** 
+  /**
    * Listener de sessão
    * 
    */
@@ -476,8 +476,10 @@ public class FacebookActivity2 extends Activity {
 
     // Cria um stream de saída de bytes
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    
     // Escteve o bitmap para o stream de saída
     bi.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+    
     // Obtem um array de bytes com o bitmap
     data = baos.toByteArray();
 
