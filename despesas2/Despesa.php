@@ -5,37 +5,35 @@ class Despesa {
 	
 	/**
 	 * 
-	 * Identificador da despesas
+	 * Enter description here ...
 	 * @var unknown_type
 	 */
 	private $id;
 	
 	/**
 	 * 
-	 * Data de realização da despesa
+	 * Enter description here ...
 	 * @var unknown_type
 	 */
 	private $data;
 	
 	/**
 	 * 
-	 * Desscrição da despesa
-	 * @var String
+	 * Enter description here ...
+	 * @var unknown_type
 	 */
 	private $descricao;
 	
 	/**
 	 * 
-	 * Valor da despesa
-	 * 
+	 * Enter description here ...
 	 * @var unknown_type
 	 */
 	private $valor;
 	
 	/**
 	 * 
-	 * Categoria a qual a despesa pertence
-	 * 
+	 * Enter description here ...
 	 * @var unknown_type
 	 */
 	private $categoria;
@@ -59,6 +57,8 @@ class Despesa {
 	}
 	
 	// métodos getters e setters
+	
+	
 	
 }
 

@@ -14,14 +14,12 @@ class Session {
 	/**
 	 * Session ID
 	 * 
-	 * Enter description here ...
 	 * @var number
 	 */
 	private $id;
 	
 	/**
 	 * 
-	 * Enter description here ...
 	 * @param $id
 	 */
 	 function __construct($id) {
@@ -29,21 +27,17 @@ class Session {
 	}
 	
 	/**
-	 * getId()
 	 * 
-	 * Enter description here ...
 	 */
 	public function getId() {
 		return $this->id;
 	}
 	
 	/**
-	 * setId($id)
 	 * 
-	 * Enter description here ...
 	 * @param $id
 	 */
-	public function setId($id) {
+	public function setIt($id) {
 		$this->id=$id;
 	}
 	
@@ -51,8 +45,8 @@ class Session {
 
 $s = new Session(1);
 
-echo "<br>id: " . $s->getId();
+echo $s->getId();
 
-$s->setId(5);
+$s->setIt(5);
 
-echo "<br>id: " . $s->getId();
+echo $s->getId();
