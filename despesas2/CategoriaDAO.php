@@ -1,8 +1,7 @@
 <?php
-
-class GenericDAO implements InterfaceDAO {
-	
-	// propriedades
+class CategoriaDAO {
+  
+  // propriedades
 	
 	// métodos
 	
@@ -22,11 +21,8 @@ class GenericDAO implements InterfaceDAO {
 		echo "Executando o destrutor ...\n";
 	}
 	
-	/**
-	 * (non-PHPdoc)
-	 * @see InterfaceDAO::save()
-	 */
-    public function save() {
+	
+    public function save($categoria) {
 		
 	}
 	
@@ -34,7 +30,7 @@ class GenericDAO implements InterfaceDAO {
 	 * (non-PHPdoc)
 	 * @see InterfaceDAO::update()
 	 */
-	public function update() {
+	public function update($categoria) {
 		
 	}
 	
@@ -42,13 +38,13 @@ class GenericDAO implements InterfaceDAO {
 	 * (non-PHPdoc)
 	 * @see InterfaceDAO::delete()
 	 */
-	public function delete() {
+	public function delete($categoria) {
 		
 	}
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see InterfaceDAO::query()
+	 * @see InterfaceDAO::query($categoria)
 	 */
 	public function query() {
 		
@@ -61,7 +57,6 @@ class GenericDAO implements InterfaceDAO {
 	public function getAll() {
 		
 	}
-	
+  
+  
 }
-
-?>

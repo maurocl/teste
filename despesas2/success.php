@@ -20,8 +20,17 @@ else {
 
 	echo "Welcome!";
 
+	
+	
 }
 
 echo "<h1>Success</h1>";
+
+echo "<p><a href=\"manutencaoCategoria.php\">Manutenção de Categorias</a></p>";
+echo "<p><a href=\"manutencaoDespesa.php\">Manutenção de Despesas</a></p>";
+echo "<p><a href=\"\">Relatório de Categorias</a></p>";
+echo "<p><a href=\"\">Relatório de Despesas</a></p>";
+
+echo "<p><a href=\"logout.php\">Logout</a></p>";
 
 ?>

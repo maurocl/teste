@@ -5,6 +5,7 @@ Interface InterfaceDAO {
 		
 	/**
 	 * 
+	 * Enter description here ...
 	 */
     public function save() {
 		
@@ -12,6 +13,7 @@ Interface InterfaceDAO {
 	
 	/**
 	 * 
+	 * Enter description here ...
 	 */
 	public function update() {
 		
@@ -19,6 +21,7 @@ Interface InterfaceDAO {
 	
 	/**
 	 * 
+	 * Enter description here ...
 	 */
 	public function delete() {
 		
@@ -26,6 +29,7 @@ Interface InterfaceDAO {
 	
 	/**
 	 * 
+	 * Enter description here ...
 	 */
 	public function query() {
 		
@@ -33,6 +37,7 @@ Interface InterfaceDAO {
 	
 	/**
 	 * 
+	 * Enter description here ...
 	 */
 	public function getAll() {
 		
