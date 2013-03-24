@@ -21,7 +21,6 @@ class DespesaDAO {
   /**
    * getConnection()
    *
-   * Enter description here ...
    */
   public function getConnection() {
     return $this->con;
@@ -32,7 +31,7 @@ class DespesaDAO {
    *
    * Insere uma nova Despesa
    *
-   * @param Despesa $c Nova Despesa
+   * @param Despesa $despesa Nova Despesa
    */
   public function inserir(Despesa $despesa) {
 
@@ -41,7 +40,9 @@ class DespesaDAO {
     $valor = $despesa->getValor();
     $categoria = $despesa->getCategoria();
 
-    $cmd="insert into despesa (data, descricao, valor, categoria) values ('$data','$desc','$valor','$categoria')";
+    $dataYMD = $this->fmtYMD($data);
+    
+    $cmd="insert into despesa (data, descricao, valor, categoria) values ('$dataYMD','$desc','$valor','$categoria')";
      
     //echo "<br>cmd=[ $cmd ]";
      
@@ -62,7 +63,7 @@ class DespesaDAO {
    *
    * Altera as informações de uma Despesa
    *
-   * @param Despesa $c
+   * @param Despesa $despesa
    *
    */
   public function alterar(Despesa $despesa) {
@@ -73,7 +74,9 @@ class DespesaDAO {
     $valor = $despesa->getValor();
     $categoria = $despesa->getCategoria();
      
-    $cmd = "update despesa set descricao='$descricao', data='$data', valor=$valor, categoria='$categoria' where id=$id";
+    $dataYMD = $this->fmtYMD($data);
+    
+    $cmd = "update despesa set descricao='$descricao', data='$dataYMD', valor=$valor, categoria='$categoria' where id=$id";
 
     return $this->getConnection()->query($cmd);
 
@@ -104,7 +107,7 @@ class DespesaDAO {
    *
    * Consulta uma despesa dado seu código
    *
-   * @param int $cod_categoria
+   * @param int $id Identificador da despesa
    *
    * @return Um objeto Despesa ou null caso a Despesa não seja encontrada
    *
@@ -117,7 +120,7 @@ class DespesaDAO {
 
     $result = $this->getConnection()->query($cmd);
 
-    $c=null;
+    $despesa=null;
 
     while($linha=$result->fetch_array()) {
 
@@ -130,12 +133,11 @@ class DespesaDAO {
 
   }
 
-
   /**
    * listarTodos()
    *
    * Obtém um array de objetos Despesa
-   * ordenados por cod_categoria
+   * ordenados por data.
    *
    * @return Uma array de objetos Despesa
    *
@@ -169,10 +171,13 @@ class DespesaDAO {
   }
 
   /**
-   * 
+   * Obtém uma lista de despesas compreendidas entre
+   * um período ordenadas pela data da despesa
    * 
    * @param string $data1 Data inicial
    * @param string $data2 Data final
+   * 
+   * @return Uma lista de objetos
    */
   public function listarTodosByData($data1,$data2) {
      
@@ -189,7 +194,7 @@ class DespesaDAO {
 
     //$cmd="SELECT id, date_format(data,'%d/%m/%Y') dt, descricao, valor, categoria  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2'";
     
-    $cmd="SELECT id, data, descricao, valor, categoria  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2'";
+    $cmd="SELECT id, data, descricao, valor, categoria  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2' order by data";
 
     //echo "<p>cmd=$cmd<br>";
     
@@ -215,12 +220,16 @@ class DespesaDAO {
   }
 
   /**
-   * Transforma uma data no formato dd/mm/aaaa para o
-   * formato aaaammdd
+   * Transforma uma data representada por uma string no 
+   * formato dd/mm/aaaa para o formato aaaammdd
    * 
    * @param string $data Data no formato dd/mm/aaaa
+   * 
+   * @return string com data no formato aaaammdd
    */
   private function fmtYMD($data) {
+    
+    //echo "<br>data: $data";
     
     $d = substr($data, 0,2);
     $m = substr($data, 3,2);
@@ -231,6 +240,28 @@ class DespesaDAO {
     return $a . $m . $d;
   }
 
+ /**
+   * Transforma uma data representada por uma string no 
+   * formato aaaa/mm/dd para o formato dd/mm/aaaa
+   * 
+   * @param string $data Data no formato aaaa/mm/dd
+   * 
+   * @return string com data no formato dd/mm/aaaa
+   */
+  public function fmtDMA($data) {
+    
+    //echo "<br>data: $data";
+    
+    $a = substr($data, 0,4);
+    $m = substr($data, 5,2);
+    $d = substr($data, 8,2);
+
+    //echo "<br>d=$d, m=$m, a=$a<br>";
+
+    return "$d/$m/$a";
+    
+  }
+  
 }
 
 ?>

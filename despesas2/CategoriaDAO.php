@@ -194,7 +194,7 @@ class CategoriaDAO {
 
       $s = $descricao . "|" . $cod_categoria;
       
-      $hash[$descricao] = $cod_categoria;
+      //$hash[$descricao] = $cod_categoria;
 
       // insere o objeto em uma lista
       array_push($lista, $s);
@@ -202,7 +202,8 @@ class CategoriaDAO {
     }
 
     // retorna a lista de categorias
-    return $hash;
+    //return $hash;
+    return $lista;
 
   }
 

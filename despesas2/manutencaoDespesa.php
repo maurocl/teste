@@ -21,13 +21,9 @@ echo "<h1>Manutenção Despesa</h1>";
 
 echo "<h2>Período: $data1 até $data2";
 
-echo "<p><a href='relDespesa.php'>voltar</a>";
+echo "<p><a href='relDespesa.php'>voltar</a><br>";
 
 // exibe a lista de todas as despesas
-
-// exibe uma lista das despesas
-
-// permite adicionar uma nova despesa
 
 $con = DBConnection::getConnection();
 
@@ -70,7 +66,8 @@ foreach($lista as $item) {
 
 echo "</table>";
 
-echo "<a href=\"insereDespesa.php\">Insere nova despesa</a>";
+// permite adicionar uma nova despesa
+echo "<br><a href=\"insereDespesa.php\">Insere nova despesa</a>";
 
 $con->close();
 

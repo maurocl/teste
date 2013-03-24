@@ -7,11 +7,17 @@ include 'Despesa.php';
 include 'DespesaDAO.php';
 
 $id = -1;
+
 $data = $_POST['data'];
 $descricao = $_POST['descricao'];
 $valor = $_POST['valor'];
-//$categoria = $_POST['categoria'];
-$categoria = 1;
+$descrCategoria = $_POST['descrCategoria'];
+
+$pieces = explode("|",$descrCategoria);
+
+$idCategoria = $pieces[1];
+
+$categoria = $idCategoria;
 
 echo "<p>ctrlInsereDespesa";
 

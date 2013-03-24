@@ -4,6 +4,12 @@ include_once 'Categoria.php';
 include_once 'CategoriaDAO.php';
 include_once 'DBConnection.php';
 
+
+$data = $_POST['data'];
+$descricao = $_POST['descricao'];
+$valor= $_POST['valor'];
+$categoria = $_POST['categoria'];
+
 $con = DBConnection::getConnection();
 
 if($con==null) {
@@ -36,10 +42,10 @@ $con->close();
 ?>
 
 <hr>
-<h1>Insere Despesa</h1>
+<h1>Altera Despesa</h1>
 <hr>
 
-<form name="frmInsereDespesa" method="post" action="ctrlInsereDespesa.php">
+<form name="frmAlteraDespesa" method="post" action=".php">
 
 <!-- 
 <p>Id:
