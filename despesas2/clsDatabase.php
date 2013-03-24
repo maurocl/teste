@@ -7,35 +7,35 @@ class clsDatabase {
 
 	/**
 	 *
-	 * Enter description here ...
+	 * 
 	 * @var string
 	 */
 	private $host;
 
 	/**
 	 *
-	 * Enter description here ...
+	 * 
 	 * @var string
 	 */
 	private $user;
 
 	/**
 	 *
-	 * Enter description here ...
+	 * 
 	 * @var string
 	 */
 	private $pass;
 
 	/**
 	 *
-	 * Enter description here ...
+	 * 
 	 * @var string
 	 */
 	private $db;
 
 	/**
 	 *
-	 * Enter description here ...
+	 * 
 	 * @var string
 	 */
 	private $table;
@@ -45,7 +45,7 @@ class clsDatabase {
 	/**
 	 * __construct
 	 *
-	 * Enter description here ...
+	 * 
 	 * @param $host
 	 * @param $user
 	 * @param $pass
@@ -71,7 +71,7 @@ class clsDatabase {
 	/**
 	 * insert
 	 *
-	 * Enter description here ...
+	 * 
 	 */
 	public function insert() {
 		$sql = "insert into $this->table values ()";
@@ -83,7 +83,7 @@ class clsDatabase {
 	/**
 	 * update
 	 *
-	 * Enter description here ...
+	 * 
 	 */
 	public function update($key) {
 		$sql = "update $this->table where id=$key";
@@ -95,7 +95,7 @@ class clsDatabase {
 	/**
 	 * delete
 	 *
-	 * Enter description here ...
+	 * 
 	 */
 	public function delete($key) {
 		$sql = "delete from $this->table where id=$key";
@@ -107,7 +107,7 @@ class clsDatabase {
 	/**
 	 * query
 	 *
-	 * Enter description here ...
+	 * 
 	 */
 	public function query($key) {
 		$sql = "select * from $this->table where id=$key";
@@ -133,16 +133,12 @@ class clsDatabase {
 		echo "<p>Executando a query: [$sql]\n";
 
 		if ($result=$this->mysqli->query($sql)) {
-
-				
 				
 			if ($result->num_rows >0) {
 
 				echo "<br>Retornando $result->num_rows linha(s)\n";
 
 				while($row = $result->fetch_row()) {
-						
-						
 						
 					//echo "Numero de colunas retornadas: " . count($row) . ".\n";
 					//echo "$row[0], $row[1], $row[2]\n";
@@ -151,7 +147,6 @@ class clsDatabase {
 						echo "$row[$i], ";
 					}
 					echo $row[count($row)-1]."\n";
-
 
 				}
 			}
@@ -192,14 +187,13 @@ class clsDatabase {
 		$this->table=$table;
 	}
 
-
-
 }
 
 // criação de um objecto
 $test = new clsDatabase('localhost', 'root', '', 'mydb');
 
-$test->setTable("users");
+//$test->setTable("users");
+$test->setTable("categoria");
 
 $test->connect();
 

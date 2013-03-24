@@ -1,5 +1,9 @@
 <?php
 
+###################
+# Limpa a autorização
+#
+###################
 
 // start a session
 session_start();

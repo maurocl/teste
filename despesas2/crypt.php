@@ -14,7 +14,6 @@ $size = strlen($crypt);
 
 echo "$crypt, $size<br>";
 
-
 $hash1 = md5($password);
 $size1 = strlen($hash1);
 

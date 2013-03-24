@@ -50,6 +50,9 @@ class Categoria {
     $this->descricao = $descricao;
   }
 
+  function __toString() {
+    return "Id: " . $this->getId() . ", Descricao: " . $this->getDescricao();
+  }
 
 }
 
