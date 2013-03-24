@@ -6,7 +6,10 @@ require_once 'CategoriaDAO.php';
 require_once 'DespesaDAO.php';
 require_once 'DBConnection.php';
 
+// Data Inicial
 $data1=$_POST['data1'];
+
+// Data Final
 $data2=$_POST['data2'];
 
 if($data1==null) {
@@ -17,9 +20,9 @@ if($data2==null) {
   $data2 = "31/03/2013";
 }
 
-echo "<h1>Manutenção Despesa</h1>";
+echo "<h1 align=center>Manutenção Despesa</h1>";
 
-echo "<h2>Período: $data1 até $data2";
+echo "<h2 align=center>Período: $data1 até $data2";
 
 echo "<p><a href='relDespesa.php'>voltar</a><br>";
 

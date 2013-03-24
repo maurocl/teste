@@ -68,10 +68,10 @@ class DespesaDAO {
    */
   public function alterar(Despesa $despesa) {
 
-    $id = $despesa->getId();
-    $data = $despesa->getData();
-    $desc = $despesa->getDescricao();
-    $valor = $despesa->getValor();
+    $id        = $despesa->getId();
+    $data      = $despesa->getData();
+    $descricao = $despesa->getDescricao();
+    $valor     = $despesa->getValor();
     $categoria = $despesa->getCategoria();
      
     $dataYMD = $this->fmtYMD($data);
