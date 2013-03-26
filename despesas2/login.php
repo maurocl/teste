@@ -1,7 +1,13 @@
 <?php
+
+include_once 'Constantes.php';
+include_once 'DBConnection.php';
+
+
+
 // form not submitted
 if (!$_POST['submit']) {
-?>
+  ?>
 
 <html>
 
@@ -11,22 +17,20 @@ if (!$_POST['submit']) {
 
 <body>
 
-<hr>
-<h1>Sistema de Controle de Despesas</h1>
-<hr>
+	<hr>
+	<h1>Sistema de Controle de Despesas</h1>
+	<hr>
 
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST"><br>
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+		<br> <br>Username: <input type="text" size="10" name="username"><br> <br>Password:
+		<input type="password" size="10" name="password"><br>
 
-<br>Username: <input type="text" size="10" name="username"><br>
+		<p align="center">
+			<input type="submit" name="submit" value="Logar"> <input type="reset"
+				name="reset" value="Cancelar">
+		</p>
 
-<br>Password: <input type="password" size="10" name="password"><br>
-
-<p align="center">
-<input type="submit" name="submit" value="Logar">
-<input type="reset" name="reset" value="Cancelar">
-</p>
-
-</form>
+	</form>
 
 </body>
 
@@ -34,53 +38,75 @@ if (!$_POST['submit']) {
 <p align="center">Copyright (2013) - MLTech</p>
 <hr>
 
-
 </html>
 
-<?php
+  <?php
 } else {
 
-	// form submitted
+  $inputUser = $_POST['username'];
+  $inputPass = $_POST['password'];
 
-	// check for username
+  //echo "<p>user=[$inputUser]";
+  //echo "<p>pass=[$inputPass]";
 
-	// check for password
+  $con = DBConnection::getConnection();
 
-	// assign to variables and escape
+  if($con==null) {
+    //echo "<p>conn é null";
+  }
+  else {
+    //echo "<p>conn NÃO é null";
+  }
 
-	$inputUser = $_POST['username'];
-	$inputPass = $_POST['password'];
-	
-	//echo "<p>user=[$inputUser]";
-	//echo "<p>pass=[$inputPass]";
+  $cmd="select id from users where username = '$inputUser' and password='$inputPass'";
 
-	// connect and execute SQL query
-	$connection = mysql_connect("localhost","root","") or die ("Unable to connect!");
+  //echo "<br>cmd=[$cmd]";
 
-	mysql_select_db("mydb");
+  //$result = $con->getConnection()->query($cmd);
+  $result = $con->query($cmd);
 
-	$query="select id from users where username = '$inputUser' and password='$inputPass'";
 
-	$result = mysql_query($query, $connection) or die ("Error in query: $query. " . mysql_error());
 
-	if (mysql_num_rows($result)==1) {
-		// if row exists
-		// user/pass combination is correct
-		// start a session
-		session_start();
+  if($result) {
 
-		// register a session variable
-		$_SESSION['authorizedUser']=1;
+    if($result->num_rows==1) {
+       
+      while($linha=$result->fetch_array()) {
 
-		// redirect browser to protected resource
-		header("Location: success.php");
-	}
-	else {
-		// if row does not exist
-		// user/pass combination is wrong
-		// redirect browser to error page
-		header("Location: fail.php");
-	}
+        $id = $linha[0];
+
+      }
+
+      // if row exists
+      // user/pass combination is correct
+      // start a session
+      session_start();
+
+      // register a session variable
+      $_SESSION['authorizedUser']=1;
+
+      // redirect browser to protected resource
+      header("Location: success.php");
+
+
+    }
+    else {
+      // if row does not exist
+      // user/pass combination is wrong
+      // redirect browser to error page
+      header("Location: fail.php");
+
+    }
+
+
+
+  }
+  else {
+    // if row does not exist
+    // user/pass combination is wrong
+    // redirect browser to error page
+    header("Location: fail.php");
+  }
 }
 
 ?>

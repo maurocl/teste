@@ -2,7 +2,6 @@
 // start a session
 session_start();
 
-
 // register a session variable
 $_SESSION['authorizedUser']=null;
 

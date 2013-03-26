@@ -1,12 +1,12 @@
 <?php
-  
+
 require_once 'Categoria.php';
 
 /**
- * DAOCategoria
+ * CategoriaDAO
  *
  * Objeto de acesso a dados de Categoria
- * 
+ *
  * @author maurocl
  *
  */
@@ -72,7 +72,7 @@ class CategoriaDAO {
   public function alterar(Categoria $c) {
 
     $id = $c->getId();
-    $descricao     = $c->getDescricao();
+    $descricao = $c->getDescricao();
      
     $cmd = "update categoria set descricao='$descricao' where id=$id";
 
@@ -115,7 +115,7 @@ class CategoriaDAO {
     $cmd = "select * from categoria where id=$id";
 
     //echo "<br>cmd=[$cmd]<br>";
-    
+
     $result = $this->getConnection()->query($cmd);
 
     $c=null;
@@ -149,8 +149,6 @@ class CategoriaDAO {
     $cmd = "select * from categoria order by id";
 
     $result = $this->getConnection()->query($cmd);
-    
-    
 
     while($linha=$result->fetch_array()) {
 
@@ -187,17 +185,21 @@ class CategoriaDAO {
 
     $result = $this->getConnection()->query($cmd);
 
-    while($linha=$result->fetch_array()) {
+    if($result!=null) {
 
-      $cod_categoria = $linha[0];
-      $descricao     = $linha[1];
+      while($linha=$result->fetch_array()) {
 
-      $s = $descricao . "|" . $cod_categoria;
-      
-      //$hash[$descricao] = $cod_categoria;
+        $cod_categoria = $linha[0];
+        $descricao     = $linha[1];
 
-      // insere o objeto em uma lista
-      array_push($lista, $s);
+        $s = $descricao . "|" . $cod_categoria;
+
+        //$hash[$descricao] = $cod_categoria;
+
+        // insere o objeto em uma lista
+        array_push($lista, $s);
+
+      }
 
     }
 
@@ -237,9 +239,9 @@ class CategoriaDAO {
     return $hash;
 
   }
-    
+
 }
 
 ?>
-  
-}
+
+

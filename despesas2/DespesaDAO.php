@@ -41,7 +41,7 @@ class DespesaDAO {
     $categoria = $despesa->getCategoria();
 
     $dataYMD = $this->fmtYMD($data);
-    
+
     $cmd="insert into despesa (data, descricao, valor, categoria) values ('$dataYMD','$desc','$valor','$categoria')";
      
     //echo "<br>cmd=[ $cmd ]";
@@ -75,7 +75,7 @@ class DespesaDAO {
     $categoria = $despesa->getCategoria();
      
     $dataYMD = $this->fmtYMD($data);
-    
+
     $cmd = "update despesa set descricao='$descricao', data='$dataYMD', valor=$valor, categoria='$categoria' where id=$id";
 
     return $this->getConnection()->query($cmd);
@@ -173,17 +173,17 @@ class DespesaDAO {
   /**
    * Obtém uma lista de despesas compreendidas entre
    * um período ordenadas pela data da despesa
-   * 
+   *
    * @param string $data1 Data inicial
    * @param string $data2 Data final
-   * 
+   *
    * @return Uma lista de objetos
    */
   public function listarTodosByData($data1,$data2) {
      
     // data1 está no formato dd/mm/aaaa --> aaaammdd
     // data2 está no formato dd/mm/aaaa --> aaaammdd
-    
+
     $fmtData1 = $this->fmtYMD($data1);
     $fmtData2 = $this->fmtYMD($data2);
 
@@ -193,24 +193,28 @@ class DespesaDAO {
     //$cmd = "select * from despesa between data1 and data2 order by data ";
 
     //$cmd="SELECT id, date_format(data,'%d/%m/%Y') dt, descricao, valor, categoria  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2'";
-    
+
     $cmd="SELECT id, data, descricao, valor, categoria  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2' order by data";
 
     //echo "<p>cmd=$cmd<br>";
-    
+
     $result = $this->getConnection()->query($cmd);
 
-    while($linha=$result->fetch_array()) {
+    if($result!=null) {
 
-      //echo "<p>$linha[0], $linha[1], $linha[2], $linha[3], $linha[4], ";
+      while($linha=$result->fetch_array()) {
 
-      $despesa = new Despesa($linha[0], $linha[1], $linha[2], $linha[3], $linha[4]);
+        //echo "<p>$linha[0], $linha[1], $linha[2], $linha[3], $linha[4], ";
 
-      // insere o objeto em uma lista
-      array_push($lista, $despesa);
+        $despesa = new Despesa($linha[0], $linha[1], $linha[2], $linha[3], $linha[4]);
 
-      //echo "<p>$despesa";
-      //echo "<p>$despesa->getDescricao()";
+        // insere o objeto em uma lista
+        array_push($lista, $despesa);
+
+        //echo "<p>$despesa";
+        //echo "<p>$despesa->getDescricao()";
+
+      }
 
     }
 
@@ -220,17 +224,17 @@ class DespesaDAO {
   }
 
   /**
-   * Transforma uma data representada por uma string no 
+   * Transforma uma data representada por uma string no
    * formato dd/mm/aaaa para o formato aaaammdd
-   * 
+   *
    * @param string $data Data no formato dd/mm/aaaa
-   * 
+   *
    * @return string com data no formato aaaammdd
    */
   private function fmtYMD($data) {
-    
+
     //echo "<br>data: $data";
-    
+
     $d = substr($data, 0,2);
     $m = substr($data, 3,2);
     $a = substr($data, 6,4);
@@ -240,18 +244,18 @@ class DespesaDAO {
     return $a . $m . $d;
   }
 
- /**
-   * Transforma uma data representada por uma string no 
+  /**
+   * Transforma uma data representada por uma string no
    * formato aaaa/mm/dd para o formato dd/mm/aaaa
-   * 
+   *
    * @param string $data Data no formato aaaa/mm/dd
-   * 
+   *
    * @return string com data no formato dd/mm/aaaa
    */
   public function fmtDMA($data) {
-    
+
     //echo "<br>data: $data";
-    
+
     $a = substr($data, 0,4);
     $m = substr($data, 5,2);
     $d = substr($data, 8,2);
@@ -259,9 +263,9 @@ class DespesaDAO {
     //echo "<br>d=$d, m=$m, a=$a<br>";
 
     return "$d/$m/$a";
-    
+
   }
-  
+
 }
 
 ?>

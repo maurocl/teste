@@ -2,6 +2,12 @@
 
 include "Constantes.php";
 
+/**
+ * 
+ * 
+ * 
+ *
+ */
 class DBConnection {
   
   private static $con=null;
