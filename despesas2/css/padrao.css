@@ -1,0 +1,57 @@
+@CHARSET "ISO-8859-1";
+
+body {
+	background-color: #CCCCCC;
+	color: #000000;
+}
+
+h1 {
+	font-size: 16pt;
+	font-weight: bold;
+	color: #0000FF;
+}
+
+h2 {
+	font-size: 14pt;
+	font-style: normal;
+	color: #000080;
+}
+
+.rodape {
+	font-size: 6pt/
+	color: #000080;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	background-color: #FFFF00;
+	text-align: center;
+}
+
+.preco {color: #006600}
+.frete {color: #0000ff}
+
+.titulo {font-size: 14pt; }
+
+.aviso {
+  border: thin solid black;
+  font-size: 12pt;
+  font-weight: bold;
+  color: #000000;
+  background-color: #ffff00;.	
+}
+
+.erro {
+	font-size: 14pt;
+	color: #FF0000;
+}
+
+.fmtDireita {
+	font-style: normal;
+	color: #ff0000;
+	text-align:right;
+}
+
+.fmtEsquerda {
+	font-style: normal;
+	color: #000000;
+	text-align:left;
+}	

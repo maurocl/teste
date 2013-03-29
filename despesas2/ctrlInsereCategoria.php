@@ -4,7 +4,6 @@ include 'DBConnection.php';
 include 'Categoria.php';
 include 'CategoriaDAO.php';
 
-
 $id = -1;
 $descricao = $_POST['descricao'];
 

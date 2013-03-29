@@ -13,6 +13,7 @@ if (!$_POST['submit']) {
 
 <head>
 <title>Login</title>
+<link rel="stylesheet" href="css/padrao.css" type="text/css" >
 </head>
 
 <body>
@@ -26,8 +27,8 @@ if (!$_POST['submit']) {
 		<input type="password" size="10" name="password"><br>
 
 		<p align="center">
-			<input type="submit" name="submit" value="Logar"> <input type="reset"
-				name="reset" value="Cancelar">
+			<input type="submit" name="submit" value="Logar">
+			 <input type="reset" name="reset" value="Cancelar">
 		</p>
 
 	</form>
@@ -35,7 +36,7 @@ if (!$_POST['submit']) {
 </body>
 
 <hr>
-<p align="center">Copyright (2013) - MLTech</p>
+<p class="rodape">Copyright 2013 - MLTech</p>
 <hr>
 
 </html>

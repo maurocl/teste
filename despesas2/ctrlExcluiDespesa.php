@@ -26,8 +26,6 @@ $dao = new DespesaDAO($con);
 //$despesa = new Despesa($id, $data, $descricao, $valor, $categoria);
 $despesa = $dao->consultar($id);
 
-
-
 echo "<p>Despesa: " . $despesa ;
 
 $dao->excluir($despesa);

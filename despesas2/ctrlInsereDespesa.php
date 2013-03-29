@@ -19,25 +19,14 @@ $idCategoria = $pieces[1];
 
 $categoria = $idCategoria;
 
-echo "<p>ctrlInsereDespesa";
-
 $despesa = new Despesa($id, $data, $descricao, $valor, $categoria);
 
-echo "<p>despesa: " . $despesa;
-
 $con = DBConnection::getConnection();
-
-if($con==null) {
-  echo "<p>conn é null";
-}
-else {
-  echo "<p>conn NÃO é null";
-}
     
 $dao = new DespesaDAO($con);
 
 $lista = $dao->inserir($despesa);
 
-echo "<p>Registro inserido com id: " . $despesa->getId();
-
 $con->close();
+
+header("Location: manutencaoDespesa.php");

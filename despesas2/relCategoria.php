@@ -11,8 +11,6 @@ echo "<hr>";
 
 //echo "<p><a href=''>voltar</a><br>";
 
-
-
 $con = DBConnection::getConnection();
 
 // exibe a lista de todas as categorias
@@ -31,7 +29,6 @@ echo "<td>Excluir".  "</td>";
 echo "</tr>";
 
 foreach($lista as $item) {
-
   
   echo "<tr>";
   echo "<td>" . $item->getId() . "</td>";
@@ -49,6 +46,5 @@ echo "</table>";
 echo "<p><a href=\"insereCategoria.php\">Insere nova categoria</a>";
 
 $con->close();
-
 
 ?>
