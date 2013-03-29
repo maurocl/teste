@@ -1,5 +1,10 @@
 <?php
 
+//SELECT d.id, d.data, d.descricao, d.valor, d.categoria, c.descricao  
+//FROM   despesa d left outer join categoria c on c.id = d.id 
+//where date_format(data,'%Y%m%d') between '20130101' and '20131231' order by data
+
+
 require_once 'Categoria.php';
 require_once 'Despesa.php';
 

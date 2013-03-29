@@ -1,6 +1,4 @@
-
 <?php
-
 
 include 'DBConnection.php';
 include 'Categoria.php';
@@ -26,8 +24,6 @@ foreach($lista as $item) {
 }
 
 $con->close();
- 
-    
 
 exit;    
 

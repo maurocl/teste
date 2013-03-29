@@ -18,9 +18,11 @@ if($_SESSION['authorizedUser']!=1) {
 }
 else {
 
-  echo "Welcome!";
+  //echo "Welcome!";
 
 }
+
+echo "<h1>Sistema de Controle de Despesas</h1>";
 
 echo "<p><a href=\"manutencaoCategoria.php\">Manutenção de Categorias</a></p>";
 echo "<p><a href=\"manutencaoDespesa.php\">Manutenção de Despesas</a></p>";

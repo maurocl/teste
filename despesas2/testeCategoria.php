@@ -7,10 +7,10 @@ include 'DBConnection.php';
 $con = DBConnection::getConnection();
 
 if($con==null) {
-  echo "<p>conn é null";
+  echo "<p>Erro na abertura da conexão.";
 }
 else {
-  echo "<p>conn NÃO é null";
+  echo "<p>Conexão ok.";
 }
     
 $dao = new CategoriaDAO($con);
@@ -23,8 +23,6 @@ foreach($lista as $item) {
 
 $con->close();
  
-    
-
 exit;    
 
 
