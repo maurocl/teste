@@ -221,7 +221,7 @@ class CategoriaDAO {
    */
   public function listarCategoriaDescr() {
 
-    $cmd = "select id, descricao from categoria order by id";
+    $cmd = "select id, descricao from categoria order by descricao";
 
     $result = $this->getConnection()->query($cmd);
 

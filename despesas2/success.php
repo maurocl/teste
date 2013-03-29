@@ -28,6 +28,9 @@ echo "<p><a href=\"manutencaoCategoria.php\">Manutenção de Categorias</a></p>";
 echo "<p><a href=\"manutencaoDespesa.php\">Manutenção de Despesas</a></p>";
 echo "<p><a href=\"manutencaoCategoria.php\">Relatório de Categorias</a></p>";
 echo "<p><a href=\"relDespesa.php\">Relatório de Despesas</a></p>";
+echo "<p><a href=\"relDespesaByCategoria.php\">Relatorio de Despesas por Categoria</a></p>";
+echo "<p><a href=\"relDespesaTotalByCategoria.php\">Relatorio de total de Despesas por Categoria</a></p>";
+
 
 echo "<p><a href=\"logout.php\">Logout</a></p>";
 

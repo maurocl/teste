@@ -63,6 +63,10 @@ echo "<p><a href='relDespesa.php'>voltar</a><br>";
 
 $con = DBConnection::getConnection();
 
+$daoCategoria = new CategoriaDAO($con);
+
+$hash = $daoCategoria->listarCategoriaDescr();
+
 $dao = new DespesaDAO($con);
 
 //$lista = $dao->listarTodos();
@@ -76,6 +80,7 @@ echo "<td>Data" .  "</td>";
 echo "<td>Descrição".  "</td>";
 echo "<td>Valor".  "</td>";
 echo "<td>Categoria ".  "</td>";
+echo "<td>Descr. Categoria ".  "</td>";
 echo "<td>Editar".  "</td>";
 echo "<td>Excluir".  "</td>";
 echo "</tr>";
@@ -89,12 +94,15 @@ foreach($lista as $item) {
   
   $valor = number_format($item->getValor(),2,",",".");
   
+  $descrCategoria = $hash[$item->getCategoria()];
+  
   echo "<tr>";
   echo "<td>" . $item->getId() . "</td>";
   echo "<td>" . $df . "</td>";
   echo "<td class=\"fmtEsquerda\">" . $item->getDescricao(). "</td>";
   echo "<td class=\"fmtDireita\">" . $valor. "</td>";
   echo "<td>" . $item->getCategoria(). "</td>";
+  echo "<td>" . $descrCategoria. "</td>";
   echo "<td><a href=\"ctrlAlteraDespesa.php?id="  . $item->getId()  . "\">editar</a>" .  "</td>";
   echo "<td><a href=\"ctrlExcluiDespesa.php?id=" . $item->getId() . "\">excluir</a>" . "</td>";
 
