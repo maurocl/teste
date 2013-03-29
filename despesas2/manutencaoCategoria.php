@@ -52,7 +52,7 @@ foreach($lista as $item) {
 
 echo "</table>";
 
-echo "<a href=\"insereCategoria.php\">Insere nova categoria</a>";
+echo "<p><a href=\"insereCategoria.php\">Insere nova categoria</a>";
 
 $con->close();
 

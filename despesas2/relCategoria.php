@@ -36,8 +36,8 @@ foreach($lista as $item) {
   echo "<tr>";
   echo "<td>" . $item->getId() . "</td>";
   echo "<td>" . $item->getDescricao(). "</td>";
-  echo "<td><a href=\"ctrlAlteraDespesa.php?id=" . $item->getId()  . "\">editar</a>" .  "</td>";
-  echo "<td><a href=\"ctrlExcluiDespesa.php?id=" . $item->getId() . "\">excluir</a>" . "</td>";
+  echo "<td><a href=\"ctrlAlteraCategoria.php?id=" . $item->getId()  . "\">editar</a>" .  "</td>";
+  echo "<td><a href=\"ctrlExcluiCategoria.php?id=" . $item->getId() . "\">excluir</a>" . "</td>";
 
   echo "</tr>";
 

@@ -114,18 +114,20 @@ class DespesaDAO {
    */
   public function consultar($id) {
 
-    $cmd = "select * from Despesa where id=$id";
+    $cmd = "select * from despesa where id=$id";
 
-    echo "<br>cmd=[$cmd]<br>";
+    echo "<br>Consultar - cmd=[$cmd]<br>";
 
     $result = $this->getConnection()->query($cmd);
 
     $despesa=null;
 
-    while($linha=$result->fetch_array()) {
+    if($result!=null) {
+      while($linha=$result->fetch_array()) {
 
-      $despesa = new Despesa($linha[0],$linha[1], $linha[2], $linha[3], $linha[4]);
+        $despesa = new Despesa($linha[0],$linha[1], $linha[2], $linha[3], $linha[4]);
 
+      }
     }
 
     // retorna um objeto Despesa ou null

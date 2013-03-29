@@ -77,7 +77,7 @@ class CategoriaDAO {
     $cmd = "update categoria set descricao='$descricao' where id=$id";
 
     return $this->getConnection()->query($cmd);
-
+    
   }
 
   /**
@@ -243,5 +243,3 @@ class CategoriaDAO {
 }
 
 ?>
-
-
