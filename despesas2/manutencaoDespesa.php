@@ -44,6 +44,7 @@ if($data2==null) {
 }
 
 ?>
+
 <!DOCTYPE h1 PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <head>
@@ -53,7 +54,7 @@ if($data2==null) {
 
 <?php 
 
-echo "<h1 align=center>Manutenção Despesa</h1>";
+echo "<h1 class=\"center\">Manutenção Despesa</h1>";
 
 echo "<h2 align=center>Período: $data1 até $data2";
 
@@ -85,6 +86,9 @@ echo "<td>Editar".  "</td>";
 echo "<td>Excluir".  "</td>";
 echo "</tr>";
 
+// valor total das despesas
+$total = 0.00;
+
 foreach($lista as $item) {
 
   //echo "<p><b>item</b>=$item";
@@ -106,9 +110,24 @@ foreach($lista as $item) {
   echo "<td><a href=\"ctrlAlteraDespesa.php?id="  . $item->getId()  . "\">editar</a>" .  "</td>";
   echo "<td><a href=\"ctrlExcluiDespesa.php?id=" . $item->getId() . "\">excluir</a>" . "</td>";
 
+  $total += $item->getValor();
+  
   echo "</tr>";
 
 }
+
+$valorTotalFormatado = number_format($total,2,",",".");
+
+echo "<tr>";
+echo "<td>&nbsp;"  . "</td>";
+echo "<td>&nbsp;" .  "</td>";
+echo "<td>&nbsp;".  "</td>";
+echo "<td>" . $valorTotalFormatado . "</td>";
+echo "<td>&nbsp;".  "</td>";
+echo "<td>&nbsp;".  "</td>";
+echo "<td>&nbsp;".  "</td>";
+echo "<td>&nbsp;".  "</td>";
+echo "</tr>";
 
 echo "</table>";
 

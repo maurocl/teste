@@ -1,10 +1,20 @@
 <?php
 
+
+
 ?>
 
+<head>
+<title>Insere Categoria</title>
+<link rel="stylesheet" href="css/padrao.css" type="text/css">
+</head>
+
 <hr>
-<h1>Insere Categoria</h1>
+<h1 class="center">Insere Categoria</h1>
 <hr>
+
+<p>
+<a href="">voltar</a>
 
 <form name="frmInsereCategoria" method="post" action="ctrlInsereCategoria.php">
 
@@ -12,7 +22,9 @@
 <input type="text" name="descricao" value="" >
 
 <p>
-<input type="submit" name="btnSubmit" value="submit" >
-<input type="reset"  name="btnSubmit" value="reset" >
+<div class="center">
+<input type="submit" name="btnSubmit" value="Inserir" >
+<input type="reset"  name="btnSubmit" value="Limpar" >
+</div>
 
 </form>

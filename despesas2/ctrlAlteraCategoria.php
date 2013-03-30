@@ -11,40 +11,35 @@ $id = $_GET['id'];
 
 $con = DBConnection::getConnection();
 
-if($con==null) {
-  echo "<p>conn é null";
-}
-else {
-  echo "<p>conn NÃO é null";
-}
-
 $dao = new CategoriaDAO($con);
 
 // busca a consulta que será alterada
 $categoria = $dao->consultar($id);
 
-//echo "<p>Buscando id categoria: $id";
-
-// exibe informações sobre a despesa
-//echo "<p>Categoria: " . $categoria ;
-
 $con->close();
 
 ?>
 
+<head>
+<title>Altera Categoria</title>
+<link rel="stylesheet" href="css/padrao.css" type="text/css">
+</head>
+
 <hr>
-<h2>Altera Categoria</h2>
+<h1 class="center" >Altera Categoria</h2>
 <hr>
 
 <form name="frmAlteraCategoria2" method="post" action="confirmaAlteracaoCategoria.php" >
 
-<p>Id: <input type="text" name="id" value="<?php echo $categoria->getId();?>">
+<p>Id: <input type="text"  size="5"  readonly="readonly" name="id" value="<?php echo $categoria->getId();?>">
 
 <p>Descrição: <input type="text" name="descricao" value="<?php echo $categoria->getDescricao();?>">
 
 <p>
-<input type="submit" name="btnSubmit" value="submit"> 
-<input type="reset" name="btnSubmit" value="reset">
+<div class="center">
+<input type="submit" name="btnSubmit" value="Alterar"> 
+<input type="reset" name="btnSubmit" value="Limpar">
+</div>
 </p>
 
 </form>

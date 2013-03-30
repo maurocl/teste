@@ -410,5 +410,56 @@ class DespesaDAO {
 		return $lista;
 
 	}
+	
+	
+	/**
+	 * 
+	 * Obtem o total por categoria
+	 * 
+	 * @param unknown_type $data1
+	 * @param unknown_type $data2
+	 */
+	public function listarByCategoriaBetweenData($idCategoria, $data1,$data2) {
+		 
+		// data1 está no formato dd/mm/aaaa --> aaaammdd
+		// data2 está no formato dd/mm/aaaa --> aaaammdd
+
+		$fmtData1 = $this->fmtYMD($data1);
+		$fmtData2 = $this->fmtYMD($data2);
+
+		// cria um array (lista) vazio(a).
+		$lista = Array();
+
+		//$cmd = "select * from despesa between data1 and data2 order by data ";
+
+		//$cmd="SELECT id, date_format(data,'%d/%m/%Y') dt, descricao, valor, categoria  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2'";
+
+		$cmd="SELECT * total  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2' and categoria=$idCategoria order by data";
+
+		//echo "<p>cmd=$cmd<br>";
+
+		$result = $this->getConnection()->query($cmd);
+
+		if($result!=null) {
+
+			while($linha=$result->fetch_array()) {
+
+				//echo "<p>$linha[0], $linha[1], $linha[2], $linha[3], $linha[4], ";
+
+				//$despesa = new Despesa($linha[0], $linha[1], $linha[2], $linha[3], $linha[4]);
+
+				// insere o objeto em uma lista
+				array_push($lista, $linha);			
+
+			}
+
+		}
+
+		// retorna a lista de categorias
+		return $lista;
+
+	}
+	
+	
 }
 ?>

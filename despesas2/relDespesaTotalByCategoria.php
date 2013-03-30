@@ -97,15 +97,29 @@ foreach($lista as $item) {
   // obtem a descricao da categoria
   $descrCategoria = $hash[$idCategoria];
 
+   
+  
+  $x1 = "id=$idCategoria";
+  $x2 = "data1=$data1";
+  $x3 = "data2=$data2";
+
+  $x4 = "\"detalheCategoria.php?";
+  
+  $x4 = $x4 .   $x1 . "&" . $x2 . "&" . $x3 . "\"";
+  
+  echo "x4=[$x4]";
+  
   echo "<tr>";
   echo "<td>" . $idCategoria . "</td>";
   echo "<td>" . $descrCategoria. "</td>";
   echo "<td class=\"fmtDireita\">" . $vlrTotalCategoria. "</td>";
-  echo "<td><a href=\"ctrlAlteraDespesa.php?id="  . $idCategoria  . "\">detalhes</a>" .  "</td>";
+  echo "<td><a href=" . $x4 . ">" . "teste" . "</a>";
   echo "<td class=\"fmtDireita\">" . $vlrPercTotal . "</td>";
 
   echo "</tr>";
 
+  //" . "id=$idCategoria" . "&data1=01" . "&data2=02" .">detalhes</a>" .  "</td>";
+  
 }
 
 // Formato o valor total das despesas entre duas datas.
@@ -121,6 +135,10 @@ echo "</tr>";
 
 
 echo "</table>";
+
+echo "<p>";
+
+echo  "id=$idCategoria" . "&data1=\"$data1\"" . "&data2=\"$data2\"" ; 
 
 $con->close();
 

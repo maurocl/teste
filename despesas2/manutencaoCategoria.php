@@ -6,9 +6,23 @@ require_once 'CategoriaDAO.php';
 require_once 'DespesaDAO.php';
 require_once 'DBConnection.php';
 
-echo "<a href=\"success.php\">voltar</a>";
+?>
+<!DOCTYPE h1 PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-echo "<h1>Manutenção Categoria</h1>";
+<head>
+<title>Manutenção de Despesas</title>
+<link rel="stylesheet" href="css/padrao.css" type="text/css" >
+</head>
+
+<hr>
+<h1 class="center">Manutenção Categoria</h1>
+<hr>
+
+<p><a href="success.php">voltar</a></p>
+
+<br />
+
+<?php 
 
 // exibe a lista de todas as categorias
 

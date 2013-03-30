@@ -4,6 +4,15 @@ include_once 'Categoria.php';
 include_once 'CategoriaDAO.php';
 include_once 'DBConnection.php';
 
+?>
+
+<!DOCTYPE head PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<head>
+<title>Insere Despesa</title>
+<link rel="stylesheet" href="css/padrao.css" type="text/css" >
+</head>
+
+<?php 
 $con = DBConnection::getConnection();
     
 $dao = new CategoriaDAO($con);
@@ -29,7 +38,7 @@ $con->close();
 ?>
 
 <hr>
-<h1>Insere Despesa</h1>
+<h1 class="center">Insere Despesa</h1>
 <hr>
 
 <form name="frmInsereDespesa" method="post" action="ctrlInsereDespesa.php">
@@ -53,7 +62,9 @@ $con->close();
 
 
 <p>
-<input type="submit" name="btnSubmit" value="submit" >
-<input type="reset"  name="btnSubmit" value="reset" >
 
+<div class="center">
+<input type="submit" name="btnSubmit" value="Inserir" >
+<input type="reset"  name="btnSubmit" value="Limpar" >
+</div>
 </form>

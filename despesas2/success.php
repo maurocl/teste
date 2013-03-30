@@ -22,16 +22,32 @@ else {
 
 }
 
-echo "<h1>Sistema de Controle de Despesas</h1>";
-
-echo "<p><a href=\"manutencaoCategoria.php\">Manutenção de Categorias</a></p>";
-echo "<p><a href=\"manutencaoDespesa.php\">Manutenção de Despesas</a></p>";
-echo "<p><a href=\"manutencaoCategoria.php\">Relatório de Categorias</a></p>";
-echo "<p><a href=\"relDespesa.php\">Relatório de Despesas</a></p>";
-echo "<p><a href=\"relDespesaByCategoria.php\">Relatorio de Despesas por Categoria</a></p>";
-echo "<p><a href=\"relDespesaTotalByCategoria.php\">Relatorio de total de Despesas por Categoria</a></p>";
-
-
-echo "<p><a href=\"logout.php\">Logout</a></p>";
-
 ?>
+
+<!DOCTYPE h1 PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<title>Sistema de Controle de Despesas</title>
+<link rel="stylesheet" href="css/padrao.css" type="text/css">
+</head>
+
+<body>
+
+<hr>
+<h1 class="center">Sistema de Controle de Despesas</h1>
+<hr>
+
+<p><a href="manutencaoCategoria.php">Manutenção de Categorias</a></p>
+<p><a href="manutencaoDespesa.php">Manutenção de Despesas</a></p>
+<p><a href="manutencaoCategoria.php">Relatório de Categorias</a></p>
+<p><a href="relDespesa.php">Relatório de Despesas</a></p>
+<p><a href="relDespesaByCategoria.php">Relatorio de Despesas por Categoria</a></p>
+<p><a href="relDespesaTotalByCategoria.php">Relatorio de total de Despesas por Categoria</a></p>
+
+<p><a href="logout.php">Logout</a></p>
+
+<hr>
+
+</body>
+</html>

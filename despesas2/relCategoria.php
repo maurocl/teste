@@ -5,11 +5,23 @@ require_once 'CategoriaDAO.php';
 require_once 'DespesaDAO.php';
 require_once 'DBConnection.php';
 
-echo "<hr>";
-echo "<h1 align=center>Relatório de Categorias</h1>";
-echo "<hr>";
 
-echo "<p><a href='success.php'>voltar</a><p><br>";
+?>
+
+<!DOCTYPE hr PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<head>
+<title>Relatório de Categorias</title>
+<link rel="stylesheet" href="css/padrao.css" type="text/css">
+</head>
+
+<hr>
+<h1 class="center">Relatório de Categorias</h1>
+<hr>
+
+<p><a href='success.php'>voltar</a><p>
+
+<?php 
 
 $con = DBConnection::getConnection();
 

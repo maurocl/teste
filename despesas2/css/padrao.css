@@ -6,7 +6,7 @@ body {
 }
 
 h1 {
-	font-size: 16pt;
+	font-size: 18pt;
 	font-weight: bold;
 	color: #0000FF;
 }
@@ -17,26 +17,45 @@ h2 {
 	color: #000080;
 }
 
+p.center {
+	text-align: center;
+}
+
+h1.center {
+	text-align: center;
+}
+
+div.center {
+	text-align: center;
+}
+
 .rodape {
-	font-size: 6pt/
-	color: #000080;
+	font-size: 6pt/color :   #000080;
 	padding-top: 5px;
 	padding-bottom: 5px;
 	background-color: #FFFF00;
 	text-align: center;
 }
 
-.preco {color: #006600}
-.frete {color: #0000ff}
+.preco {
+	color: #006600
+}
 
-.titulo {font-size: 14pt; }
+.frete {
+	color: #0000ff
+}
+
+.titulo {
+	font-size: 14pt;
+}
 
 .aviso {
-  border: thin solid black;
-  font-size: 12pt;
-  font-weight: bold;
-  color: #000000;
-  background-color: #ffff00;.	
+	border: thin solid black;
+	font-size: 12pt;
+	font-weight: bold;
+	color: #000000;
+	background-color: #ffff00;
+	.
 }
 
 .erro {
@@ -47,11 +66,11 @@ h2 {
 .fmtDireita {
 	font-style: normal;
 	color: #000000;
-	text-align:right;
+	text-align: right;
 }
 
 .fmtEsquerda {
 	font-style: normal;
 	color: #000000;
-	text-align:left;
-}	
+	text-align: left;
+}
