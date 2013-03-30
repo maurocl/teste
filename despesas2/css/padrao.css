@@ -29,6 +29,16 @@ div.center {
 	text-align: center;
 }
 
+td.right {
+	text-align: right;
+	}
+	
+td.title {
+	text-align: center;
+	font-weight: bold;
+	}
+
+
 .rodape {
 	font-size: 6pt/color :   #000080;
 	padding-top: 5px;

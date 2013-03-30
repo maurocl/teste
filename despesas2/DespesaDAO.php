@@ -434,7 +434,7 @@ class DespesaDAO {
 
 		//$cmd="SELECT id, date_format(data,'%d/%m/%Y') dt, descricao, valor, categoria  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2'";
 
-		$cmd="SELECT * total  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2' and categoria=$idCategoria order by data";
+		$cmd="SELECT * FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2' and categoria=$idCategoria order by data";
 
 		//echo "<p>cmd=$cmd<br>";
 

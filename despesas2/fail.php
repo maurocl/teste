@@ -1,7 +1,7 @@
 
 <html>
 <head>
-<title></title>
+<title>Login incorreto</title>
 
 <script>
 
@@ -10,6 +10,7 @@ function alerta() {
 }
 </script>
 
+<link rel="stylesheet" href="css/padrao.css" type="text/css">
 
 </head>
 
@@ -24,9 +25,9 @@ header("Location: login.php");
 ?>
  -->
  
- <h1>Usuário e/ou Senha estão inválidos</h1>
+ <h1 class="center">Usuário e/ou Senha estão inválidos</h1>
  
- <p><a href="login.php">Login</a>
+ <p><a href="login.php">Faça um login na aplicação</a>
  
 
 </body>

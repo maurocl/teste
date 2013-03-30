@@ -70,7 +70,9 @@ $lista = $dao->listarTotalByCategoria($data1,$data2);
 // obtem o valor total das despesas entre duas datas
 $vlrTotalDespesas = $dao->listarVlrTotalByCategoria($data1,$data2);
 
-echo "<p><p>vlrTotalDespesas=". $vlrTotalDespesas . "<br><br>";
+//echo "<p><p>vlrTotalDespesas=". $vlrTotalDespesas . "<br><br>";
+
+echo "<p>";
 
 echo "<table border=1>";
 
@@ -96,8 +98,6 @@ foreach($lista as $item) {
 
   // obtem a descricao da categoria
   $descrCategoria = $hash[$idCategoria];
-
-   
   
   $x1 = "id=$idCategoria";
   $x2 = "data1=$data1";
@@ -107,13 +107,13 @@ foreach($lista as $item) {
   
   $x4 = $x4 .   $x1 . "&" . $x2 . "&" . $x3 . "\"";
   
-  echo "x4=[$x4]";
+  //echo "x4=[$x4]";
   
   echo "<tr>";
   echo "<td>" . $idCategoria . "</td>";
   echo "<td>" . $descrCategoria. "</td>";
   echo "<td class=\"fmtDireita\">" . $vlrTotalCategoria. "</td>";
-  echo "<td><a href=" . $x4 . ">" . "teste" . "</a>";
+  echo "<td><a href=" . $x4 . ">" . "detalhes" . "</a>";
   echo "<td class=\"fmtDireita\">" . $vlrPercTotal . "</td>";
 
   echo "</tr>";
@@ -133,12 +133,11 @@ echo "<td>" . "&nbsp;" .  "</td>";
 echo "<td>" . "&nbsp;" .  "</td>";
 echo "</tr>";
 
-
 echo "</table>";
 
 echo "<p>";
 
-echo  "id=$idCategoria" . "&data1=\"$data1\"" . "&data2=\"$data2\"" ; 
+//echo  "id=$idCategoria" . "&data1=\"$data1\"" . "&data2=\"$data2\"" ; 
 
 $con->close();
 

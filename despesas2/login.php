@@ -17,16 +17,21 @@ if (!$_POST['submit']) {
 <body>
 
 <hr>
-<h1>Sistema de Controle de Despesas</h1>
+<h1 class="center">Sistema de Controle de Despesas</h1>
 <hr>
 
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST"><br>
+
+<div class="center">
+
 <br>
 Username: <input type="text" size="10" name="username"><br>
 <br>
 Password: <input type="password" size="10" name="password"><br>
 
-<p align="center"><input type="submit" name="submit" value="Logar"> <input
+</div>
+
+<p class="center"><input type="submit" name="submit" value="Logar"> <input
 	type="reset" name="reset" value="Cancelar"></p>
 
 </form>

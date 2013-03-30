@@ -38,14 +38,18 @@ else {
 <h1 class="center">Sistema de Controle de Despesas</h1>
 <hr>
 
+<div class="center">
+
 <p><a href="manutencaoCategoria.php">Manutenção de Categorias</a></p>
 <p><a href="manutencaoDespesa.php">Manutenção de Despesas</a></p>
 <p><a href="manutencaoCategoria.php">Relatório de Categorias</a></p>
 <p><a href="relDespesa.php">Relatório de Despesas</a></p>
-<p><a href="relDespesaByCategoria.php">Relatorio de Despesas por Categoria</a></p>
-<p><a href="relDespesaTotalByCategoria.php">Relatorio de total de Despesas por Categoria</a></p>
+<p><a href="relDespesaByCategoria.php">Relatório de Despesas por Categoria</a></p>
+<p><a href="relDespesaTotalByCategoria.php">Relatório de total de Despesas por Categoria</a></p>
 
 <p><a href="logout.php">Logout</a></p>
+
+</div>
 
 <hr>
 
