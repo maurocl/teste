@@ -117,11 +117,11 @@ $vlrTotal = number_format($total,2,",",".");
 
 
 echo "<tr>";
-echo "<td>&nbsp;"  . "</td>";
+echo "<td>" . "&nbsp;"  . "</td>";
 echo "<td>" . $vlrTotal . "</td>";
-echo "<td>".  "</td>";
-echo "<td>&nbsp;".  "</td>";
-echo "<td>&nbsp;".  "</td>";
+echo "<td>" . "&nbsp;" . "</td>";
+echo "<td>" . "&nbsp;" .  "</td>";
+echo "<td>" . "&nbsp;" .  "</td>";
 echo "</tr>";
 
 

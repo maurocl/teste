@@ -62,10 +62,6 @@ foreach ($lista as $categoria) {
 
 $s .= "</select>";
 
-//echo "<p>s=$s";
-
-//$con->close();
-
 ?>
 
 <hr>
@@ -78,18 +74,18 @@ $s .= "</select>";
 	value="<?php echo $despesa->getId();?>">
 
 <p>Data: <input type="text" name="data"
-	value="<?php echo $dao->fmtDMA($despesa->getData());?>">
+	value="<?php echo $dao->fmtDMA($despesa->getData());?>"></p>
 
 <p>Descrição: <input type="text" name="descricao"
 	value="<?php echo $despesa->getDescricao();?>">
 
 <p>Valor: <input type="text" name="valor"
-	value="<?php echo $despesa->getValor();?>">
+	value="<?php echo $despesa->getValor();?>"></p>
 
-<p>Categoria: <?php echo $s; ?>
+<p>Categoria: <?php echo $s; ?></p>
 
 <p><input type="submit" name="btnSubmit" value="submit"> <input
-	type="reset" name="btnSubmit" value="reset">
+	type="reset" name="btnSubmit" value="reset"></p>
 
 </form>
 

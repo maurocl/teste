@@ -17,6 +17,12 @@ class Categoria {
 
   // métodos
 
+  /**
+   * 
+   * 
+   * @param $id
+   * @param $descricao
+   */
   function __construct($id, $descricao) {
     $this->id        = $id;
     $this->descricao = $descricao;

@@ -61,46 +61,95 @@ class Despesa {
 
   // métodos getters e setters
 
+  /**
+   * 
+   * Enter description here ...
+   */
   function getId() {
     return $this->id;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   */
   function getDescricao() {
     return $this->descricao;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   * @param unknown_type $id
+   */
   function setId($id) {
     $this->id = $id;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   * @param $descricao
+   */
   function setDescricao($descricao) {
     $this->descricao = $descricao;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   */
   function getData() {
     return $this->data;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   * @param $data
+   */
   function setData($data) {
     $this->data = $data;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   */
   function getValor() {
     return $this->valor;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   * @param $valor
+   */
   function setValor($valor) {
     $this->valor = $valor;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   */
   function getCategoria() {
     return $this->categoria;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   * @param $categoria
+   */
   function setCategoria($categoria) {
     $this->categoria = $categoria;
   }
 
+  /**
+   * 
+   * Enter description here ...
+   */
   function __toString() {
     return "Id: " . $this->getId() . ", data: " .
     $this->getData(). ", descrição: " .
