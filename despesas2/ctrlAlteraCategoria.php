@@ -7,7 +7,7 @@ include 'CategoriaDAO.php';
 // Identificador da categoria
 $id = $_GET['id'];
 
-echo "<p>ctrlAlteraCategoria";
+//echo "<p>ctrlAlteraCategoria";
 
 $con = DBConnection::getConnection();
 
@@ -23,10 +23,10 @@ $dao = new CategoriaDAO($con);
 // busca a consulta que será alterada
 $categoria = $dao->consultar($id);
 
-echo "<p>Buscando id categoria: $id";
+//echo "<p>Buscando id categoria: $id";
 
 // exibe informações sobre a despesa
-echo "<p>Categoria: " . $categoria ;
+//echo "<p>Categoria: " . $categoria ;
 
 $con->close();
 

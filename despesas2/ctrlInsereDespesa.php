@@ -19,6 +19,7 @@ $idCategoria = $pieces[1];
 
 $categoria = $idCategoria;
 
+// cria uma nova despesa
 $despesa = new Despesa($id, $data, $descricao, $valor, $categoria);
 
 $con = DBConnection::getConnection();

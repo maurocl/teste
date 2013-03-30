@@ -136,7 +136,7 @@ class CategoriaDAO {
    * listarTodos()
    *
    * Obtém um array de objetos Categoria
-   * ordenados por cod_categoria
+   * ordenados pela descrição da categoria
    *
    * @return Uma array de objetos Categoria
    *
@@ -146,7 +146,7 @@ class CategoriaDAO {
     // cria um array vazio
     $lista = Array();
 
-    $cmd = "select * from categoria order by id";
+    $cmd = "select * from categoria order by descricao";
 
     $result = $this->getConnection()->query($cmd);
 
@@ -156,9 +156,6 @@ class CategoriaDAO {
 
       // insere o objeto em uma lista
       array_push($lista, $c);
-
-      //echo "<p>$c";
-      //echo "<p>$c->getDescricao()";
 
     }
 

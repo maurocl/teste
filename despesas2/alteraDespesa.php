@@ -4,7 +4,6 @@ include_once 'Categoria.php';
 include_once 'CategoriaDAO.php';
 include_once 'DBConnection.php';
 
-
 $data = $_POST['data'];
 $descricao = $_POST['descricao'];
 $valor= $_POST['valor'];
@@ -62,15 +61,8 @@ $con->close();
 <input type="text" name="valor" value="" >
 
 <p>Categoria:
-<!-- 
-<select name="descrCategoria">
-<option>Descr1</option>
-<option>Descr2</option>
-<option>Descr3</option>
-<option>Descr4</option>
-</select>
- -->
- <?php echo $s; ?>
+
+<?php echo $s; ?>
 
 
 <p>

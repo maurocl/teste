@@ -57,7 +57,7 @@ echo "<h1 align=center>Manutenção Despesa</h1>";
 
 echo "<h2 align=center>Período: $data1 até $data2";
 
-echo "<p><a href='relDespesa.php'>voltar</a><br>";
+echo "<p><a href='success.php'>voltar</a><br>";
 
 // exibe a lista de todas as despesas
 

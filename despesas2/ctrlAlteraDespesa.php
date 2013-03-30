@@ -9,24 +9,12 @@ include 'DespesaDAO.php';
 // Identificador da despesa
 $id = $_GET['id'];
 
-echo "<p>ctrlAlteraDespesa";
-
 $con = DBConnection::getConnection();
-
-if($con==null) {
-  echo "<p>conn é null";
-}
-else {
-  echo "<p>conn NÃO é null";
-}
 
 $dao = new DespesaDAO($con);
 
 // busca a consulta que será alterada
 $despesa = $dao->consultar($id);
-
-// exibe informações sobre a despesa
-echo "<p>Despesa: " . $despesa ;
 
 $daoCategoria = new CategoriaDAO($con);
 
@@ -34,8 +22,6 @@ $lista = $daoCategoria->listarDescrCategoria();
 
 // obtém a categoria da despesa
 $idCategoria = $despesa->getCategoria();
-
-echo "<p>Buscando id categoria: $idCategoria";
 
 $s="<select name=\"categoria\">" . "<br>";
 

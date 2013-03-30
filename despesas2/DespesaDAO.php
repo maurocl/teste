@@ -1,10 +1,5 @@
 <?php
 
-//SELECT d.id, d.data, d.descricao, d.valor, d.categoria, c.descricao
-//FROM   despesa d left outer join categoria c on c.id = d.id
-//where date_format(data,'%Y%m%d') between '20130101' and '20131231' order by data
-
-
 require_once 'Categoria.php';
 require_once 'Despesa.php';
 
@@ -121,7 +116,7 @@ class DespesaDAO {
 
 		$cmd = "select * from despesa where id=$id";
 
-		echo "<br>Consultar - cmd=[$cmd]<br>";
+		//echo "<br>Consultar - cmd=[$cmd]<br>";
 
 		$result = $this->getConnection()->query($cmd);
 
@@ -348,7 +343,7 @@ class DespesaDAO {
 
 		//$cmd="SELECT id, date_format(data,'%d/%m/%Y') dt, descricao, valor, categoria  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2'";
 
-		$cmd="SELECT categoria, max(valor) total  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2' group by categoria  order by total desc";
+		$cmd="SELECT categoria, sum(valor) total  FROM despesa g where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2' group by categoria  order by total desc";
 
 		//echo "<p>cmd=$cmd<br>";
 
@@ -415,17 +410,5 @@ class DespesaDAO {
 		return $lista;
 
 	}
-	
-	
 }
-
-
-// SELECT categoria, max(valor) total  FROM despesa g group by categoria where date_format(data,'%Y%m%d') between '$fmtData1' and '$fmtData2' order by total desc";
-
-// SELECT categoria, max(valor) total  FROM despesa g  where date_format(data,'%Y%m%d') between '$20130101' and '20131231' group by categoria order by total desc;
-
-
-
-?>
-
 ?>

@@ -7,19 +7,14 @@ session_start();
 
 if($_SESSION['authorizedUser']!=1) {
 
-	// if flag is absent
-	// the user does not have view privileges
-	// print error message
-	echo "You are not authorized to view this pages.";
+  // if flag is absent
+  // the user does not have view privileges
+  // print error message
+  echo "You are not authorized to view this pages.";
 
-	// terminate processing
-	// kick the client out
-	exit();
-
-}
-else {
-
-	//echo "Welcome!";
+  // terminate processing
+  // kick the client out
+  exit();
 
 }
 
@@ -35,12 +30,12 @@ $data1=$_POST['data1'];
 // Data Final
 $data2=$_POST['data2'];
 
-if($data1==null) {
-	$data1="01/01/2013";
+if(!isset($data1)) {
+  $data1="01/01/2013";
 }
 
-if($data2==null) {
-	$data2 = "31/12/2013";
+if(!isset($data2)) {
+  $data2 = "31/12/2013";
 }
 
 ?>
@@ -70,19 +65,19 @@ $hash = $daoCategoria->listarCategoriaDescr();
 
 $dao = new DespesaDAO($con);
 
-
 $lista = $dao->listarTotalByCategoria($data1,$data2);
 
-$lista2 = $dao->listarVlrTotalByCategoria($data1,$data2);
+// obtem o valor total das despesas entre duas datas
+$vlrTotalDespesas = $dao->listarVlrTotalByCategoria($data1,$data2);
 
-echo "<p><p>lista2=". $lista2;
+echo "<p><p>vlrTotalDespesas=". $vlrTotalDespesas . "<br><br>";
 
 echo "<table border=1>";
 
 echo "<tr>";
 echo "<td>Categoria"  . "</td>";
-echo "<td>Valor".  "</td>";
 echo "<td>Descr. Categoria ".  "</td>";
+echo "<td>Valor".  "</td>";
 echo "<td>Detalhes".  "</td>";
 echo "<td>%".  "</td>";
 echo "</tr>";
@@ -91,35 +86,35 @@ $total = 0.0;
 
 foreach($lista as $item) {
 
-	$item0 = $item[0]; // categoria
-	$item1 = $item[1]; // valor total da categoria
+  $idCategoria = $item[0]; // categoria
+  $item1 = $item[1]; // valor total da categoria
 
-	$total += $item1;
+  $total += $item1;
 
-	$vlrPercTotal = number_format(($item1/$lista2*100),2,",",".");
-	$vlrTotalCategoria = number_format($item1,2,",",".");
-	
-	// obtem a descricao da categoria
-	$descrCategoria = $hash[$item0];
+  $vlrPercTotal = number_format(($item1/$vlrTotalDespesas*100),2,",",".");
+  $vlrTotalCategoria = number_format($item1,2,",",".");
 
-	echo "<tr>";
-	echo "<td>" . $item0 . "</td>";
-	echo "<td class=\"fmtDireita\">" . $vlrTotalCategoria. "</td>";
-	echo "<td>" . $descrCategoria. "</td>";
-	echo "<td><a href=\"ctrlAlteraDespesa.php?id="  . $item0  . "\">detalhes</a>" .  "</td>";
-	echo "<td class=\"fmtDireita\">" . $vlrPercTotal . "</td>";
+  // obtem a descricao da categoria
+  $descrCategoria = $hash[$idCategoria];
 
-	echo "</tr>";
+  echo "<tr>";
+  echo "<td>" . $idCategoria . "</td>";
+  echo "<td>" . $descrCategoria. "</td>";
+  echo "<td class=\"fmtDireita\">" . $vlrTotalCategoria. "</td>";
+  echo "<td><a href=\"ctrlAlteraDespesa.php?id="  . $idCategoria  . "\">detalhes</a>" .  "</td>";
+  echo "<td class=\"fmtDireita\">" . $vlrPercTotal . "</td>";
+
+  echo "</tr>";
 
 }
 
+// Formato o valor total das despesas entre duas datas.
 $vlrTotal = number_format($total,2,",",".");
-
 
 echo "<tr>";
 echo "<td>" . "&nbsp;"  . "</td>";
-echo "<td>" . $vlrTotal . "</td>";
 echo "<td>" . "&nbsp;" . "</td>";
+echo "<td>" . $vlrTotal . "</td>";
 echo "<td>" . "&nbsp;" .  "</td>";
 echo "<td>" . "&nbsp;" .  "</td>";
 echo "</tr>";
@@ -127,10 +122,6 @@ echo "</tr>";
 
 echo "</table>";
 
-
-
 $con->close();
-
-
 
 ?>

@@ -5,13 +5,6 @@ include_once 'CategoriaDAO.php';
 include_once 'DBConnection.php';
 
 $con = DBConnection::getConnection();
-
-if($con==null) {
-  echo "<p>conn é null";
-}
-else {
-  echo "<p>conn NÃO é null";
-}
     
 $dao = new CategoriaDAO($con);
 
@@ -56,15 +49,7 @@ $con->close();
 <input type="text" name="valor" value="" >
 
 <p>Categoria:
-<!-- 
-<select name="descrCategoria">
-<option>Descr1</option>
-<option>Descr2</option>
-<option>Descr3</option>
-<option>Descr4</option>
-</select>
- -->
- <?php echo $s; ?>
+<?php echo $s; ?>
 
 
 <p>

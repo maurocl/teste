@@ -9,14 +9,13 @@ echo "<hr>";
 echo "<h1 align=center>Relatório de Categorias</h1>";
 echo "<hr>";
 
-//echo "<p><a href=''>voltar</a><br>";
+echo "<p><a href='success.php'>voltar</a><p><br>";
 
 $con = DBConnection::getConnection();
 
 // exibe a lista de todas as categorias
 $dao = new CategoriaDAO($con);
 
-//$lista = $dao->listarTodos();
 $lista = $dao->listarTodos();
 
 echo "<table border=1>";

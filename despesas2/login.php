@@ -3,8 +3,6 @@
 include_once 'Constantes.php';
 include_once 'DBConnection.php';
 
-
-
 // form not submitted
 if (!$_POST['submit']) {
 ?>
@@ -41,7 +39,7 @@ Password: <input type="password" size="10" name="password"><br>
 
 </html>
 
-	<?php
+<?php
 } else {
 
 	$inputUser = $_POST['username'];
