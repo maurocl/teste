@@ -1,4 +1,5 @@
 <?php
+include "valida_sessao.php";
 
 include_once 'Despesa.php';
 include_once 'DespesaDAO.php';

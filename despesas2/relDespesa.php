@@ -1,4 +1,5 @@
 <?php
+include "valida_sessao.php";
 ?>
 
 <!DOCTYPE h1 PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -16,16 +17,20 @@
 
 <form name="rel1" method="post" action="manutencaoDespesa.php">
 
-<p>Data Inicial: <input type="text" size="10" name="data1" value="">
+<div class="center">
+<p>Data Inicial: <input type="text" size="10" name="data1" >
 
-<p>Data Final: <input type="text" size="10" name="data2" value="">
+<p>Data Final: <input type="text" size="10" name="data2" >
 
 <p>
 
+</div>
+
 <hr>
 
-<div class="center"><input type="submit" name="btnSubmit"
-	value="Consultar"> <input type="reset" name="btnSubmit" value="Limpar">
+<div class="center">
+<input type="submit" name="btnSubmit" value="Consultar"> 
+<input type="reset"  name="btnSubmit" value="Limpar">
 </div>
 
 </form>

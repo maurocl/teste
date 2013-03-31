@@ -1,27 +1,6 @@
 <?php
 
-// start session
-session_start();
-
-// check session for flag
-
-if($_SESSION['authorizedUser']!=1) {
-
-  // if flag is absent
-  // the user does not have view privileges
-  // print error message
-  echo "You are not authorized to view this pages.";
-
-  // terminate processing
-  // kick the client out
-  exit();
-
-}
-else {
-
-  //echo "Welcome!";
-
-}
+include "valida_sessao.php";
 
 require_once 'Categoria.php';
 require_once 'Despesa.php';
@@ -29,19 +8,24 @@ require_once 'CategoriaDAO.php';
 require_once 'DespesaDAO.php';
 require_once 'DBConnection.php';
 
-// Data Inicial
-$data1=$_POST['data1'];
-
-// Data Final
-$data2=$_POST['data2'];
-
-if($data1==null) {
+if(isset($_POST["data1"])) {
+  $data1 = $_POST["data1"];
+  //echo "<p>Data1: $data1";
+}
+else {
   $data1="01/01/2013";
 }
+$_SESSION["data1"] = $data1;
 
-if($data2==null) {
+if(isset($_POST["data2"])) {
+  $data2 = $_POST["data2"];
+  //echo "<p>Data2: $data2";
+}
+else {
   $data2 = "31/12/2013";
 }
+$_SESSION["data2"]=$data2;
+
 
 ?>
 
@@ -49,10 +33,10 @@ if($data2==null) {
 
 <head>
 <title>Manutenção de Despesas</title>
-<link rel="stylesheet" href="css/padrao.css" type="text/css" >
+<link rel="stylesheet" href="css/padrao.css" type="text/css">
 </head>
 
-<?php 
+<?php
 
 echo "<h1 class=\"center\">Manutenção Despesa</h1>";
 
@@ -76,14 +60,14 @@ $lista = $dao->listarTodosByData($data1,$data2);
 echo "<table border=1>";
 
 echo "<tr>";
-echo "<td>ID"  . "</td>";
-echo "<td>Data" .  "</td>";
-echo "<td>Descrição".  "</td>";
-echo "<td>Valor".  "</td>";
-echo "<td>Categoria ".  "</td>";
-echo "<td>Descr. Categoria ".  "</td>";
-echo "<td>Editar".  "</td>";
-echo "<td>Excluir".  "</td>";
+echo "<td class=\"title\">ID"  . "</td>";
+echo "<td class=\"title\">Data" .  "</td>";
+echo "<td class=\"title\">Descrição".  "</td>";
+echo "<td class=\"title\">Valor".  "</td>";
+echo "<td class=\"title\">Categoria ".  "</td>";
+echo "<td class=\"title\">Descr. Categoria ".  "</td>";
+echo "<td class=\"title\">Editar".  "</td>";
+echo "<td class=\"title\">Excluir".  "</td>";
 echo "</tr>";
 
 // valor total das despesas
@@ -95,11 +79,11 @@ foreach($lista as $item) {
 
   $df = date("d/m/Y", strtotime($item->getData()));
   //$df= $item->getData();
-  
+
   $valor = number_format($item->getValor(),2,",",".");
-  
+
   $descrCategoria = $hash[$item->getCategoria()];
-  
+
   echo "<tr>";
   echo "<td>" . $item->getId() . "</td>";
   echo "<td>" . $df . "</td>";
@@ -111,7 +95,7 @@ foreach($lista as $item) {
   echo "<td><a href=\"ctrlExcluiDespesa.php?id=" . $item->getId() . "\">excluir</a>" . "</td>";
 
   $total += $item->getValor();
-  
+
   echo "</tr>";
 
 }
@@ -135,7 +119,5 @@ echo "</table>";
 echo "<p align=\"left\"><a href=\"insereDespesa.php\">Insere nova despesa</a>";
 
 $con->close();
-
-
 
 ?>

@@ -1,4 +1,5 @@
 <?php
+include "valida_sessao.php";
 
 include_once 'Categoria.php';
 include_once 'CategoriaDAO.php';

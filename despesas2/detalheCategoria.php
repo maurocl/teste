@@ -1,4 +1,5 @@
 <?php
+include "valida_sessao.php";
 
 require_once 'Categoria.php';
 require_once 'Despesa.php';
@@ -21,10 +22,6 @@ $data2 = $_GET['data2'];
 </head>
 
 <?php
-
-echo "<h1 class=\"center\">Detalhes da Despesa</h1>";
-
-echo "<p>Exibe despesas da categoria [$idCategoria] no período de [$data1] à [$data2]";
 
 // conecta no banco de dados
 $con = DBConnection::getConnection();
@@ -49,9 +46,15 @@ $total = 0.0;
 // obtem a descricao da categoria
 $descrCategoria = $hash[$idCategoria];
 
-echo "<p>Categoria: " . $idCategoria . " - " . $descrCategoria;
+echo "<h1 class=\"center\">Detalhes da Despesa</h1>";
+
+echo "<p class=\"center\">Categoria: " . $idCategoria . " - " . $descrCategoria;
+
+echo "<p class=\"center\">Período de [$data1] à [$data2]";
 
 echo "<p>";
+
+echo "<div class=\"center\">";
 
 echo "<table border=1>";
 
@@ -66,13 +69,17 @@ echo "</tr>";
 
 foreach($lista as $item) {
 
+  //echo "<p>$item[3]</p>";
+  
   $id        = $item[0];
   $data      = $item[1];
   $descricao = $item[2];
   $valor     = $item[3];
 
-  //echo "<p>item=[$item]";
+  // valor formatado da despesa
+  $vlrFormatado = number_format($valor,2,",",".");
 
+  // totaliza o valor
   $total += $valor;
 
   echo "<tr>";
@@ -80,12 +87,13 @@ foreach($lista as $item) {
   echo "<td>" . $id . "</td>";
   echo "<td>" . $data. "</td>";
   echo "<td>" . $descricao. "</td>";
-  echo "<td class=\"right\">" . $valor. "</td>";
+  echo "<td class=\"right\">" . $valor . "</td>";
 
   echo "</tr>";
 
 }
 
+// formata o valor total do intervalo
 $vlrTotal = number_format($total,2,",",".");
 
 echo "<tr>";
@@ -99,10 +107,7 @@ echo "</tr>";
 
 echo "</table>";
 
-// Formato o valor total das despesas entre duas datas.
-//$vlrTotal = number_format($total,2,",",".");
-
-echo "<p><a href=\"relDespesaTotalByCategoria.php\">voltar</a>";
+echo "</div>";
 
 $x2 = "data1=$data1";
 $x3 = "data2=$data2";
@@ -111,6 +116,6 @@ $x4 = "\"relDespesaTotalByCategoria.php?";
 
 $x4 = $x4 . $x2 . "&" . $x3 . "\"";
 
-echo "<td><a href=" . $x4 . ">" . "novo teste" . "</a>";
+echo "<td><a href=" . $x4 . ">" . "Voltar" . "</a>";
 
 ?>

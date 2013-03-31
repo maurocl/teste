@@ -1,4 +1,12 @@
 <?php
+/**
+ * 
+ * Representa uma categoria onde uma despesa
+ * é classificada.
+ * 
+ * @author maurocl
+ *
+ */
 class Categoria {
 
   // propriedades
@@ -30,7 +38,7 @@ class Categoria {
 
   /**
    *
-   * Enter description here ...
+   * 
    */
   function __destruct() {
 
@@ -56,7 +64,7 @@ class Categoria {
 
   /**
    * 
-   * Enter description here ...
+   * 
    * @param unknown_type $id
    */
   function setId($id) {
@@ -65,7 +73,7 @@ class Categoria {
 
   /**
    * 
-   * Enter description here ...
+   * 
    * @param unknown_type $descricao
    */
   function setDescricao($descricao) {
@@ -74,7 +82,7 @@ class Categoria {
 
   /**
    * 
-   * Enter description here ...
+   * 
    */
   function __toString() {
     return "Id: " . $this->getId() . ", Descricao: " . $this->getDescricao();

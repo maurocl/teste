@@ -25,14 +25,14 @@ if (!$_POST['submit']) {
 <div class="center">
 
 <br>
-Username: <input type="text" size="10" name="username"><br>
+Usuário: <input type="text" size="10" name="username"><br>
 <br>
-Password: <input type="password" size="10" name="password"><br>
+Senha: <input type="password" size="10" name="password"><br>
+
+<input type="submit" name="submit" value="Logar"> 
+<input type="reset"  name="reset"  value="Limpar"></p>
 
 </div>
-
-<p class="center"><input type="submit" name="submit" value="Logar"> <input
-	type="reset" name="reset" value="Cancelar"></p>
 
 </form>
 
@@ -47,8 +47,8 @@ Password: <input type="password" size="10" name="password"><br>
 <?php
 } else {
 
-	$inputUser = $_POST['username'];
-	$inputPass = $_POST['password'];
+	$inputUser = htmlspecialchars($_POST['username']);
+	$inputPass = htmlspecialchars($_POST['password']);
 
 	//echo "<p>user=[$inputUser]";
 	//echo "<p>pass=[$inputPass]";

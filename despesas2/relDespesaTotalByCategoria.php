@@ -1,22 +1,5 @@
 <?php
-
-// start session
-session_start();
-
-// check session for flag
-
-if($_SESSION['authorizedUser']!=1) {
-
-  // if flag is absent
-  // the user does not have view privileges
-  // print error message
-  echo "You are not authorized to view this pages.";
-
-  // terminate processing
-  // kick the client out
-  exit();
-
-}
+include "valida_sessao.php";
 
 require_once 'Categoria.php';
 require_once 'Despesa.php';
@@ -24,19 +7,21 @@ require_once 'CategoriaDAO.php';
 require_once 'DespesaDAO.php';
 require_once 'DBConnection.php';
 
-// Data Inicial
-$data1=$_POST['data1'];
 
-// Data Final
-$data2=$_POST['data2'];
+  if(isset($_SESSION['data1'])) {
+    $data1=$_SESSION['data1'];
+  }
+  else {
+    $data1="01/01/2013";
+  }
 
-if(!isset($data1)) {
-  $data1="01/01/2013";
-}
+  if(isset($_SESSION['data2'])) {
+    $data2=$_SESSION['data2'];
+  }
+  else {
+    $data2="31/12/2013";
+  }
 
-if(!isset($data2)) {
-  $data2 = "31/12/2013";
-}
 
 ?>
 

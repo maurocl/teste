@@ -1,4 +1,5 @@
 <?php
+include "valida_sessao.php";
 
 include 'DBConnection.php';
 include 'Categoria.php';

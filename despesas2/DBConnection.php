@@ -3,10 +3,12 @@
 include "Constantes.php";
 
 /**
+ * Classe responsável pela
+ * obtenção de uma conexão com
+ * o Banco de Dados.
+ * Usa os dados definidos no arquivo
+ * Constantes.php afim de fazer a conexão.
  * 
- * 
- * 
- *
  */
 class DBConnection {
   

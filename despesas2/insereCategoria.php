@@ -1,5 +1,5 @@
 <?php
-
+include "valida_sessao.php";
 
 
 ?>

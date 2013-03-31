@@ -1,4 +1,6 @@
-<?php 
+<?php
+include "valida_sessao.php";
+ 
 require_once 'Categoria.php';
 require_once 'Despesa.php';
 require_once 'CategoriaDAO.php';
@@ -46,7 +48,6 @@ foreach($lista as $item) {
   echo "<td>" . $item->getDescricao(). "</td>";
   echo "<td><a href=\"ctrlAlteraCategoria.php?id=" . $item->getId()  . "\">editar</a>" .  "</td>";
   echo "<td><a href=\"ctrlExcluiCategoria.php?id=" . $item->getId() . "\">excluir</a>" . "</td>";
-
   echo "</tr>";
 
 }

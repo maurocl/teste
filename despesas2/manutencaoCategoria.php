@@ -1,4 +1,5 @@
 <?php
+include "valida_sessao.php";
 
 require_once 'Categoria.php';
 require_once 'Despesa.php';
@@ -10,7 +11,7 @@ require_once 'DBConnection.php';
 <!DOCTYPE h1 PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <head>
-<title>Manutenção de Despesas</title>
+<title>Manutenção de Categorias</title>
 <link rel="stylesheet" href="css/padrao.css" type="text/css" >
 </head>
 
@@ -32,13 +33,15 @@ $dao = new CategoriaDAO($con);
 
 $lista = $dao->listarTodos();
 
+echo "<div class=\"center\">";
+
 echo "<table border=1>";
 
 echo "<tr>";
-echo "<td>ID"  . "</td>";
-echo "<td>Descrição".  "</td>";
-echo "<td>Editar".  "</td>";
-echo "<td>Excluir".  "</td>";
+echo "<td class=\"title\">ID"  . "</td>";
+echo "<td class=\"title\">Descrição".  "</td>";
+echo "<td class=\"title\">Editar".  "</td>";
+echo "<td class=\"title\">Excluir".  "</td>";
 echo "</tr>";
 
 foreach($lista as $item) {
@@ -55,6 +58,8 @@ foreach($lista as $item) {
 }
 
 echo "</table>";
+
+echo "</div>";
 
 // adiciona um botão para permitir a inserção de uma nova categoria
 echo "<p><a href=\"insereCategoria.php\">Insere nova categoria</a>";
