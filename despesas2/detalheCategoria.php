@@ -87,7 +87,7 @@ foreach($lista as $item) {
   echo "<td>" . $id . "</td>";
   echo "<td>" . $data. "</td>";
   echo "<td>" . $descricao. "</td>";
-  echo "<td class=\"right\">" . $valor . "</td>";
+  echo "<td class=\"right\">" . vlrFormatado . "</td>";
 
   echo "</tr>";
 
