@@ -69,6 +69,7 @@ public class LoginButton extends ImageButton {
 	 * 
 	 * @param context
 	 *          contexto da aplicação
+	 *          
 	 * @param attrs
 	 *          atributos
 	 * 
@@ -82,8 +83,10 @@ public class LoginButton extends ImageButton {
 	 * 
 	 * @param context
 	 *          contexto da aplicação
+	 *          
 	 * @param attrs
 	 *          atributos
+	 *          
 	 * @param defStyle
 	 *          definição de estilo
 	 * 
@@ -97,8 +100,10 @@ public class LoginButton extends ImageButton {
 	 * 
 	 * @param activity
 	 *          activity
+	 *          
 	 * @param activityCode
 	 *          código de identificação da activity
+	 *          
 	 * @param fb
 	 *          instância da classe Facebook
 	 */
@@ -113,10 +118,13 @@ public class LoginButton extends ImageButton {
 	 * 
 	 * @param activity
 	 *          activity
+	 *          
 	 * @param activityCode
 	 *          código de identificação da activity
+	 *          
 	 * @param fb
 	 *          instância da classe Facebook
+	 *          
 	 * @param permissions
 	 *          array de string contendo as permissões necessárias à operação
 	 * 

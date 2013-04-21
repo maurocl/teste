@@ -302,6 +302,9 @@ public class CameraActivity extends Activity implements Constantes {
 
 	}
 
+	/**
+	 * Define uma subrotina de callback
+	 */
 	final ShutterCallback shutter = new ShutterCallback() {
 
 		public void onShutter() {
@@ -421,11 +424,13 @@ public class CameraActivity extends Activity implements Constantes {
 
 		Log.d(TAG, "*** onResume() ***");
 
+		Log.d(TAG,"*** cameraId: "+cameraId+" ***");
+		
 		// obtém uma instância da câmera
 		mCamera = CameraTools.getCameraInstance(cameraId);
 
 		// Configura os parâmetros da câmera
-		configParametrosCamera();
+		//configParametrosCamera();
 
 		Log.i(TAG, "onResume() - ==> mCamera=" + mCamera);
 
@@ -506,6 +511,8 @@ public class CameraActivity extends Activity implements Constantes {
 	 */
 	private void configParametrosCamera() {
 
+		Log.d(TAG, "configParametrosCamera() - inicio " );
+		
 		// Obtem a lista de parâmetros suportados pela câmera
 		Camera.Parameters params = mCamera.getParameters();
 
@@ -525,6 +532,8 @@ public class CameraActivity extends Activity implements Constantes {
 
 		}
 
+		Log.d(TAG, "configParametrosCamera() - fim " );
+		
 	}
 
 	/**
@@ -601,7 +610,8 @@ public class CameraActivity extends Activity implements Constantes {
 
 		}
 
-		params.setPreviewSize(720, 576);
+		//params.setPreviewSize(720, 576);
+		params.setPreviewSize(640, 480);
 
 		Camera.Size currentPreviewSize = params.getPreviewSize();
 
