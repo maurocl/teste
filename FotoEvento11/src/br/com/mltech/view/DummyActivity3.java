@@ -48,8 +48,6 @@ import br.com.mltech.utils.ManipulaImagem;
 import br.com.mltech.utils.camera.CameraTools;
 
 /**
- * DummyActivity3
- * 
  * Activity responsável pela obtenção das informações de um participante, tirar
  * fotos e enviar email.
  * 
@@ -436,13 +434,13 @@ public class DummyActivity3 extends Activity implements Constantes {
 	/**
 	 * Inicializa as variáveis (da classe) que vão conter o bitmap das molduras:<br>
 	 * 
-	 * Carrega as molduras configuradas no arquivo de configuração.
+	 * <p>Carrega as molduras configuradas no arquivo de configuração.
 	 * 
-	 * mBitmapMolduraPolaroid.<br>
-	 * mBitmapMolduraCabine.<br>
+	 * <p>mBitmapMolduraPolaroid.<br>
+	 * <p>mBitmapMolduraCabine.<br>
 	 * <br>
-	 * molduraPolaroid<br>
-	 * molduraCabine<br>
+	 * <p>molduraPolaroid<br>
+	 * <p>molduraCabine<br>
 	 * 
 	 */
 	private void carregaMolduras() throws IllegalArgumentException {
@@ -717,10 +715,10 @@ public class DummyActivity3 extends Activity implements Constantes {
 	 * activity.<br>
 	 * 
 	 * @param resultCode
-	 *          resultado da execução da activity Participante
+	 *          resultado da execução da activity Participante.
 	 * 
 	 * @param data
-	 *          Intent com os resultados (se houverem)
+	 *          Intent com os resultados (se houverem).
 	 * 
 	 */
 	private void resultActivityParticipante(int resultCode, Intent data) {
@@ -1854,16 +1852,24 @@ public class DummyActivity3 extends Activity implements Constantes {
 	 * Envia uma intent com a URI da foto que será exibida.
 	 * 
 	 * @param arquivo
-	 *          nome completo do arquivo onde a foto está localizada.
+	 *          nome completo do arquivo onde a foto está armazenada no sistema de arquivos.
 	 * 
 	 */
 	private void executaActivityExibeFoto(String arquivo) {
 
+		// Cria um objeto File a partir do nome de um arquivo
 		File f = new File(arquivo);
+		
+		// Cria uma Uri a partir de um objeto File
 		Uri uri = Uri.fromFile(f);
 
+		// Cria uma intent
 		Intent intent = new Intent(this, ExibeFotoActivity.class);
+		
+		// Estabelece a localização dos dados através da Uri criada.
 		intent.setData(uri);
+		
+		// Inicia a activity
 		startActivity(intent);
 
 	}
@@ -2639,10 +2645,14 @@ public class DummyActivity3 extends Activity implements Constantes {
 
 		matrix.reset();
 
-		matrix.setValues(new float[] { -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f });
+		matrix.setValues(new float[] { 
+				                           -1.0f, 0.0f, 0.0f, 
+				                            0.0f, 1.0f, 0.0f, 
+				                            0.0f, 0.0f, 1.0f });
 
 		Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
+		// retorna o bitmap refletido em torno do eixo y
 		return resizedBitmap;
 
 	}
