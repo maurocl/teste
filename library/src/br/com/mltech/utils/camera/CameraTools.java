@@ -133,9 +133,7 @@ public class CameraTools {
 	}
 
 	/**
-	 * checkCameraFeatures(Context context)
-	 * 
-	 * Verifica as features básicas das câmeras
+	 * Verifica as features básicas das câmeras.
 	 * 
 	 * @param context
 	 *          Contexto da aplicação
@@ -927,7 +925,8 @@ public class CameraTools {
 	}
 
 	/**
-	 * Exibe a configuração de todas as câmeras disponíveis no dispositivo no log da aplicação.
+	 * Exibe a configuração de todas as câmeras disponíveis no dispositivo no log
+	 * da aplicação.
 	 * 
 	 */
 	public static void showCameraInfo() {
@@ -972,6 +971,8 @@ public class CameraTools {
 	 */
 	public static void showParametersDetail(Camera c) {
 
+		int index = 0;
+
 		// obtém os parametros de configuração da Camera.
 		Parameters params = c.getParameters();
 
@@ -982,50 +983,107 @@ public class CameraTools {
 		// semi-colon
 		// delimited
 
-		Log.d(TAG, "flatten=" + params.flatten());
+		if (params != null) {
 
-		String flatten = params.flatten();
+			Log.d(TAG, "flatten=" + params.flatten());
 
-		// Divide a string contendo os parâmetros separados por ";"
-		String[] lines = flatten.split(";");
+			String flatten = params.flatten();
 
-		int index = 0;
-		if (lines != null) {
+			// Divide a string contendo os parâmetros separados por ";"
+			String[] lines = flatten.split(";");
 
-			Log.d(TAG, "Nº de linhas: " + lines.length);
-			for (String line : lines) {
+			if (lines != null) {
 
-				// divide um parâmetro em pares do tipo key-value paired
-				String[] chavesValores = line.split("=");
+				Log.d(TAG, "Nº de linhas: " + lines.length);
 
-				// a chave é representada pelo lado esquerdo da atribuição
-				// o valor é representado pelo lado direito da atribuição
-				String chave = null, valor = null;
+				for (String line : lines) {
 
-				// os múltiplos valores das chaves (se existirem) são separados
-				// por ","
-				String[] valoresPossiveis = null;
+					// index = xxx(index, line);
+					// Log.d(TAG,"line=["+line+"]");
 
-				if (chavesValores != null && chavesValores.length == 2) {
+					Log.v(TAG, ++index + ": " + line);
 
-					chave = chavesValores[0];
-					valor = chavesValores[1];
+				}
 
-					if (valor != null) {
-						valoresPossiveis = valor.split(",");
+			} else {
+				// lines is null
+			}
+
+		} else {
+			//
+			Log.w(TAG, "flatten é null");
+		}
+
+	}
+
+	/**
+	 * Recebe uma linha que possui informações sobre a configuração da máquina.
+	 * 
+	 * A linha normalmente possui a seguinte estrutura:
+	 * 
+	 * nome=valor
+	 * 
+	 * ou
+	 * 
+	 * nome=
+	 * 
+	 * nome=valor1,valor2,...,valorN
+	 * 
+	 * @param line
+	 * 
+	 * @return
+	 * 
+	 */
+	private static void xxx(String line) {
+
+		if (line == null) {
+			// retorna se a linha for vazia
+			return;
+			
+		} else {
+
+			// divide um parâmetro em pares do tipo key-value paired
+			String[] chaveValor = line.split("=");
+
+			// a chave é representada pelo lado esquerdo da atribuição
+			String chave = null;
+
+			// o valor é representado pelo lado direito da atribuição
+			String valor = null;
+
+			if (chaveValor != null) {
+
+				if (chaveValor.length == 2) {
+
+					chave = chaveValor[0];
+					valor = chaveValor[1];
+
+					// os múltiplos valores das chaves (se existirem) são separados por
+					// ","
+					String[] multiplosValores = valor.split(",");
+
+					Log.v(TAG, "chave: " + chave);
+
+					if (multiplosValores != null) {
+
+						Log.v(TAG, "valor(es): " + valor + " (" + multiplosValores.length + ") values");
+
+						for (String value : multiplosValores) {
+							Log.v(TAG, "  " + value);
+
+						}
+
 					}
 
+				} else if (chaveValor.length == 1) {
+					chave = chaveValor[0];
 				}
 
-				Log.v(TAG, "chave: " + chave);
-				Log.v(TAG, "valor(es): " + valor + " (" + valoresPossiveis.length + ") values");
-				for (String value : valoresPossiveis) {
-					Log.v(TAG, "  " + value);
-				}
-
-				Log.v(TAG, ++index + ": " + line);
 			}
+
 		}
+
+		return;
 
 	}
 
