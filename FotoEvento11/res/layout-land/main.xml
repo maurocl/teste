@@ -44,6 +44,7 @@
             android:background="@color/branco"
             android:gravity="center_horizontal" >
 
+            <!-- 
             <Button
                 android:id="@+id/btnParticipante"
                 style="@style/btnConfirmaStyle"
@@ -52,6 +53,8 @@
                 android:text="Participar"
                 android:width="200dp" />
 
+ -->
+
             <Button
                 android:id="@+id/btnBotao"
                 style="@style/btnConfirmaStyle"
@@ -59,7 +62,8 @@
                 android:layout_height="wrap_content"
                 android:text="Config"
                 android:width="200dp" />
-
+ 
+ 
             <Button
                 android:id="@+id/btnSair"
                 style="@style/btnConfirmaStyle"

@@ -187,41 +187,15 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     }
 
-    Button btnParticipante = (Button) findViewById(R.id.btnParticipante);
-
-    btnParticipante.setVisibility(android.view.View.GONE);
-
-    Button btn = (Button) findViewById(R.id.btnBotao);
+    Button btnParticipar = (Button) findViewById(R.id.btnBotao);
+    btnParticipar.setText("Participar");
 
     Button btnSair = (Button) findViewById(R.id.btnSair);
-    
-    Button btnBotao = (Button) findViewById(R.id.btnBotao);
-
-    if (DEBUG == 1) {
-
-      // ----------------------------
-      // trata o botão Participante (ação do usuário para participar no evento)
-      // ----------------------------
-      btnParticipante.setOnClickListener(new OnClickListener() {
-
-        public void onClick(View v) {
-
-          // launchActivity(FotoEventoActivity.this, ParticipanteActivity.class,
-          // null, ACTIVITY_PARTICIPANTE);
-
-        }
-
-      });
-
-    }
 
     // ----------------------------
     // trata o botão Participar
-    // ----------------------------
-
-    btn.setText("Participar");
-
-    btn.setOnClickListener(new OnClickListener() {
+    // ---------------------------
+    btnParticipar.setOnClickListener(new OnClickListener() {
 
       public void onClick(View v) {
 
@@ -264,16 +238,6 @@ public class FotoEventoActivity extends Activity implements Constantes {
         // executa o diálogo verificando se o usuário deseja realmente sair da
         // aplicação.
         dialogoDesejaSairDaAplicacao();
-
-      }
-
-    });
-
-    btnBotao.setOnClickListener(new OnClickListener() {
-
-      public void onClick(View v) {
-
-        processaClickItemMenuManutencao();
 
       }
 
@@ -464,6 +428,8 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * Lança a Activity responsável pela manutenção da aplicação.<br>
    * 
+   * <p>São passados como parâmetros os valores: mContratante, mEvento e lListaParticipacao.
+   * 
    */
   private void launchActivityManutencao() {
 
@@ -633,12 +599,17 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * Processa o resultado da execução da activity responsável por executar um
    * ciclo completo da aplicação que é:<br>
+   * 
    * <ul>
+   * 
    * <li>Obter informações sobre o participante do evento (nome, email,
    * telefone, etc);
+   * 
    * <li>Obter informações sobre o tipo da foto (polaroid/cabine) e o efeito de
    * cores aplicado (cores/p&b)
+   * 
    * <li>Obter a foto no formato e efeito desejado mais a inclusão da moldura.
+   * 
    * </ul>
    * 
    * @param resultCode
@@ -719,7 +690,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
 
     if (resultCode == RESULT_OK) {
 
-      Log.d(TAG, "resultActivityCamera() - activityprocessada com sucesso: RESULT_OK");
+      Log.d(TAG, "resultActivityCamera() - activity processada com sucesso: RESULT_OK");
 
       if (data != null) {
 
@@ -733,7 +704,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
             // o parâmetro foi encontrado
           }
 
-          dados = params.getByteArray("br.com.mltech.dados");
+          dados    = params.getByteArray("br.com.mltech.dados");
           filename = params.getString("br.com.mltech.image.filename");
 
           Log.d(TAG, "resultActivityCamera() - Filename=" + filename);
@@ -755,6 +726,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   /**
    * Verifica se as configurações iniciais estão satisfeitas para execução de
    * uma participação no evento.<br>
+   * 
    * <p>
    * Condições:<br>
    * <br>
@@ -1108,7 +1080,7 @@ public class FotoEventoActivity extends Activity implements Constantes {
   }
 
   /**
-   * Obtém o nome associado a activity dado de requestCode.
+   * Obtém o nome associado a activity dado seu requestCode.
    * 
    * @param requestCode
    *          inteiro originalmente fornecido na chamada ao método

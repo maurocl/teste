@@ -182,10 +182,7 @@ public class Utility extends Application {
 
   
   /**
-   * É um InputStream com flush automático
-   * 
-   * 
-   * 
+   * É um InputStream com flush automático.
    */
   static class FlushedInputStream extends FilterInputStream {
 
@@ -237,7 +234,7 @@ public class Utility extends Application {
   }
 
   /**
-   * Redimensiona uma imagem
+   * <p>Redimensiona uma imagem.
    * 
    * @param context
    *          contexto da aplicação
@@ -246,7 +243,7 @@ public class Utility extends Application {
    * 
    * @return um array de bytes com a imagem escalonada
    * 
-   * @throws IOException
+   * @throws IOException caso haja algum erro de IO.
    * 
    */
   public static byte[] scaleImage(Context context, Uri photoUri) throws IOException {
@@ -385,9 +382,9 @@ public class Utility extends Application {
   }
 
   /**
-   * Exibe a relação de chaves e valores de um Bundle
+   * Exibe a relação de chaves e valores de um Bundle no log da aplicação.
    * 
-   * @param values
+   * @param values Bundle contendo os valores
    * 
    */
   public void showBundle(Bundle values) {
@@ -399,6 +396,7 @@ public class Utility extends Application {
 
     if (values != null) {
 
+    	// Obtém o conjunto de chaves
       Set<String> chaves = values.keySet();
 
       if (chaves != null) {
@@ -427,7 +425,7 @@ public class Utility extends Application {
   }
 
   /**
-   * Exibe informações sobre o erro Facebook
+   * Exibe o log de <i>warning</i> informações sobre o erro Facebook
    * 
    * @param error
    *          instância de um erro do facebook

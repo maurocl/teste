@@ -10,8 +10,6 @@ import android.widget.Toast;
 import br.com.mltech.R;
 
 /**
- * SplashScreenActivity.java
- * 
  * Splash Screen
  * 
  * @author maurocl
@@ -20,6 +18,9 @@ import br.com.mltech.R;
 public class SplashScreenActivity extends Activity implements Runnable {
 
   private static final String TAG = "SplashScreenActivity";
+  
+  // tempo de exibição do splash na tela
+  private static final int TEMPO = 3000;
 
   private TextView text1;
 
@@ -41,12 +42,12 @@ public class SplashScreenActivity extends Activity implements Runnable {
     text1.setText("Aguarde ...");
 
     Handler h = new Handler();
-    h.postDelayed(this, 3000);
+    h.postDelayed(this, TEMPO);
 
   }
 
   /**
-   * 
+   * Chama a activity principal.
    */
   public void run() {
 

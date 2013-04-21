@@ -10,6 +10,8 @@ import br.com.mltech.utils.ManipulaImagem;
 /**
  * Moldura
  * 
+ * <p>Representa a moldura de uma foto.
+ * 
  * @author maurocl
  * 
  */

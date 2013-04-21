@@ -35,8 +35,6 @@ import br.com.mltech.modelo.RepositorioParticipacaoScript;
 import br.com.mltech.utils.FileUtils;
 
 /**
- * ManutencaoActivity
- * 
  * Esta activity é responsável pela Manutenção do Sistema.<br>
  * 
  * É a partir dela que podemos fazer a manutenção do Contratante, Evento,
@@ -88,12 +86,12 @@ public class ManutencaoActivity extends Activity implements Constantes {
 			Log.d(TAG, "onCreate() - Erro na leitura do arquivo de preferências.");
 		}
 
-		Button btnContratante = (Button) findViewById(R.id.btnContratante);
-		Button btnEvento = (Button) findViewById(R.id.btnEvento);
-		Button btnPreferencias = (Button) findViewById(R.id.btnPrefencias);
-		Button btnRelatorios = (Button) findViewById(R.id.btnRelatorios);
-		Button btnBackup = (Button) findViewById(R.id.btnBackup);
-		Button btnRestauracao = (Button) findViewById(R.id.btnRestauracao);
+		Button btnContratante         = (Button) findViewById(R.id.btnContratante);
+		Button btnEvento              = (Button) findViewById(R.id.btnEvento);
+		Button btnPreferencias        = (Button) findViewById(R.id.btnPrefencias);
+		Button btnRelatorios          = (Button) findViewById(R.id.btnRelatorios);
+		Button btnBackup              = (Button) findViewById(R.id.btnBackup);
+		Button btnRestauracao         = (Button) findViewById(R.id.btnRestauracao);
 		Button btnConfiguracaoInicial = (Button) findViewById(R.id.btnConfiguracaoInicial);
 
 		// Desabilita botão
@@ -460,8 +458,6 @@ public class ManutencaoActivity extends Activity implements Constantes {
 	}
 
 	/**
-	 * processActivityPreferencias(int resultCode, Intent data)
-	 * 
 	 * @param resultCode
 	 * @param data
 	 */
@@ -486,8 +482,8 @@ public class ManutencaoActivity extends Activity implements Constantes {
 	/**
 	 * Trata o resultado da execução da activity Relatórios
 	 * 
-	 * @param resultCode
-	 * @param data
+	 * @param resultCode Código do resultado de execução da activity
+	 * @param data Dados recebidos.
 	 */
 	private void processActivityRelatorios(int resultCode, Intent data) {
 
@@ -584,7 +580,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
 	 * Lê a configuração do Contratante e do Evento armazenada na estrutura de
 	 * preferências (Preferences).<br>
 	 * 
-	 * Inicializa as variáveis mContratante e mEvento com os valores lidos ou
+	 * <p>Inicializa as variáveis mContratante e mEvento com os valores lidos ou
 	 * apenas cria uma instância delas.<br>
 	 * 
 	 * @return true em caso de sucesso ou false no caso de falhas
@@ -725,11 +721,11 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
 	}
 
-	/**
-	 * leArquivoConfiguracao(String filename)
-	 * 
-	 * Lê um arquivo com as configurações. O nome das chaves deve ser colocado em
-	 * letras maiúsculas.<br>
+	/** 
+	 * Abre o arquivo contendo as configurações.<br /> 
+	 * O arquivo de configurações é um arquivo texto contendo uma séria e definições do tipo chave=valor.<br />
+	 * O nome das chaves deve ser colocado em letras maiúsculas.<br>
+	 * As linhas iniciada com '#' serão consideradas comentários<br />
 	 * 
 	 * @param filename
 	 *          nome do arquivo de configuração
@@ -754,6 +750,8 @@ public class ManutencaoActivity extends Activity implements Constantes {
 		String line = null;
 
 		while ((line = buf.readLine()) != null) {
+			
+			// processa uma nova linha do arquivo
 
 			linha++;
 
@@ -764,6 +762,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
 			Log.d(TAG, linha + ": " + line);
 
+			// Executa um split no valor da linha lida buscando pela caractere de atribuição ('=').
 			String[] atribuicao = line.split("=");
 
 			// Log.v(TAG, "Tamanho=" + atribuicao.length);
@@ -773,7 +772,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
 
 			if (atribuicao.length > 1) {
 
-				chave = atribuicao[0];
+				chave = atribuicao[0]; 
 				valor = atribuicao[1];
 
 				Log.v(TAG, "Tamanho=" + atribuicao.length + ", Chave=" + chave + ", Valor=" + valor);
@@ -786,6 +785,7 @@ public class ManutencaoActivity extends Activity implements Constantes {
 				Log.w(TAG, "Erro de atribuição na linha: " + linha);
 			}
 
+			// acrescenta o valor a um hash formado pela chave (caracteres minusculos) e seu valor
 			hash.put(chave.toLowerCase(), valor);
 
 		}

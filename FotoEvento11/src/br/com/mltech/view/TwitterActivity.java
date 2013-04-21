@@ -16,7 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 /**
- * 
+ * Activity responsável pelo envio do post ao Twitter.
  * 
  *
  */
@@ -24,8 +24,8 @@ public class TwitterActivity extends Activity {
 
 	public static final String TAG = "TwitterActivity";
 
-	private String filename;
-	private String text;
+	private String filename; // nome do arquivo contendo a foto
+	private String text; // mensagem
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -33,16 +33,28 @@ public class TwitterActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_main);
 		
+		// Obtém a intent chamadora
 		Intent i = getIntent();
 		
+		// Obtém as informações sobre a intent chamados
 		Bundle bundle = i.getExtras();
 		
+		// São aguardadas as seguintes informações:
+		// br.com.mltech.filename
+		// br.com.mltech.text
+		//
 		if(bundle!=null) {
 			if(bundle.containsKey("br.com.mltech.filename")) {
 				filename=bundle.getString("br.com.mltech.filename");
 			}
+			else {
+				filename=null;
+			}
 			if(bundle.containsKey("br.com.mltech.text")) {
 				text = bundle.getString("br.com.mltech.text");
+			}
+			else {
+				text=null;
 			}
 		}
 		else {
@@ -73,7 +85,8 @@ public class TwitterActivity extends Activity {
 	/**
 	 * Cria um thread para envio de uma foto ao Twitter
 	 * 
-	 * @param text
+	 * @param filename nome do arquivo onde se encontra a foto
+	 * @param text texto conteúdo do post enviado
 	 */
 	private String executaEnviaFotoTwitter(String filename, String text) {
 
@@ -101,6 +114,7 @@ public class TwitterActivity extends Activity {
 	}
 
 	/**
+	 * Tarefa assincrona responsável pelo envio da foto.
 	 * 
 	 * InParamType ProgressReportType ResultType
 	 * 
@@ -129,6 +143,7 @@ public class TwitterActivity extends Activity {
 
 			ConfigurationBuilder cb = new ConfigurationBuilder();
 
+			// TODO esse código hardcoded deverá ser removido
 			cb.setDebugEnabled(true)
 					.setOAuthConsumerKey("zFGaPH929CR11pKq8glzw")
 					.setOAuthConsumerSecret(
@@ -154,7 +169,9 @@ public class TwitterActivity extends Activity {
 			try {
 
 				url = upload.upload(new File(filename), text);
+				
 				Log.d(TAG, "Upload da imagem feita com sucesso no Twitter em: " + url);
+				
 				result = url.toString();
 
 			} catch (TwitterException e) {

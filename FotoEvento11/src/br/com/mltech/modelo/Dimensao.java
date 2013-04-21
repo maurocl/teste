@@ -1,6 +1,7 @@
 package br.com.mltech.modelo;
 
 /**
+ * Dimensões (largura e altura) de um objeto.
  * 
  * @author maurocl
  *
@@ -29,9 +30,9 @@ public class Dimensao {
    * Constroi uma dimensão dada sua laegura e altura
    * 
    * @param largura
-   *          largura
+   *          largura do objeto
    * @param altura
-   *          altura
+   *          altura do objeto
    * 
    */
   public Dimensao(int largura, int altura) {
@@ -40,9 +41,9 @@ public class Dimensao {
   }
 
   /**
-   * Calcula o aspect ratio da dimensão
+   * Calcula o aspect ratio da dimensão.
    * 
-   * @return a relação entre largura e altura
+   * @return a relação entre largura e altura.
    * 
    */
   public double aspectRatio() {
@@ -96,11 +97,11 @@ public class Dimensao {
    */
   @Override
   public String toString() {
-    return "Dimensao [largura=" + largura + ", altura=" + altura + "]";
+    return "Dimensao: [largura=" + largura + ", altura=" + altura + "]";
   }
 
   /**
-   * Obtem a maior largura dado duas dimensões
+   * Obtem a maior largura dado duas dimensões.
    * 
    * @param dim1 Instância de Dimensão
    * @param dim2 Instância de Dimensão

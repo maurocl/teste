@@ -2379,9 +2379,11 @@ public class DummyActivity3 extends Activity implements Constantes {
 	 * Cria uma nova foto (bitmap) a partir de três fotos recebidas.<br>
 	 * 
 	 * <pre>
+	 * |-----|
 	 * |foto1|
 	 * |foto2|
 	 * |foto3|
+	 * |-----|
 	 * </pre>
 	 * 
 	 * @param bmFoto1

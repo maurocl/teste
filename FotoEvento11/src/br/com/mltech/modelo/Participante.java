@@ -3,7 +3,16 @@ package br.com.mltech.modelo;
 import java.io.Serializable;
 
 /**
- * Participante
+ * Participante do Evento.
+ * 
+ * <p>O participante do evento possui os seguintes abtributos:
+ * <ul>
+ * <li>nome
+ * <li>email
+ * <li>telefone
+ * </ul>
+ * <p>Há também espaço para criação de cinco campos adicionais representados por:
+ * param1, ..., param5.
  * 
  * @author maurocl
  * 
@@ -57,10 +66,10 @@ public class Participante implements Serializable {
 	/**
 	 * Constroi um novo participante
 	 * 
-	 * @param nome
-	 * @param email
-	 * @param telefone
-	 * @param parametros
+	 * @param nome Nome 
+	 * @param email Email
+	 * @param telefone Telefone
+	 * @param parametros 
 	 */
 	public Participante(String nome, String email, String telefone, Parametros parametros) {
 		this.nome = nome;
@@ -70,7 +79,7 @@ public class Participante implements Serializable {
 	}
 
 	/**
-	 * @return the nome
+	 * @return o nome do participante
 	 */
 	public String getNome() {
 		return nome;
