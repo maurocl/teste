@@ -69,8 +69,6 @@ public class CameraTools {
 	}
 
 	/**
-	 * checkCameraHardware(Context context)
-	 * 
 	 * Verifica se um dispositivo possui uma câmera.
 	 * 
 	 * @param context
@@ -201,7 +199,7 @@ public class CameraTools {
 	}
 
 	/**
-	 * Apaga (ou remove) uma imagem da área pública de armzenamento externo
+	 * Apaga (ou remove) uma imagem da área pública de armazenamento externo.
 	 * 
 	 */
 	public static void deleteExternalStoragePublicPicture() {
@@ -324,6 +322,7 @@ public class CameraTools {
 		}
 
 		String flatten = c.getParameters().flatten();
+		
 		Log.d(TAG, "getParametersFlatten() - params.flatten=" + flatten);
 
 		return flatten;
@@ -802,9 +801,8 @@ public class CameraTools {
 	}
 
 	/**
-	 * safeCamera(int id)
 	 * 
-	 * @param id
+	 * @param id Identificador da câmera
 	 * 
 	 * @return
 	 * 
@@ -1091,7 +1089,7 @@ public class CameraTools {
 	 * Esse método foi tirado do site developer.android.com (Reference)<br>
 	 * 
 	 * @param activity
-	 * @param cameraId
+	 * @param cameraId Identificador da câmera
 	 * @param camera
 	 * 
 	 */
@@ -1101,6 +1099,7 @@ public class CameraTools {
 
 		android.hardware.Camera.getCameraInfo(cameraId, info);
 
+		// obtem a rotação do display default
 		int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
 
 		int degrees = 0;

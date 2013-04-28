@@ -75,7 +75,7 @@ public class FileUtils {
   }
 
   /**
-   * Obtém o diretório onde são armazenadas as molduras da aplicação
+   * Obtém o diretório onde são armazenadas as molduras da aplicação.
    * 
    * @return O diretório onde são armazenadas as molduras da aplicação
    * 
@@ -192,9 +192,12 @@ public class FileUtils {
   public static String getFileExtension(Uri uri) {
 
     if (isFileURI(uri)) {
+    	
+    	// é uma URI do tipo file
       String s = uri.getPath();
 
       return s.substring(s.lastIndexOf(".") + 1);
+      
     }
 
     return null;
@@ -213,9 +216,11 @@ public class FileUtils {
   public static String getFileExtension(File f) {
 
     if (f == null) {
+    	// a extensão de um arquivo vazio é nula
       return null;
     }
 
+    // retorna o path do arquivo
     String s = f.getPath();
 
     return s.substring(s.lastIndexOf(".") + 1);
@@ -290,10 +295,10 @@ public class FileUtils {
   }
 
   /**
-   * Verifica se um arquivo existe e é um arquivo.
+   * Verifica se um objeto do tipo File existe e é do tipo arquivo.
    * 
    * @param f
-   *          Arquivo
+   *          Instância um um objeto File
    * 
    * @return true se o arquivo existir e for um arquivo.
    * 
@@ -304,7 +309,8 @@ public class FileUtils {
       return false;
     }
 
-    if (f.exists() || f.isFile()) {
+    // TODO: verificar se não seria && ao invés de ||
+    if (f.exists() && f.isFile()) {
       return true;
     }
 
@@ -313,10 +319,10 @@ public class FileUtils {
   }
 
   /**
-   * Verifica se um diretório existe.
+   * Verifica se um objeto do tipo File existe e é do tipo diretório.
    * 
-   * @param f
-   *          referência a um diretório no sistema de arquivos
+   * @param f Instância um um objeto File
+   *          
    * 
    * @return true se o diretório existir
    * 
@@ -327,7 +333,7 @@ public class FileUtils {
       return false;
     }
 
-    if (f.exists() || f.isDirectory()) {
+    if (f.exists() && f.isDirectory()) {
       return true;
     }
 

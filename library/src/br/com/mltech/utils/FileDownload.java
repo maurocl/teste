@@ -55,8 +55,6 @@ public class FileDownload {
   private Bitmap bitmap;
 
   /**
-   * FileDownload(String url)
-   * 
    * Método construtor
    * 
    * @param url
@@ -66,11 +64,10 @@ public class FileDownload {
   public FileDownload(String url) {
 
     this(url, null, null);
+    
   }
 
   /**
-   * FileDownload(String url, Context ctx, ImageView imageView)
-   * 
    * Método construtor
    * 
    * @param url
@@ -90,7 +87,8 @@ public class FileDownload {
     Log.d(TAG, "construtor - FileDownload: " + url);
 
     if (context != null) {
-      dialog = ProgressDialog.show(context, "Exemplo", "Buscando imagem, aguarde ...", false, true);
+    	// Exibe uma caixa de diálogo indicando o progresso do download
+      dialog = ProgressDialog.show(context, "FileDownload", "Buscando imagem, aguarde ...", false, true);
     }
 
     if (dialog == null) {
@@ -102,14 +100,13 @@ public class FileDownload {
   }
 
   /**
-   * downloadImage()
-   * 
    * Executa o download de um arquivo de imagem
    */
   public void downloadImage() {
 
-    Log.d(TAG, "método downloadImage");
+    Log.d(TAG, "downloadImage()");
 
+    // cria uma nova thread para execução do download
     Thread t = new Thread() {
 
       public void run() {
@@ -118,18 +115,24 @@ public class FileDownload {
 
         try {
 
+        	// obtem o endereço do arquivo, isto é, a URL que possui a imagem.
           url = new URL(mUrl);
 
-          Log.d(TAG, "mUrl=" + mUrl);
+          Log.d(TAG, "downloadImage() - mUrl=" + mUrl);
 
+          // abre um input stream para leitura
           InputStream is = url.openStream();
 
+          // decodifica o input stream como se fosse um bitmap
           bitmap = BitmapFactory.decodeStream(is);
 
           if (bitmap != null) {
+          	// um bitmap foi decodificado
+          	// exibe as informações sobre o tamanho do bitmap lido
             Log.i(TAG, bitmap.getWidth() + "x" + bitmap.getHeight() + " pixels");
           }
 
+          // fecha o input stream
           is.close();
 
           // atualiza a Tela
@@ -152,12 +155,13 @@ public class FileDownload {
 
     };
 
+    // inicia a thread
     t.start();
 
   }
 
   /**
-   * atualizaTela(final Bitmap imagem)
+   * Método responsável pela visualização do bitmap
    * 
    * @param imagem Bitmap usado para atualizar a tela
    * 
@@ -170,6 +174,7 @@ public class FileDownload {
       Log.w(TAG, "handler is null");
     }
 
+    // enfilera a thread para posterior execução
     handler.post(new Runnable() {
 
       //@Override
@@ -182,9 +187,7 @@ public class FileDownload {
 
           dialog.dismiss();
 
-        } else {
-
-        }
+        } 
 
         if (imageView != null) {
           imageView.setImageBitmap(imagem);
@@ -210,9 +213,9 @@ public class FileDownload {
   }
 
   /**
-   * Atualiza a URL de onde será feito o download
+   * Atualiza a URL de onde será feito o download do bitmap.
    * 
-   * @param mUrl URL de onde será feito o download
+   * @param mUrl URL de onde será feito o download do bitmap.
    */
   public void setUrl(String mUrl) {
 
@@ -264,7 +267,8 @@ public class FileDownload {
   /**
    * Obtém o componente de visualização da imagem.
    * 
-   * @return o componente de visualização
+   * @return o componente de visualização.
+   * 
    */
   public ImageView getImageView() {
 
@@ -273,7 +277,7 @@ public class FileDownload {
   }
 
   /**
-   * Estabelece o componente de visualização da imagem
+   * Estabelece o componente onde a imagem será visualizada.
    * 
    * @param imageView o componente de visualização
    * 

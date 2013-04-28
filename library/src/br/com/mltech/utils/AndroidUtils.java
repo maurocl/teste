@@ -76,7 +76,7 @@ public class AndroidUtils {
 	}
 
 	/**
-	 * alertDialog(Context context, String title, String message)
+   * Exibe uma caixa de diálogo de Alerta
 	 * 
 	 * @param context
 	 *          Contexto da Aplicação
@@ -89,6 +89,7 @@ public class AndroidUtils {
 	public static void alertDialog(Context context, String title, String message) {
 
 		AlertDialog dialog = new AlertDialog.Builder(context).setTitle(title).setMessage(message).create();
+		
 		dialog.setButton("OK", new OnClickListener() {
 
 			// @Override

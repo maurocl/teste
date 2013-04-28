@@ -38,7 +38,7 @@ public class Logger {
   /**
    * BufferWriter
    */
-  private BufferedWriter bw;
+  private BufferedWriter bufferedWriter;
 
   /**
    * Construtor
@@ -59,6 +59,7 @@ public class Logger {
    * 
    * @param filename
    *          Nome do arquivo onde será gerado o log.
+   *          
    * @param append
    *          Indica o modo de abertura do arquivo
    * 
@@ -73,7 +74,7 @@ public class Logger {
 
     this.append = append;
 
-    bw = new BufferedWriter(new FileWriter(filename, append));
+    bufferedWriter = new BufferedWriter(new FileWriter(filename, append));
 
     Log.d(TAG, "Logger() - inicio do log");
 
@@ -90,10 +91,9 @@ public class Logger {
 
     if (enabled) {
       try {
-        bw.append(str);
+        bufferedWriter.append(str);
       } catch (IOException e) {
         Log.w(TAG, "print() - falha no log", e);
-
       }
     }
 
@@ -109,8 +109,10 @@ public class Logger {
   public void println(String str) {
 
     if (enabled) {
+    	
       StringBuilder sb = new StringBuilder();
 
+      // monta a string de log: data e hora + mensagem + fim de linha
       sb.append(getDataHora()).append(" ").append(str).append("\n");
 
       print(sb.toString());
@@ -159,12 +161,13 @@ public class Logger {
   }
 
   /**
+   * Executa um esvaziamento do buffer de escrita para garantir que toda mensagem tenha sido enviada do buffer.
    * 
-   * @throws IOException
+   * @throws IOException Exceção lançada se houver algum problema no esvaziamento do buffer.
    */
   public void flush() throws IOException {
 
-    bw.flush();
+    bufferedWriter.flush();
   }
 
   /**
@@ -176,7 +179,7 @@ public class Logger {
 
     try {
       Log.d(TAG, "Logger() - fim do log");
-      bw.close();
+      bufferedWriter.close();
     } catch (Exception e) {
       Log.w(TAG, "close() - erro ao fechar o arquivo", e);
     }
@@ -186,7 +189,7 @@ public class Logger {
   /**
    * Obtém o nome do arquivo de log.
    * 
-   * @return O nome do arquivo de log
+   * @return O nome do arquivo de log.
    * 
    */
   public String getFilename() {
@@ -226,12 +229,14 @@ public class Logger {
   public boolean isAppend() {
 
     return append;
+    
   }
 
   /**
-   * Indica se o sistema de log está funcionando.
+   * Indica se o sistema de log está habilitado ou não.
    * 
-   * @return
+   * @return true caso esteja habilitado ou false caso contrário
+   * 
    */
   public boolean isEnabled() {
 
@@ -241,7 +246,8 @@ public class Logger {
   /**
    * Altera o modo de log
    * 
-   * @param enabled
+   * @param enabled Habilita ou desabilita o log.
+   * 
    */
   public void setEnabled(boolean enabled) {
 

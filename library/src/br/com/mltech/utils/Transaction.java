@@ -1,9 +1,9 @@
 package br.com.mltech.utils;
 
 /**
- * Define uma transacao.<br>
+ * <p>Define uma transacao.<br>
  * 
- * Essa interface define duas ações:<br>
+ * <p>Essa interface define duas ações:<br>
  * - execução de uma tarefa<br>
  * - atualização de uma visão<br>
  * 
