@@ -480,9 +480,10 @@ public final class Util {
   }
 
   /**
+   * Loga uma mensagem de categoria informacional
    * 
-   * @param tag
-   * @param msg
+   * @param tag Tag da mensagem
+   * @param msg Mensagem exibida
    */
   public static void logi(String tag, String msg) {
 
@@ -493,9 +494,10 @@ public final class Util {
   }
 
   /**
-   * 
-   * @param tag
-   * @param msg
+   *  Loga uma mensagem de categoria de advertencia (warning)
+   *  
+   * @param tag Tag da mensagem
+   * @param msg Mensagem exibida
    */
   public static void logw(String tag, String msg) {
 
@@ -506,9 +508,10 @@ public final class Util {
   }
 
   /**
-   * 
-   * @param tag
-   * @param msg
+   *  Loga uma mensagem de categoria de verbose
+   *  
+   * @param tag Tag da mensagem
+   * @param msg Mensagem exibida
    */
   public static void logv(String tag, String msg) {
 
