@@ -30,7 +30,16 @@ import br.com.mltech.utils.camera.CameraTools;
  * Activity responsável por controlar (implementar) as funcionalidades de uma
  * uma câmera fotográfica.<br>
  * 
- * Retorna um array contendo as fotos.
+ * <p>A activity suporta a passagem dos seguintes parâmetros:
+ *   <br>tipoDisparo = intent.getIntExtra("TIPO_DISPARO", AUTOMATICO);
+ *   <br>numFotos    = intent.getIntExtra("NUM_FOTOS", 1);
+ * 
+ * <p>A activity retorna o seguinte parâmetro:
+ * 	 <br>intent.putExtra("br.com.mltech.fotos", fotos);
+ * 
+ * 
+ * <p>Retorna um array de Strings onde cada elemento possui o caminho completo de
+ * uma foto.
  * 
  * @author maurocl
  * 
@@ -38,6 +47,9 @@ import br.com.mltech.utils.camera.CameraTools;
 public class CameraActivity extends Activity implements Constantes {
 
 	private static final String TAG = "CameraActivity";
+
+	// nº máximo de fotos que serão armazenadas
+	private static final int NUM_MAX_FOTOS = 3;
 
 	// controla o tipo de disparo da câmera
 	private static final int MANUAL = 1;
@@ -75,7 +87,7 @@ public class CameraActivity extends Activity implements Constantes {
 	private Button btnCapture;
 
 	// handler usado para controle do disparo automático
-	private Handler handler = new TestHandler();
+	private Handler handler = new DisparaObturadorHandler();
 
 	// controla o tipo de disparo da câmera
 	private int tipoDisparo = AUTOMATICO;
@@ -89,9 +101,8 @@ public class CameraActivity extends Activity implements Constantes {
 	// nº de fotos tiradas
 	private int contador = 0;
 
-	// estrutura para guardar as fotos
-	// private Foto[] fotos = new Foto[NUM_FOTOS];
-	private String[] fotos = new String[3];
+	// estrutura para guardar o nome dos arquivos onde estão armazenadas as fotos.
+	private String[] fotos = new String[NUM_MAX_FOTOS];
 
 	//
 	private Participacao mParticipacao;
@@ -107,24 +118,24 @@ public class CameraActivity extends Activity implements Constantes {
 		super.onCreate(savedInstanceState);
 
 		// Obtém as informações da intent chamadora.
-		Intent i = getIntent();
+		Intent intent = getIntent();
 
-		tipoDisparo = i.getIntExtra("TIPO_DISPARO", AUTOMATICO);
-		numFotos = i.getIntExtra("NUM_FOTOS", 1);
+		// Obtém o tipo de disparo solicitado. Caso contrário usa como default o
+		// modo automático.
+		tipoDisparo = intent.getIntExtra("TIPO_DISPARO", AUTOMATICO);
+
+		// Obtém o nº de fotos que serão tiradas. Caso contrário tira apenas uma
+		// foto.
+		numFotos = intent.getIntExtra("NUM_FOTOS", 1);
 
 		// Obtém informações do participante
-		obtemInfoParticipacao(i);
+		obtemInfoParticipacao(intent);
 
 		// Obtém o identificador da câmera
-		obtemIdentificadorCamera(i);
+		obtemIdentificadorCamera(intent);
 
 		Log.d(TAG, "onCreate() - tipoDisparo=" + tipoDisparo);
-		Log.d(TAG, "onCreate() - numFotos=" + numFotos);
-
-		// a intent poderia solicitar:
-		// - nº de fotos
-		// tipo do disparo: manual ou automático
-		//
+		Log.d(TAG, "onCreate() - numFotos   =" + numFotos);
 
 		Log.d(TAG, "*** onCreate() ***");
 
@@ -139,9 +150,9 @@ public class CameraActivity extends Activity implements Constantes {
 		// objeto onde será exibido a tela da câmera
 		layoutPreview = (FrameLayout) findViewById(R.id.camera_preview);
 
-		btnCapture  = (Button) findViewById(R.id.button_capture);
-		btnOk       = (Button) findViewById(R.id.btnOk);
-		btnNovo     = (Button) findViewById(R.id.btnNovo);
+		btnCapture = (Button) findViewById(R.id.button_capture);
+		btnOk = (Button) findViewById(R.id.btnOk);
+		btnNovo = (Button) findViewById(R.id.btnNovo);
 		btnCancelar = (Button) findViewById(R.id.btnCancelar);
 
 		if (tipoDisparo == MANUAL) {
@@ -182,7 +193,7 @@ public class CameraActivity extends Activity implements Constantes {
 				}
 
 			}
-			
+
 		});
 
 		/**
@@ -265,7 +276,7 @@ public class CameraActivity extends Activity implements Constantes {
 	 * default.
 	 * 
 	 * @param intent
-	 *          intent Intent chamadora da Activity
+	 *          Intent chamadora da Activity
 	 */
 	private void obtemIdentificadorCamera(Intent intent) {
 
@@ -278,7 +289,7 @@ public class CameraActivity extends Activity implements Constantes {
 		}
 
 		Log.d(TAG, "obtemIdentificadorCamera() - atualizando o dientificador da câmera - cameraId = " + cameraId);
-		
+
 	}
 
 	/**
@@ -338,7 +349,7 @@ public class CameraActivity extends Activity implements Constantes {
 
 				// grava a foto
 				gravaFoto(nomeArquivo, data);
-				
+
 				Log.d(TAG, "onPictureTaken() - arquivo: [" + nomeArquivo + "] gravado com sucesso.");
 
 			} catch (Exception e) {
@@ -366,11 +377,11 @@ public class CameraActivity extends Activity implements Constantes {
 			mCamera.startPreview();
 
 			// Atualiza as funcionalidades dos botões
-			atualizaBotoesDeControle();
+			atualizaVisualizacaoBotoesDeControle();
 
 			// TODO qual é a situação nesse momento ?
 			// o que é necessário fazer para ter a visualização da câmera novamente ?
-			// pelo que eu entendo, após tirar uma foto a situação da c^maera é
+			// pelo que eu entendo, após tirar uma foto a situação da câmera é
 			// stopped, correto ?
 
 			// TODO verificar o disparo automático da câmera
@@ -424,13 +435,13 @@ public class CameraActivity extends Activity implements Constantes {
 
 		Log.d(TAG, "*** onResume() ***");
 
-		Log.d(TAG,"*** cameraId: "+cameraId+" ***");
-		
+		Log.d(TAG, "*** cameraId: " + cameraId + " ***");
+
 		// obtém uma instância da câmera
 		mCamera = CameraTools.getCameraInstance(cameraId);
 
 		// Configura os parâmetros da câmera
-		//configParametrosCamera();
+		// configParametrosCamera();
 
 		Log.i(TAG, "onResume() - ==> mCamera=" + mCamera);
 
@@ -511,8 +522,8 @@ public class CameraActivity extends Activity implements Constantes {
 	 */
 	private void configParametrosCamera() {
 
-		Log.d(TAG, "configParametrosCamera() - inicio " );
-		
+		Log.d(TAG, "configParametrosCamera() - inicio ");
+
 		// Obtem a lista de parâmetros suportados pela câmera
 		Camera.Parameters params = mCamera.getParameters();
 
@@ -532,8 +543,8 @@ public class CameraActivity extends Activity implements Constantes {
 
 		}
 
-		Log.d(TAG, "configParametrosCamera() - fim " );
-		
+		Log.d(TAG, "configParametrosCamera() - fim ");
+
 	}
 
 	/**
@@ -590,6 +601,7 @@ public class CameraActivity extends Activity implements Constantes {
 		// exibe todos os parâmetros de configuração da câmera.
 		CameraTools.showParametersDetail(mCamera);
 
+		// TODO verificar se o modo é suportado
 		// altera o tamanho da foto
 		params.setPictureSize(640, 480);
 
@@ -610,7 +622,7 @@ public class CameraActivity extends Activity implements Constantes {
 
 		}
 
-		//params.setPreviewSize(720, 576);
+		// params.setPreviewSize(720, 576);
 		params.setPreviewSize(640, 480);
 
 		Camera.Size currentPreviewSize = params.getPreviewSize();
@@ -724,10 +736,11 @@ public class CameraActivity extends Activity implements Constantes {
 	}
 
 	/**
-	 * Exibe informações no log sobre as fotos.
+	 * Exibe a relação dos nomes dos arquivos que contem as fotos.
 	 * 
 	 * @param fotos
-	 *          Array de fotos.
+	 *          Array contendo o nome das fotos
+	 * 
 	 * 
 	 */
 	private void exibeFotos(String[] fotos) {
@@ -738,18 +751,20 @@ public class CameraActivity extends Activity implements Constantes {
 		}
 
 		int i = 0;
+
+		// percorre o array exibindo o nome de cada foto
 		for (String foto : fotos) {
 			Log.d(TAG, "exibeFotos() - Foto: " + i + " - " + foto);
 			i++;
 		}
-		
+
 	}
 
 	/**
 	 * Grava a foto obtida pela câmera (um array de bytes) em um arquivo.
 	 * 
 	 * @param nomeArquivo
-	 *          Nome completo do arquivo onde a foto será armazenada
+	 *          Nome completo do arquivo onde a foto será armazenada.
 	 * @param data
 	 *          Array de bytes contendo a foto (no formato jpeg).
 	 * 
@@ -776,14 +791,15 @@ public class CameraActivity extends Activity implements Constantes {
 	}
 
 	/**
-	 * Atualiza os botões de acordo com o modo de disparo da câmera.<br />
+	 * Atualiza a visibilidade dos botões de acordo com o modo de disparo da
+	 * câmera.<br />
 	 * 
 	 * Se o disparo for manual então ...
 	 * 
 	 * Se o disparo for automatico então ...
 	 * 
 	 */
-	private void atualizaBotoesDeControle() {
+	private void atualizaVisualizacaoBotoesDeControle() {
 
 		if (tipoDisparo == MANUAL) {
 
@@ -830,13 +846,13 @@ public class CameraActivity extends Activity implements Constantes {
 	 * Prepara a câmera para disparar a captura de uma foto.
 	 * 
 	 * @param segundos
-	 *          Nº de segundos que serão esperados
+	 *          Nº de segundos que serão esperados antes de disparar o obturador.
 	 * 
 	 * @throws IllegalArgumentException
 	 *           se o nº de segundos não for válido
 	 * 
 	 */
-	private void setDisparoAutomatico(int segundos) throws IllegalArgumentException {
+	private boolean setDisparoAutomatico(int segundos) throws IllegalArgumentException {
 
 		if (segundos < 0) {
 			throw new IllegalArgumentException("O tempo não poderá ser negativo");
@@ -844,7 +860,7 @@ public class CameraActivity extends Activity implements Constantes {
 
 		if (mCamera == null) {
 			Log.e(TAG, "setDisparoAutomatico() - câmera está nula");
-			return;
+			return false;
 		}
 
 		// Exibe o aviso de disparo automático
@@ -852,14 +868,18 @@ public class CameraActivity extends Activity implements Constantes {
 
 		// cria uma nova mensagem (identificador 1)
 		Message msg = new Message();
+
 		// identificador da mensagem
 		msg.what = 1;
+
 		// envia a mensagem
-		handler.sendMessageDelayed(msg, segundos * 1000);
+		boolean enqueued = handler.sendMessageDelayed(msg, segundos * 1000);
 
 		Log.i(TAG, "-------------------------------------");
 		Log.i(TAG, "captura foi disparada automaticamente");
 		Log.i(TAG, "-------------------------------------");
+
+		return enqueued;
 
 	}
 
@@ -872,7 +892,7 @@ public class CameraActivity extends Activity implements Constantes {
 		Log.i(TAG, " => confirmaFoto()");
 		Log.i(TAG, "---------------------------------------------------------");
 
-		Log.d(TAG, "Número de fotos tiradas: " + contador);
+		Log.d(TAG, "confirmaFoto() - Número de fotos tiradas: " + contador);
 
 		// Finaliza activity com sucesso
 		finalizaActivityResultOk();
@@ -881,7 +901,9 @@ public class CameraActivity extends Activity implements Constantes {
 
 	/**
 	 * Cria uma intent de resposta Ok<br>
+	 * 
 	 * Finaliza a activity com resultado Ok.
+	 * 
 	 */
 	private void finalizaActivityResultOk() {
 
@@ -895,12 +917,14 @@ public class CameraActivity extends Activity implements Constantes {
 		// intent.setData(mUri);
 
 		/*
-		 * String[] xxx = new String[fotos.length]; for (int i = 0; i <
-		 * fotos.length; i++) { xxx[i] = fotos[i].getArquivo();
-		 * Log.d(TAG,"Foto "+i+": "+xxx[i]); }
+		 * String[] xxx = new String[fotos.length]; 
+		 * for (int i = 0; i < fotos.length; i++) { 
+		 *   xxx[i] = fotos[i].getArquivo();
+		 *   Log.d(TAG,"Foto "+i+": "+xxx[i]); 
+		 * }
 		 */
 
-		// intent.putExtra("br.com.mltech.xxx", xxx);
+		
 		intent.putExtra("br.com.mltech.fotos", fotos);
 
 		// estabelece o resultado da execução da activity
@@ -989,9 +1013,9 @@ public class CameraActivity extends Activity implements Constantes {
 		} else if (facing == CameraInfo.CAMERA_FACING_FRONT) {
 			return "CAMERA_FACING_FRONT";
 		}
-		
+
 		return null;
-		
+
 	}
 
 	/**
@@ -1016,10 +1040,12 @@ public class CameraActivity extends Activity implements Constantes {
 	/**
 	 * Responsável pelo disparo da captura de uma foto.
 	 * 
+	 * Processa uma mensagem enfileirada.
+	 * 
 	 * @author maurocl
 	 * 
 	 */
-	private class TestHandler extends Handler {
+	private class DisparaObturadorHandler extends Handler {
 
 		/**
 		 * Lida com as mensagens

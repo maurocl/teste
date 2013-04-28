@@ -15,226 +15,246 @@ import android.widget.Button;
 import android.widget.ImageView;
 import br.com.mltech.R;
 
-/** 
- * O objetivo dessa activity é a exibição de uma foto.
+/**
+ * O objetivo dessa activity é exibir uma foto.
  * 
+ * A foto é exibida num ImageView e há dois botões, um para confirmar e o outro
+ * para cancelar
  * 
  * 
  */
 public class ExibeFotoActivity extends Activity implements OnClickListener {
 
-  public static final String TAG = "ExibeFotoActivity";
+	public static final String TAG = "ExibeFotoActivity";
 
-  // 0 - desligado; 1 - ligado
-  public static int DEBUG = 0;
+	// 0 - desligado; 1 - ligado
+	public static int DEBUG = 1;
 
-  // usado para testes da activity (para retornar uma imagem padrão).
-  public static int IMAGEM_DUMMY = 0;
+	// usado para testes da activity (para retornar uma imagem padrão).
+	public static int IMAGEM_DUMMY = 1;
 
-  // botão confirma (confirma a visualização da foto)
-  private static Button btnConfirmar;
+	// botão confirma (confirma a visualização da foto)
+	private static Button btnConfirmar;
 
-  // botão cancela
-  private static Button btnCancelar;
+	// botão cancela
+	private static Button btnCancelar;
 
-  /**
-   * onCreate(Bundle savedInstanceState)
-   */
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
+	/**
+	 * onCreate(Bundle savedInstanceState)
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 
-    super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
 
-    Log.d(TAG, "*** onCreate() ***");
+		Log.d(TAG, "*** onCreate() ***");
 
-    setContentView(R.layout.exibefoto);
+		setContentView(R.layout.exibefoto);
 
-    /**
-     * Trata o evento do botão Confirmar
-     */
-    btnConfirmar = (Button) findViewById(R.id.btnConfirmar);
-    btnConfirmar.setOnClickListener(this);
+		/**
+		 * Trata o evento do botão Confirmar
+		 */
+		btnConfirmar = (Button) findViewById(R.id.btnConfirmar);
+		btnConfirmar.setOnClickListener(this);
 
-    /**
-     * Trata o evento do botão Cancelar
-     */
-    btnCancelar = (Button) findViewById(R.id.btnCancelar);
-    btnCancelar.setOnClickListener(this);
+		/**
+		 * Trata o evento do botão Cancelar
+		 */
+		btnCancelar = (Button) findViewById(R.id.btnCancelar);
+		btnCancelar.setOnClickListener(this);
 
-    /**
-     * objeto onde a imagem será exibida.
-     */
-    ImageView imageView = (ImageView) findViewById(R.id.imageView1);
+		/**
+		 * objeto onde a imagem será exibida.
+		 */
+		ImageView imageView = (ImageView) findViewById(R.id.imageView1);
 
-    // Obtém a intent que iniciou a activity
-    Intent intent = getIntent();
+		// Obtém a intent que iniciou a activity
+		Intent intent = getIntent();
 
-    // Retrieve data this intent is operating on. This URI specifies the name of
-    // the data; often it uses the content: scheme, specifying data in a content
-    // provider. Other schemes may be handled by specific activities, such as
-    // http: by the web browser.
+		// Retrieve data this intent is operating on. This URI specifies the name of
+		// the data;
+		// often it uses the content: scheme, specifying data in a content
+		// provider.
+		// Other schemes may be handled by specific activities, such as
+		// http: by the web browser.
 
-    // Obtem o dado que a intent está operando
-    // A Uri especifica o nome do dado
-    Uri data = intent.getData();
+		// Obtem o dado que a intent está operando
+		// A Uri especifica o nome do dado
+		Uri data = intent.getData();
 
-    if (data != null) {
-      Log.d(TAG, "data=" + data);
-      Log.d(TAG, "getScheme()=" + data.getScheme());
-    }
+		if (data != null) {
+			Log.d(TAG, "data=" + data);
+			Log.d(TAG, "getScheme()=" + data.getScheme());
+		}
 
-    if (IMAGEM_DUMMY == 0) {
+		if (intent != null) {
+			Bundle params = intent.getExtras();
 
-      if (data != null) {
-        imageView.setImageURI(data);
-      }
-      else {
-        Log.d(TAG, "onCreate() - data é nula");
-      }
+			if (params != null) {
+				Log.i(TAG, "Mensagem: " + params.getString("msg"));
+			}
 
-    }
-    else {
+		}
 
-      Bitmap bm = getBitmapTest();
-      imageView.setImageBitmap(bm);
+		if (IMAGEM_DUMMY == 0) {
 
-    }
+			if (data != null) {
+				imageView.setImageURI(data);
+			} else {
+				Log.d(TAG, "onCreate() - data é nula");
+			}
 
-  }
+		} else {
 
-  /**
-   * onClick(View view)
-   * 
-   * Trata o evento de click de botão.
-   */
-  public void onClick(View view) {
+			// cria um bitmap que exibe uma imagem apenas para testes.
+			Bitmap bm = getBitmapTest(100, 100);
 
-  	// obtém informações sobre a intent chamadora
-    Intent intent = new Intent();
+			// atualiza o imageView com a imagem criada
+			imageView.setImageBitmap(bm);
 
-    if (view == btnConfirmar) {
-      Log.d(TAG, "botão confirmar");
+		}
 
-      setResult(RESULT_OK, intent);
+	}
 
-    } else if (view == btnCancelar) {
-      Log.d(TAG, "botão cancelar");
+	/**
+	 * Trata os eventos gerados pelo click de um botão.
+	 */
+	public void onClick(View view) {
 
-      setResult(RESULT_CANCELED, intent);
+		// TODO nesse método qualquer que seja o botão pressionado a activity será
+		// finalizada.
 
-    }
+		// obtém informações sobre a intent chamadora
+		Intent intent = new Intent();
 
-    // finaliza a activity
-    finish();
+		if (view == btnConfirmar) {
+			Log.d(TAG, "botão confirmar pressionado");
 
-  }
+			setResult(RESULT_OK, intent);
 
-  /**
-   * Cria um bitmap de tamanho 100 x 100 pixels
-   * 
-   * @return um bitmap de teste
-   * 
-   */
-  private Bitmap getBitmapTest() {
+		} else if (view == btnCancelar) {
+			Log.d(TAG, "botão cancelar pressionado");
 
-    Bitmap bm = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-    Canvas c = new Canvas(bm);
+			setResult(RESULT_CANCELED, intent);
 
-    Paint paint = new Paint();
-    paint.setColor(Color.BLUE);
+		}
 
-    c.drawLine(10, 10, 80, 80, paint);
+		// finaliza a activity
+		finish();
 
-    return bm;
+	}
 
-  }
+	/**
+	 * Cria um bitmap usando as dimensões fornecidas.
+	 * 
+	 * @param largura
+	 *          Largura do bitmap
+	 * @param altura
+	 *          Altura do bitmap
+	 * 
+	 * @return um bitmap com as dimensões selecionadas
+	 * 
+	 */
+	private Bitmap getBitmapTest(int largura, int altura) {
 
-  /**
-   * onStart(2)
-   */
-  @Override
-  protected void onStart() {
+		Bitmap bm = Bitmap.createBitmap(largura, altura, Bitmap.Config.ARGB_8888);
+		Canvas c = new Canvas(bm);
 
-    super.onStart();
+		Paint paint = new Paint();
+		paint.setColor(Color.BLUE);
 
-    if (DEBUG == 1) {
-      Log.d(TAG, "*** onStart() ***");
-    }
+		c.drawLine(10, 10, 80, 80, paint);
 
-  }
+		return bm;
 
-  /**
-   * onResume(3)
-   * 
-   * Esse callback é chamado a partir da sequencia: onCreate() --> onStart() -->
-   * on Resume() ou após ( a aplicação estar no estado Pause e retorna a
-   * funcionar) onPause() --> on Resume().
-   * 
-   */
-  @Override
-  protected void onResume() {
+	}
 
-    super.onResume();
-    if (DEBUG == 1) {
-      Log.d(TAG, "*** onResume() ***");
-    }
+	/**
+	 * onStart(2)
+	 */
+	@Override
+	protected void onStart() {
 
-  }
+		super.onStart();
 
-  /**
-   * onPause(4)
-   * 
-   * Activity foi colocada em pausa
-   * 
-   */
-  @Override
-  protected void onPause() {
+		if (DEBUG == 1) {
+			Log.d(TAG, "*** onStart() ***");
+		}
 
-    super.onPause();
-    if (DEBUG == 1) {
-      Log.d(TAG, "*** onPause() ***");
-    }
+	}
 
-  }
+	/**
+	 * onResume(3)
+	 * 
+	 * Esse callback é chamado a partir da sequencia: onCreate() --> onStart() -->
+	 * on Resume() ou após ( a aplicação estar no estado Pause e retorna a
+	 * funcionar) onPause() --> on Resume().
+	 * 
+	 */
+	@Override
+	protected void onResume() {
 
-  /**
-   * onStop()
-   */
-  @Override
-  protected void onStop() {
+		super.onResume();
+		if (DEBUG == 1) {
+			Log.d(TAG, "*** onResume() ***");
+		}
 
-    super.onStop();
-    if (DEBUG == 1) {
-      Log.d(TAG, "*** onStop() ***");
-    }
-  }
+	}
 
-  /**
-   * onRestart()
-   * 
-   * É executado após um onStop()
-   */
-  @Override
-  protected void onRestart() {
+	/**
+	 * onPause(4)
+	 * 
+	 * Activity foi colocada em pausa
+	 * 
+	 */
+	@Override
+	protected void onPause() {
 
-    super.onRestart();
-    if (DEBUG == 1) {
-      Log.d(TAG, "*** onRestart() ***");
-    }
-  }
+		super.onPause();
+		if (DEBUG == 1) {
+			Log.d(TAG, "*** onPause() ***");
+		}
 
-  /**
-   * onDestroy();
-   */
-  @Override
-  protected void onDestroy() {
+	}
 
-    super.onDestroy();
+	/**
+	 * onStop()
+	 */
+	@Override
+	protected void onStop() {
 
-    if (DEBUG == 1) {
-      Log.d(TAG, "*** onDestroy() ***");
-    }
+		super.onStop();
+		if (DEBUG == 1) {
+			Log.d(TAG, "*** onStop() ***");
+		}
+	}
 
-  }
+	/**
+	 * onRestart()
+	 * 
+	 * É executado após um onStop()
+	 */
+	@Override
+	protected void onRestart() {
+
+		super.onRestart();
+		if (DEBUG == 1) {
+			Log.d(TAG, "*** onRestart() ***");
+		}
+	}
+
+	/**
+	 * onDestroy();
+	 */
+	@Override
+	protected void onDestroy() {
+
+		super.onDestroy();
+
+		if (DEBUG == 1) {
+			Log.d(TAG, "*** onDestroy() ***");
+		}
+
+	}
 
 }

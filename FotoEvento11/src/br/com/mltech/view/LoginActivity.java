@@ -74,9 +74,7 @@ public class LoginActivity extends Activity implements OnClickListener, Constant
   }
 
   /**
-   * processaLogin()
-   * 
-   * Processa ação do botão login
+   * Processa ação do botão login.
    * 
    * Obtém o usuário e sua senha.
    * Verifica se o usuário e senha fornecida são compatíveis.
@@ -84,14 +82,14 @@ public class LoginActivity extends Activity implements OnClickListener, Constant
    */
   private void processaLogin() {
 
-    Log.d(TAG, "onClick() - Botão Login clicado");
+    Log.d(TAG, "processaLogin() - Botão Login clicado");
 
     final String sUsuario = usuario.getText().toString().toLowerCase();
 
     final String sSenha = senha.getText().toString().toLowerCase();
 
-    Log.d(TAG, "onClick() ==> usuario: " + sUsuario);
-    Log.d(TAG, "onClick() ==> senha: " + sSenha);
+    Log.d(TAG, "processaLogin() ==> usuario: " + sUsuario);
+    Log.d(TAG, "processaLogin() ==> senha: " + sSenha);
 
     mUsuarioValidado = verificaUsuarioSenha(sUsuario, sSenha);
 
@@ -99,10 +97,10 @@ public class LoginActivity extends Activity implements OnClickListener, Constant
 
     if (mUsuarioValidado) {
       it.putExtra(USUARIOVALIDADO, "OK");
-      Log.d(TAG, "onClick() - Usuário validado");
+      Log.d(TAG, "processaLogin() - Usuário validado");
     } else {
       it.putExtra(USUARIOVALIDADO, "FALHOU");
-      Log.d(TAG, "onClick() - Usuário NÃO validado");
+      Log.d(TAG, "processaLogin() - Usuário NÃO validado");
     }
 
     // retorna o usuário
@@ -126,7 +124,7 @@ public class LoginActivity extends Activity implements OnClickListener, Constant
    */
   public void processaCancelar() {
 
-    Log.d(TAG, "onClick() - Botão Cancelar clicado");
+    Log.d(TAG, "processaCancelar() - Botão Cancelar clicado");
     Intent it = new Intent();
     setResult(RESULT_CANCELED, it);
     finish();

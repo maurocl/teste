@@ -96,11 +96,15 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+
         <!-- configura esta activity para usar orientacao landscape -->
-        <activity android:name=".view.ExibeFotoActivity" >
-            android:label="Exibe uma foto na tela"
+        <activity
+            android:name=".view.ExibeFotoActivity"
+            android:label="Exibe uma foto na tela" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -138,11 +142,20 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-         <activity
+        <activity
             android:name=".view.DummyActivity3"
             android:label="Tela Principal" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TestaExibeFotoActivity"
+            android:label="@string/title_activity_testa_exibe_foto" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>

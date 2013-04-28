@@ -10,5 +10,8 @@
     <dimen name="headerSize">70dp</dimen>
     <dimen name="footerSize">50dp</dimen>
     <dimen name="Fonte40">40sp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+    <dimen name="padding_medium">8dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
 
 </resources>

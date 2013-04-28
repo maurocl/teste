@@ -93,6 +93,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 	// uma participação
 	private static Participacao mParticipacao;
 
+	// arquivo de preferências compartilhadas
 	private static SharedPreferences mPreferences;
 
 	// Estado atual da máquina de estado da aplicação
@@ -222,7 +223,9 @@ public class DummyActivity3 extends Activity implements Constantes {
 		mContador++;
 
 		contador++;
+		
 		numCreate++;
+		
 		i++;
 
 		Button btnIniciar = (Button) findViewById(R.id.btn0);
@@ -340,6 +343,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 		super.onRestart();
 
 		contador++;
+		
 		i++;
 
 		numRestart++;
@@ -686,7 +690,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 	}
 
 	/**
-	 * Obtém informações sobre o participante do evento<br>
+	 * Obtém informações sobre o participante do evento.<br>
 	 * 
 	 * Inicia a Activity Participante. Passa como parâmetro as informações sobre o
 	 * Evento.<br>
@@ -790,8 +794,6 @@ public class DummyActivity3 extends Activity implements Constantes {
 	}
 
 	/**
-	 * resultActivityParticipacao(int resultCode, Intent data)
-	 * 
 	 * Processa o resultado da execução da activity Participação.
 	 * 
 	 * @param resultCode
@@ -1771,7 +1773,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 	}
 
 	/**
-	 * Envia a foto e a mensaem configurada ao Facebook
+	 * Envia a foto e a mensagem configurada ao Facebook
 	 * 
 	 * @param filename
 	 *          nome do arquivo onde se encontra a foto
@@ -1940,16 +1942,16 @@ public class DummyActivity3 extends Activity implements Constantes {
 	/**
 	 * Atualiza o estado da uma máquina de estados.
 	 * 
-	 * @param e
+	 * @param estado
 	 *          novo estado (próximo estado)
 	 */
-	private void setEstado(int e) {
+	private void setEstado(int estado) {
 
 		Log.i(TAG, "----------------------------------------------------------");
-		Log.i(TAG, "Transição do estado: " + mEstado + " para o estado: " + e);
+		Log.i(TAG, "Transição do estado: " + mEstado + " para o estado: " + estado);
 		Log.i(TAG, "----------------------------------------------------------");
 
-		mEstado = e;
+		mEstado = estado;
 
 	}
 
