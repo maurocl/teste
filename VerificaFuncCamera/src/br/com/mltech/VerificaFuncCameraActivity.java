@@ -1,4 +1,3 @@
-
 package br.com.mltech;
 
 import java.io.DataOutputStream;
@@ -42,10 +41,12 @@ public class VerificaFuncCameraActivity extends Activity {
 
     Log.d(TAG, "*** onCreate() ***");
 
+    // verifica se existe uma câmera disponível
     boolean isCameraAvailable = CameraTools.checkCameraHardware(this);
 
     if (!isCameraAvailable) {
       Log.w(TAG, "hardware não está disponvel");
+      finish();
       return;
     }
 
@@ -71,7 +72,7 @@ public class VerificaFuncCameraActivity extends Activity {
 
       exibeParametrosCamera(edit, hash);
 
-      exibeGravaParametrosCamera(edit, hash);
+      //exibeGravaParametrosCamera(edit, hash);
 
       if (c != null) {
         // Disconnects and releases the Camera object resources.
@@ -81,17 +82,22 @@ public class VerificaFuncCameraActivity extends Activity {
     }
 
     //
-    obtemAtributoCameras();
+    //obtemAtributoCameras();
 
   }
 
 
+  /**
+   * Obtem os atributos das câmeras
+   * 
+   */
   private void obtemAtributoCameras() {
 
     if (CameraTools.getNumCameras() < 2) {
       return;
     }
 
+    // Exibe o nº de câmeras do dispositivo.
     Log.i(TAG, "Nº de câmeras: " + CameraTools.getNumCameras());
 
     Camera c = null;
@@ -108,6 +114,7 @@ public class VerificaFuncCameraActivity extends Activity {
     }
     */
 
+    // obtem uma instância da câmera 0 (traseira)
     c = CameraTools.getCameraInstance(0);
 
     HashMap<String, List<String>> hash0 = CameraTools.getParametersDetail(c);
@@ -132,36 +139,35 @@ public class VerificaFuncCameraActivity extends Activity {
   }
   
   
-  /**
-   * exibeParametrosCamera(EditText edit, HashMap<String, List<String>> hash)
-   * 
-   * Lê todos os parâmetros de configuração da câmera e exibe em um campo de
-   * texto
+  /** 
+   * <p>Exibe os parâmetros de configuração da câmera em um componente texto fornecido.
    * 
    * @param edit
    *          componente onde as informações serão exibidas
    * @param hash
    *          HashMap contendo a lista de parâmetros e seus respectivos valores
-   *          válidos
+   *          suportados
    */
   private void exibeParametrosCamera(EditText edit, HashMap<String, List<String>> hash) {
 
-    int num = 0;
+    int numeroDoAtributo = 0;
 
+    // percorre a lista de chaves (atributos)
     for (String chave : hash.keySet()) {
 
-      num++;
+      numeroDoAtributo++;
+      
+      Log.d(TAG, "\nchave(" + numeroDoAtributo + ")=" + chave);
+      edit.append("\nchave(" + numeroDoAtributo + ")=" + chave + "\n");
 
-      List<String> listaValues = hash.get(chave);
+      // obtem a lista de valores da associados a chave
+      List<String> listaDePossiveisValores = hash.get(chave);
 
-      Log.d(TAG, "\nchave(" + num + ")=" + chave);
-      edit.append("\nchave(" + num + ")=" + chave + "\n");
-
-      if (listaValues != null) {
-
-        for (String s2 : listaValues) {
-          Log.d(TAG, "  value=" + s2);
-          edit.append("  value=" + s2 + "\n");
+      if (listaDePossiveisValores != null) {
+        // Obtida a lista de valores suportados pelo atributo
+        for (String valor : listaDePossiveisValores) {
+          Log.d(TAG,  "  value=" + valor);
+          edit.append("  value=" + valor + "\n");
         }
 
       }
@@ -228,18 +234,19 @@ public class VerificaFuncCameraActivity extends Activity {
   }
 
   /**
-   * Grava uma string em um arquivo.<br>
+   * <p>Grava o conteúdo de uma string em um arquivo texto dado. O nome do arquivo será fornecido pelo usuário.<br>
    * O arquivo será armazenado no diretório dado por:
    * Environment.getExternalStorageDirectory()
    * 
    * @param s
-   *          String
+   *          String Conteúdo da String
    * 
    * @param filename
-   *          nome do arquivo
+   *          nome do arquivo destino relativo ao Environment.getExternalStorageDirectory().
    */
   private void gravaString(String s, String filename) {
 
+  	// obtém o nome do diretório de armazenamento externo
     File dirs = Environment.getExternalStorageDirectory();
 
     // cria o arquivo no diretório especificado
@@ -302,6 +309,8 @@ public class VerificaFuncCameraActivity extends Activity {
    */
   private void comparaAtributosCamera(HashMap<String, List<String>> hash0, HashMap<String, List<String>> hash1) {
 
+  	// TODO arrumar essa rotina que está com problemas !!!
+  	
     if ((hash0 == null) || (hash1 == null)) {
       Log.w(TAG, "lista de parâmetros está vazia");
       return;
