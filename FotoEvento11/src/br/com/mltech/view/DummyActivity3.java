@@ -954,7 +954,7 @@ public class DummyActivity3 extends Activity implements Constantes {
 
 		intent.putExtra(Constantes.PARTICIPACAO, mParticipacao);
 
-		intent.putExtra("br.com.mltech.cameraId", currentCamera);
+		intent.putExtra("br.com.mltech.cameraId",      currentCamera);
 		intent.putExtra("br.com.mltech.outputFileUri", outputFileUri);
 
 		Log.d(TAG, "getIntentTirarFoto() -  " + intent);

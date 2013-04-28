@@ -31,7 +31,7 @@ public class ExibeFotoActivity extends Activity implements OnClickListener {
 	public static int DEBUG = 1;
 
 	// usado para testes da activity (para retornar uma imagem padrão).
-	public static int IMAGEM_DUMMY = 1;
+	public static int IMAGEM_DUMMY = 0;
 
 	// botão confirma (confirma a visualização da foto)
 	private static Button btnConfirmar;
