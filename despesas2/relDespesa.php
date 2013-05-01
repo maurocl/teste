@@ -20,7 +20,7 @@ include "valida_sessao.php";
 <div class="center">
 <p>Data Inicial: <input type="text" size="10" name="data1" >
 
-<p>Data Final: <input type="text" size="10" name="data2" >
+<p>Data Final:   <input type="text" size="10" name="data2" >
 
 <p>
 

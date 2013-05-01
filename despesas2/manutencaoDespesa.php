@@ -118,6 +118,12 @@ echo "</table>";
 // permite adicionar uma nova despesa
 echo "<p align=\"left\"><a href=\"insereDespesa.php\">Insere nova despesa</a>";
 
+
+echo "<p>";
+foreach($_SESSION as $key=>$value) {
+  echo "<br>key=$key, value=$value";
+}
+
 $con->close();
 
 ?>

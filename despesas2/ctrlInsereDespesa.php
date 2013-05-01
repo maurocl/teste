@@ -9,9 +9,9 @@ include 'DespesaDAO.php';
 
 $id = -1;
 
-$data = $_POST['data'];
-$descricao = $_POST['descricao'];
-$valor = $_POST['valor'];
+$data           = $_POST['data'];
+$descricao      = $_POST['descricao'];
+$valor          = $_POST['valor'];
 $descrCategoria = $_POST['descrCategoria'];
 
 $pieces = explode("|",$descrCategoria);
