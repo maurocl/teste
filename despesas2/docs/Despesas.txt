@@ -1,0 +1,15 @@
+
+
+
+
+                       
+index.php --> login.php --> fail.php
+index.php --> login.php --> success.php
+
+sucess.php --> 
+  manutencaoCategoria.php
+  manutencaoDespesa.php
+  manutencaoCategoria.php
+  relDespesa.php
+  relDespesaByCategoria.php
+  relDespesaTotalByCategoria.php
