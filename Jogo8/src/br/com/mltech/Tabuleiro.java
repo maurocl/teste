@@ -1,6 +1,7 @@
 package br.com.mltech;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class Tabuleiro {
 	 * Método construtor - constroi um tabuleiro a partir de uma matriz 3x3. O
 	 * elemento não preenchido é representado pelo nº 0.
 	 * 
-	 * @param matriz
+	 * @param matriz Matriz 3x3 de inteiros
 	 * 
 	 */
 	public Tabuleiro(int[][] matriz) {
@@ -63,9 +64,9 @@ public class Tabuleiro {
 	 *            Valor associado a posição
 	 * 
 	 */
-	public void setPosicao(Posicao p) {
-		posicoes[p.getY()][p.getX()] = p;
-	}
+	//public void setPosicao(Posicao p) {
+	//	posicoes[p.getY()][p.getX()] = p;
+	//}
 
 	/**
 	 * Altera um posição no tabuleiro
@@ -235,7 +236,7 @@ public class Tabuleiro {
 	}
 
 	/**
-	 * Executa um movimento
+	 * Executa um movimento, isto é, uma troca da posição vazia com a posição solicitada.
 	 * 
 	 * @param operacao
 	 * 
@@ -246,13 +247,14 @@ public class Tabuleiro {
 
 		if (isMovimentoValido(operacao)) {
 
+		  // Guarda a posição atual do espaço em branco
 			int y2 = y;
 			int x2 = x;
 
-			// troca duas posições
-
+			
 			// guarda o valor da posição destino
 
+			// Calcula a posição destino
 			if (operacao == Operation.UP) {
 				y2--;
 			} else if (operacao == Operation.DOWN) {
@@ -264,12 +266,14 @@ public class Tabuleiro {
 			}
 
 			// posição corrente
-			Posicao posicaoCorrente = this.getPosicao(y, x);
+			Posicao posicaoOrigem = this.getPosicao(y, x);
 
 			// posição destino
 			Posicao posicaoDestino = this.getPosicao(y2, x2);
 
-			troca(posicaoCorrente, posicaoDestino);
+   		// troca duas posições
+			//troca(posicaoOrigem, posicaoDestino);
+			swap(posicaoOrigem, posicaoDestino);
 
 			// atualiza a posição do espaço em branco
 			this.x = x2;
@@ -296,20 +300,38 @@ public class Tabuleiro {
 	 */
 	private void troca(Posicao posicaoOrigem, Posicao posicaoDestino) {
 
-		Posicao temp;
+	  int tempValue;
+		  
+		//Posicao temp;
 
-		temp = posicaoOrigem;
+		//temp = posicaoOrigem;
+		tempValue = posicaoOrigem.getValue();
 
 		posicaoOrigem = posicaoDestino;
+		posicaoOrigem.setValue(posicaoDestino.getValue());
 
-		posicaoDestino = temp;
+		//posicaoDestino = temp;
+		posicaoDestino.setValue(tempValue);
 
-		this.posicoes[posicaoOrigem.getY()][posicaoOrigem.getX()] = posicaoDestino;
+		//this.posicoes[posicaoOrigem.getY()][posicaoOrigem.getX()] = posicaoDestino;
 
-		this.posicoes[posicaoDestino.getY()][posicaoDestino.getX()] = posicaoOrigem;
+		//this.posicoes[posicaoDestino.getY()][posicaoDestino.getX()] = posicaoOrigem;
 
 	}
 
+	private void swap(Posicao posicaoOrigem, Posicao posicaoDestino) {
+
+    int tempValue;
+
+    tempValue = posicaoOrigem.getValue();
+
+    posicaoOrigem.setValue(posicaoDestino.getValue());
+
+    posicaoDestino.setValue(tempValue);
+
+  }
+	
+	
 	/**
 	 * 
 	 * @param y
@@ -368,4 +390,52 @@ public class Tabuleiro {
 		this.x = x;
 	}
 
+	void compara(Tabuleiro t2) {
+	  
+	  int num=0;
+	  
+	  for (int i = 0; i < MAX_LIN; i++) {
+
+      for (int j = 0; j < MAX_COL; j++) {
+
+        if(this.posicoes[i][j].equals(t2.posicoes[i][j])) {
+          
+        }
+        else {
+          num++;
+          System.out.println("Posicao "+i+", "+j+ " possuem valores diferentes: "+this.posicoes[i][j].getValue()+", "+t2.posicoes[i][j].getValue()+", num="+num);
+        }
+        
+
+      }
+
+    }	  
+	}
+
+  @Override
+  public int hashCode() {
+
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(posicoes);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Tabuleiro other = (Tabuleiro) obj;
+    if (!Arrays.equals(posicoes, other.posicoes))
+      return false;
+    return true;
+  }
+	
+	
+	
 }
