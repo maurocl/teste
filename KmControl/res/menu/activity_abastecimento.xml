@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+     <item
+        android:id="@+id/add_abastecimento"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/menu_add_abastecimento"
+        android:icon="@android:drawable/ic_menu_add"/>
+
+</menu>

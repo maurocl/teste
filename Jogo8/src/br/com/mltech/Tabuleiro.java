@@ -319,6 +319,13 @@ public class Tabuleiro {
 
 	}
 
+	/**
+	 * Troca os valores da posição origem e posição destino.
+	 * 
+	 * @param posicaoOrigem Posição Origem
+	 * @param posicaoDestino Posição Destino
+	 * 
+	 */
 	private void swap(Posicao posicaoOrigem, Posicao posicaoDestino) {
 
     int tempValue;
@@ -390,7 +397,11 @@ public class Tabuleiro {
 		this.x = x;
 	}
 
-	void compara(Tabuleiro t2) {
+	/**
+	 * 
+	 * @param t2
+	 */
+	public void compara(Tabuleiro t2) {
 	  
 	  int num=0;
 	  

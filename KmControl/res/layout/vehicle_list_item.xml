@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="10dip" >
+
+    <TextView
+        android:id="@+id/text_veiculo_nome"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:text="@string/veiculo_nome"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/text_veiculo_marca"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:text="@string/veiculo_marca"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/text_veiculo_modelo"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip"
+        android:text="@string/veiculo_modelo"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/text_veiculo_placa"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip"
+        android:text="@string/veiculo_placa"
+        android:textSize="12sp" />
+
+    <ImageButton
+        android:id="@+id/button_abastecimento_remove"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
+        android:layout_gravity="center_vertical"
+        android:background="@android:drawable/ic_menu_delete"
+        android:contentDescription="Remove item"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip" />
+
+    <ImageButton
+        android:id="@+id/button_abastecimento_edit"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
+        android:layout_gravity="center_vertical"
+        android:background="@android:drawable/ic_menu_edit"
+        android:contentDescription="Update item"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip" />
+
+</LinearLayout>
