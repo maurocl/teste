@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
+ * SML - Simpletron Machine Language
  * 
  */
 public class Simpletron {
@@ -76,6 +77,7 @@ public class Simpletron {
     accumulator = 0;
     simpletron.mem.clear();
 
+    // carrega o programa
     simpletron.mem.write(0, 1007); // (Read A)
     simpletron.mem.write(1, 1008); // (Read B)
     simpletron.mem.write(2, 2007); // (Load A
@@ -87,6 +89,7 @@ public class Simpletron {
     simpletron.mem.write(8, 0000); // (Variable B)
     simpletron.mem.write(9, 0000); // (Variable C)
     
+    // exibe o código fonte do programa
     for(int i=0; i<10;i++) {
       
       int word = simpletron.mem.read(i);
@@ -100,17 +103,16 @@ public class Simpletron {
     }
     System.out.println();
 
-    //System.out.println(simpletron.mem);
-
     pc = 0;
 
     Scanner sc = new Scanner(System.in);
     
     boolean halt=false;
 
-    //while (pc < simpletron.mem.size) {
+
     while (!halt) {
 
+      // busca a próxima instrução
       int word = simpletron.mem.read(pc);
 
       // operation code
@@ -175,12 +177,6 @@ public class Simpletron {
       pc++;
 
     }
-
-    /*
-    System.out.println(simpletron.mem.read(7));
-    System.out.println(simpletron.mem.read(8));
-    System.out.println(simpletron.mem.read(9));
-    */
     
     simpletron.dump();
 
@@ -195,6 +191,9 @@ public class Simpletron {
     execute();
   }
 
+  /**
+   * Exibe um dump da memória
+   */
   public void dump() {
 
     
