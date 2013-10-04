@@ -13,3 +13,28 @@ sucess.php -->
   relDespesa.php
   relDespesaByCategoria.php
   relDespesaTotalByCategoria.php
+
+---------------------------------
+
+Categorias das Despesas
+
+- Uma categoria poderá ter subcategorias e estas sub-subcategorias
+- haverá de três níveis de sategorias
+
+As despesas poderão ser associadas a uma forma de pagamento.
+
+O sistema deverá permitir o pagamento nas seguintes modalidades:
+- dinheiro ("caixa")
+- cheque
+- cartão de crédito
+- transferências usando DOCs ou TEDs
+
+O sistema deverá permitir a criação de orçamentos.
+
+Cada orçamento terá um identificador, isto é, uma nome usado para sua identificação.
+
+Os lançamentos no orçamento serão feitos em relação as categorias de despesas previamente cadastradas.
+
+O valor orçado poderá ser dado de forma atual ou mensal.
+
+O sistema permitirá ao usuário "explorir" uma categoria de despesa e observar todos os lançamentos efetuados nessa categoria entre uma data inicial e final. As despesas serão totalizadas nesse período.
