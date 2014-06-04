@@ -8,7 +8,14 @@ package br.com.mltech;
  */
 public class InstructionCounter {
   
+  /**
+   * Código da operação
+   */
   private int operationCode;
+  
+  /**
+   * Operando
+   */
   private int operand;
   
   /**

@@ -10,8 +10,14 @@ import java.util.Arrays;
  */
 public class Memory {
   
-  public int size;
+  /**
+   * Tamanho da memória
+   */
+  private int size;
   
+  /**
+   * Array de posições
+   */
   private int[] pos;
 
   /**
@@ -36,10 +42,12 @@ public class Memory {
   }
   
   /**
+   * Lê posição p da memória
    * 
-   * @param p
+   * @param p Posição da memória
    * 
-   * @return
+   * @return O conteúdo da memória na posição p
+   * 
    */
   int read(int p) {
     return pos[p];
@@ -56,7 +64,8 @@ public class Memory {
   }
 
   /**
-   * Limpa a memória
+   * Limpa a memória (escreve o valor 0 em todas as posições)
+   * 
    */
   void clear() {
     for(int i=0;i<this.size;i++) {

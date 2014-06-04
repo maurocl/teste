@@ -233,7 +233,7 @@ public class Simpletron {
   }
 
   /**
-   * 
+   * Cria o conjunto de instruções
    */
   public static void createInstructionSet() {
     

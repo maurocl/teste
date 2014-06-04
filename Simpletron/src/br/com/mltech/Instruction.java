@@ -1,44 +1,65 @@
 package br.com.mltech;
 
-
+/**
+ * Representa uma instrução
+ * 
+ * 
+ */
 public class Instruction {
-  
-  private int op;
-  private String name;
-  
-  public Instruction(int op, String name) {
 
-    super();
-    this.op = op;
-    this.name = name;
-    
-  }
+	private int op; // operation code
+	private String name;
 
-  
-  public int getOp() {
-  
-    return op;
-  }
+	/**
+	 * Cria uma nova instrução
+	 * 
+	 * @param op
+	 *            Operation Code
+	 * @param name
+	 *            Nome
+	 */
+	public Instruction(int op, String name) {
 
-  
-  public void setOp(int op) {
-  
-    this.op = op;
-  }
+		super();
+		this.op = op;
+		this.name = name;
 
-  
-  public String getName() {
-  
-    return name;
-  }
+	}
 
-  
-  public void setName(String name) {
-  
-    this.name = name;
-  }
-  
-  
-  
-  
+	/**
+	 * 
+	 * @return
+	 */
+	public int getOp() {
+
+		return op;
+	}
+
+	/**
+	 * 
+	 * @param op
+	 */
+	public void setOp(int op) {
+
+		this.op = op;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getName() {
+
+		return name;
+	}
+
+	/**
+	 * 
+	 * @param name
+	 */
+	public void setName(String name) {
+
+		this.name = name;
+	}
+
 }
