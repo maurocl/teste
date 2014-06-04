@@ -7,6 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+/**
+ * 
+ * 
+ *
+ */
 public class Tela2 extends Activity implements
 		android.view.View.OnClickListener {
 
@@ -30,13 +35,14 @@ public class Tela2 extends Activity implements
 			Log.i(TAG, "Ok");
 		}
 
-		setContentView(R.layout.calculadora);
-		// setContentView(R.layout.activity_tela2);
+		// setContentView(R.layout.calculadora);
+
+		setContentView(R.layout.activity_tela2);
 
 		display = ((EditText) findViewById(R.id.editText1));
 
 		display.setText("0");
-		
+
 		((Button) findViewById(R.id.button1)).setOnClickListener(this);
 		((Button) findViewById(R.id.button2)).setOnClickListener(this);
 		((Button) findViewById(R.id.button3)).setOnClickListener(this);
@@ -67,71 +73,71 @@ public class Tela2 extends Activity implements
 		String token = null;
 
 		if (v == ((Button) findViewById(R.id.button1))) {
-			Log.i(TAG, "botão 1 pressionado");
+			Log.i(TAG, "botao 1 pressionado");
 			token = "1";
 		} else if (v == ((Button) findViewById(R.id.button2))) {
-			Log.i(TAG, "botão 2 pressionado");
+			Log.i(TAG, "botao 2 pressionado");
 			token = "2";
 		} else if (v == ((Button) findViewById(R.id.button3))) {
-			Log.i(TAG, "botão 3 pressionado");
+			Log.i(TAG, "botao 3 pressionado");
 			token = "3";
 		} else if (v == ((Button) findViewById(R.id.button4))) {
-			Log.i(TAG, "botão 4 pressionado");
+			Log.i(TAG, "botao 4 pressionado");
 			token = "4";
 		} else if (v == ((Button) findViewById(R.id.button5))) {
-			Log.i(TAG, "botão 5 pressionado");
+			Log.i(TAG, "botao 5 pressionado");
 			token = "5";
 		} else if (v == ((Button) findViewById(R.id.button6))) {
-			Log.i(TAG, "botão 6 pressionado");
+			Log.i(TAG, "botao 6 pressionado");
 			token = "6";
 		} else if (v == ((Button) findViewById(R.id.button7))) {
-			Log.i(TAG, "botão 7 pressionado");
+			Log.i(TAG, "botao 7 pressionado");
 			token = "7";
 		} else if (v == ((Button) findViewById(R.id.button8))) {
-			Log.i(TAG, "botão 8 pressionado");
+			Log.i(TAG, "botao 8 pressionado");
 			token = "8";
 		} else if (v == ((Button) findViewById(R.id.button9))) {
-			Log.i(TAG, "botão 9 pressionado");
+			Log.i(TAG, "botao 9 pressionado");
 			token = "9";
 		} else if (v == ((Button) findViewById(R.id.button0))) {
-			Log.i(TAG, "botão 0 pressionado");
+			Log.i(TAG, "botao 0 pressionado");
 			token = "0";
 		} else if (v == ((Button) findViewById(R.id.buttonPonto))) {
-			Log.i(TAG, "botão . pressionado");
+			Log.i(TAG, "botao . pressionado");
 			token = ".";
 		} else if (v == ((Button) findViewById(R.id.buttonDel))) {
-			Log.i(TAG, "botão Del pressionado");
+			Log.i(TAG, "botao Del pressionado");
 			token = "DEL";
 			display.setText("");
 		} else if (v == ((Button) findViewById(R.id.buttonMais))) {
-			Log.i(TAG, "botão + pressionado");
+			Log.i(TAG, "botao + pressionado");
 			token = "+";
 			// empilha o valor do visor
 			pilha.push(Double.valueOf(texto.toString()));
-			calculaTopo(token);
+			calculaValorOperacao(token);
 		} else if (v == ((Button) findViewById(R.id.buttonMenos))) {
-			Log.i(TAG, "botão - pressionado");
+			Log.i(TAG, "botao - pressionado");
 			token = "-";
 			// empilha o valor do visor
 			pilha.push(Double.valueOf(texto.toString()));
-			calculaTopo(token);
+			calculaValorOperacao(token);
 		} else if (v == ((Button) findViewById(R.id.buttonMultiplica))) {
-			Log.i(TAG, "botão * pressionado");
+			Log.i(TAG, "botao * pressionado");
 			token = "*";
 			// empilha o valor do visor
 			pilha.push(Double.valueOf(texto.toString()));
-			calculaTopo(token);
+			calculaValorOperacao(token);
 		} else if (v == ((Button) findViewById(R.id.buttonDivide))) {
-			Log.i(TAG, "botão / pressionado");
+			Log.i(TAG, "botao / pressionado");
 			token = "/";
 			// empilha o valor do visor
 			pilha.push(Double.valueOf(texto.toString()));
-			calculaTopo(token);
+			calculaValorOperacao(token);
 
 		} else if (v == ((Button) findViewById(R.id.buttonEnter))) {
 
 			token = "ENTER";
-			Log.i(TAG, "botão <ENTER> pressionado");
+			Log.i(TAG, "botao <ENTER> pressionado");
 
 			if (texto != null && !texto.equals("")) {
 
@@ -152,11 +158,11 @@ public class Tela2 extends Activity implements
 	}
 
 	/**
-	 * Verifica se o token é um digito entre 0 e 9
+	 * Verifica se o token e um digito entre 0 e 9
 	 * 
-	 * @param token
+	 * @param token Token (representad por uma string)
 	 * 
-	 * @return true se o token for um dígito ou false caso contrário.
+	 * @return true se o token for um digito ou false caso contrario.
 	 */
 	boolean isDigitToken(String token) {
 
@@ -175,19 +181,23 @@ public class Tela2 extends Activity implements
 	}
 
 	/**
-	 * Verifica se o token é um operador
+	 * Verifica se o token e um operador
 	 * 
-	 * @param token
+	 * @param token Token
 	 * 
-	 * @return
+	 * @return true se o token for um operador ou false caso contrario.
 	 */
 	boolean isOperatorToken(String token) {
 
 		if (token.equals("+") || token.equals("-") || token.equals("*")
 				|| token.equals("/")) {
+			
 			return true;
+			
 		} else {
+			
 			return false;
+			
 		}
 
 	}
@@ -211,20 +221,22 @@ public class Tela2 extends Activity implements
 	}
 
 	/**
-	 * Executa uma operação entre os dois valores no topo da pilha e insere o
+	 * Executa uma operacao entre os dois valores no topo da pilha e insere o
 	 * resultado na pilha
 	 * 
 	 * @param token
+	 * 
 	 * @throws Exception
 	 */
-	void calculaTopo(String token) {
+	void calculaValorOperacao(String token) {
 
 		double x = 0.0;
+		
 		try {
 			x = pilha.pop();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Log.e(TAG, "Erro ao retorver elemento da pilha");
+			Log.e(TAG, "Erro ao remover operando da pilha");
 			e.printStackTrace();
 		}
 
@@ -233,7 +245,7 @@ public class Tela2 extends Activity implements
 			y = pilha.pop();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			Log.e(TAG, "Erro ao retorver elemento da pilha");
+			Log.e(TAG, "Erro ao remover operando da pilha");
 			e.printStackTrace();
 		}
 
@@ -253,7 +265,7 @@ public class Tela2 extends Activity implements
 
 		Log.d(TAG, "oper: " + token + ", res=" + topo);
 
-		// Empilha o resultado da operação
+		// Empilha o resultado da operacao
 		pilha.push(topo);
 
 		((EditText) findViewById(R.id.editText1)).setText("");

@@ -6,7 +6,7 @@ import java.util.List;
 import android.util.Log;
 
 /**
- * Implementação de uma Pilha<E>
+ * Implementacao de uma Pilha<E>
  * 
  * @author maurocl
  * 
@@ -39,10 +39,12 @@ public class Pilha<T> {
 	 * 
 	 */
 	public void push(T t) {
+		
 		lista.add(0,t);
 
-		if (DEBUG)
+		if (DEBUG) {
 			Log.i(TAG, "Pilha: " + this);
+		}
 
 	}
 
@@ -56,21 +58,22 @@ public class Pilha<T> {
 
 		T t = null;
 
-		if (DEBUG)
+		if (DEBUG) {
 			Log.i(TAG, "Pilha: " + this);
+		}
 
 		if (lista != null) {
 			t = lista.get(0);
 			lista.remove(0);
 		} else {
-			throw new Exception("Pilha está vazia");
+			throw new Exception("Pilha esta vazia");
 		}
 
 		return t;
 	}
 
 	/**
-	 * Retorna o nº de elementos da pilha
+	 * Retorna o numero de elementos da pilha
 	 * 
 	 * @return o tamanho da pilha
 	 */
@@ -79,12 +82,13 @@ public class Pilha<T> {
 		if (DEBUG) {
 			Log.i(TAG, "Pilha: " + this);
 		}
+		
 		return lista.size();
 
 	}
 
 	/**
-	 * Retorna o elemento do topo da pilha. O elemento não será removido.
+	 * Retorna o elemento do topo da pilha. O elemento nao sera removido.
 	 * 
 	 * @return
 	 */
