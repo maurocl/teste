@@ -9,23 +9,23 @@ $nome = trim($_POST['nome']);
 define(DEBUG, 0);
 
 if (DEBUG) {
-  // exibe a lista de parâmetros recebidos
+  // exibe a lista de parï¿½metros recebidos
   echo "<p>Acao = $acao";
   echo "<p>RA   = $ra";
   echo "<p>Nome = $nome";
 }
 
-// Lista de opções
+// Lista de opï¿½ï¿½es
 $codigo = array(
-    "adi" => "Adição",
-    "alt" => "Alteração",
-    "exc" => "Exclusão",
+    "adi" => "AdiÃ§Ã£o",
+    "alt" => "AlteraÃ§Ã£o",
+    "exc" => "ExclusÃ£o",
     "con" => "Consulta",
     "lis" => "Listar"
 );
 
 if (DEBUG) {
-  // exibe o código da operação
+  // exibe o cÃ³digo da operaÃ§Ã£o
   echo "<p><b>$codigo[$acao]</b>";
 }
 
@@ -40,7 +40,7 @@ if ($acao == 'adi') {
 } else if ($acao == 'lis') {
   listar2();
 } else {
-  echo "Comando não encontrado !!!";
+  echo "Comando nÃ£o encontrado !!!";
 }
 
 
@@ -59,18 +59,18 @@ function adicionar($ra1, $nome1) {
   $erro = 0;
 
   if (!isset($ra1) || empty($ra1)) {
-    echo "<p>RA não foi fornecido";
+    echo "<p>RA nï¿½o foi fornecido";
     $erro = 1;
   }
 
   if (!isset($nome1) || empty($ra1)) {
-    echo "<p>Nome não foi fornecido";
+    echo "<p>Nome nÃ£o foi fornecido";
     $erro = 2;
   }
 
   if ($erro == 0) {
 
-    titulo("Inserção de novo aluno");
+    titulo("InsersÃ£o de novo aluno");
 
     $cmd = "insert into aluno (ra,nome) values ('$ra1', '$nome1')";
 
@@ -88,7 +88,7 @@ function adicionar($ra1, $nome1) {
 
   } else {
 
-    echo "<p>Aluno não foi inserido";
+    echo "<p>Aluno nÃ£o foi inserido";
 
   }
 
@@ -107,7 +107,7 @@ function adicionar($ra1, $nome1) {
  */
 function alterar($ra1, $nome1) {
 
-  titulo("Alteração");
+  titulo("AlteraÃ§Ã£o");
 
   global $con;
 
@@ -119,7 +119,7 @@ function alterar($ra1, $nome1) {
 
   $res = mysqli_query($con, $cmd);
 
-  // obtém o número de linhas afetados pela operação
+  // obtÃ©m o nÃºmero de linhas afetados pela operaÃ§Ã£o
   $num = mysqli_affected_rows($con);
 
   echo "<p>linhas=$num";
@@ -130,7 +130,7 @@ function alterar($ra1, $nome1) {
 
   } elseif ($num == 0) {
 
-    echo "<p>Aluno: $ra1 não foi encontrado";
+    echo "<p>Aluno: $ra1 nï¿½o foi encontrado";
 
   } elseif ($num == -1) {
 
@@ -153,7 +153,7 @@ function alterar($ra1, $nome1) {
  */
 function excluir($ra1) {
 
-  titulo("Exclusão");
+  titulo("ExclusÃ£o");
 
   global $con;
 
@@ -177,7 +177,7 @@ function excluir($ra1) {
 
     } elseif ($num == 0) {
 
-      echo "<p>Aluno: $ra1 não foi encontrado";
+      echo "<p>Aluno: $ra1 nÃ£o foi encontrado";
 
     } elseif ($num == -1) {
 
@@ -188,7 +188,7 @@ function excluir($ra1) {
     }
 
   } else {
-    echo "<p>RA não foi fornecido.";
+    echo "<p>RA nÃ£o foi fornecido.";
   }
 
   voltar();
@@ -198,7 +198,7 @@ function excluir($ra1) {
 /**
  * consultar($ra1)
 
- * Consulta as informações de um aluno dado seu RA
+ * Consulta as informaÃ§Ãµes de um aluno dado seu RA
  *
  * @param string $ra1
  *
@@ -230,7 +230,7 @@ function consultar($ra1) {
 
   } else {
 
-    echo "<p>Aluno: $ra1 não foi encontrado";
+    echo "<p>Aluno: $ra1 nÃ£o foi encontrado";
 
   }
 
@@ -258,7 +258,7 @@ function listar() {
 
   $res = mysqli_query($con, $cmd);
 
-  // obtém o nº de linhas retornados pela consulta
+  // obtÃ©m o nÂº de linhas retornados pela consulta
   $num = $res->num_rows;
 
   echo "<p>Numero de linhas: $num";
@@ -307,7 +307,7 @@ function listar2() {
 
   $num = $res->num_rows;
 
-  echo "<p>Número de linhas: $num";
+  echo "<p>NÃºmero de linhas: $num";
 
   echo "<table border=1>";
 
@@ -334,7 +334,7 @@ function listar2() {
 
 
 /**
- * Cria um link que permite ao usuário retornar a página inicial
+ * Cria um link que permite ao usuÃ¡rio retornar a pÃ¡gina inicial
  *
  */
 function voltar() {
@@ -345,7 +345,7 @@ function voltar() {
 /**
  * titulo($titulo)
  *
- * Exibe um título centralizado seguido de uma linha horizontal
+ * Exibe um tÃ­tulo centralizado seguido de uma linha horizontal
  *
  * @param string $titulo
  */

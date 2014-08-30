@@ -5,12 +5,12 @@ define(servidor,"localhost");
 $servidor= "localhost";
 $usuario = "root";
 $senha   = "";
-$banco   = "test";
+$banco   = "aluno";
 
 /**
- * Abre uma conexão com o banco de dados
+ * Abre uma conexï¿½o com o banco de dados
  * 
- * @var conexão mysqli
+ * @var conexï¿½o mysqli
  */
 $con=mysqli_connect($servidor, $usuario, $senha, $banco);
 

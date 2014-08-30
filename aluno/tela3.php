@@ -7,7 +7,7 @@
  */
 include_once("conecta.php");
 
-// Obtém a operação desejada
+// ObtÃ©m a operaÃ§Ã£o desejada
 $acao = trim($_GET['acao']);
 
 $ra   = trim($_GET['ra']);
@@ -16,15 +16,15 @@ $nome = trim($_GET['nome']);
 define(DEBUG, 0);
 
 if (DEBUG) {
-	// exibe a lista de parâmetros recebidos
+	// exibe a lista de parÃ¢metros recebidos
 	echo "<p>Acao = $acao";
 	echo "<p>RA   = $ra";
 	echo "<p>Nome = $nome";
 }
 
 $codigo = array(
-    "alt" => "Alteração",
-    "exc" => "Exclusão",
+    "alt" => "Alteracao",
+    "exc" => "Exclusao",
 );
 
 if (DEBUG) {
@@ -36,7 +36,7 @@ if ($acao == 'alt') {
 } else if ($acao == 'exc') {
 	excluir($ra, $nome);
 } else {
-	echo "Comando não encontrado !!!";
+	echo "Comando nÃ£o encontrado !!!";
 }
 
 /**
@@ -49,7 +49,7 @@ if ($acao == 'alt') {
  */
 function alterar($ra1, $nome1) {
 
-	titulo("Alteração");
+	titulo("AlteraÃ§Ã£o");
 
 	global $acao;
 	
@@ -62,13 +62,13 @@ function alterar($ra1, $nome1) {
 /**
  * excluir($ra1, $nome)
 
- * Exclui o aluno cujo ra é fornecido
+ * Exclui o aluno cujo ra Ã© fornecido
  *
  * @param unknown_type $ra1
  */
 function excluir($ra1, $nome1) {
 
-	titulo("Exclusão");
+	titulo("ExclusÃ£o");
 
 	global $acao;
 	
@@ -81,7 +81,7 @@ function excluir($ra1, $nome1) {
 /**
  * voltar()
  * 
- * Cria um link que permite ao usuário retornar a página inicial
+ * Cria um link que permite ao usuï¿½rio retornar a pï¿½gina inicial
  *
  */
 function voltar() {
@@ -92,7 +92,7 @@ function voltar() {
 /**
  * titulo($titulo)
  *
- * Exibe um título centralizado seguido the uma linha horizontal
+ * Exibe um tï¿½tulo centralizado seguido the uma linha horizontal
  *
  * @param string $titulo
  */
@@ -104,11 +104,11 @@ function titulo($titulo) {
 
 /**
  * 
- * Exibe informações de um aluno
+ * Exibe informaÃ§Ãµes de um aluno
  * 
  * @param string $ra RA do Aluno
  * @param string $nome Nome do Aluno
- * @param string $acao Alteração (alt) ou Exclusão (exc)
+ * @param string $acao AlteraÃ§Ã£o (alt) ou ExclusÃ£o (exc)
  * 
  */
 function exibe($ra, $nome, $acao) {
@@ -125,7 +125,7 @@ function exibe($ra, $nome, $acao) {
   }
   
 echo <<<TELA
-<h1 align='center'>Cadastro de Alunos - Ação: $acao1</h1>
+<h1 align='center'>Cadastro de Alunos - AÃ§Ã£o: $acao1</h1>
 
 <hr>
 
