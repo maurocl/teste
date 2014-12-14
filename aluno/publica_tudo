@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# publica_tudo
+#
+
+DEST=/var/www/aluno/
+
+echo copying all files to $DEST
+cp * $DEST/.
+
