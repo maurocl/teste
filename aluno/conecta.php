@@ -8,9 +8,9 @@ $senha   = "";
 $banco   = "aluno";
 
 /**
- * Abre uma conex�o com o banco de dados
+ * Abre uma conexao com o banco de dados
  * 
- * @var conex�o mysqli
+ * @var conexao mysqli
  */
 $con=mysqli_connect($servidor, $usuario, $senha, $banco);
 

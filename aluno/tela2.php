@@ -1,21 +1,32 @@
 <?php
-
+/**
+ * tela2.php
+ * 
+ */
 include_once("conecta.php");
 
 $acao = trim($_POST['acao']);
 $ra   = trim($_POST['ra']);
 $nome = trim($_POST['nome']);
 
+print "<head>";
+print "<link rel=\”stylesheet\” href=\”estilo.css\”>";
+print "<title>Tela2</title>";
+print "</head>";
+
+/*
+ * Define DEBUG
+ */
 define(DEBUG, 0);
 
 if (DEBUG) {
-  // exibe a lista de par�metros recebidos
+  // exibe a lista de parametros recebidos
   echo "<p>Acao = $acao";
   echo "<p>RA   = $ra";
   echo "<p>Nome = $nome";
 }
 
-// Lista de op��es
+// Lista de opoces
 $codigo = array(
     "adi" => "Adição",
     "alt" => "Alteração",
@@ -59,7 +70,7 @@ function adicionar($ra1, $nome1) {
   $erro = 0;
 
   if (!isset($ra1) || empty($ra1)) {
-    echo "<p>RA n�o foi fornecido";
+    echo "<p class=\"titulo2\">RA nao foi fornecido";
     $erro = 1;
   }
 
@@ -97,8 +108,6 @@ function adicionar($ra1, $nome1) {
 }
 
 /**
- * alterar($ra1, $nome1)
-
  * Altera o nome do aluno associado ao ra fornecido
  *
  * @param string $ra1
@@ -144,11 +153,9 @@ function alterar($ra1, $nome1) {
 }
 
 /**
- * excluir($ra1)
-
  * Exclui o aluno a partir de seu ra.
  *
- * @param string $ra1
+ * @param string $ra1 RA do aluno
  *
  */
 function excluir($ra1) {
@@ -196,11 +203,9 @@ function excluir($ra1) {
 }
 
 /**
- * consultar($ra1)
-
  * Consulta as informações de um aluno dado seu RA
  *
- * @param string $ra1
+ * @param string $ra1 RA do aluno.
  *
  */
 function consultar($ra1) {
@@ -230,7 +235,7 @@ function consultar($ra1) {
 
   } else {
 
-    echo "<p>Aluno: $ra1 não foi encontrado";
+    echo "<p>Aluno: $ra1 não foi encontrado.";
 
   }
 
@@ -238,8 +243,6 @@ function consultar($ra1) {
 }
 
 /**
- * listar()
- *
  * Lista todos alunos cadastrados na base de dados classificados
  * por nome.
  *
@@ -264,6 +267,11 @@ function listar() {
   echo "<p>Numero de linhas: $num";
 
   echo "<table border=1>";
+  
+  print "<tr>";
+  print "<td>RA</td>";
+  print "<td>Nome</td>";
+  print "</tr>";
 
   while ($dados = mysqli_fetch_assoc($res)) {
 
@@ -286,9 +294,9 @@ function listar() {
 
 
 /**
- * listar2()
  *
  * Lista todos alunos cadastrados na base de dados
+ * ordenados por nome
  *
  */
 function listar2() {
@@ -339,19 +347,16 @@ function listar2() {
  */
 function voltar() {
   echo "<br><hr>";
-  echo "<p><a href='tela1.html'>voltar</a>";
+  echo "<p><a href='tela1.html'>Voltar</a>";
 }
 
 /**
- * titulo($titulo)
- *
  * Exibe um título centralizado seguido de uma linha horizontal
  *
  * @param string $titulo
  */
 function titulo($titulo) {
-  //echo "<h1 align='center'>$titulo</h1>";
-  echo "<p class='titulo'>$titulo</p>";
+  echo "<p class=\"titulo2\">$titulo</p>";
   echo "<hr>";
 }
 

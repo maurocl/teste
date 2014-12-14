@@ -13,6 +13,10 @@ $acao = trim($_GET['acao']);
 $ra   = trim($_GET['ra']);
 $nome = trim($_GET['nome']);
 
+print "<head>";
+print "<link rel=\”stylesheet\” type=\”text/css\” href=\”estilo.css\”>";
+print "</head>";
+
 define(DEBUG, 0);
 
 if (DEBUG) {
@@ -40,8 +44,6 @@ if ($acao == 'alt') {
 }
 
 /**
- * alterar($ra1, $nome1)
-
  * Altera o nome do aluno associado ao ra fornecido
  *
  * @param string $ra1
@@ -60,8 +62,6 @@ function alterar($ra1, $nome1) {
 }
 
 /**
- * excluir($ra1, $nome)
-
  * Exclui o aluno cujo ra é fornecido
  *
  * @param unknown_type $ra1
@@ -79,7 +79,6 @@ function excluir($ra1, $nome1) {
 }
 
 /**
- * voltar()
  * 
  * Cria um link que permite ao usu�rio retornar a p�gina inicial
  *
