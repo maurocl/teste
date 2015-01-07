@@ -1,0 +1,56 @@
+<html>
+
+<head>
+<title>Controle de Alunos</title>
+
+<link rel="stylesheet" href="estilo.css" type="text/css">
+
+</head>
+
+<body>
+	<hr />
+
+	<h1 align='center'>Cadastro de Alunos</h1>
+
+	<hr>
+
+	<form name="form" method="post" action="tela2.php">
+
+		<div align='center'>
+
+			<input type='radio' name='acao' value='adi' checked>Adicionar
+			<input type='radio' name='acao' value='alt'>Alterar <input
+				type='radio' name='acao' value='exc'>Excluir <input
+				type='radio' name='acao' value='con'>Consultar <input
+				type='radio' name='acao' value='lis'>Lista Todos
+
+		</div>
+
+
+		<fieldset>
+			<legend>Aluno</legend>
+
+
+			<p class="titulo2">
+				RA: <input name='ra' value='' type='text'>
+			</p>
+
+			<p class="titulo2">
+				Nome: <input name='nome' value='' type='text'>
+			</p>
+
+		</fieldset>
+
+		<div align="center">
+			<input type='submit' value="Enviar"> <input type='reset'
+				value="Limpar">
+		</div>
+
+
+		<hr>
+
+	</form>
+
+</body>
+
+</html>
