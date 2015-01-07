@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="categorias_array">
-        <item>Categoria1</item>
-        <item>Categoria2</item>
-        <item>Categoria3</item>
-    </string-array>
-</resources>
