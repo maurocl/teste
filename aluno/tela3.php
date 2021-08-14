@@ -10,8 +10,8 @@ include_once("conecta.php");
 // Obtém a operação desejada
 $acao = trim($_GET['acao']);
 
-$ra   = trim($_GET['ra']);
-$nome = trim($_GET['nome']);
+$ra   = trim($_GET['ra']); // RA do aluno
+$nome = trim($_GET['nome']); // Nome do aluno
 
 print "<head>";
 print "<link rel=\”stylesheet\” type=\”text/css\” href=\”estilo.css\”>";
@@ -46,14 +46,14 @@ if ($acao == 'alt') {
 /**
  * Altera o nome do aluno associado ao ra fornecido
  *
- * @param string $ra1
- * @param string $nome1
+ * @param string $ra1 RA do Aluno
+ * @param string $nome1 Nome do Aluno
  */
 function alterar($ra1, $nome1) {
 
-	titulo("Alteração");
-
 	global $acao;
+	
+	titulo("Alteração");
 	
 	exibe($ra1,$nome1,$acao);
 	
@@ -64,13 +64,13 @@ function alterar($ra1, $nome1) {
 /**
  * Exclui o aluno cujo ra é fornecido
  *
- * @param unknown_type $ra1
+ * @param string $ra1 RA do Aluno
  */
 function excluir($ra1, $nome1) {
 
-	titulo("Exclusão");
-
 	global $acao;
+
+	titulo("Exclusão");
 	
 	exibe($ra1,$nome1, $acao);
 	
@@ -80,7 +80,7 @@ function excluir($ra1, $nome1) {
 
 /**
  * 
- * Cria um link que permite ao usu�rio retornar a p�gina inicial
+ * Cria um link que permite ao usuário retornar a página inicial
  *
  */
 function voltar() {
@@ -91,9 +91,9 @@ function voltar() {
 /**
  * titulo($titulo)
  *
- * Exibe um t�tulo centralizado seguido the uma linha horizontal
+ * Exibe um título centralizado seguido the uma linha horizontal
  *
- * @param string $titulo
+ * @param string $titulo Título
  */
 function titulo($titulo) {
 	//echo "<h1 align='center'>$titulo</h1>";
@@ -102,7 +102,8 @@ function titulo($titulo) {
 }
 
 /**
- * 
+ * exibe($ra, $nome, $acao)
+ 
  * Exibe informações de um aluno
  * 
  * @param string $ra RA do Aluno
