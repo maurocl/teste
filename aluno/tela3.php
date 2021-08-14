@@ -20,27 +20,27 @@ print "</head>";
 define(DEBUG, 0);
 
 if (DEBUG) {
-	// exibe a lista de parâmetros recebidos
-	echo "<p>Acao = $acao";
-	echo "<p>RA   = $ra";
-	echo "<p>Nome = $nome";
+  // exibe a lista de parâmetros recebidos
+  echo "<p>Acao = $acao";
+  echo "<p>RA   = $ra";
+  echo "<p>Nome = $nome";
 }
 
 $codigo = array(
-    "alt" => "Alteracao",
-    "exc" => "Exclusao",
+  "alt" => "Alteracao",
+  "exc" => "Exclusao",
 );
 
 if (DEBUG) {
-	echo "<p><b>$codigo[$acao]</b>";
+  echo "<p><b>$codigo[$acao]</b>";
 }
 
 if ($acao == 'alt') {
-	alterar($ra, $nome);
+  alterar($ra, $nome);
 } else if ($acao == 'exc') {
-	excluir($ra, $nome);
+  excluir($ra, $nome);
 } else {
-	echo "Comando não encontrado !!!";
+  echo "Comando não encontrado !!!";
 }
 
 /**
@@ -51,13 +51,13 @@ if ($acao == 'alt') {
  */
 function alterar($ra1, $nome1) {
 
-	global $acao;
+  global $acao;
 	
-	titulo("Alteração");
+  titulo("Alteração");
 	
-	exibe($ra1,$nome1,$acao);
+  exibe($ra1,$nome1,$acao);
 	
-	return;
+  return;
 	
 }
 
@@ -68,18 +68,19 @@ function alterar($ra1, $nome1) {
  */
 function excluir($ra1, $nome1) {
 
-	global $acao;
+  global $acao;
 
-	titulo("Exclusão");
+  titulo("Exclusão");
 	
-	exibe($ra1,$nome1, $acao);
+  exibe($ra1,$nome1, $acao);
 	
-	return;
+  return;
 
 }
 
 /**
- * 
+ * voltar()
+ 
  * Cria um link que permite ao usuário retornar a página inicial
  *
  */
@@ -103,7 +104,7 @@ function titulo($titulo) {
 
 /**
  * exibe($ra, $nome, $acao)
- 
+ *
  * Exibe informações de um aluno
  * 
  * @param string $ra RA do Aluno
