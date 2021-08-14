@@ -60,8 +60,8 @@ if ($acao == 'adi') {
 
  * Adiciona um novo aluno
  *
- * @param String $ra1
- * @param String $nome1
+ * @param String $ra1 RA do Aluno
+ * @param String $nome1 Nome do Aluno
  */
 function adicionar($ra1, $nome1) {
 
@@ -110,8 +110,8 @@ function adicionar($ra1, $nome1) {
 /**
  * Altera o nome do aluno associado ao ra fornecido
  *
- * @param string $ra1
- * @param string $nome1
+ * @param string $ra1 RA do Aluno
+ * @param string $nome1 Nome do Aluno
  *
  */
 function alterar($ra1, $nome1) {
@@ -139,7 +139,7 @@ function alterar($ra1, $nome1) {
 
   } elseif ($num == 0) {
 
-    echo "<p>Aluno: $ra1 n�o foi encontrado";
+    echo "<p>Aluno: $ra1 não foi encontrado";
 
   } elseif ($num == -1) {
 
@@ -153,6 +153,8 @@ function alterar($ra1, $nome1) {
 }
 
 /**
+ * excluir($ra1)
+ *
  * Exclui o aluno a partir de seu ra.
  *
  * @param string $ra1 RA do aluno
@@ -203,6 +205,8 @@ function excluir($ra1) {
 }
 
 /**
+ * consultar($ra1)
+ *
  * Consulta as informações de um aluno dado seu RA
  *
  * @param string $ra1 RA do aluno.
@@ -243,6 +247,8 @@ function consultar($ra1) {
 }
 
 /**
+ * listar()
+ *
  * Lista todos alunos cadastrados na base de dados classificados
  * por nome.
  *
@@ -279,12 +285,10 @@ function listar() {
     $nome = $dados['nome'];
 
     echo "<tr>";
-
     echo "<td>$ra</td>";
     echo "<td>$nome</td>";
-
-
     echo "</tr>";
+    
   }
 
   echo "</table>";
@@ -294,6 +298,7 @@ function listar() {
 
 
 /**
+ * listar2()
  *
  * Lista todos alunos cadastrados na base de dados
  * ordenados por nome
@@ -342,6 +347,8 @@ function listar2() {
 
 
 /**
+ * voltar()
+ *
  * Cria um link que permite ao usuário retornar a página inicial
  *
  */
@@ -351,6 +358,8 @@ function voltar() {
 }
 
 /**
+ * titulo($titulo)
+ 
  * Exibe um título centralizado seguido de uma linha horizontal
  *
  * @param string $titulo
